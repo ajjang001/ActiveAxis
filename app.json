@@ -36,8 +36,8 @@
             "minSdkVersion": 26
           }
         }
-      ]
-      
+      ],
+      "react-native-health"
     ]
   }
 }
