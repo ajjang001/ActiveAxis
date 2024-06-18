@@ -37,7 +37,8 @@
           }
         }
       ],
-      "react-native-health"
+      "react-native-health",
+      "expo-font"
     ]
   }
 }
