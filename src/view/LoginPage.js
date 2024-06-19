@@ -4,7 +4,9 @@ import { useFonts } from "expo-font";
 import { CheckBox } from '@rneui/themed';
 import { Dropdown } from 'react-native-element-dropdown';
 
-import {firebase} from '../../.expo/api/firebase';
+import {app, auth, db} from '../../.expo/api/firebase';
+import { getAuth, signInWithEmailAndPassword,browserLocalPersistence, browserSessionPersistence, setPersistence  } from "firebase/auth";
+import { collection, query, where, getDoc } from "firebase/firestore"; 
 
 import MessageDialog from '../other/Modal';
 
@@ -22,7 +24,7 @@ const LoginPage = ({navigation})=>{
     // User Login Info
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [checked, setChecked] = useState(false);
+    const [remember, setRemember] = useState(false);
     const [loginType, setLoginType] = useState('u');
 
     // Firebase Authentication
@@ -48,13 +50,40 @@ const LoginPage = ({navigation})=>{
     // if logged in, user will be redirected to the home page
     // otherwise, user will be redirected to the login page
     useEffect(() => {
-        const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
+        //const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
+        const subscriber = onAuthStateChanged(auth, onAuthStateChanged);
         return subscriber;
     }, []);
 
     useEffect(() => {
         const checkPersistence = async () => {
-            console.log('Hi! Im checking persistence');
+            const currentUser = getAuth().currentUser;
+            if (currentUser) {
+                const userDoc = await firestore.collection('users').doc(currentUser.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    console.log('Persisted User Data:', {
+                        fullName: userData.fullName,
+                        email: userData.email,
+                        userType: userData.userType,
+                        phoneNumber: userData.phoneNumber,
+                    });
+                    //navigation.navigate('Homepage');
+                }
+            } else {
+                setUser(null);
+                setInitializing(false);
+            }
+        };
+        
+        if(user){
+            checkPersistence();
+        }
+            
+    },[]);
+
+    /*
+    console.log('Hi! Im checking persistence');
             const currentUser = firebase.auth().currentUser;
             console.log('Current User is set');
             if (currentUser){
@@ -78,12 +107,7 @@ const LoginPage = ({navigation})=>{
                 setInitializing(false);
             }
         };
-        
-        if(user){
-            checkPersistence();
-        }
-            
-    },[]);
+    */
 
     if(initializing) return null;
     /*
@@ -129,7 +153,7 @@ const LoginPage = ({navigation})=>{
 
     */
 
-    const processLogin = async (email, password) => {
+    const processLogin = async (email, password, remember, loginType) => {
         console.log('Login in');
         // To if email is in valid format
         const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -145,7 +169,79 @@ const LoginPage = ({navigation})=>{
         }
         else{
             try{
-                console.log('in Else');
+                const persistenceType = remember
+                ? browserLocalPersistence
+                : browserSessionPersistence;
+
+                setPersistence(auth, persistenceType)
+                .then(() =>
+                    {
+                        signInWithEmailAndPassword(auth, email, password);
+                    }
+                );
+
+
+                //setPersistence(auth, persistenceType);
+                const user = auth.currentUser;
+                if (!user) {
+                    throw new Error('No user is signed in');
+                }
+
+                const q = query(collection(db, 'users'), where('email', '==', user.email));
+                const querySnapshot = await getDoc(q);
+                querySnapshot.forEach((doc) => {
+                    console.log(doc.id, ' => ', doc.data());
+                });
+                
+
+                if (loginType !== userData.userType) {
+                    auth.signOut();
+                    changeModalVisible(true, 'Invalid login type');
+                    return;
+                }
+
+
+                
+            }catch(e){
+                console.log("ERROR 2 " + e.message);
+            }
+        }
+    };
+
+    /* 
+    await firebase.auth().setPersistence(persistenceType);
+
+                // Proceed with sign-in
+                await firebase.auth().signInWithEmailAndPassword(email, password);
+
+                console.log('Login successful');
+
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    throw new Error('No user is signed in');
+                }
+                const userData = (await firebase.firestore().collection('users').doc(user.uid).get()).data();
+                if (!userData) {
+                    throw new Error('User data not found');
+                }
+
+                console.log('Hello '+remember+' User Data:', {
+                    fullName: userData.fullName,
+                    email: userData.email,
+                    userType: userData.userType,
+                    phoneNumber: userData.phoneNumber,
+                });
+
+                if (loginType !== userData.userType) {
+                    firebase.auth().signOut();
+                    changeModalVisible(true, 'Invalid login type');
+                    return;
+                }
+                
+
+    */
+    /*
+    console.log('in Else');
                 await firebase.auth().signInWithEmailAndPassword(email, password);
                 console.log('1');
                 const user = firebase.auth().currentUser;
@@ -185,11 +281,7 @@ const LoginPage = ({navigation})=>{
                     console.log('User data not found');
                     throw new Error('User data not found');
                 }
-            }catch(e){
-                console.log("ERROR 2 " + e.message);
-            }
-        }
-    };
+    */ 
 
     /*const processLogin = async (email, password) => {
         try {
@@ -233,7 +325,7 @@ const LoginPage = ({navigation})=>{
 
     // Checkbox Toggle
     const toggleCheckbox = () => {
-        setChecked(!checked);
+        setRemember(!remember);
     };
 
     // Dropdown - Login type
@@ -286,7 +378,7 @@ const LoginPage = ({navigation})=>{
                 <View style ={styles.rememberMe}>
                     <CheckBox
                         title="Remember me"
-                        checked={checked}
+                        checked={remember}
                         fontFamily='Inter SemiBold'
                         containerStyle={styles.checkBoxContainter}
                         textStyle={styles.checkBoxText}
@@ -321,7 +413,7 @@ const LoginPage = ({navigation})=>{
             </View>
 
             <View style={styles.bottomContainer}>
-                <TouchableOpacity activeOpacity={.7} style={styles.loginButton} onPress={()=>processLogin(email, password, checked, loginType)} >
+                <TouchableOpacity activeOpacity={.7} style={styles.loginButton} onPress={()=>processLogin(email, password, remember, loginType)} >
                     <Text style={styles.loginButtonText}>LOGIN</Text>
                 </TouchableOpacity>
 
