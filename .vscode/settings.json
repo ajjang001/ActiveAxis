@@ -1,3 +1,14 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.project.sourcePaths": ["src"],
+    "java.jdt.ls.java.home": "C:\\Program Files (x86)\\Java\\jdk21",  // Update this to your JDK path
+    "java.import.gradle.enabled": true,
+    "java.import.gradle.wrapper.enabled": true,
+    "java.import.gradle.version": "8.6",  // Adjust the version as needed
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-21",
+            "path": "C:\\Program Files (x86)\\Java\\jdk21"  // Update this to your JDK 11 path
+        }
+    ]
 }
