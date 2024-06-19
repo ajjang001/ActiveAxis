@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import 'react-native-gesture-handler';
 import { StyleSheet, Text, View } from 'react-native';
 import LoginPage from './src/view/LoginPage';
 import UserHomePage from './src/view/UserHomePage';
@@ -10,12 +10,6 @@ import RegisterPage2 from './src/view/RegisterPage2';
 import RegisterPage3 from './src/view/RegisterPage3';
 import ResetPasswordPage from './src/view/ResetPasswordPage';
 import ResetPasswordPage2 from './src/view/ResetPasswordPage2';
-
-const Stack = createStackNavigator();
-import 'react-native-gesture-handler';
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import AboutOurApp from './src/view/AboutOurApp';
 import AboutActiveAxis from './src/view/AboutActiveAxis';
 import FunctionsFeatures from './src/view/FunctionsFeatures';
@@ -35,6 +29,11 @@ export default function App() {
         <Stack.Screen name="Register3" component={RegisterPage3} />
         <Stack.Screen name="ResetPassword" component={ResetPasswordPage} />
         <Stack.Screen name="ResetPassword2" component={ResetPasswordPage2} />
+        <Stack.Screen name="AboutOurApp" component={AboutOurApp} />
+        <Stack.Screen name="AboutActiveAxis" component={AboutActiveAxis} />
+        <Stack.Screen name="FunctionsFeatures" component={FunctionsFeatures} />
+        <Stack.Screen name="AppFeedbacks" component={AppFeedbacks} />
+        <Stack.Screen name="UserStatistics" component={UserStatistics} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -98,14 +97,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="AboutOurApp">
-        <Stack.Screen name="AboutOurApp" component={AboutOurApp} />
-        <Stack.Screen name="AboutActiveAxis" component={AboutActiveAxis} />
-        <Stack.Screen name="FunctionsFeatures" component={FunctionsFeatures} />
-        <Stack.Screen name="AppFeedbacks" component={AppFeedbacks} />
-        <Stack.Screen name="UserStatistics" component={UserStatistics} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-}
