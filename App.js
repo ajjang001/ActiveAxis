@@ -1,22 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import 'react-native-gesture-handler';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import AboutOurApp from './src/view/AboutOurApp';
+import AboutActiveAxis from './src/view/AboutActiveAxis';
+import FunctionsFeatures from './src/view/FunctionsFeatures';
+import AppFeedbacks from './src/view/AppFeedbacks';
+import UserStatistics from './src/view/UserStatistics';
 
-//test
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="AboutOurApp">
+        <Stack.Screen name="AboutOurApp" component={AboutOurApp} />
+        <Stack.Screen name="AboutActiveAxis" component={AboutActiveAxis} />
+        <Stack.Screen name="FunctionsFeatures" component={FunctionsFeatures} />
+        <Stack.Screen name="AppFeedbacks" component={AppFeedbacks} />
+        <Stack.Screen name="UserStatistics" component={UserStatistics} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
