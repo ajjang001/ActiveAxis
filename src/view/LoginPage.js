@@ -1,20 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal } from "react-native";
+import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal, Dimensions, ScrollView   } from "react-native";
 import * as Font from 'expo-font';
 import { CheckBox } from '@rneui/themed';
 import { Dropdown } from 'react-native-element-dropdown';
-
+import {scale} from '../components/scale';
 
 import {app, auth, db} from '../../.expo/api/firebase';
 import { getAuth, signInWithEmailAndPassword,browserLocalPersistence, browserSessionPersistence, setPersistence  } from "firebase/auth";
 import { collection, query, where, getDoc } from "firebase/firestore"; 
 
-import MessageDialog from '../other/Modal';
+import MessageDialog from '../components/Modal';
+
+
+
 
 const LoginPage = ({navigation})=>{
-    // Load Fonts
-    const [fontLoaded, setFontLoaded] = useState(false);
-    
     // User Login Info
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -40,17 +40,19 @@ const LoginPage = ({navigation})=>{
     };
 
     useEffect(() => {
-        Font.loadAsync({
-            "Poppins SemiBold": require("../../assets/fonts/Poppins SemiBold.ttf"),
-            "Poppins Medium": require("../../assets/fonts/Poppins Medium.ttf"),
-            "Inter": require("../../assets/fonts/Inter.ttf"),
-            "Inter SemiBold": require("../../assets/fonts/Inter SemiBold.ttf"),
-            "Inter Medium": require("../../assets/fonts/Inter Medium.ttf"), 
-            //"Fuzzy Bubbles": require("../../assets/fonts/Fuzzy Bubbles.ttf"), 
-            })
-        .then(() => setFontLoaded(true));
+        async function loadFonts(){
+            await Font.loadAsync({
+                "Poppins SemiBold": require("../../assets/fonts/Poppins SemiBold.ttf"),
+                "Poppins Medium": require("../../assets/fonts/Poppins Medium.ttf"),
+                "Inter": require("../../assets/fonts/Inter.ttf"),
+                "Inter SemiBold": require("../../assets/fonts/Inter SemiBold.ttf"),
+                "Inter Medium": require("../../assets/fonts/Inter Medium.ttf"), 
+                //"Fuzzy Bubbles": require("../../assets/fonts/Fuzzy Bubbles.ttf"), 
+            });
+        }
+
+        loadFonts();
         
-        if (!fontLoaded) return;
 
     }, []);
 
@@ -163,7 +165,7 @@ const LoginPage = ({navigation})=>{
 
 
     return(
-        <SafeAreaView style = {styles.container}>
+        <View style = {styles.container}>
             
             <View style = {styles.topContainer}>
                 <Image style = {styles.logo} source={require('../../assets/img/logo.png')} />
@@ -175,29 +177,12 @@ const LoginPage = ({navigation})=>{
                 <TextInput style={styles.inputBox} onChangeText={setEmail} value = {email} placeholder='Enter your email'/>
                 <TextInput secureTextEntry={true} style={styles.inputBox} onChangeText={setPassword} value = {password} placeholder='Enter your password'/>
 
-                <View style ={styles.rememberMe}>
-                    <CheckBox
-                        title="Remember me"
-                        checked={remember}
-                        fontFamily='Inter SemiBold'
-                        containerStyle={styles.checkBoxContainter}
-                        textStyle={styles.checkBoxText}
-                        onPress={toggleCheckbox}
-                        checkedColor='grey'
-                        uncheckedColor='grey'
-                        iconType="material-community"
-                        checkedIcon="checkbox-outline"
-                        uncheckedIcon={'checkbox-blank-outline'}
-                    
-                    />
-                    <TouchableOpacity onPress={()=>navigation.navigate('ResetPassword')}>
-                        <Text style={styles.checkBoxText}>Forgot Password?</Text>
-                    </TouchableOpacity>
-                    
-                </View>
+                <TouchableOpacity onPress={()=>navigation.navigate('ResetPassword')}>
+                    <Text style={styles.forgotPassText}>Forgot Password?</Text>
+                </TouchableOpacity>
 
                 
-                <Text style ={{fontFamily:'Inter', fontSize:15}}>Login as</Text>
+                <Text style ={{fontFamily:'Inter', fontSize:scale(15)}}>Login as</Text>
                 <Dropdown
                     style={styles.dropdown}
                     placeholderStyle={styles.placeholderStyle}
@@ -241,16 +226,20 @@ const LoginPage = ({navigation})=>{
                      and 
                     <Text style = {{color:'black'}}> Privacy Policy </Text>
                 </Text>
+            </View>
 
-                <View style={styles.oval}>
-                    
-                    <Text style={{marginTop: 40, transform:[{scaleX:0.5}],}}>Don’t have an account? 
-                        
-                            <Text style = {{fontFamily:'Inter', fontWeight:'bold'}} onPress={()=>{navigation.navigate('Register')}}> Register Now</Text>
-                        
+            
+
+            <View style={styles.ovalAndText}>
+                <View style={styles.oval}></View>
+
+                <View style = {styles.inTextOval}>
+                    <Text style={{fontFamily:'Inter Medium', fontSize:scale(14)}} >Don’t have an account?  
+                            <Text style = {{fontFamily:'Inter', fontWeight:'bold', fontSize:scale(14)}} onPress={()=>{navigation.navigate('Register')}}> Register Now</Text>
                     </Text>
-                    <Text style={{marginTop: 20, transform:[{scaleX:0.5}],}}>Want to join us as a coach? 
-                            <Text style = {{fontFamily:'Inter', fontWeight:'bold'}}> Click Here</Text>
+
+                    <Text style={{fontFamily:'Inter Medium', paddingTop:15, fontSize:scale(14)}}>Want to join us as a coach? 
+                        <Text style = {{fontFamily:'Inter', fontWeight:'bold', fontSize:scale(14)}}> Click Here</Text>
                     </Text>
 
                     <TouchableOpacity activeOpacity={.7} style ={styles.aboutAppButton} onPress={()=>{navigation.navigate('AboutOurApp')}}>
@@ -259,16 +248,14 @@ const LoginPage = ({navigation})=>{
                             ABOUT OUR APP
                         </Text>
                     </TouchableOpacity>
-
                 </View>
-            
-            
             </View>
 
+
             
 
             
-        </SafeAreaView>
+        </View>
     );
 
     
@@ -284,86 +271,70 @@ const styles = StyleSheet.create({
         display:'flex',
         justifyContent:'center',
         alignItems:'center',
-        paddingTop:70,
+        paddingTop:scale(80),
     },  
     logo:{
-        width:125,
-        height:125,
+        width:scale(125),
+        height:scale(125),
         borderRadius:17,
     },
     redBox:{
         backgroundColor:'#C42847',
-        height:15,
-        width:400,
-        marginTop:20,
+        height:scale(15),
+        width:'90%',
+        marginTop:scale(20),
     },
 
     middleContainer:{
-        margin:24
+        margin:scale(20)
     },
     title:{
-        fontSize:32,
+        fontSize:scale(32),
         fontFamily: 'Poppins SemiBold',
     },
     inputBox:{
         backgroundColor:'white',
         borderRadius:10,
-        padding:10,
-        margin:10,
-        fontSize:14,
+        padding:scale(10),
+        margin:scale(10),
+        fontSize:scale(14),
         fontFamily:'Inter'
     },
-
-    rememberMe:{
-        flexDirection: 'row',
-        gap: 60,
-        flexWrap: 'wrap',
-        display:'flex',
-        justifyContent:'center',
-        alignItems:'center',
-        marginTop:-15,
-        
-    },
-    checkBoxContainter:{
-        maxWidth:'50%',
-        maxHeight:50,
-        backgroundColor:'transparent',
-        right: 20,
-    },
-    checkBoxText:{
+    forgotPassText:{
         fontFamily:'Inter',
         color:'black',
-        fontSize:15,
+        fontSize:scale(14),
         fontWeight:'bold',
+        textAlign:'right',
     },
 
     dropdown: {
-        height: 30,
-        width: 160,
+        height: scale(30),
+        width: '40%',
         margin:5,
-        padding:10,
+        padding:scale(10),
         borderBottomColor: 'gray',
         borderBottomWidth: 0.5,
         backgroundColor: 'white',
         borderRadius:8
     },
     placeholderStyle: {
-        fontSize: 14,
+        fontSize: scale(14),
     },
     selectedTextStyle: {
-        fontSize: 14,
-        height:18,
+        fontSize: scale(15),
+        height:scale(18),
         color:'grey'
     },
     item: {
-        paddingLeft: 5,
-        height:25,
-        borderWidth:2,
+        paddingLeft: scale(5),
+        height:scale(25),
+        borderWidth:1,
         borderColor: 'lightgrey',
     },
     itemText: {
-        fontSize: 12,
-        fontFamily:'Popins Medium'
+        fontSize: scale(12),
+        fontFamily:'Poppins Medium'
     },
 
 
@@ -371,12 +342,12 @@ const styles = StyleSheet.create({
         display:'flex',
         justifyContent:'center',
         alignItems:'center',
-        paddingTop:10,
+        paddingTop:scale(10),
     },
     loginButton:{
         backgroundColor:'black',
-        width:400,
-        height:50,
+        width:'90%',
+        height:scale(50),
         borderRadius:10,
         display:'flex',
         justifyContent:'center',
@@ -385,44 +356,52 @@ const styles = StyleSheet.create({
     loginButtonText:{
         color:'white',
         fontFamily:'Inter',
-        fontSize:20,
+        fontSize:scale(20),
         fontWeight:'bold',
     },
     privacyPolicyText:{
         fontFamily:'Inter',
-        fontSize:15,
+        fontSize:scale(15),
         color:'#828282',
         textAlign:'center',
-        maxWidth:390,
-        paddingTop:10,
+        maxWidth:'85%',
+        paddingTop:scale(10),
+    },
+    ovalAndText:{
+        position:'absolute',
+        width:'100%',
+        bottom:scale(200),
+        alignItems:'center',
     },
 
     oval: {
-        width: 300,
-        height: 300,
-        margin: 30,
-
+        position:'absolute',
+        width: scale(300),
+        height: scale(300),
         borderRadius: 150,
         borderWidth: 5,
         backgroundColor: "#E28413",
         borderColor: "#C42847",
-
-        justifyContent:'top',
-        alignItems:'center',
-
         transform: [{ scaleX: 2 }],
-        bottom: -25,
+        zIndex: 0,
         
+      },
+      inTextOval:{
+        zIndex: 1,
+        position:'absolute',
+        display:'flex',
+        justifyContent:'center',
+        alignItems:'center',
+        paddingTop:scale(40),
       },
 
       aboutAppButton:{
         backgroundColor:'#C42847',
-        height:24,
-        width:124,
+        height:scale(24),
+        width:scale(175),
         borderRadius:35,
-        transform: [{ scaleX: 0.5 }],
 
-        marginTop:20,
+        marginTop:scale(20),
         
 
         display:'flex',
@@ -431,7 +410,7 @@ const styles = StyleSheet.create({
 
         flexDirection:'row',
         
-        gap:5,
+        gap:scale(5),
 
         
       },
@@ -442,7 +421,7 @@ const styles = StyleSheet.create({
       },
       aboutAppText:{
         fontFamily:'Poppins SemiBold',
-        fontSize:11,
+        fontSize:scale(11),
         color:'white',
         
         
@@ -452,6 +431,6 @@ const styles = StyleSheet.create({
 
 
 
-})
+});
 
 export default LoginPage;

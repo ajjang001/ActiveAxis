@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, ScrollView, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const AboutOurApp = ({ navigation }) => {
   const handlePress = (label) => {
@@ -18,20 +18,22 @@ const AboutOurApp = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={[styles.button, { backgroundColor: 'rgba(186, 0, 0, 0.2)' }]} onPress={() => handlePress('About ActiveAxis')}>
-        <Text style={styles.buttonText}>About ActiveAxis</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { backgroundColor: 'rgba(0, 117, 255, 0.2)' }]} onPress={() => handlePress('Functions & Features')}>
-        <Text style={styles.buttonText}>Functions & Features</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { backgroundColor: 'rgba(29, 112, 0, 0.2)' }]} onPress={() => handlePress('App Feedbacks')}>
-        <Text style={styles.buttonText}>App Feedbacks</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { backgroundColor: 'rgba(226, 132, 19, 0.2)' }]} onPress={() => handlePress('User Statistics')}>
-        <Text style={styles.buttonText}>User Statistics</Text>
-      </TouchableOpacity>
-    </View>
+    <ScrollView>
+      <View style={styles.container}>
+        <TouchableOpacity style={[styles.button, { backgroundColor: 'rgba(186, 0, 0, 0.2)' }]} onPress={() => handlePress('About ActiveAxis')}>
+          <Text style={styles.buttonText}>About ActiveAxis</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, { backgroundColor: 'rgba(0, 117, 255, 0.2)' }]} onPress={() => handlePress('Functions & Features')}>
+          <Text style={styles.buttonText}>Functions & Features</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, { backgroundColor: 'rgba(29, 112, 0, 0.2)' }]} onPress={() => handlePress('App Feedbacks')}>
+          <Text style={styles.buttonText}>App Feedbacks</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, { backgroundColor: 'rgba(226, 132, 19, 0.2)' }]} onPress={() => handlePress('User Statistics')}>
+          <Text style={styles.buttonText}>User Statistics</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
