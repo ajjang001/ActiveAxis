@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 
 const MessageDialog = (props) =>{
     closeModal = (bool) => {
@@ -23,11 +23,20 @@ const MessageDialog = (props) =>{
     );
 };
 
+const LoadingDialog = () =>{
+    return(
+        <TouchableOpacity disabled={true} style={styles.container}>
+                <ActivityIndicator size="large" color="white" style={{ transform: [{ scaleX: 3 }, { scaleY: 3 }] }} />
+        </TouchableOpacity>
+    );
+};
+
 const styles = StyleSheet.create({
     container:{
         flex:1,
         justifyContent:'center',
         alignItems:'center',
+        backgroundColor:'rgba(0,0,0,0.5)',
     },
     modal:{
         width:300,
@@ -65,4 +74,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default MessageDialog;
+export {MessageDialog, LoadingDialog };
