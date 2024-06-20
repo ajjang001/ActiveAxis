@@ -1,12 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { SafeAreaView, ActivityIndicator , View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal, Dimensions, ScrollView   } from "react-native";
-import * as Font from 'expo-font';
-import { CheckBox } from '@rneui/themed';
+import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal } from "react-native";
 import { Dropdown } from 'react-native-element-dropdown';
 import {scale} from '../components/scale';
 
 import {app, auth, db} from '../../.expo/api/firebase';
-import { getAuth, signInWithEmailAndPassword,browserLocalPersistence, browserSessionPersistence, setPersistence  } from "firebase/auth";
+import { signInWithEmailAndPassword,browserLocalPersistence, browserSessionPersistence, setPersistence  } from "firebase/auth";
 import { collection, query, where, getDoc } from "firebase/firestore"; 
 
 import MessageDialog from '../components/Modal';

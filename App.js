@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { StyleSheet} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useFonts } from 'expo-font';
 import 'react-native-gesture-handler';
-import { StyleSheet, Text, View } from 'react-native';
+
 import LoginPage from './src/view/LoginPage';
 import UserHomePage from './src/view/UserHomePage';
 import RegisterPage from './src/view/RegisterPage';
