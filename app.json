@@ -4,12 +4,12 @@
     "slug": "ActiveAxis",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/activeaxislogo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/activeaxislogo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
     },
     "ios": {
       "supportsTablet": true,
@@ -17,13 +17,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/activeaxislogo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.ActiveAxis"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/activeaxislogo.png"
     },
     "plugins": [
       "react-native-health-connect",
@@ -38,7 +38,17 @@
         }
       ],
       "react-native-health",
-      "expo-font"
+      ["expo-font",
+      {
+        "fonts":[
+          ".assets/fonts/Inter Medium.ttf",
+          ".assets/fonts/Inter.ttf",
+          ".assets/fonts/Inter SemiBold.ttf",
+          ".assets/fonts/Poppins Medium.ttf",
+          ".assets/fonts/Poppins SemiBold.ttf",
+          ".assets/fonts/Fuzzy Bubbles.ttf"
+      ]
+      }]
     ]
   }
 }

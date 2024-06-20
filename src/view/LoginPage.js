@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal, Dimensions, ScrollView   } from "react-native";
+import { SafeAreaView, ActivityIndicator , View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal, Dimensions, ScrollView   } from "react-native";
 import * as Font from 'expo-font';
 import { CheckBox } from '@rneui/themed';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -10,11 +10,13 @@ import { getAuth, signInWithEmailAndPassword,browserLocalPersistence, browserSes
 import { collection, query, where, getDoc } from "firebase/firestore"; 
 
 import MessageDialog from '../components/Modal';
+import { set } from 'firebase/database';
 
 
 
 
 const LoginPage = ({navigation})=>{
+    
     // User Login Info
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -39,22 +41,7 @@ const LoginPage = ({navigation})=>{
         if (initializing) setInitializing(false);
     };
 
-    useEffect(() => {
-        async function loadFonts(){
-            await Font.loadAsync({
-                "Poppins SemiBold": require("../../assets/fonts/Poppins SemiBold.ttf"),
-                "Poppins Medium": require("../../assets/fonts/Poppins Medium.ttf"),
-                "Inter": require("../../assets/fonts/Inter.ttf"),
-                "Inter SemiBold": require("../../assets/fonts/Inter SemiBold.ttf"),
-                "Inter Medium": require("../../assets/fonts/Inter Medium.ttf"), 
-                //"Fuzzy Bubbles": require("../../assets/fonts/Fuzzy Bubbles.ttf"), 
-            });
-        }
-
-        loadFonts();
-        
-
-    }, []);
+    
 
 
     // After authentication....
@@ -67,8 +54,11 @@ const LoginPage = ({navigation})=>{
         return subscriber;
     }, []);
 
+
     
     if(initializing) return null;
+
+    
     
     const processLogin = async (email, password, remember, loginType) => {
         console.log('Login in');
@@ -92,7 +82,7 @@ const LoginPage = ({navigation})=>{
 
                 await setPersistence(auth, persistenceType)
                 await signInWithEmailAndPassword(auth, email, password);
-                  
+                
 
 
                 //setPersistence(auth, persistenceType);
@@ -141,14 +131,14 @@ const LoginPage = ({navigation})=>{
     // Render Dropdown options
     const renderItem=(item)=>{
         return(
-           <TouchableOpacity activeOpacity={.7} style={styles.item}
-           onPress={()=>{
+        <TouchableOpacity activeOpacity={.7} style={styles.item}
+        onPress={()=>{
             setLoginType(item.value);
             dropdownRef.current.close();
-           }}
-           >
+        }}
+        >
                 <Text style={styles.itemText}>{item.label}</Text>
-           </TouchableOpacity> 
+        </TouchableOpacity> 
         );
     };
     
@@ -223,7 +213,7 @@ const LoginPage = ({navigation})=>{
                 <Text style={styles.privacyPolicyText}>
                     By clicking login, you agree to our 
                     <Text style = {{color:'black'}}> Terms of Service </Text> 
-                     and 
+                    and 
                     <Text style = {{color:'black'}}> Privacy Policy </Text>
                 </Text>
             </View>
@@ -257,6 +247,7 @@ const LoginPage = ({navigation})=>{
             
         </View>
     );
+    
 
     
 }
@@ -355,7 +346,7 @@ const styles = StyleSheet.create({
     },
     loginButtonText:{
         color:'white',
-        fontFamily:'Inter',
+        fontFamily:'Fuzzy Bubbles',
         fontSize:scale(20),
         fontWeight:'bold',
     },

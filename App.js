@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { useFonts } from 'expo-font';
 import 'react-native-gesture-handler';
 import { StyleSheet, Text, View } from 'react-native';
 import LoginPage from './src/view/LoginPage';
@@ -19,6 +20,19 @@ import UserStatistics from './src/view/UserStatistics';
 const Stack = createStackNavigator();
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    "Poppins SemiBold": require("./assets/fonts/Poppins SemiBold.ttf"),
+    "Poppins Medium": require("./assets/fonts/Poppins Medium.ttf"),
+    "Inter": require("./assets/fonts/Inter.ttf"),
+    "Inter SemiBold": require("./assets/fonts/Inter SemiBold.ttf"),
+    "Inter Medium": require("./assets/fonts/Inter Medium.ttf"), 
+    "Fuzzy Bubbles": require("./assets/fonts/Fuzzy Bubbles.ttf"), 
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginPage" screenOptions={{headerShown:false}}>
