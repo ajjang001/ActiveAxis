@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal } from "react-native";
-import { useFonts } from "expo-font";
 import * as Font from 'expo-font';
 import { CheckBox } from '@rneui/themed';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -47,12 +46,14 @@ const LoginPage = ({navigation})=>{
             "Inter": require("../../assets/fonts/Inter.ttf"),
             "Inter SemiBold": require("../../assets/fonts/Inter SemiBold.ttf"),
             "Inter Medium": require("../../assets/fonts/Inter Medium.ttf"), 
-            "Fuzzy Bubbles": require("../../assets/fonts/Fuzzy Bubbles.ttf"), 
+            //"Fuzzy Bubbles": require("../../assets/fonts/Fuzzy Bubbles.ttf"), 
             })
         .then(() => setFontLoaded(true));
+        
+        if (!fontLoaded) return;
+
     }, []);
 
-    
 
     // After authentication....
     // to check if the user is logged in or not
@@ -64,104 +65,9 @@ const LoginPage = ({navigation})=>{
         return subscriber;
     }, []);
 
-    useEffect(() => {
-        const checkPersistence = async () => {
-            const currentUser = getAuth().currentUser;
-            if (currentUser) {
-                const userDoc = await firestore.collection('users').doc(currentUser.uid).get();
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
-                    console.log('Persisted User Data:', {
-                        fullName: userData.fullName,
-                        email: userData.email,
-                        userType: userData.userType,
-                        phoneNumber: userData.phoneNumber,
-                    });
-                    //navigation.navigate('Homepage');
-                }
-            } else {
-                setUser(null);
-                setInitializing(false);
-            }
-        };
-        
-        if(user){
-            checkPersistence();
-        }
-            
-    },[]);
-
-    /*
-    console.log('Hi! Im checking persistence');
-            const currentUser = firebase.auth().currentUser;
-            console.log('Current User is set');
-            if (currentUser){
-                console.log('Current User is found');
-                const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
-                console.log('Current User get db data');
-                if(userDoc.exists){
-                    console.log('userDocExists checkPersistence');
-                    const userData = userDoc.data();
-                    console.log('Persisted User Data:', {
-                        fullName: userData.fullName,
-                        email: userData.email,
-                        userType: userData.userType,
-                        phoneNumber: userData.phoneNumber,
-                    });
-                    //navigation.navigate('Homepage');
-                }
-            }else{
-                console.log('Current User is not found');
-                setUser(null);
-                setInitializing(false);
-            }
-        };
-    */
-
+    
     if(initializing) return null;
-    /*
-    useEffect(() => {
-    const checkPersistence = async () => {
-        console.log('Hi! Im checking persistence');
-        const currentUser = firebase.auth().currentUser;
-        console.log('Current User is set');
-        if (currentUser) {
-            console.log('Current User is found');
-            const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
-            console.log('Current User get db data');
-            if (userDoc.exists) {
-                console.log('userDocExists checkPersistence');
-                const userData = userDoc.data();
-                console.log('Persisted User Data:', {
-                    fullName: userData.fullName,
-                    email: userData.email,
-                    userType: userData.userType,
-                    phoneNumber: userData.phoneNumber,
-                });
-                if (firebase.auth().persistence === firebase.auth.Auth.Persistence.LOCAL) {
-                    // Redirect to user homepage based on type
-                    // navigation.navigate('Homepage');
-                } else if (firebase.auth().persistence === firebase.auth.Auth.Persistence.NONE) {
-                    // Redirect to login and clear user data
-                    firebase.auth().signOut();
-                    setUser(null);
-                    setInitializing(false);
-                }
-            }
-        } else {
-            console.log('Current User is not found');
-            setUser(null);
-            setInitializing(false);
-        }
-    };
-    if (user) {
-        console.log('User is found Why Im here?');
-        checkPersistence();
-    }
-}, [user]);
-
-    */
-
+    
     const processLogin = async (email, password, remember, loginType) => {
         console.log('Login in');
         // To if email is in valid format
@@ -213,118 +119,6 @@ const LoginPage = ({navigation})=>{
             }
         }
     };
-
-    /* 
-    await firebase.auth().setPersistence(persistenceType);
-
-                // Proceed with sign-in
-                await firebase.auth().signInWithEmailAndPassword(email, password);
-
-                console.log('Login successful');
-
-                const user = firebase.auth().currentUser;
-                if (!user) {
-                    throw new Error('No user is signed in');
-                }
-                const userData = (await firebase.firestore().collection('users').doc(user.uid).get()).data();
-                if (!userData) {
-                    throw new Error('User data not found');
-                }
-
-                console.log('Hello '+remember+' User Data:', {
-                    fullName: userData.fullName,
-                    email: userData.email,
-                    userType: userData.userType,
-                    phoneNumber: userData.phoneNumber,
-                });
-
-                if (loginType !== userData.userType) {
-                    firebase.auth().signOut();
-                    changeModalVisible(true, 'Invalid login type');
-                    return;
-                }
-                
-
-    */
-    /*
-    console.log('in Else');
-                await firebase.auth().signInWithEmailAndPassword(email, password);
-                console.log('1');
-                const user = firebase.auth().currentUser;
-                console.log('2');
-                const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
-                console.log('3');
-                if(userDoc.exists){
-                    console.log('userDoc exists');
-                    const userData = userDoc.data();
-                    
-                    if(loginType === userData.userType){
-                        console.log('Login Type is correct');
-                        if(checked){
-                            console.log('Local persistence');
-                            await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-                            console.log('Hello Local User Data:', {
-                                fullName: userData.fullName,
-                                email: userData.email,
-                                userType: userData.userType,
-                                phoneNumber: userData.phoneNumber,
-                            });
-                        }else{
-                            console.log('Session persistence');
-                            await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
-                            console.log('Hello Session User Data:', {
-                                fullName: userData.fullName,
-                                email: userData.email,
-                                userType: userData.userType,
-                                phoneNumber: userData.phoneNumber,
-                            });
-                        }
-                    }else{
-                        console.log('Invalid login type');
-                        throw new Error('Invalid login type');
-                    }
-                } else{
-                    console.log('User data not found');
-                    throw new Error('User data not found');
-                }
-    */ 
-
-    /*const processLogin = async (email, password) => {
-        try {
-            await firebase.auth().signInWithEmailAndPassword(email, password);
-            const user = firebase.auth().currentUser;
-            const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
-            if (userDoc.exists) {
-                const userData = userDoc.data();
-    
-                if (loginType === userData.userType) {
-                    if (checked) {
-                        if (firebase.auth.Auth.Persistence.LOCAL) {
-                            await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-                        } else {
-                            throw new Error('Local persistence is not supported in the current environment');
-                        }
-                    } else {
-                        if (firebase.auth.Auth.Persistence.SESSION) {
-                            await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
-                        } else {
-                            throw new Error('Session persistence is not supported in the current environment');
-                        }
-                    }
-                } else {
-                    throw new Error('Invalid login type');
-                }
-            } else {
-                throw new Error('User data not found');
-            }
-        } catch (e) {
-            console.log(e.message);
-        }
-    };*/
-
-    
-
-
 
 
 
@@ -391,9 +185,15 @@ const LoginPage = ({navigation})=>{
                         onPress={toggleCheckbox}
                         checkedColor='grey'
                         uncheckedColor='grey'
+                        iconType="material-community"
+                        checkedIcon="checkbox-outline"
+                        uncheckedIcon={'checkbox-blank-outline'}
+                    
                     />
-
-                    <Text style={styles.checkBoxText}>Forgot Password?</Text>
+                    <TouchableOpacity onPress={()=>navigation.navigate('ResetPassword')}>
+                        <Text style={styles.checkBoxText}>Forgot Password?</Text>
+                    </TouchableOpacity>
+                    
                 </View>
 
                 
@@ -415,7 +215,11 @@ const LoginPage = ({navigation})=>{
                     ref={dropdownRef}
                 />
 
-                <Text>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</Text>
+            <View style={{
+                    borderStyle:'dashed', 
+                    maxWidth:'100%', 
+                    borderWidth:1, 
+                    margin:10}}></View>
             </View>
 
             <View style={styles.bottomContainer}>
@@ -439,14 +243,17 @@ const LoginPage = ({navigation})=>{
                 </Text>
 
                 <View style={styles.oval}>
+                    
                     <Text style={{marginTop: 40, transform:[{scaleX:0.5}],}}>Don’t have an account? 
-                            <Text style = {{fontFamily:'Inter', fontWeight:'bold'}}> Register Now</Text>
+                        
+                            <Text style = {{fontFamily:'Inter', fontWeight:'bold'}} onPress={()=>{navigation.navigate('Register')}}> Register Now</Text>
+                        
                     </Text>
                     <Text style={{marginTop: 20, transform:[{scaleX:0.5}],}}>Want to join us as a coach? 
                             <Text style = {{fontFamily:'Inter', fontWeight:'bold'}}> Click Here</Text>
                     </Text>
 
-                    <TouchableOpacity activeOpacity={.7} style ={styles.aboutAppButton} >
+                    <TouchableOpacity activeOpacity={.7} style ={styles.aboutAppButton} onPress={()=>{navigation.navigate('AboutOurApp')}}>
                         <Image style = {styles.infoLogo} source={require('../../assets/img/info_logo.png')} />
                         <Text style={styles.aboutAppText}>
                             ABOUT OUR APP
@@ -496,7 +303,7 @@ const styles = StyleSheet.create({
     },
     title:{
         fontSize:32,
-        fontFamily: 'Fuzzy Bubbles',
+        fontFamily: 'Poppins SemiBold',
     },
     inputBox:{
         backgroundColor:'white',
@@ -604,6 +411,7 @@ const styles = StyleSheet.create({
         alignItems:'center',
 
         transform: [{ scaleX: 2 }],
+        bottom: -25,
         
       },
 

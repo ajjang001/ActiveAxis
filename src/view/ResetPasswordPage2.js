@@ -33,7 +33,7 @@ const ResetPasswordPage2 = ({ navigation }) => {
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.navigate('Register')
+                        navigation.navigate('LoginPage')
                     }}
                     style={styles.button}
                 >
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'white',
+        backgroundColor: '#FBF5F3',
     },
     header: {
         fontSize: 30,

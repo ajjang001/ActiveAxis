@@ -64,6 +64,7 @@ const RegisterPage2 = ({ navigation }) => {
                     uncheckedIcon={'checkbox-blank-outline'}
                     checkedColor="black"
                     textStyle=''
+                    containerStyle={{backgroundColor:'transparent'}}
                 />
             </View>
             <View style={styles.buttonContainer}>
@@ -79,7 +80,7 @@ const RegisterPage2 = ({ navigation }) => {
             <View style={styles.bottomDesign}>
                 <Text style={{ top: 70, zIndex: 2 }}>Already have an account? </Text>
                 <TouchableOpacity style={{ zIndex: 2 }}>
-                    <Text style={{ top: 70, fontWeight: 'bold', }}>Login Now</Text>
+                    <Text style={{ top: 70, fontWeight: 'bold', }} onPress={()=>{navigation.navigate('LoginPage')}}>Login Now</Text>
                 </TouchableOpacity>
                 <Svg style={{ zIndex: 1 }}
                     width="1000"
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: 'white',
+        backgroundColor: '#FBF5F3',
     },
     header: {
         marginTop: 10,
@@ -183,4 +184,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
     },
+
 })

@@ -24,70 +24,21 @@ export default function App() {
       <Stack.Navigator initialRouteName="LoginPage" screenOptions={{headerShown:false}}>
         <Stack.Screen name="LoginPage" component={LoginPage} />
         <Stack.Screen name="UserHomePage" component={UserHomePage} />
-        <Stack.Screen name="Register" component={RegisterPage} />
-        <Stack.Screen name="Register2" component={RegisterPage2} />
-        <Stack.Screen name="Register3" component={RegisterPage3} />
-        <Stack.Screen name="ResetPassword" component={ResetPasswordPage} />
-        <Stack.Screen name="ResetPassword2" component={ResetPasswordPage2} />
-        <Stack.Screen name="AboutOurApp" component={AboutOurApp} />
-        <Stack.Screen name="AboutActiveAxis" component={AboutActiveAxis} />
-        <Stack.Screen name="FunctionsFeatures" component={FunctionsFeatures} />
-        <Stack.Screen name="AppFeedbacks" component={AppFeedbacks} />
-        <Stack.Screen name="UserStatistics" component={UserStatistics} />
+        <Stack.Screen name="Register" component={RegisterPage} options={{headerShown:true, title:'Back', }} />
+        <Stack.Screen name="Register2" component={RegisterPage2} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}  />
+        <Stack.Screen name="Register3" component={RegisterPage3} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }} />
+        <Stack.Screen name="ResetPassword" component={ResetPasswordPage} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
+        <Stack.Screen name="ResetPassword2" component={ResetPasswordPage2} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
+        <Stack.Screen name="AboutOurApp" component={AboutOurApp} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
+        <Stack.Screen name="AboutActiveAxis" component={AboutActiveAxis} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }} />
+        <Stack.Screen name="FunctionsFeatures" component={FunctionsFeatures} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
+        <Stack.Screen name="AppFeedbacks" component={AppFeedbacks} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
+        <Stack.Screen name="UserStatistics" component={UserStatistics} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-/*
-function App() {
-  const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState(null);
-
-  // handle user state changes
-  const onAuthStateChanged = (user) => {
-    setUser(user);
-    if (initializing) setInitializing(false);
-  };
-
-  // After authentication....
-  useEffect(() => {
-    // to check if the user is logged in or not
-    // if logged in, user will be redirected to the home page
-    // otherwise, user will be redirected to the login page
-    const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
-    
-    return subscriber; 
-  }, []);
-  if(initializing) return null;
-
-  if(!user){
-    // Here need Registration and other Guest Page
-    return(
-        <Stack.Navigator>
-          <Stack.Screen name="LoginPage" component={LoginPage} options={{headerShown:false}} />
-        </Stack.Navigator>
-    );
-  }
-
-
-
-  // when the state change
-  return (
-      <Stack.Navigator>
-        <Stack.Screen name="homepage" component={homepage} options={{headerShown:false}} />
-      </Stack.Navigator>
-  );
-}
-
-export default ()=>{
-  return(
-    <NavigationContainer>
-      <App />
-    </NavigationContainer>
-  );
-}
-*/
 
 const styles = StyleSheet.create({
   container: {
