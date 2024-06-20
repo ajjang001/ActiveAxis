@@ -156,7 +156,7 @@ const LoginPage = ({navigation})=>{
         <View style = {styles.container}>
             
             <View style = {styles.topContainer}>
-                <Image style = {styles.logo} source={require('../../assets/img/logo.png')} />
+                <Image style = {styles.logo} source={require('../../assets/activeaxislogo.png')} />
                 <View style = {styles.redBox} />
             </View>
             
@@ -231,7 +231,7 @@ const LoginPage = ({navigation})=>{
                     </Text>
 
                     <TouchableOpacity activeOpacity={.7} style ={styles.aboutAppButton} onPress={()=>{navigation.navigate('AboutOurApp')}}>
-                        <Image style = {styles.infoLogo} source={require('../../assets/img/info_logo.png')} />
+                        <Image style = {styles.infoLogo} source={require('../../assets/info_logo.png')} />
                         <Text style={styles.aboutAppText}>
                             ABOUT OUR APP
                         </Text>
