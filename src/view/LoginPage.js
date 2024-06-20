@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal } from "react-native";
 import { useFonts } from "expo-font";
+import * as Font from 'expo-font';
 import { CheckBox } from '@rneui/themed';
 import { Dropdown } from 'react-native-element-dropdown';
+
 
 import {app, auth, db} from '../../.expo/api/firebase';
 import { getAuth, signInWithEmailAndPassword,browserLocalPersistence, browserSessionPersistence, setPersistence  } from "firebase/auth";
@@ -12,14 +14,7 @@ import MessageDialog from '../other/Modal';
 
 const LoginPage = ({navigation})=>{
     // Load Fonts
-    const [fontsLoaded] = useFonts({
-        "Poppins SemiBold": require("../../assets/fonts/Poppins SemiBold.ttf"),
-        "Poppins Medium": require("../../assets/fonts/Poppins Medium.ttf"),
-        "Inter": require("../../assets/fonts/Inter.ttf"),
-        "Inter SemiBold": require("../../assets/fonts/Inter SemiBold.ttf"),
-        "Inter Medium": require("../../assets/fonts/Inter Medium.ttf"), 
-        "Fuzzy Bubbles": require("../../assets/fonts/Fuzzy Bubbles.ttf"), 
-      });
+    const [fontLoaded, setFontLoaded] = useState(false);
     
     // User Login Info
     const [email, setEmail] = useState('');
@@ -44,6 +39,20 @@ const LoginPage = ({navigation})=>{
         setUser(user);
         if (initializing) setInitializing(false);
     };
+
+    useEffect(() => {
+        Font.loadAsync({
+            "Poppins SemiBold": require("../../assets/fonts/Poppins SemiBold.ttf"),
+            "Poppins Medium": require("../../assets/fonts/Poppins Medium.ttf"),
+            "Inter": require("../../assets/fonts/Inter.ttf"),
+            "Inter SemiBold": require("../../assets/fonts/Inter SemiBold.ttf"),
+            "Inter Medium": require("../../assets/fonts/Inter Medium.ttf"), 
+            "Fuzzy Bubbles": require("../../assets/fonts/Fuzzy Bubbles.ttf"), 
+            })
+        .then(() => setFontLoaded(true));
+    }, []);
+
+    
 
     // After authentication....
     // to check if the user is logged in or not
@@ -173,12 +182,9 @@ const LoginPage = ({navigation})=>{
                 ? browserLocalPersistence
                 : browserSessionPersistence;
 
-                setPersistence(auth, persistenceType)
-                .then(() =>
-                    {
-                        signInWithEmailAndPassword(auth, email, password);
-                    }
-                );
+                await setPersistence(auth, persistenceType)
+                await signInWithEmailAndPassword(auth, email, password);
+                  
 
 
                 //setPersistence(auth, persistenceType);
@@ -498,7 +504,7 @@ const styles = StyleSheet.create({
         padding:10,
         margin:10,
         fontSize:14,
-        fontFamily:'Inter Regular'
+        fontFamily:'Inter'
     },
 
     rememberMe:{
