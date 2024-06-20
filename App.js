@@ -6,7 +6,6 @@ import { useFonts } from 'expo-font';
 import 'react-native-gesture-handler';
 
 import LoginPage from './src/view/LoginPage';
-import UserHomePage from './src/view/UserHomePage';
 import RegisterPage from './src/view/RegisterPage';
 import RegisterPage2 from './src/view/RegisterPage2';
 import RegisterPage3 from './src/view/RegisterPage3';
@@ -17,6 +16,10 @@ import AboutActiveAxis from './src/view/AboutActiveAxis';
 import FunctionsFeatures from './src/view/FunctionsFeatures';
 import AppFeedbacks from './src/view/AppFeedbacks';
 import UserStatistics from './src/view/UserStatistics';
+
+import UserHomePage from './src/view/UserHomePage';
+import CoachHomePage from './src/view/CoachHomePage';
+import SystemAdminHomePage from './src/view/SystemAdminHomePage';
 
 const Stack = createStackNavigator();
 
@@ -36,19 +39,23 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LoginPage" screenOptions={{headerShown:false}}>
-        <Stack.Screen name="LoginPage" component={LoginPage} />
+      <Stack.Navigator initialRouteName="LoginPage">
+        <Stack.Screen name="LoginPage" component={LoginPage} options={{headerShown:false}} />
+        <Stack.Screen name="Register" component={RegisterPage} options={{title:'Back'}} />
+        <Stack.Screen name="Register2" component={RegisterPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}  />
+        <Stack.Screen name="Register3" component={RegisterPage3} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }} />
+        <Stack.Screen name="ResetPassword" component={ResetPasswordPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
+        <Stack.Screen name="ResetPassword2" component={ResetPasswordPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
+        <Stack.Screen name="AboutOurApp" component={AboutOurApp} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
+        <Stack.Screen name="AboutActiveAxis" component={AboutActiveAxis} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }} />
+        <Stack.Screen name="FunctionsFeatures" component={FunctionsFeatures} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
+        <Stack.Screen name="AppFeedbacks" component={AppFeedbacks} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
+        <Stack.Screen name="UserStatistics" component={UserStatistics} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
+
+        
         <Stack.Screen name="UserHomePage" component={UserHomePage} />
-        <Stack.Screen name="Register" component={RegisterPage} options={{headerShown:true, title:'Back', }} />
-        <Stack.Screen name="Register2" component={RegisterPage2} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}  />
-        <Stack.Screen name="Register3" component={RegisterPage3} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }} />
-        <Stack.Screen name="ResetPassword" component={ResetPasswordPage} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
-        <Stack.Screen name="ResetPassword2" component={ResetPasswordPage2} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
-        <Stack.Screen name="AboutOurApp" component={AboutOurApp} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
-        <Stack.Screen name="AboutActiveAxis" component={AboutActiveAxis} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }} />
-        <Stack.Screen name="FunctionsFeatures" component={FunctionsFeatures} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
-        <Stack.Screen name="AppFeedbacks" component={AppFeedbacks} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
-        <Stack.Screen name="UserStatistics" component={UserStatistics} options={{headerShown:true, title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
+        <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} />
+        <Stack.Screen name="CoachHomePage" component={CoachHomePage} />
       </Stack.Navigator>
     </NavigationContainer>
   );

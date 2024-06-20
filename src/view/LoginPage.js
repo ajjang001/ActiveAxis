@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal} from "react-native";
 import { Dropdown } from 'react-native-element-dropdown';
 import {scale} from '../components/scale';
 
 import {app, auth, db} from '../../.expo/api/firebase';
-import { signInWithEmailAndPassword,browserLocalPersistence, browserSessionPersistence, setPersistence  } from "firebase/auth";
-import { collection, query, where, getDoc } from "firebase/firestore"; 
+import {signInWithEmailAndPassword} from "firebase/auth";
+import { getDoc, doc } from "firebase/firestore"; 
 
-import MessageDialog from '../components/Modal';
+import {MessageDialog, LoadingDialog } from '../components/Modal';
 import { set } from 'firebase/database';
 
 
@@ -18,51 +18,21 @@ const LoginPage = ({navigation})=>{
     // User Login Info
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [remember, setRemember] = useState(false);
     const [loginType, setLoginType] = useState('u');
 
-    // Firebase Authentication
-    const [initializing, setInitializing] = useState(true);
-    const [user, setUser] = useState(null);
-
+    
     // Modal/Display Message
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
     
     // to close dropdown
     const dropdownRef = useRef(null);
     
-
-    // handle user state changes
-    const onAuthStateChanged = (user) => {
-        setUser(user);
-        if (initializing) setInitializing(false);
-    };
-
-    
-
-
-    // After authentication....
-    // to check if the user is logged in or not
-    // if logged in, user will be redirected to the home page
-    // otherwise, user will be redirected to the login page
-    useEffect(() => {
-        //const subscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged);
-        const subscriber = onAuthStateChanged(auth, onAuthStateChanged);
-        return subscriber;
-    }, []);
-
-
-    
-    if(initializing) return null;
-
-    
-    
-    const processLogin = async (email, password, remember, loginType) => {
-        console.log('Login in');
+    const processLogin = async (email, password, loginType) => {
         // To if email is in valid format
         const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-
+    
         if(email.trim() === '' || password.trim() === ''){
             // Email and Password field is empty
             changeModalVisible(true, 'Please enter your email and password');
@@ -73,49 +43,51 @@ const LoginPage = ({navigation})=>{
             return;
         }
         else{
-            try{
-                const persistenceType = remember
-                ? browserLocalPersistence
-                : browserSessionPersistence;
+                try{
+                    setIsLoading(true);
 
-                await setPersistence(auth, persistenceType)
-                await signInWithEmailAndPassword(auth, email, password);
-                
+                    const login = async (auth, email, password) =>{
+                        try{
+                            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                            return userCredential.user;
+                        }catch(e){
+                            throw new Error('User not found');
+                        }
+                    }
 
+                    const user = await login(auth, email, password);
+                    //if(!user){
+                        //throw new Error('User not found');
+                    //}
 
-                //setPersistence(auth, persistenceType);
-                const user = auth.currentUser;
-                if (!user) {
-                    throw new Error('No user is signed in');
+                    const q = doc(db, 'users', user.uid);
+                    const queryResult = await getDoc(q);
+                    const ut = queryResult.data().userType
+                    if(queryResult.exists() && loginType === ut){
+                        setIsLoading(false);
+                        switch(ut){
+                            case 'u':
+                                navigation.navigate('UserHomePage');
+                                break;
+                            case 'c':
+                                navigation.navigate('CoachHomePage');
+                                break;
+                            case 'a':
+                                navigation.navigate('SystemAdminHomePage');
+                                break;
+                        }  
+
+                    }else{
+                        throw new Error('User not found');
+                    }
+
+                }catch(e){
+                    setIsLoading(false);
+                    changeModalVisible(true, "ERROR2" + e.message);
                 }
-
-                const q = query(collection(db, 'users'), where('email', '==', user.email));
-                const querySnapshot = await getDoc(q);
-                querySnapshot.forEach((doc) => {
-                    console.log(doc.id, ' => ', doc.data());
-                });
-                
-
-                if (loginType !== userData.userType) {
-                    auth.signOut();
-                    changeModalVisible(true, 'Invalid login type');
-                    return;
-                }
-
-
-                
-            }catch(e){
-                console.log("ERROR 2 " + e.message);
-            }
+                 
         }
-    };
-
-
-
-
-    // Checkbox Toggle
-    const toggleCheckbox = () => {
-        setRemember(!remember);
+            
     };
 
     // Dropdown - Login type
@@ -146,6 +118,9 @@ const LoginPage = ({navigation})=>{
     const changeModalVisible = (b, m)=>{
         setModalMsg(m);
         setIsModalVisible(b);
+    }
+    const changeLoadingVisible = (b)=>{
+        setIsLoading(b);
     }
 
 
@@ -196,7 +171,7 @@ const LoginPage = ({navigation})=>{
             </View>
 
             <View style={styles.bottomContainer}>
-                <TouchableOpacity activeOpacity={.7} style={styles.loginButton} onPress={()=>processLogin(email, password, remember, loginType)} >
+                <TouchableOpacity activeOpacity={.7} style={styles.loginButton} onPress={()=>processLogin(email, password, loginType)} >
                     <Text style={styles.loginButtonText}>LOGIN</Text>
                 </TouchableOpacity>
 
@@ -205,7 +180,10 @@ const LoginPage = ({navigation})=>{
                     message = {modalMsg} 
                     changeModalVisible = {changeModalVisible} 
                     />
+                </Modal>
 
+                <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
+                    <LoadingDialog />
                 </Modal>
 
                 <Text style={styles.privacyPolicyText}>
@@ -295,6 +273,7 @@ const styles = StyleSheet.create({
         fontSize:scale(14),
         fontWeight:'bold',
         textAlign:'right',
+        paddingRight:scale(10),
     },
 
     dropdown: {
@@ -356,15 +335,16 @@ const styles = StyleSheet.create({
         maxWidth:'85%',
         paddingTop:scale(10),
     },
+
     ovalAndText:{
-        position:'absolute',
         width:'100%',
         bottom:scale(200),
         alignItems:'center',
+
+        position:'absolute',
     },
 
     oval: {
-        position:'absolute',
         width: scale(300),
         height: scale(300),
         borderRadius: 150,
@@ -372,16 +352,19 @@ const styles = StyleSheet.create({
         backgroundColor: "#E28413",
         borderColor: "#C42847",
         transform: [{ scaleX: 2 }],
-        zIndex: 0,
+        
+        zIndex: 1,
+        position:'absolute',
         
       },
       inTextOval:{
-        zIndex: 1,
-        position:'absolute',
         display:'flex',
         justifyContent:'center',
         alignItems:'center',
         paddingTop:scale(40),
+
+        zIndex: 2,
+        position:'absolute',
       },
 
       aboutAppButton:{

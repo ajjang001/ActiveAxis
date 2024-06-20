@@ -41,12 +41,12 @@
       ["expo-font",
       {
         "fonts":[
-          ".assets/fonts/Inter Medium.ttf",
-          ".assets/fonts/Inter.ttf",
-          ".assets/fonts/Inter SemiBold.ttf",
-          ".assets/fonts/Poppins Medium.ttf",
-          ".assets/fonts/Poppins SemiBold.ttf",
-          ".assets/fonts/Fuzzy Bubbles.ttf"
+          "./assets/fonts/Inter Medium.ttf",
+          "./assets/fonts/Inter.ttf",
+          "./assets/fonts/Inter SemiBold.ttf",
+          "./assets/fonts/Poppins Medium.ttf",
+          "./assets/fonts/Poppins SemiBold.ttf",
+          "./assets/fonts/Fuzzy Bubbles.ttf"
       ]
       }]
     ]
