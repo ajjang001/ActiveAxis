@@ -16,7 +16,6 @@ import AboutActiveAxis from './src/view/AboutActiveAxis';
 import FunctionsFeatures from './src/view/FunctionsFeatures';
 import AppFeedbacks from './src/view/AppFeedbacks';
 import UserStatistics from './src/view/UserStatistics';
-
 import UserHomePage from './src/view/UserHomePage';
 import CoachHomePage from './src/view/CoachHomePage';
 import SystemAdminHomePage from './src/view/SystemAdminHomePage';
