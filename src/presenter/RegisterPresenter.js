@@ -1,10 +1,19 @@
-import User from '../model/User';
+import { firebase } from '../../.expo/api/firebase'
 
-//constructor(view) {
-//    this.view = view;
-//   this.User = new User();
-//  }
+class RegisterPresenter {
+    constructor(view) {
+        this.view = view;
+    }
 
-//  const [email, setEmail] = useState('')
-
-// export default RegisterPresenter;
+    registerUser(user) {
+        firebase.auth()
+            .createUserWithEmailAndPassword(user.email, user.password)
+            .then(() => {
+                this.view.onRegisterSuccess();
+            })
+            .catch(error => {
+                this.view.onRegisterError(error.message);
+            });
+    }
+}
+export default RegisterPresenter;
