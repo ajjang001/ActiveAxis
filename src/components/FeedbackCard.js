@@ -11,7 +11,7 @@ const FeedbackCard = ({ avatar, name, rating, feedback }) => {
           key={i}
           name="star"
           size={20}
-          color={i < rating ? '#FFD700' : '#D3D3D3'} // Gold for filled stars, light gray for empty stars
+          color={i < rating ? '#FFD700' : '#D3D3D3'}
         />
       );
     }
@@ -21,7 +21,7 @@ const FeedbackCard = ({ avatar, name, rating, feedback }) => {
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Image source={avatar} style={styles.avatar} />
+        <Image source={{ uri: avatar }} style={styles.avatar} />
         <View style={styles.headerText}>
           <Text style={styles.name}>{name}</Text>
           <View style={styles.stars}>{renderStars()}</View>
@@ -69,10 +69,6 @@ const styles = StyleSheet.create({
   },
   stars: {
     flexDirection: 'row',
-  },
-  star: {
-    color: '#000',
-    fontSize: 18,
   },
   feedbackContainer: {
     backgroundColor: '#E0E0E0',

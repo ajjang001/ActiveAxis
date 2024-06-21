@@ -1,29 +1,45 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import FeedbackCard from '../components/FeedbackCard';
-
-const feedbackData = [
-  {
-    avatar: require('../../assets/avatar.png'),
-    name: 'John Doe',
-    rating: 5,
-    feedback: 'This is a test 1This This ThisThisThisThisThisThisThis ThisThisThisThisThisThisThisThis This This.\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest',
-  },
-  {
-    avatar: require('../../assets/avatar.png'),
-    name: 'Jane Smith',
-    rating: 4,
-    feedback: 'This is a test 2.',
-  },
-  {
-    avatar: require('../../assets/avatar.png'),
-    name: 'Alice Johnson',
-    rating: 3,
-    feedback: 'This is a test 3\nTest\nTest\nTest\nTest\nTest\nTest\nTest\nTest',
-  },
-];
+import { db } from '../../.expo/api/firebase';
+import { collection, getDocs } from 'firebase/firestore';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 
 const AppFeedbacks = () => {
+  const [feedbackData, setFeedbackData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const storage = getStorage(); // Get the storage instance
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const feedbacksCollection = collection(db, 'feedbacks');
+        const feedbackSnapshot = await getDocs(feedbacksCollection);
+        const feedbackList = await Promise.all(feedbackSnapshot.docs.map(async (doc) => {
+          const data = doc.data();
+          const avatarRef = ref(storage, data.avatar); // Reference to the image in storage
+          data.avatar = await getDownloadURL(avatarRef); // Get the download URL
+          return data;
+        }));
+        setFeedbackData(feedbackList);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching feedbacks: ", error);
+        setLoading(false);
+      }
+    };
+
+    fetchFeedbacks();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000FF" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>App Feedbacks</Text>
@@ -51,6 +67,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
