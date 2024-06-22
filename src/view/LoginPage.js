@@ -1,24 +1,27 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal} from "react-native";
 import { Dropdown } from 'react-native-element-dropdown';
 import {scale} from '../components/scale';
 
-import {app, auth, db} from '../../.expo/api/firebase';
+import {app, auth, db, storage} from '../../.expo/api/firebase';
 import {signInWithEmailAndPassword} from "firebase/auth";
-import { getDoc, doc } from "firebase/firestore"; 
+import { getDoc, doc, collection, query, where, getDocs } from "firebase/firestore"; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import LoginPresenter from '../presenter/LoginPresenter';
 
 import {MessageDialog, LoadingDialog } from '../components/Modal';
-import { set } from 'firebase/database';
 
 
 
 
-const LoginPage = ({navigation})=>{
+const LoginPage = ({navigation})=>{ 
     
     // User Login Info
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loginType, setLoginType] = useState('u');
+    const [user, setUser] = useState(null);
 
     
     // Modal/Display Message
@@ -28,7 +31,75 @@ const LoginPage = ({navigation})=>{
     
     // to close dropdown
     const dropdownRef = useRef(null);
-    
+
+    const changeLoadingVisible = (b)=>{
+        setIsLoading(b);
+    }
+
+    const checkUserSession = async () => {
+        try{
+            AsyncStorage.removeItem('rememberEmail');
+            const email = await AsyncStorage.getItem('rememberEmail');
+            if(email !== null){
+                changeLoadingVisible(true);
+                
+                const q = query(collection(db, 'users'), where('email', '==', email));
+                const queryResult = await getDocs(q);
+
+                if(!queryResult.empty){
+                    const e = queryResult.docs[0].data().email;
+                    const ut = queryResult.docs[0].data().userType;
+                    if(e === email){
+                        switch(ut){
+                            case 'u':
+                                navigation.navigate('UserHomePage');
+                                break;
+                            case 'c':
+                                navigation.navigate('CoachHomePage');
+                                break;
+                            case 'a':
+                                AsyncStorage.removeItem('rememberEmail');
+                                break;
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+
+        }catch(e){
+            changeModalVisible(true, e.message);
+        }finally{
+            changeLoadingVisible(false);
+        }
+        
+    }
+
+
+    // Check if User logged in
+    useEffect(()=>{
+        checkUserSession();
+    },[]);
+
+    const processLogin = async (email, password, loginType) => {
+        changeLoadingVisible(true);
+        try{
+            const loginAccount = await new LoginPresenter().processLogin(email, password, loginType);
+            console.log(loginAccount);
+            console.log('DONE!');
+            setUser(loginAccount);
+        }catch(e){
+            changeModalVisible(true, e.message);
+        }finally{
+            changeLoadingVisible(false);
+        }
+
+        
+    };
+
+    /*
+    // Process Login
     const processLogin = async (email, password, loginType) => {
         // To if email is in valid format
         const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -44,51 +115,50 @@ const LoginPage = ({navigation})=>{
         }
         else{
                 try{
-                    setIsLoading(true);
+                    changeLoadingVisible(true);
 
                     const login = async (auth, email, password) =>{
                         try{
                             const userCredential = await signInWithEmailAndPassword(auth, email, password);
                             return userCredential.user;
                         }catch(e){
-                            throw new Error('User not found');
+                            throw new Error('Incorrect email or password');
                         }
                     }
 
                     const user = await login(auth, email, password);
-                    //if(!user){
-                        //throw new Error('User not found');
-                    //}
-
                     const q = doc(db, 'users', user.uid);
                     const queryResult = await getDoc(q);
                     const ut = queryResult.data().userType
                     if(queryResult.exists() && loginType === ut){
-                        setIsLoading(false);
+                        changeLoadingVisible(false);
                         switch(ut){
                             case 'u':
+                                await AsyncStorage.setItem('rememberEmail', email);
                                 navigation.navigate('UserHomePage');
                                 break;
                             case 'c':
+                                await AsyncStorage.setItem('rememberEmail', email);
                                 navigation.navigate('CoachHomePage');
                                 break;
                             case 'a':
+                                await AsyncStorage.removeItem('rememberEmail');
                                 navigation.navigate('SystemAdminHomePage');
                                 break;
-                        }  
-
+                        }
                     }else{
-                        throw new Error('User not found');
+                        throw new Error('Incorrect email or password');
                     }
 
                 }catch(e){
-                    setIsLoading(false);
-                    changeModalVisible(true, "ERROR2" + e.message);
+                    changeLoadingVisible(false);
+                    changeModalVisible(true, e.message);
                 }
                  
         }
             
     };
+    */
 
     // Dropdown - Login type
     const dropdownOpt = [
@@ -119,14 +189,6 @@ const LoginPage = ({navigation})=>{
         setModalMsg(m);
         setIsModalVisible(b);
     }
-    const changeLoadingVisible = (b)=>{
-        setIsLoading(b);
-    }
-
-
-    
-
-
     return(
         <View style = {styles.container}>
             
