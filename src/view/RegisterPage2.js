@@ -1,26 +1,56 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { CheckBox } from '@rneui/themed';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
+import RegisterPresenter from '../presenter/RegisterPresenter';
+import User from '../model/User';
 
-const RegisterPage2 = ({ navigation }) => {
+const RegisterPage2 = ({ navigation, route }) => {
 
-    const [check1, setCheck1] = useState(false);
+    const [checkTC, setCheckTC] = useState(false);
+    const { gender, age, weight, height, goal, level } = route.params;
+
+    const [name, setName] = useState(null);
+    const [phone, setPhone] = useState(null);
+    const [email, setEmail] = useState(null);
+    const [password, setPassword] = useState(null);
+
+    const presenter = new RegisterPresenter({
+        onRegisterSuccess: () => {
+            Alert.alert('Registered!', [
+                { text: 'OK', onPress: () => navigation.navigate('LoginPage') },
+            ]);
+        },
+        onRegisterError: (errorMessage) => {
+            Alert.alert('Registration Failed', errorMessage);
+        },
+        // onEmailVerificationSent: () => {
+        //     Alert.alert('Verification Email Sent', 'Please check your email to verify your account.', [
+        //         { text: 'OK', onPress: () => navigation.navigate('Register3') },
+        //    ]);
+        //}
+    });
+
+    const handleRegister = () => {
+        console.log({ name, email, password, gender, age, weight, height, goal, level, phone })
+        const user = new User(email, password);
+        presenter.registerUser(user);
+    };
 
     return (
         <KeyboardAvoidingView
             style={styles.container}
             behavior="padding"
         >
-            <Text style={styles.header}>Register</Text>
+            <Text style={styles.header} >Register</Text>
             <View style={styles.container2}>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Name</Text>
                     <TextInput
                         placeholder="Enter your name"
-                        // value = { }
-                        // onChangeText = {text => }
+                        value={name}
+                        onChangeText={text => setName(text)}
                         style={styles.input}
                     />
                     <Text style={styles.label}>Phone Number</Text>
@@ -30,30 +60,30 @@ const RegisterPage2 = ({ navigation }) => {
                         keyboardType="phone-pad"
                         maxLength={8}
                         returnKeyType='done'
-                    // value = { }
-                    // onChangeText = {text => }
+                        value={phone}
+                        onChangeText={text => setPhone(text)}
                     />
                     <Text style={styles.label}>Email</Text>
                     <TextInput
                         placeholder="Enter your email"
-                        // value = { }
-                        // onChangeText = {text => }
+                        value={email}
+                        onChangeText={text => setEmail(text)}
                         style={styles.input}
                     />
                     <Text style={styles.label}>Password</Text>
                     <TextInput
                         placeholder="Enter your password"
                         secureTextEntry
-                        // value = { }
-                        // onChangeText = {text => }
+                        value={password}
+                        onChangeText={text => setPassword(text)}
                         style={styles.input}
                     />
                 </View>
             </View>
             <View style={styles.checkboxContainer}>
                 <CheckBox
-                    checked={check1}
-                    onPress={() => setCheck1(!check1)}
+                    checked={checkTC}
+                    onPress={() => setCheckTC(!checkTC)}
                     title={
                         <Text>
                             <Text> Agree to </Text>
@@ -64,24 +94,20 @@ const RegisterPage2 = ({ navigation }) => {
                     uncheckedIcon={'checkbox-blank-outline'}
                     checkedColor="black"
                     textStyle=''
-                    containerStyle={{backgroundColor:'transparent'}}
+                    containerStyle={{ backgroundColor: 'transparent' }}
                 />
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
-                    onPress={() => {
-                        navigation.navigate('Register3')
-                    }}
+                    onPress={handleRegister}
+                    //navigation.navigate('Register3')
                     style={styles.button}
                 >
                     <Text style={styles.buttonText}>REGISTER</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.bottomDesign}>
-                <Text style={{ top: 70, zIndex: 2 }}>Already have an account? </Text>
-                <TouchableOpacity style={{ zIndex: 2 }}>
-                    <Text style={{ top: 70, fontWeight: 'bold', }} onPress={()=>{navigation.navigate('LoginPage')}}>Login Now</Text>
-                </TouchableOpacity>
+                <Text style={{ top: 70, zIndex: 2 }}>Already have an account? <Text style={{ fontWeight: 'bold', zIndex: 2, }} onPress={() => { navigation.navigate('LoginPage') }}>Login Now</Text></Text>
                 <Svg style={{ zIndex: 1 }}
                     width="1000"
                     height="150"

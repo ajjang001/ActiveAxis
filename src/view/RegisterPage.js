@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { Dropdown } from 'react-native-element-dropdown';
-import RegisterPresenter from '../presenter/RegisterPresenter';
 
 const RegisterPage = ({ navigation }) => {
 
   const genderData = [
     { label: 'Male', value: '1' },
     { label: 'Female', value: '2' },
-    { label: 'Other', value: '3' },
   ];
 
   const goalsData = [
@@ -24,8 +22,12 @@ const RegisterPage = ({ navigation }) => {
     { label: 'Advanced', value: '3' },
   ];
 
-  const [dropdown, setDropdown] = useState(null);
-
+  const [gender, setGender] = useState(null);
+  const [age, setAge] = useState(null);
+  const [weight, setWeight] = useState(null);
+  const [height, setHeight] = useState(null);
+  const [goal, setGoal] = useState(null);
+  const [level, setLevel] = useState(null);
 
   return (
     <KeyboardAvoidingView
@@ -42,9 +44,9 @@ const RegisterPage = ({ navigation }) => {
               labelField="label"
               valueField="value"
               placeholder="Choose your gender"
-              value={dropdown}
+              value={gender}
               onChange={item => {
-                //setDropdown(item.value);
+                setGender(item.value);
                 console.log('selected', item);
               }}
             />
@@ -53,8 +55,8 @@ const RegisterPage = ({ navigation }) => {
             <Text style={styles.label}>Age</Text>
             <TextInput
               placeholder="Enter your age"
-              // value = { }
-              // onChangeText = {text => }
+              value={age}
+              onChangeText={text => setAge(text)}
               style={styles.input}
               maxLength={2}
               keyboardType="phone-pad"
@@ -63,8 +65,8 @@ const RegisterPage = ({ navigation }) => {
             <Text style={styles.label}>Weight (KG)</Text>
             <TextInput
               placeholder="Enter your weight"
-              // value = { }
-              // onChangeText = {text => }
+              value={weight}
+              onChangeText={text => setWeight(text)}
               style={styles.input}
               maxLength={3}
               keyboardType="phone-pad"
@@ -73,8 +75,8 @@ const RegisterPage = ({ navigation }) => {
             <Text style={styles.label}>Height (CM)</Text>
             <TextInput
               placeholder="Enter your height"
-              // value = { }
-              // onChangeText = {text => }
+              value={height}
+              onChangeText={text => setHeight(text)}
               style={styles.input}
               maxLength={3}
               keyboardType="phone-pad"
@@ -89,9 +91,9 @@ const RegisterPage = ({ navigation }) => {
               labelField="label"
               valueField="value"
               placeholder="Choose your goals"
-              value={dropdown}
+              value={goal}
               onChange={item => {
-                //setDropdown(item.value);
+                setGoal(item.value);
                 console.log('selected', item);
               }}
             />
@@ -104,9 +106,9 @@ const RegisterPage = ({ navigation }) => {
               labelField="label"
               valueField="value"
               placeholder="Choose your level"
-              value={dropdown}
+              value={level}
               onChange={item => {
-                //setDropdown(item.value);
+                setLevel(item.value);
                 console.log('selected', item);
               }}
             />
@@ -116,7 +118,8 @@ const RegisterPage = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('Register2')
+            navigation.navigate('Register2', { gender, age, weight, height, goal, level })
+            console.log({ gender, age, weight, height, goal, level })
           }}
           style={styles.button}
         >
