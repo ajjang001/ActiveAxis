@@ -6,6 +6,7 @@ import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import RegisterPresenter from '../presenter/RegisterPresenter';
 import User from '../model/User';
 
+
 const RegisterPage2 = ({ navigation, route }) => {
 
     const [checkTC, setCheckTC] = useState(false);

@@ -20,6 +20,7 @@
         "foregroundImage": "./assets/activeaxislogo.png",
         "backgroundColor": "#ffffff"
       },
+      "softwareKeyboardLayoutMode": "pan",
       "package": "com.anonymous.ActiveAxis"
     },
     "web": {

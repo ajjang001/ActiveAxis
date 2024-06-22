@@ -1,4 +1,4 @@
-import { firebase } from '../../.expo/api/firebase'
+import { firebase, auth } from '../../.expo/api/firebase'
 
 class RegisterPresenter {
     constructor(view) {

@@ -21,8 +21,7 @@ const LoginPage = ({navigation})=>{
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loginType, setLoginType] = useState('u');
-    const [user, setUser] = useState(null);
-
+    
     
     // Modal/Display Message
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -86,9 +85,16 @@ const LoginPage = ({navigation})=>{
         changeLoadingVisible(true);
         try{
             const loginAccount = await new LoginPresenter().processLogin(email, password, loginType);
-            console.log(loginAccount);
-            console.log('DONE!');
-            setUser(loginAccount);
+            
+            if(loginType === "u"){
+                navigation.navigate('UserHomePage', {user:loginAccount});
+            }
+            if(loginType === "c"){
+                navigation.navigate('CoachHomePage', {coach:loginAccount});
+            }
+            if(loginType === "a"){
+                navigation.navigate('SystemAdminHomePage', {admin:loginAccount});
+            }
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
@@ -191,6 +197,7 @@ const LoginPage = ({navigation})=>{
     }
     return(
         <View style = {styles.container}>
+            
             
             <View style = {styles.topContainer}>
                 <Image style = {styles.logo} source={require('../../assets/activeaxislogo.png')} />

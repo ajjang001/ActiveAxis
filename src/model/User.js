@@ -70,7 +70,6 @@ class User extends Account{
                         u.fitnessGoal = data.fitnessGoal;
                         u.fitnessLevel = data.fitnessLevel;
                         u.restInterval = data.restInterval;
-                        console.log('Preparing to async storage');
 
                         await AsyncStorage.setItem('rememberEmail', email); 
                         
