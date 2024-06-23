@@ -3,14 +3,10 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal} from
 import { Dropdown } from 'react-native-element-dropdown';
 import {scale} from '../components/scale';
 
-import {app, auth, db, storage} from '../../.expo/api/firebase';
-import {signInWithEmailAndPassword} from "firebase/auth";
-import { getDoc, doc, collection, query, where, getDocs } from "firebase/firestore"; 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import LoginPresenter from '../presenter/LoginPresenter';
 
 import {MessageDialog, LoadingDialog } from '../components/Modal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -21,6 +17,7 @@ const LoginPage = ({navigation})=>{
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loginType, setLoginType] = useState('u');
+    const [loginAccount, setLoginAccount] = useState(null);
     
     
     // Modal/Display Message
@@ -34,47 +31,19 @@ const LoginPage = ({navigation})=>{
     const changeLoadingVisible = (b)=>{
         setIsLoading(b);
     }
-
-    const checkUserSession = async () => {
+    
+    const checkUserSession = async () =>{
+        //await AsyncStorage.removeItem('remember');
+        changeLoadingVisible(true);
         try{
-            AsyncStorage.removeItem('rememberEmail');
-            const email = await AsyncStorage.getItem('rememberEmail');
-            if(email !== null){
-                changeLoadingVisible(true);
-                
-                const q = query(collection(db, 'users'), where('email', '==', email));
-                const queryResult = await getDocs(q);
-
-                if(!queryResult.empty){
-                    const e = queryResult.docs[0].data().email;
-                    const ut = queryResult.docs[0].data().userType;
-                    if(e === email){
-                        switch(ut){
-                            case 'u':
-                                navigation.navigate('UserHomePage');
-                                break;
-                            case 'c':
-                                navigation.navigate('CoachHomePage');
-                                break;
-                            case 'a':
-                                AsyncStorage.removeItem('rememberEmail');
-                                break;
-                        }
-                        
-                    }
-                    
-                }
-                
-            }
+            await new LoginPresenter({updateLoginAcc: setLoginAccount, updateLoginType: setLoginType}).checkSession();
 
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
             changeLoadingVisible(false);
         }
-        
-    }
-
+    };
 
     // Check if User logged in
     useEffect(()=>{
@@ -84,17 +53,7 @@ const LoginPage = ({navigation})=>{
     const processLogin = async (email, password, loginType) => {
         changeLoadingVisible(true);
         try{
-            const loginAccount = await new LoginPresenter().processLogin(email, password, loginType);
-            
-            if(loginType === "u"){
-                navigation.navigate('UserHomePage', {user:loginAccount});
-            }
-            if(loginType === "c"){
-                navigation.navigate('CoachHomePage', {coach:loginAccount});
-            }
-            if(loginType === "a"){
-                navigation.navigate('SystemAdminHomePage', {admin:loginAccount});
-            }
+            await new LoginPresenter({updateLoginAcc: setLoginAccount}).processLogin(email, password, loginType);
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
@@ -104,68 +63,21 @@ const LoginPage = ({navigation})=>{
         
     };
 
-    /*
-    // Process Login
-    const processLogin = async (email, password, loginType) => {
-        // To if email is in valid format
-        const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    useEffect(()=>{
+        if(loginAccount !== null){
+            if(loginType === "u"){
+                navigation.navigate('UserHomePage', {user:loginAccount});
+            }
+            if(loginType === "c"){
+                navigation.navigate('CoachHomePage', {coach:loginAccount});
+            }
+            if(loginType === "a"){
+                navigation.navigate('SystemAdminHomePage', {admin:loginAccount});
+            }
+        }
+    },[loginAccount]);
+
     
-        if(email.trim() === '' || password.trim() === ''){
-            // Email and Password field is empty
-            changeModalVisible(true, 'Please enter your email and password');
-            return;
-        }else if(!pattern.test(email)){
-            // Email is not in valid format
-            changeModalVisible(true, 'Invalid email format');
-            return;
-        }
-        else{
-                try{
-                    changeLoadingVisible(true);
-
-                    const login = async (auth, email, password) =>{
-                        try{
-                            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                            return userCredential.user;
-                        }catch(e){
-                            throw new Error('Incorrect email or password');
-                        }
-                    }
-
-                    const user = await login(auth, email, password);
-                    const q = doc(db, 'users', user.uid);
-                    const queryResult = await getDoc(q);
-                    const ut = queryResult.data().userType
-                    if(queryResult.exists() && loginType === ut){
-                        changeLoadingVisible(false);
-                        switch(ut){
-                            case 'u':
-                                await AsyncStorage.setItem('rememberEmail', email);
-                                navigation.navigate('UserHomePage');
-                                break;
-                            case 'c':
-                                await AsyncStorage.setItem('rememberEmail', email);
-                                navigation.navigate('CoachHomePage');
-                                break;
-                            case 'a':
-                                await AsyncStorage.removeItem('rememberEmail');
-                                navigation.navigate('SystemAdminHomePage');
-                                break;
-                        }
-                    }else{
-                        throw new Error('Incorrect email or password');
-                    }
-
-                }catch(e){
-                    changeLoadingVisible(false);
-                    changeModalVisible(true, e.message);
-                }
-                 
-        }
-            
-    };
-    */
-
     // Dropdown - Login type
     const dropdownOpt = [
         {label: 'USER', value:'u'},

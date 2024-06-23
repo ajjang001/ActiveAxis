@@ -2,6 +2,8 @@ import User from '../model/User';
 import Coach from '../model/Coach';
 import SystemAdmin from '../model/SystemAdmin';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 class LoginPresenter{
     constructor(view){
@@ -27,7 +29,6 @@ class LoginPresenter{
                     case "u":
                         loginAccount = new User();
                         break;
-                        
                     case "c":
                         loginAccount = new Coach();
                         break;
@@ -36,7 +37,14 @@ class LoginPresenter{
                         break;
                 }
 
-                return await loginAccount.login(email, password);
+                const loginResult = await loginAccount.login(email, password);
+                if(loginResult instanceof User || loginResult instanceof Coach){ 
+                    
+                    await AsyncStorage.setItem('remember', JSON.stringify(loginResult) + '\n' + loginType);
+                    
+                }
+                    
+                this.view.updateLoginAcc( loginResult );
 
             }catch(e){
                 throw new Error(e.message);
@@ -46,68 +54,45 @@ class LoginPresenter{
         }
     }
 
+    async checkSession(){
+        try{
+            let j = await AsyncStorage.getItem('remember');
+            
+            if(j !== null){
+                
+                const type = j.split('\n')[1];
+                j = j.split('\n')[0];
+
+                let rememberData = JSON.parse(j);
+                const e = rememberData._email;
+                
+                
+                let remember;
+                if(type === 'u'){
+                    remember = new User();
+                }
+                if (type === 'c'){
+                    remember = new Coach();
+                }
+
+                if(remember){
+                    const sessionResult = await remember.getInfo(e);
+                    
+                    this.view.updateLoginType( type );
+                    this.view.updateLoginAcc( sessionResult );
+                    
+                    
+                }
+
+
+                
+
+            }
+        }catch(e){
+            throw new Error('Error occurred: ' + e.message + '\nPlease try again or contact customer support');
+        }
+    }
+
 
 }
-
 export default LoginPresenter;
-
-/*
-const processLogin = async (email, password, loginType) => {
-        // To if email is in valid format
-        const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    
-        if(email.trim() === '' || password.trim() === ''){
-            // Email and Password field is empty
-            changeModalVisible(true, 'Please enter your email and password');
-            return;
-        }else if(!pattern.test(email)){
-            // Email is not in valid format
-            changeModalVisible(true, 'Invalid email format');
-            return;
-        }
-        else{
-                try{
-                    changeLoadingVisible(true);
-
-                    const login = async (auth, email, password) =>{
-                        try{
-                            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                            return userCredential.user;
-                        }catch(e){
-                            throw new Error('Incorrect email or password');
-                        }
-                    }
-
-                    const user = await login(auth, email, password);
-                    const q = doc(db, 'users', user.uid);
-                    const queryResult = await getDoc(q);
-                    const ut = queryResult.data().userType
-                    if(queryResult.exists() && loginType === ut){
-                        changeLoadingVisible(false);
-                        switch(ut){
-                            case 'u':
-                                await AsyncStorage.setItem('rememberEmail', email);
-                                navigation.navigate('UserHomePage');
-                                break;
-                            case 'c':
-                                await AsyncStorage.setItem('rememberEmail', email);
-                                navigation.navigate('CoachHomePage');
-                                break;
-                            case 'a':
-                                await AsyncStorage.removeItem('rememberEmail');
-                                navigation.navigate('SystemAdminHomePage');
-                                break;
-                        }
-                    }else{
-                        throw new Error('Incorrect email or password');
-                    }
-
-                }catch(e){
-                    changeLoadingVisible(false);
-                    changeModalVisible(true, e.message);
-                }
-                 
-        }
-            
-    };
-*/

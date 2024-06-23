@@ -9,6 +9,7 @@ const UserHomePage = ({route}) => {
     const {user} = route.params;
     const [imageURL, setImageURL] = React.useState('');
 
+
     useEffect(() => {
         const getImageURL = async (u) => {
             const storageRef = ref(storage, u.profilePicture);

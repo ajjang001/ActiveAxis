@@ -51,13 +51,12 @@ const styles = StyleSheet.create({
     },
     textView:{
         flex:1,
-        alignItems:'center',
     },
     text:{
         fontSize:11,
-        margin:5,
         fontWeight:'bold',
         fontFamily: 'Poppins SemiBold',
+        textAlign:'center',
     },
     buttonsView:{
         flexDirection:'row',

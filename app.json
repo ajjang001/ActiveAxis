@@ -39,17 +39,24 @@
         }
       ],
       "react-native-health",
-      ["expo-font",
-      {
-        "fonts":[
-          "./assets/fonts/Inter Medium.ttf",
-          "./assets/fonts/Inter.ttf",
-          "./assets/fonts/Inter SemiBold.ttf",
-          "./assets/fonts/Poppins Medium.ttf",
-          "./assets/fonts/Poppins SemiBold.ttf",
-          "./assets/fonts/Fuzzy Bubbles.ttf"
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Inter Medium.ttf",
+            "./assets/fonts/Inter.ttf",
+            "./assets/fonts/Inter SemiBold.ttf",
+            "./assets/fonts/Poppins Medium.ttf",
+            "./assets/fonts/Poppins SemiBold.ttf",
+            "./assets/fonts/Fuzzy Bubbles.ttf"
+          ]
+        }
       ]
-      }]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b49333ec-6e83-4739-ac15-06f5bfb9e045"
+      }
+    }
   }
 }
