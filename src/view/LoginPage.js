@@ -121,7 +121,7 @@ const LoginPage = ({navigation})=>{
                 <TextInput style={styles.inputBox} onChangeText={setEmail} value = {email} placeholder='Enter your email'/>
                 <TextInput secureTextEntry={true} style={styles.inputBox} onChangeText={setPassword} value = {password} placeholder='Enter your password'/>
 
-                <TouchableOpacity onPress={()=>navigation.navigate('ResetPassword')}>
+                <TouchableOpacity style = {{marginLeft:'auto', marginRight:0}} onPress={()=>navigation.navigate('ResetPassword')}>
                     <Text style={styles.forgotPassText}>Forgot Password?</Text>
                 </TouchableOpacity>
 
@@ -181,7 +181,7 @@ const LoginPage = ({navigation})=>{
                 <View style={styles.oval}></View>
 
                 <View style = {styles.inTextOval}>
-                    <Text style={{fontFamily:'Inter Medium', fontSize:scale(14)}} >Don’t have an account?  
+                    <Text style={{fontFamily:'Inter Medium', fontSize:scale(14)}} >Don't have an account?  
                             <Text style = {{fontFamily:'Inter', fontWeight:'bold', fontSize:scale(14)}} onPress={()=>{navigation.navigate('Register')}}> Register Now</Text>
                     </Text>
 
@@ -255,6 +255,7 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
         textAlign:'right',
         paddingRight:scale(10),
+        width:scale(150),
     },
 
     dropdown: {
