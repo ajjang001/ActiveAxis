@@ -1,33 +1,43 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { Dropdown } from 'react-native-element-dropdown';
+import RegisterPresenter from '../presenter/RegisterPresenter';
 
 const RegisterPage = ({ navigation }) => {
 
   const genderData = [
-    { label: 'Male', value: '1' },
-    { label: 'Female', value: '2' },
+    { label: 'Male', value: 'm' },
+    { label: 'Female', value: 'f' },
   ];
 
   const goalsData = [
-    { label: 'Goal 1', value: '1' },
-    { label: 'Goal 2', value: '2' },
-    { label: 'Goal 3', value: '3' },
+    { label: 'Goal 1', value: 'Goal 1' },
+    { label: 'Goal 2', value: 'Goal 2' },
+    { label: 'Goal 3', value: 'Goal 3' },
   ];
 
   const levelData = [
-    { label: 'Beginner', value: '1' },
-    { label: 'Intermediate', value: '2' },
-    { label: 'Advanced', value: '3' },
+    { label: 'Beginner', value: 'Beginner' },
+    { label: 'Intermediate', value: 'Intermediate' },
+    { label: 'Advanced', value: 'Advanced' },
   ];
 
-  const [gender, setGender] = useState(null);
-  const [age, setAge] = useState(null);
-  const [weight, setWeight] = useState(null);
-  const [height, setHeight] = useState(null);
-  const [goal, setGoal] = useState(null);
-  const [level, setLevel] = useState(null);
+  const [gender, setGender] = useState('');
+  const [age, setAge] = useState('');
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
+  const [goal, setGoal] = useState('');
+  const [level, setLevel] = useState('');
+
+  const processProfiling = async (gender, age, weight, height, goal, level) => {
+    try {
+      await new RegisterPresenter().processProfiling(gender, age, weight, height, goal, level);
+      navigation.navigate('Register2', { gender, age, weight, height, goal, level })
+    } catch (e) {
+      Alert.alert(e.message);
+    }
+  }
 
   return (
     <KeyboardAvoidingView
@@ -117,10 +127,9 @@ const RegisterPage = ({ navigation }) => {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('Register2', { gender, age, weight, height, goal, level })
-            console.log({ gender, age, weight, height, goal, level })
-          }}
+          onPress={() =>
+            processProfiling(gender, age, weight, height, goal, level)
+          }
           style={styles.button}
         >
           <Text style={styles.buttonText}>Continue</Text>

@@ -1,9 +1,32 @@
-import React from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal, Alert } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
+import { LoadingDialog } from '../components/Modal';
+import ResetPasswordPresenter from '../presenter/ResetPasswordPresenter';
 
 const ResetPasswordPage = ({ navigation }) => {
+
+    const [email, setEmail] = useState('');
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const changeLoadingVisible = (b) => {
+        setIsLoading(b);
+    }
+    const processResetPassword = async (email) => {
+        try {
+            changeLoadingVisible(true);
+            console.log({ email })
+            await new ResetPasswordPresenter().processResetPassword(email);
+            Alert.alert("Kindly check your email to reset your password!");
+            navigation.navigate('LoginPage')
+        } catch (e) {
+            Alert.alert(e.message);
+        } finally {
+            changeLoadingVisible(false);
+        }
+    };
     return (
         <KeyboardAvoidingView
             style={styles.container}
@@ -15,11 +38,12 @@ const ResetPasswordPage = ({ navigation }) => {
                     <Text style={styles.label}>Email</Text>
                     <TextInput
                         placeholder="Enter your email"
-                        // value = { }
-                        // onChangeText = {text => }
+                        autoCapitalize='none'
+                        value={email}
+                        onChangeText={text => setEmail(text.toLowerCase())}
                         style={styles.input}
                     />
-                    <Text style={styles.label}>Email Verification Code</Text>
+                    {/* <Text style={styles.label}>Email Verification Code</Text>
                     <TextInput
                         placeholder="Enter the email verification code"
                         // value = { }
@@ -28,14 +52,15 @@ const ResetPasswordPage = ({ navigation }) => {
                         maxLength={6}
                         keyboardType="phone-pad"
                         returnKeyType='done'
-                    />
+                    /> */}
                 </View>
             </View>
             <View style={styles.buttonContainer}>
+                <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+                    <LoadingDialog />
+                </Modal>
                 <TouchableOpacity
-                    onPress={() => {
-                        navigation.navigate('ResetPassword2')
-                    }}
+                    onPress={() => processResetPassword(email)}
                     style={styles.button}
                 >
                     <Text style={styles.buttonText}>VERIFY</Text>
