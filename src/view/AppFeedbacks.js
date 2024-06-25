@@ -1,35 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import FeedbackCard from '../components/FeedbackCard';
-import { db } from '../../.expo/api/firebase';
-import { collection, getDocs } from 'firebase/firestore';
-import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import DisplayAppFeedbacksPresenter from '../presenter/DisplayAppFeedbacksPresenter';
 
 const AppFeedbacks = () => {
-  const [feedbackData, setFeedbackData] = useState([]);
+  const [feedback, setFeedback] = useState(null);
   const [loading, setLoading] = useState(true);
-  const storage = getStorage(); // Get the storage instance
+  const presenter = new DisplayAppFeedbacksPresenter({
+    displayFeedback: (data) => {
+      setFeedback(data);
+      setLoading(false);
+    },
+    displayError: (message) => {
+      console.error(message);
+      setLoading(false);
+    },
+  });
 
   useEffect(() => {
-    const fetchFeedbacks = async () => {
-      try {
-        const feedbacksCollection = collection(db, 'feedbacks');
-        const feedbackSnapshot = await getDocs(feedbacksCollection);
-        const feedbackList = await Promise.all(feedbackSnapshot.docs.map(async (doc) => {
-          const data = doc.data();
-          const avatarRef = ref(storage, data.avatar); // Reference to the image in storage
-          data.avatar = await getDownloadURL(avatarRef); // Get the download URL
-          return data;
-        }));
-        setFeedbackData(feedbackList);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching feedbacks: ", error);
-        setLoading(false);
-      }
-    };
-
-    fetchFeedbacks();
+    setLoading(true);
+    presenter.loadFeedbacks();
   }, []);
 
   if (loading) {
@@ -41,27 +31,27 @@ const AppFeedbacks = () => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.title}>App Feedbacks</Text>
-      {feedbackData.map((item, index) => (
+      {feedback && (
         <FeedbackCard
-          key={index}
-          avatar={item.avatar}
-          name={item.name}
-          rating={item.rating}
-          feedback={item.feedback}
+          avatar={feedback.profilePicture || feedback.avatar}
+          name={feedback.fullName || feedback.name}
+          rating={feedback.rating}
+          feedback={feedback.feedbackText}
         />
-      ))}
-    </ScrollView>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
+    flex: 1,
     paddingVertical: 20,
     backgroundColor: '#FBF5F3',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 24,
