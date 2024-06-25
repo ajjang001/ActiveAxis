@@ -6,6 +6,7 @@ class Account{
     _email;
     _profilePicture;
     _fullName;
+    _dob;
     _gender;
     _phoneNumber;
 
@@ -19,6 +20,7 @@ class Account{
     get email(){return this._email;}
     get profilePicture(){return this._profilePicture;}
     get fullName(){return this._fullName;}
+    get dob(){return this._dob;}
     get gender(){return this._gender;}
     get phoneNumber(){return this._phoneNumber;}
 
@@ -26,6 +28,7 @@ class Account{
     set email(email){this._email = email;}
     set profilePicture(profilePicture){this._profilePicture = profilePicture;}
     set fullName(fullName){this._fullName = fullName;}
+    set dob(dob){this._dob = dob;}
     set gender(gender){this._gender = gender;}
     set phoneNumber(phoneNumber){this._phoneNumber = phoneNumber;}
 

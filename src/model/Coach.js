@@ -5,13 +5,17 @@ import { getDoc, doc, getDocs, query, collection, where } from "firebase/firesto
 import Account from './Account';
 
 class Coach extends Account{
+    #isPending;
     #chargePerMonth;
+
 
     constructor(){
         super();
     }
 
+    get isPending(){return this.#isPending;}
     get chargePerMonth(){return this.#chargePerMonth;}
+    set isPending(isPending){this.#isPending = isPending;}
     set chargePerMonth(chargePerMonth){this.#chargePerMonth = chargePerMonth;}
 
     async login(email, password){
@@ -24,8 +28,11 @@ class Coach extends Account{
             if(queryResult.exists()){
                 const data = queryResult.data();
                 const is = data.isSuspended;
+                const ip = data.isPending;
                 
-                if(is){
+                if(ip){
+                    throw new Error('Your account is pending\nPlease wait for the admin to approve your account.');
+                }else if (is){
                     throw new Error('Your account is suspended\nPlease contact customer support.');
                 }else{
                     const c = new Coach();
@@ -33,6 +40,7 @@ class Coach extends Account{
                     c.email = email;
                     c.profilePicture = data.profilePicture;
                     c.fullName = data.fullName;
+                    c.dob = data.dob;
                     c.gender = data.gender;
                     c.phoneNumber = data.phoneNumber;
                     c.chargePerMonth = data.chargePerMonth;
@@ -58,6 +66,7 @@ class Coach extends Account{
             c.email = data.email;
             c.profilePicture = data.profilePicture;
             c.fullName = data.fullName;
+            c.dob = data.dob;
             c.gender = data.gender;
             c.phoneNumber = data.phoneNumber;
             c.chargePerMonth = data.chargePerMonth;

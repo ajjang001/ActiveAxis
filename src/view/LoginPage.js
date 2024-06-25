@@ -186,7 +186,7 @@ const LoginPage = ({navigation})=>{
                     </Text>
 
                     <Text style={{fontFamily:'Inter Medium', paddingTop:15, fontSize:scale(14)}}>Want to join us as a coach? 
-                        <Text style = {{fontFamily:'Inter', fontWeight:'bold', fontSize:scale(14)}}> Click Here</Text>
+                        <Text style = {{fontFamily:'Inter', fontWeight:'bold', fontSize:scale(14)}} onPress = {() =>{navigation.navigate('CoachRegisterPage')}}> Click Here</Text>
                     </Text>
 
                     <TouchableOpacity activeOpacity={.7} style ={styles.aboutAppButton} onPress={()=>{navigation.navigate('AboutOurApp')}}>

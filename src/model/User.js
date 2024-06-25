@@ -5,6 +5,7 @@ import { getDoc, doc, getDocs, query, collection, where } from "firebase/firesto
 import Account from './Account';
 
 class User extends Account{
+    #hasMedical;
     #isPremium;
     #weight;
     #height;
@@ -17,6 +18,7 @@ class User extends Account{
         super();
     }
 
+    get hasMedical(){return this.#hasMedical;}
     get isPremium(){return this.#isPremium;}
     get weight(){return this.#weight;}
     get height(){return this.#height;}
@@ -24,6 +26,7 @@ class User extends Account{
     get fitnessLevel(){return this.#fitnessLevel;}
     get restInterval(){return this.#restInterval;}
     
+    set hasMedical(hasMedical){this.#hasMedical = hasMedical;}
     set isPremium(isPremium){this.#isPremium = isPremium;}
     set weight(weight){this.#weight = weight;}
     set height(height){this.#height = height;}
@@ -50,8 +53,10 @@ class User extends Account{
                     u.email = email;
                     u.profilePicture = data.profilePicture;
                     u.fullName = data.fullName;
+                    u.dob = data.dob;
                     u.gender = data.gender;
                     u.phoneNumber = data.phoneNumber;
+                    u.hasMedical = data.hasMedical;
                     u.isPremium = data.isPremium;
                     u.weight = data.weight;
                     u.height = data.height;
@@ -80,8 +85,10 @@ class User extends Account{
             u.email = data.email;
             u.profilePicture = data.profilePicture;
             u.fullName = data.fullName;
+            u.dob = data.dob;
             u.gender = data.gender;
             u.phoneNumber = data.phoneNumber;
+            u.hasMedical = data.hasMedical;
             u.isPremium = data.isPremium;
             u.weight = data.weight;
             u.height = data.height;
