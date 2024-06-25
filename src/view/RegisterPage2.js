@@ -99,7 +99,7 @@ const RegisterPage2 = ({ navigation, route }) => {
                     <LoadingDialog />
                 </Modal>
                 <TouchableOpacity
-                    onPress={() => processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck)}
+                    onPress={() => processRegister(name, email, '+65'+phone, password, checkTC, gender, parseInt(age), parseFloat(weight), parseFloat(height), goal, level, medicalCheck)}
                     style={styles.button}
                 >
                     <Text style={styles.buttonText}>REGISTER</Text>

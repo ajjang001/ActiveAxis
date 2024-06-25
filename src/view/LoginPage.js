@@ -33,7 +33,7 @@ const LoginPage = ({navigation})=>{
     }
     
     const checkUserSession = async () =>{
-        //await AsyncStorage.removeItem('remember');
+        await AsyncStorage.removeItem('remember');
         changeLoadingVisible(true);
         try{
             await new LoginPresenter({updateLoginAcc: setLoginAccount, updateLoginType: setLoginType}).checkSession();

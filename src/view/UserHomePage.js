@@ -17,7 +17,7 @@ const UserHomePage = ({navigation, route}) => {
             setImageURL(url);
         }
         getImageURL(user);
-    });
+    }, []);
 
     
 
@@ -26,9 +26,6 @@ const UserHomePage = ({navigation, route}) => {
         <View>
             {imageURL !== '' ? <Image source={{uri: imageURL}} style={{width: 200, height: 200, borderRadius:100}}/> : <LoadingDialog />}
             <Text>Welcome {user.fullName}</Text>
-            <TouchableOpacity onPress={()=>navigation.navigate('TryConnectWearable')}>
-                <Text>Try Wearable</Text>
-            </TouchableOpacity>
         </View>
     );
 };

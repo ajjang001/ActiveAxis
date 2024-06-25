@@ -36,6 +36,8 @@ class User extends Account{
     async login(email, password) {
         try {
             const user = await super.authenticate(email, password);
+            //console.log(user.emailVerified);
+            
 
             const q = doc(db, 'user', user.uid);
             const queryResult = await getDoc(q);
@@ -43,10 +45,20 @@ class User extends Account{
             if (queryResult.exists()) {
                 const data = queryResult.data();
                 const is = data.isSuspended;
+                const iv = user.emailVerified;
 
-                if (is) {
+                if (!iv) {
+                    //await sendEmailVerification(user, {
+                    //    handleCodeInApp: true,
+                    //    url: "https://activeaxis-c49ed.firebaseapp.com",
+                    //});
+                    throw new Error('Please verify your email first\nCheck your email for the verification link.');
+
+                } 
+                else if (is){
                     throw new Error('Your account is suspended\nPlease contact customer support.');
-                } else {
+                }
+                else {
                     const u = new User();
                     u.username = data.username;
                     u.email = email;
@@ -102,12 +114,14 @@ class User extends Account{
 
     async register(name, email, phone, password, gender, age, weight, height, goal, level, medicalCheck) {
         try {
-
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+            console.log('Register');
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            console.log('Register');
             await sendEmailVerification(userCredential.user, {
                 handleCodeInApp: true,
                 url: "https://activeaxis-c49ed.firebaseapp.com",
             });
+            console.log('Register');
             await setDoc(doc(db, "user", userCredential.user.uid), {
                 email: email,
                 fullName: name,
@@ -120,7 +134,8 @@ class User extends Account{
                 level: level,
                 medicalCondition: medicalCheck,
                 //username: username (regex)
-            })
+            });
+            console.log('Register');
 
         }
         catch (e) {
