@@ -17,10 +17,16 @@ class ResetPasswordPresenter {
         else {
             try {
                 const user = new User();
-                await user.resetPassword(email);
+                await user.resetPassword(email)
             } catch (e) {
-                console.log(e);
-                throw new Error(e.message);
+                console.log('User not found. Searching for valid coach.');
+                try{
+                    const coach = new Coach();
+                    return coach.resetPassword(email);
+                }
+                catch{
+                    throw new Error(e.message);
+                }
             }
         }
     }

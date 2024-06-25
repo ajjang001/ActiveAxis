@@ -45,7 +45,7 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterPage} options={{title:'Back'}} />
         <Stack.Screen name="Register2" component={RegisterPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
         <Stack.Screen name="Register3" component={RegisterPage3} options={{headerShown:false}} />
-        <Stack.Screen name = "CoachRegisterPage" component={CoachRegisterPage} options={{title:'Back' }} />
+        <Stack.Screen name = "CoachRegisterPage" component={CoachRegisterPage} options={{title:'Back' , headerStyle:{backgroundColor:'#FBF5F3'} }} />
         <Stack.Screen name = "CoachRegisterPage2" component={CoachRegisterPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
 
         <Stack.Screen name="ResetPassword" component={ResetPasswordPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>

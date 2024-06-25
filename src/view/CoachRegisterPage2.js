@@ -1,42 +1,56 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { CheckBox } from '@rneui/themed';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
-//import RegisterPresenter from '../presenter/RegisterPresenter';
-//import User from '../model/User';
+import { LoadingDialog, MessageDialog } from '../components/Modal';
+
+import RegisterPresenter from '../presenter/RegisterPresenter';
 
 
-const RegisterPage2 = ({ navigation, route }) => {
+const CoachRegisterPage2 = ({ navigation, route }) => {
+
+    const { gender, dob, chargePM, photo, resume, certificate, identification } = route.params;
+
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const [checkTC, setCheckTC] = useState(false);
-    const { gender, dob, chargePM } = route.params;
 
-    const [name, setName] = useState(null);
-    const [phone, setPhone] = useState(null);
-    const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
-    /*const presenter = new RegisterPresenter({
-        onRegisterSuccess: () => {
-            Alert.alert('Registered!', [
-                { text: 'OK', onPress: () => navigation.navigate('LoginPage') },
-            ]);
-        },
-        onRegisterError: (errorMessage) => {
-            Alert.alert('Registration Failed', errorMessage);
-        },
-        // onEmailVerificationSent: () => {
-        //     Alert.alert('Verification Email Sent', 'Please check your email to verify your account.', [
-        //         { text: 'OK', onPress: () => navigation.navigate('Register3') },
-        //    ]);
-        //}
-    });*/
+    // Modal/Display Message
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [modalMsg, setModalMsg] = useState('');
 
-    const handleRegister = () => {
-        console.log({ name, email, password, gender, dob, chargePM, phone, checkTC })
-        //const user = new User(email, password);
-        //presenter.registerUser(user);
+    const changeLoadingVisible = (b) => {
+        setIsLoading(b);
+    }
+    // change popup/modal visible
+    const changeModalVisible = (b, m) => {
+        setModalMsg(m);
+        setIsModalVisible(b);
+    }
+
+    // Process the registration
+    const processRegisterCoach = async (name, email, phone, password, checkTC, gender, dob, chargePM, photo, resume, certificate, identification) => {
+        try {
+            // Show loading screen
+            changeLoadingVisible(true);
+            // Call the presenter to process the registration
+            await new RegisterPresenter().processRegisterCoach(name, email, phone, password, checkTC, gender, dob, chargePM, photo, resume, certificate, identification);
+            console.log({ name, email, phone, password, checkTC, gender, dob, chargePM, photo, resume, certificate, identification })
+            // Navigate to the next screen
+            navigation.navigate('Register3')
+        } catch (e) {
+            // Show error message
+            changeModalVisible(true, e.message);
+        } finally {
+            // Hide loading screen
+            changeLoadingVisible(false);
+        }
     };
 
     return (
@@ -68,7 +82,7 @@ const RegisterPage2 = ({ navigation, route }) => {
                     <TextInput
                         placeholder="Enter your email"
                         value={email}
-                        onChangeText={text => setEmail(text)}
+                        onChangeText={text => setEmail(text.toLowerCase())}
                         style={styles.input}
                     />
                     <Text style={styles.label}>Password</Text>
@@ -98,10 +112,18 @@ const RegisterPage2 = ({ navigation, route }) => {
                     containerStyle={{ backgroundColor: 'transparent' }}
                 />
             </View>
+            <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={() => changeModalVisible(false)}>
+                <MessageDialog
+                    message={modalMsg}
+                    changeModalVisible={changeModalVisible}
+                />
+            </Modal>
             <View style={styles.buttonContainer}>
+                <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+                    <LoadingDialog />
+                </Modal>
                 <TouchableOpacity
-                    onPress={handleRegister}
-                    //navigation.navigate('Register3')
+                    onPress={() => processRegisterCoach(name, email, '+65' + phone, password, checkTC, gender, dob, chargePM, photo, resume, certificate, identification)}
                     style={styles.button}
                 >
                     <Text style={styles.buttonText}>REGISTER</Text>
@@ -141,7 +163,7 @@ const RegisterPage2 = ({ navigation, route }) => {
 }
 
 
-export default RegisterPage2;
+export default CoachRegisterPage2;
 
 const styles = StyleSheet.create({
     container: {
