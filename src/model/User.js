@@ -118,7 +118,7 @@ class User extends Account{
                 height: height,
                 fitnessGoal: goal,
                 level: level,
-                medicalCondition: medicalCheck,
+                hasMedical: medicalCheck,
                 //username: username (regex)
             })
 
