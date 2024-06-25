@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Alert, KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { Dropdown } from 'react-native-element-dropdown';
+import { CheckBox } from '@rneui/themed';
 import RegisterPresenter from '../presenter/RegisterPresenter';
 
 const RegisterPage = ({ navigation }) => {
@@ -29,11 +30,11 @@ const RegisterPage = ({ navigation }) => {
   const [height, setHeight] = useState('');
   const [goal, setGoal] = useState('');
   const [level, setLevel] = useState('');
-
-  const processProfiling = async (gender, age, weight, height, goal, level) => {
+  const [medicalCheck, setmedicalCheck] = useState(false);
+  const processProfiling = async (gender, age, weight, height, goal, level, medicalCheck) => {
     try {
-      await new RegisterPresenter().processProfiling(gender, age, weight, height, goal, level);
-      navigation.navigate('Register2', { gender, age, weight, height, goal, level })
+      await new RegisterPresenter().processProfiling(gender, age, weight, height, goal, level, medicalCheck);
+      navigation.navigate('Register2', { gender, age, weight, height, goal, level, medicalCheck })
     } catch (e) {
       Alert.alert(e.message);
     }
@@ -123,12 +124,28 @@ const RegisterPage = ({ navigation }) => {
               }}
             />
           </View>
+          <View style={styles.checkboxContainer}>
+            <CheckBox
+              checked={medicalCheck}
+              onPress={() => setmedicalCheck(!medicalCheck)}
+              title={
+                <Text style={{ marginLeft: 10 }}>
+                  I have a medical condition that might affect my ability to exercise.
+                </Text>}
+              iconType="material-community"
+              checkedIcon="checkbox-outline"
+              uncheckedIcon={'checkbox-blank-outline'}
+              checkedColor="black"
+              textStyle=''
+              containerStyle={{ backgroundColor: 'transparent' }}
+            />
+          </View>
         </View>
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={() =>
-            processProfiling(gender, age, weight, height, goal, level)
+            processProfiling(gender, age, weight, height, goal, level, medicalCheck)
           }
           style={styles.button}
         >
@@ -211,5 +228,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 18,
+  },
+  checkboxContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 10,
+
   },
 })

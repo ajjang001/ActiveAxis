@@ -94,7 +94,7 @@ class User extends Account {
 
     }
 
-    async register(name, email, phone, password, gender, age, weight, height, goal, level) {
+    async register(name, email, phone, password, gender, age, weight, height, goal, level, medicalCheck) {
         try {
 
             const userCredential = await createUserWithEmailAndPassword(auth, email, password)
@@ -112,6 +112,7 @@ class User extends Account {
                 height: height,
                 fitnessGoal: goal,
                 level: level,
+                medicalCondition: medicalCheck,
                 //username: username (regex)
             })
 

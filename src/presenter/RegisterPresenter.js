@@ -5,14 +5,14 @@ class RegisterPresenter {
         this.view = view;
     }
 
-    async processProfiling(gender, age, weight, height, goal, level) {
+    async processProfiling(gender, age, weight, height, goal, level, medicalCheck) {
 
         if (gender.trim() === '' || age.trim() === '' || weight.trim() === '' || height.trim() === '' || goal.trim() === '' || level.trim() === '') {
 
             throw new Error('Please complete all fields!');
         } else {
             try {
-                console.log({ gender, age, weight, height, goal, level })
+                console.log({ gender, age, weight, height, goal, level, medicalCheck })
             } catch (e) {
                 throw new Error(e.message);
             }
@@ -21,7 +21,7 @@ class RegisterPresenter {
         }
     }
 
-    async processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level) {
+    async processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck) {
         // To if email is in valid format
         const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
@@ -35,7 +35,7 @@ class RegisterPresenter {
         else {
             try {
                 const user = new User();
-                await user.register(name, email, phone, password, gender, age, weight, height, goal, level);
+                await user.register(name, email, phone, password, gender, age, weight, height, goal, level, medicalCheck);
 
             } catch (e) {
                 console.log(e);

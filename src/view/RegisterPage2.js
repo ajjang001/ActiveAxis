@@ -9,7 +9,7 @@ import { LoadingDialog } from '../components/Modal';
 const RegisterPage2 = ({ navigation, route }) => {
 
     const [checkTC, setCheckTC] = useState(false);
-    const { gender, age, weight, height, goal, level } = route.params;
+    const { gender, age, weight, height, goal, level, medicalCheck } = route.params;
 
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
@@ -22,11 +22,11 @@ const RegisterPage2 = ({ navigation, route }) => {
         setIsLoading(b);
     }
 
-    const processRegister = async (name, email, phone, password, checkTC, gender, age, weight, height, goal, level) => {
+    const processRegister = async (name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck) => {
         try {
             changeLoadingVisible(true);
-            console.log({ name, email, password, gender, age, weight, height, goal, level, phone, checkTC })
-            await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level);
+            console.log({ name, email, password, gender, age, weight, height, goal, level, phone, checkTC, medicalCheck })
+            await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck);
             navigation.navigate('Register3')
         } catch (e) {
             Alert.alert(e.message);
@@ -99,7 +99,7 @@ const RegisterPage2 = ({ navigation, route }) => {
                     <LoadingDialog />
                 </Modal>
                 <TouchableOpacity
-                    onPress={() => processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level)}
+                    onPress={() => processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck)}
                     style={styles.button}
                 >
                     <Text style={styles.buttonText}>REGISTER</Text>
