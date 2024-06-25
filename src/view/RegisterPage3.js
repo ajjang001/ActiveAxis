@@ -1,9 +1,9 @@
 import React from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 
 const RegisterPage3 = ({ navigation }) => {
+
     return (
         <KeyboardAvoidingView
             style={styles.container}
@@ -11,7 +11,8 @@ const RegisterPage3 = ({ navigation }) => {
         >
             <Text style={styles.header}>Verification</Text>
             <View style={styles.container2}>
-                <View style={styles.inputContainer}>
+            <Text style={styles.header2}>We have sent you a verification link to your email.{"\n"}Kindly verify your account before logging in.</Text>
+                {/* <View style={styles.inputContainer}>
                     <Text style={styles.label}>Email Verification Code</Text>
                     <TextInput
                         placeholder="Enter the email verification code"
@@ -32,7 +33,7 @@ const RegisterPage3 = ({ navigation }) => {
                         keyboardType="phone-pad"
                         returnKeyType='done'
                     />
-                </View>
+                </View> */}
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
@@ -41,7 +42,7 @@ const RegisterPage3 = ({ navigation }) => {
                     }}
                     style={styles.button}
                 >
-                    <Text style={styles.buttonText}>VERIFY</Text>
+                    <Text style={styles.buttonText}>Click here to Login!</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.bottomDesign}>
@@ -90,6 +91,13 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         alignItems: 'center',
+    },
+    header2: {
+        fontSize: 15,
+        paddingTop: 10,
+        fontWeight: 'bold',
+        alignItems: 'center',
+        textAlign: 'center',
     },
     container2: {
         justifyContent: 'center',

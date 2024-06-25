@@ -1,44 +1,39 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Alert, Modal } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { CheckBox } from '@rneui/themed';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import RegisterPresenter from '../presenter/RegisterPresenter';
-import User from '../model/User';
-
+import { LoadingDialog } from '../components/Modal';
 
 const RegisterPage2 = ({ navigation, route }) => {
 
     const [checkTC, setCheckTC] = useState(false);
-    const { gender, age, weight, height, goal, level } = route.params;
+    const { gender, age, weight, height, goal, level, medicalCheck } = route.params;
 
-    const [name, setName] = useState(null);
-    const [phone, setPhone] = useState(null);
-    const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState(null);
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    const presenter = new RegisterPresenter({
-        onRegisterSuccess: () => {
-            Alert.alert('Registered!', [
-                { text: 'OK', onPress: () => navigation.navigate('LoginPage') },
-            ]);
-        },
-        onRegisterError: (errorMessage) => {
-            Alert.alert('Registration Failed', errorMessage);
-        },
-        // onEmailVerificationSent: () => {
-        //     Alert.alert('Verification Email Sent', 'Please check your email to verify your account.', [
-        //         { text: 'OK', onPress: () => navigation.navigate('Register3') },
-        //    ]);
-        //}
-    });
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleRegister = () => {
-        console.log({ name, email, password, gender, age, weight, height, goal, level, phone })
-        const user = new User(email, password);
-        presenter.registerUser(user);
+    const changeLoadingVisible = (b) => {
+        setIsLoading(b);
+    }
+
+    const processRegister = async (name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck) => {
+        try {
+            changeLoadingVisible(true);
+            console.log({ name, email, password, gender, age, weight, height, goal, level, phone, checkTC, medicalCheck })
+            await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck);
+            navigation.navigate('Register3')
+        } catch (e) {
+            Alert.alert(e.message);
+        } finally {
+            changeLoadingVisible(false);
+        }
     };
-
     return (
         <KeyboardAvoidingView
             style={styles.container}
@@ -67,8 +62,9 @@ const RegisterPage2 = ({ navigation, route }) => {
                     <Text style={styles.label}>Email</Text>
                     <TextInput
                         placeholder="Enter your email"
+                        autoCapitalize='none'
                         value={email}
-                        onChangeText={text => setEmail(text)}
+                        onChangeText={text => setEmail(text.toLowerCase())}
                         style={styles.input}
                     />
                     <Text style={styles.label}>Password</Text>
@@ -99,9 +95,11 @@ const RegisterPage2 = ({ navigation, route }) => {
                 />
             </View>
             <View style={styles.buttonContainer}>
+                <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+                    <LoadingDialog />
+                </Modal>
                 <TouchableOpacity
-                    onPress={handleRegister}
-                    //navigation.navigate('Register3')
+                    onPress={() => processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck)}
                     style={styles.button}
                 >
                     <Text style={styles.buttonText}>REGISTER</Text>
