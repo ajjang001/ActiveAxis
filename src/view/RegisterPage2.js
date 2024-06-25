@@ -1,35 +1,53 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Alert, Modal } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { CheckBox } from '@rneui/themed';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import RegisterPresenter from '../presenter/RegisterPresenter';
 import { LoadingDialog } from '../components/Modal';
+import {MessageDialog} from '../components/Modal';
+
+
 
 const RegisterPage2 = ({ navigation, route }) => {
 
     const [checkTC, setCheckTC] = useState(false);
-    const { gender, age, weight, height, goal, level, medicalCheck } = route.params;
+    //const { gender, age, weight, height, goal, level, medicalCheck } = route.params;
+    const { gender, dob, weight, height, goal, level, medicalCheck } = route.params;
 
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    // Loading message
     const [isLoading, setIsLoading] = useState(false);
+    
+  // Modal/Display Message
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
 
     const changeLoadingVisible = (b) => {
         setIsLoading(b);
     }
+    // change popup/modal visible
+    const changeModalVisible = (b, m)=>{
+        setModalMsg(m);
+        setIsModalVisible(b);
+    }
 
-    const processRegister = async (name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck) => {
+    //const processRegister = async (name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck) => {
+    const processRegister = async (name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck) => {
         try {
             changeLoadingVisible(true);
-            console.log({ name, email, password, gender, age, weight, height, goal, level, phone, checkTC, medicalCheck })
-            await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck);
+            //console.log({ name, email, password, gender, age, weight, height, goal, level, phone, checkTC, medicalCheck })
+            //await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck);
+            //console.log({ name, email, password, gender, dob, weight, height, goal, level, phone, checkTC, medicalCheck })
+            await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck);
+            
             navigation.navigate('Register3')
         } catch (e) {
-            Alert.alert(e.message);
+            changeModalVisible(true, e.message);
         } finally {
             changeLoadingVisible(false);
         }
@@ -94,12 +112,20 @@ const RegisterPage2 = ({ navigation, route }) => {
                     containerStyle={{ backgroundColor: 'transparent' }}
                 />
             </View>
+            <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={()=>changeModalVisible(false)}>
+                <MessageDialog
+                message = {modalMsg} 
+                changeModalVisible = {changeModalVisible} 
+                />
+            </Modal>
             <View style={styles.buttonContainer}>
                 <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
                     <LoadingDialog />
                 </Modal>
                 <TouchableOpacity
-                    onPress={() => processRegister(name, email, '+65'+phone, password, checkTC, gender, parseInt(age), parseFloat(weight), parseFloat(height), goal, level, medicalCheck)}
+                    //onPress={() => processRegister(name, email, '+65'+phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck)}
+                    onPress={() => processRegister(name, email, '+65'+phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck)}
+                    
                     style={styles.button}
                 >
                     <Text style={styles.buttonText}>REGISTER</Text>

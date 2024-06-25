@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { Alert, KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { Dropdown } from 'react-native-element-dropdown';
 import { CheckBox } from '@rneui/themed';
+import DatePicker from 'react-native-date-picker';
+
+
+import {MessageDialog} from '../components/Modal';
+
 import RegisterPresenter from '../presenter/RegisterPresenter';
 
 const RegisterPage = ({ navigation }) => {
@@ -23,23 +28,66 @@ const RegisterPage = ({ navigation }) => {
     { label: 'Intermediate', value: 'Intermediate' },
     { label: 'Advanced', value: 'Advanced' },
   ];
+  
+  // Modal/Display Message
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
 
+  // Date Picker
+  const [open, setOpen] = useState(false)
+
+  // User Info
   const [gender, setGender] = useState('');
-  const [age, setAge] = useState('');
+  //const [age, setAge] = useState('');
+  const [dob, setDob] = useState(null);
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
   const [goal, setGoal] = useState('');
   const [level, setLevel] = useState('');
   const [medicalCheck, setmedicalCheck] = useState(false);
-  const processProfiling = async (gender, age, weight, height, goal, level, medicalCheck) => {
+
+  // change popup/modal visible
+  const changeModalVisible = (b, m)=>{
+      setModalMsg(m);
+      setIsModalVisible(b);
+  }
+
+  // --- DOB ---
+  const formatDate = (date) => {
+    if (!date) return "";
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    };
+  // --- DOB ---
+
+  //const processProfiling = async (gender, age, weight, height, goal, level, medicalCheck) => {
+  const processProfiling = async (gender, dob, weight, height, goal, level, medicalCheck) => {
     try {
-      await new RegisterPresenter().processProfiling(gender, age, weight, height, goal, level, medicalCheck);
-      navigation.navigate('Register2', { gender, age, weight, height, goal, level, medicalCheck })
+        //await new RegisterPresenter().processProfiling(gender, age, weight, height, goal, level, medicalCheck);
+        //navigation.navigate('Register2', { gender, age, weight, height, goal, level, medicalCheck });
+        
+        await new RegisterPresenter().processProfiling(gender, dob ? dob.toISOString() : null, weight, height, goal, level, medicalCheck);
+        navigation.navigate('Register2', { gender, dob : dob ? dob.toISOString() : null, weight, height, goal, level, medicalCheck });
     } catch (e) {
-      Alert.alert(e.message);
+      changeModalVisible(true, e.message);
     }
   }
 
+  /*
+  <Text style={styles.label}>Age</Text>
+            <TextInput
+              placeholder="Enter your age"
+              value={age}
+              onChangeText={text => setAge(text)}
+              style={styles.input}
+              maxLength={2}
+              keyboardType="phone-pad"
+              returnKeyType='done'
+            />
+  */
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -63,16 +111,29 @@ const RegisterPage = ({ navigation }) => {
             />
           </View>
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Age</Text>
-            <TextInput
-              placeholder="Enter your age"
-              value={age}
-              onChangeText={text => setAge(text)}
-              style={styles.input}
-              maxLength={2}
-              keyboardType="phone-pad"
-              returnKeyType='done'
+            <Text style={styles.label}>Date of Birth</Text>
+            <TouchableOpacity onPress={() => setOpen(true)}>
+                <View style = {styles.input}>
+                    <Text>{dob ? formatDate(dob) : "Enter your date of birth"}</Text>
+                </View>
+            </TouchableOpacity>
+
+            <DatePicker 
+                modal 
+                open = {open}
+                date = {dob || new Date()}
+                mode = 'date'
+                minimumDate={new Date(1900, 0, 1)}
+                maximumDate={new Date()}
+                onConfirm = {(date) =>{
+                    setOpen(false);
+                    setDob(date);
+                }}
+                onCancel ={() => {
+                    setOpen(false);
+                }}
             />
+
             <Text style={styles.label}>Weight (KG)</Text>
             <TextInput
               placeholder="Enter your weight"
@@ -124,6 +185,13 @@ const RegisterPage = ({ navigation }) => {
               }}
             />
           </View>
+          <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={()=>changeModalVisible(false)}>
+              <MessageDialog
+              message = {modalMsg} 
+              changeModalVisible = {changeModalVisible} 
+              />
+          </Modal>
+
           <View style={styles.checkboxContainer}>
             <CheckBox
               checked={medicalCheck}
@@ -145,7 +213,8 @@ const RegisterPage = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={() =>
-            processProfiling(gender, age, weight, height, goal, level, medicalCheck)
+            //processProfiling(gender, age, weight, height, goal, level, medicalCheck)
+            processProfiling(gender, dob, weight, height, goal, level, medicalCheck)
           }
           style={styles.button}
         >

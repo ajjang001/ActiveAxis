@@ -1,5 +1,5 @@
 import { app, auth, db, storage } from '../../.expo/api/firebase';
-import { getDoc, doc, getDocs, query, collection, where, setDoc } from "firebase/firestore";
+import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, orderBy } from "firebase/firestore";
 import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
 import Account from './Account';
 
@@ -112,31 +112,69 @@ class User extends Account{
 
     }
 
-    async register(name, email, phone, password, gender, age, weight, height, goal, level, medicalCheck) {
+    //async register(name, email, phone, password, gender, age, weight, height, goal, level, medicalCheck) {
+    async register(name, email, phone, password, gender, dob, weight, height, goal, level, medicalCheck) {
         try {
-            console.log('Register');
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            console.log('Register');
             await sendEmailVerification(userCredential.user, {
                 handleCodeInApp: true,
                 url: "https://activeaxis-c49ed.firebaseapp.com",
             });
-            console.log('Register');
-            await setDoc(doc(db, "user", userCredential.user.uid), {
-                email: email,
-                fullName: name,
-                phoneNumber: phone,
-                gender: gender,
-                age: age,
-                weight: weight,
-                height: height,
-                fitnessGoal: goal,
-                level: level,
-                hasMedical: medicalCheck,
-                //username: username (regex)
-            });
-            console.log('Register');
 
+            const nameArr = name.split(' ');
+            const fname = nameArr[0].toLowerCase();
+            let uname = "";
+            for(let i = 1; i < nameArr.length; i++){
+                uname += nameArr[i][0].toLowerCase();
+            }
+            uname += fname + "-";
+            console.log(uname);
+
+            // get id
+            const q = query(
+                collection(db, 'user'),
+                where("username", ">=", uname),
+                where("username", "<", uname + "\uf8ff"),
+                orderBy("username")
+            );
+            const querySnapshot = await getDocs(q);
+            const result = [];
+            querySnapshot.forEach((doc) => {
+                result.push( doc.data().username );
+            });
+            if(result.length === 0){
+                uname += "1";
+            }else{
+                for (let i = 1; i <= result.length; i++){
+                    if (parseInt(result[i-1].split('-')[1]) !== i){
+                        uname += i;
+                        break;
+                    }
+                    if (i === result.length){
+                        uname += result.length+1;
+                    }
+                }
+
+            }
+            
+
+            await setDoc(doc(db, "user", userCredential.user.uid), {
+                dob : Timestamp.fromDate(new Date(dob)),
+                email: email,
+                fitnessGoal: goal,
+                fullName: name,
+                gender: gender,
+                hasMedical: medicalCheck,
+                height: height,
+                isPremium: false,
+                isSuspended: false,
+                phoneNumber: phone,
+                profilePicture: "user/default_pp.png",
+                restInterval: 30,
+                username: uname,
+                weight: weight,
+            });
+            
         }
         catch (e) {
             console.log(e);

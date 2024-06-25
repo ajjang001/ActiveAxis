@@ -5,29 +5,42 @@ class RegisterPresenter {
         this.view = view;
     }
 
-    async processProfiling(gender, age, weight, height, goal, level, medicalCheck) {
+    //async processProfiling(gender, age, weight, height, goal, level, medicalCheck) {
+    async processProfiling(gender, dob, weight, height, goal, level, medicalCheck) {
+          
+      const floatPattern = /^\d+(\.\d+)?$/;
 
-        if (gender.trim() === '' || age.trim() === '' || weight.trim() === '' || height.trim() === '' || goal.trim() === '' || level.trim() === '') {
-
-            throw new Error('Please complete all fields!');
-        } else {
-            try {
-                console.log({ gender, age, weight, height, goal, level, medicalCheck })
-            } catch (e) {
-                throw new Error(e.message);
-            }
-
-
-        }
+      //if (gender.trim() === '' || age.trim() === '' || weight.trim() === '' || height.trim() === '' || goal.trim() === '' || level.trim() === '') {
+      if (gender.trim() === '' || dob === null || weight.trim() === '' || height.trim() === '' || goal.trim() === '' || level.trim() === '') {
+        throw new Error('Please complete all fields!');
+      }
+      //else if(!integerPattern.test(age)){
+      //  throw new Error('Please only enter numbers for age');
+      //}
+      else if (!floatPattern.test(weight)){
+        throw new Error('Please only enter numbers or decimals for weight');
+      }else if (!floatPattern.test(height)){
+        throw new Error('Please only enter numbers or decimals for height');
+      }else{
+        console.log({ gender, dob, weight, height, goal, level, medicalCheck });
+        //console.log({ gender, age, weight, height, goal, level, medicalCheck })
+      }
     }
 
-    async processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck) {
+
+    //async processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck) {
+    async processRegister(name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck) {
         // To if email is in valid format
         const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        // To if name is in valid format
+        const namePattern = /^[a-zA-Z\s]+$/;
 
         if (name.trim() === '' || email.trim() === '' || phone.trim() === '' || password.trim() === '') {
             throw new Error('Please complete all fields!');
-        } else if (!pattern.test(email)) {
+        }else if (!namePattern.test(name)) {
+            throw new Error('Please only enter letters for name');
+        } 
+        else if (!pattern.test(email)) {
             throw new Error('Invalid email format');
         } else if (checkTC == false) {
             throw new Error('Please Agree to the Terms & Conditions!')
@@ -35,7 +48,8 @@ class RegisterPresenter {
         else {
             try {
                 const user = new User();
-                await user.register(name, email, phone, password, gender, age, weight, height, goal, level, medicalCheck);
+                //await user.register(name, email, phone, password, gender, parseInt(age), parseFloat(weight), parseFloat(height), goal, level, medicalCheck);
+                await user.register(name, email, phone, password, gender, dob, parseFloat(weight), parseFloat(height), goal, level, medicalCheck);
 
             } catch (e) {
                 console.log(e);
