@@ -17,9 +17,11 @@ class SystemAdmin{
 
     async authenticate(email, password){
         try{
+            // Call the parent class authenticate method
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             return userCredential.user;
         }catch(e){
+            // Handle error
             if (e.code === 'auth/invalid-credential') {
                 throw new Error("Invalid email or password");
             } else {
@@ -30,11 +32,14 @@ class SystemAdmin{
 
     async login(email, password){
         try{
+            // Call the parent class authenticate method
             const admin = await this.authenticate(email, password);
+
+            // Check if admin data exists
             const q = doc(db, 'systemadmin', admin.uid);
             const queryResult = await getDoc(q);
-            
             if(queryResult.exists()){
+                // Get the data
                 const data = queryResult.data();
                 
                 const a = new SystemAdmin();
@@ -50,20 +55,6 @@ class SystemAdmin{
             throw new Error(e.message);
         }
     }
-
-    // async getInfo(){
-    //     const q = query(collection(db, 'systemadmin'), where('email', '==', this.email));
-    //     const queryResult = await getDocs(q);
-    //     if(!queryResult.empty){
-    //         const data = queryResult.docs[0].data();
-                    
-    //         this.username = data.username;
-    //         this.email = data.email;
-            
-                    
-    //     }
-
-    // }
 
 }
 

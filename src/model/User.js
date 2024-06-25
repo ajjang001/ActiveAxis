@@ -35,10 +35,10 @@ class User extends Account{
 
     async login(email, password) {
         try {
+            // Call the parent class authenticate method
             const user = await super.authenticate(email, password);
-            //console.log(user.emailVerified);
-            
 
+            // Check if user is suspended or email is verified
             const q = doc(db, 'user', user.uid);
             const queryResult = await getDoc(q);
 
@@ -52,13 +52,16 @@ class User extends Account{
                     //    handleCodeInApp: true,
                     //    url: "https://activeaxis-c49ed.firebaseapp.com",
                     //});
+                    
+                    // Account is not verified
                     throw new Error('Please verify your email first\nCheck your email for the verification link.');
-
                 } 
                 else if (is){
+                    // Account is suspended
                     throw new Error('Your account is suspended\nPlease contact customer support.');
                 }
                 else {
+                    // Account is valid
                     const u = new User();
                     u.username = data.username;
                     u.email = email;
@@ -78,20 +81,27 @@ class User extends Account{
                     return u;
                 }
             } else {
+                // Account does not exist
                 throw new Error('Invalid email or password');
             }
         } catch (e) {
+            // Throw error message
             throw new Error(e.message);
         }
     }
 
+
+
     async getInfo(email) {
+        // Get the user data from the database
         const q = query(collection(db, 'user'), where('email', '==', email));
         const queryResult = await getDocs(q);
-        if (!queryResult.empty) {
-            const data = queryResult.docs[0].data();
-            const u = new User();
 
+        if (!queryResult.empty) {
+            // Get the user data
+            const data = queryResult.docs[0].data();
+
+            const u = new User();
             u.username = data.username;
             u.email = data.email;
             u.profilePicture = data.profilePicture;
@@ -112,15 +122,17 @@ class User extends Account{
 
     }
 
-    //async register(name, email, phone, password, gender, age, weight, height, goal, level, medicalCheck) {
     async register(name, email, phone, password, gender, dob, weight, height, goal, level, medicalCheck) {
         try {
+            // Create the user account in Firebase Authentication
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            // Send email verification
             await sendEmailVerification(userCredential.user, {
                 handleCodeInApp: true,
                 url: "https://activeaxis-c49ed.firebaseapp.com",
             });
 
+            // Generate username
             const nameArr = name.split(' ');
             const fname = nameArr[0].toLowerCase();
             let uname = "";
@@ -128,9 +140,8 @@ class User extends Account{
                 uname += nameArr[i][0].toLowerCase();
             }
             uname += fname + "-";
-            console.log(uname);
 
-            // get id
+            // get number
             const q = query(
                 collection(db, 'user'),
                 where("username", ">=", uname),
@@ -157,11 +168,12 @@ class User extends Account{
 
             }
             
-
+            // Create the user account in the firestore firestore database
             await setDoc(doc(db, "user", userCredential.user.uid), {
                 dob : Timestamp.fromDate(new Date(dob)),
                 email: email,
                 fitnessGoal: goal,
+                fitnessLevel: level,
                 fullName: name,
                 gender: gender,
                 hasMedical: medicalCheck,
@@ -177,7 +189,7 @@ class User extends Account{
             
         }
         catch (e) {
-            console.log(e);
+            // Throw error message
             if (e.code === 'auth/email-already-in-use') {
                 throw new Error("The email provided has already been used. Please use another email.");
             }

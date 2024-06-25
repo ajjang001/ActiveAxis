@@ -10,15 +10,16 @@ import {MessageDialog} from '../components/Modal';
 
 
 const RegisterPage2 = ({ navigation, route }) => {
-
-    const [checkTC, setCheckTC] = useState(false);
-    //const { gender, age, weight, height, goal, level, medicalCheck } = route.params;
+    // Get data from previous screen
     const { gender, dob, weight, height, goal, level, medicalCheck } = route.params;
 
+    // State to store the user input
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    // State to store the checkbox value
+    const [checkTC, setCheckTC] = useState(false);
 
     // Loading message
     const [isLoading, setIsLoading] = useState(false);
@@ -26,29 +27,34 @@ const RegisterPage2 = ({ navigation, route }) => {
   // Modal/Display Message
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
-
+  
+  // change loading visible
     const changeLoadingVisible = (b) => {
         setIsLoading(b);
     }
+
     // change popup/modal visible
     const changeModalVisible = (b, m)=>{
         setModalMsg(m);
         setIsModalVisible(b);
     }
 
-    //const processRegister = async (name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck) => {
+    // Process the registration
     const processRegister = async (name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck) => {
         try {
+            // Show loading screen
             changeLoadingVisible(true);
-            //console.log({ name, email, password, gender, age, weight, height, goal, level, phone, checkTC, medicalCheck })
-            //await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck);
-            //console.log({ name, email, password, gender, dob, weight, height, goal, level, phone, checkTC, medicalCheck })
+            console.log({ name, email, password, gender, dob, weight, height, goal, level, phone, checkTC, medicalCheck })
+
+            // Call the presenter to process the registration
             await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck);
-            
+            // Navigate to the next screen
             navigation.navigate('Register3')
         } catch (e) {
+            // Show error message
             changeModalVisible(true, e.message);
         } finally {
+            // Hide loading screen
             changeLoadingVisible(false);
         }
     };

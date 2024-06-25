@@ -9,6 +9,7 @@ const guidelineBaseWidth = 350;
 const guidelineBaseHeight = 1000;
 
 const scale = size => {
+  // Scale the size based on the screen dimensions
   const scaleWidth = width / guidelineBaseWidth;
   const scaleHeight = height / guidelineBaseHeight;
   const scaleFactor = Math.min(scaleWidth, scaleHeight);

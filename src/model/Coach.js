@@ -20,8 +20,10 @@ class Coach extends Account{
 
     async login(email, password){
         try{
+            // Call the parent class authenticate method
             const coach = await super.authenticate(email, password);
             
+            // Check if coach is suspended or pending
             const q = doc(db, 'coach', coach.uid);
             const queryResult = await getDoc(q);
             
@@ -31,10 +33,14 @@ class Coach extends Account{
                 const ip = data.isPending;
                 
                 if(ip){
+                    // Account is pending
                     throw new Error('Your account is pending\nPlease wait for the admin to approve your account.');
                 }else if (is){
+                    // Account is suspended
                     throw new Error('Your account is suspended\nPlease contact customer support.');
                 }else{
+                    // Account is active
+                    // Get the data
                     const c = new Coach();
                     c.username = data.username;
                     c.email = email;
@@ -48,17 +54,21 @@ class Coach extends Account{
                     return c;
                 }   
             }else{
+                // Account does not exist
                 throw new Error('Invalid email or password');
             }
         }catch(e){
+            // Handle error
             throw new Error(e.message);
         }
     }
 
     async getInfo(email){
+        // Check if coach data exists
         const q = query(collection(db, 'coach'), where('email', '==', email));
         const queryResult = await getDocs(q);
         if(!queryResult.empty){
+            // Get the data
             const data = queryResult.docs[0].data();
             const c = new Coach();
                     

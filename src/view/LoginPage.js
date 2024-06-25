@@ -28,19 +28,26 @@ const LoginPage = ({navigation})=>{
     // to close dropdown
     const dropdownRef = useRef(null);
 
+    // change popup/modal visible
     const changeLoadingVisible = (b)=>{
         setIsLoading(b);
     }
-    
+     
+    // Check User Session function
     const checkUserSession = async () =>{
+        // Remove remember me
         await AsyncStorage.removeItem('remember');
+
+        // Display loading screen
         changeLoadingVisible(true);
         try{
+            // Check if user is logged in
             await new LoginPresenter({updateLoginAcc: setLoginAccount, updateLoginType: setLoginType}).checkSession();
-
         }catch(e){
+            // Display error message
             changeModalVisible(true, e.message);
         }finally{
+            // Hide loading screen
             changeLoadingVisible(false);
         }
     };
@@ -50,19 +57,25 @@ const LoginPage = ({navigation})=>{
         checkUserSession();
     },[]);
 
+    // Process Login function
     const processLogin = async (email, password, loginType) => {
+        // Display loading screen
         changeLoadingVisible(true);
         try{
+            // Call the presenter to process the login
             await new LoginPresenter({updateLoginAcc: setLoginAccount}).processLogin(email, password, loginType);
         }catch(e){
+            // Display error message
             changeModalVisible(true, e.message);
         }finally{
+            // Hide loading screen
             changeLoadingVisible(false);
         }
 
         
     };
 
+    // Redirection when account is set and ready to login
     useEffect(()=>{
         if(loginAccount !== null){
             if(loginType === "u"){
@@ -99,14 +112,13 @@ const LoginPage = ({navigation})=>{
         </TouchableOpacity> 
         );
     };
-    
-
 
     // change popup/modal visible
     const changeModalVisible = (b, m)=>{
         setModalMsg(m);
         setIsModalVisible(b);
     }
+
     return(
         <View style = {styles.container}>
             

@@ -12,17 +12,16 @@ import RegisterPresenter from '../presenter/RegisterPresenter';
 
 const RegisterPage = ({ navigation }) => {
 
+  // Dropdown Data
   const genderData = [
     { label: 'Male', value: 'm' },
     { label: 'Female', value: 'f' },
   ];
-
   const goalsData = [
     { label: 'Goal 1', value: 'Goal 1' },
     { label: 'Goal 2', value: 'Goal 2' },
     { label: 'Goal 3', value: 'Goal 3' },
   ];
-
   const levelData = [
     { label: 'Beginner', value: 'Beginner' },
     { label: 'Intermediate', value: 'Intermediate' },
@@ -38,7 +37,6 @@ const RegisterPage = ({ navigation }) => {
 
   // User Info
   const [gender, setGender] = useState('');
-  //const [age, setAge] = useState('');
   const [dob, setDob] = useState(null);
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
@@ -52,7 +50,7 @@ const RegisterPage = ({ navigation }) => {
       setIsModalVisible(b);
   }
 
-  // --- DOB ---
+  // Date formatter
   const formatDate = (date) => {
     if (!date) return "";
       return date.toLocaleDateString('en-US', {
@@ -61,33 +59,20 @@ const RegisterPage = ({ navigation }) => {
         day: 'numeric'
       });
     };
-  // --- DOB ---
 
-  //const processProfiling = async (gender, age, weight, height, goal, level, medicalCheck) => {
   const processProfiling = async (gender, dob, weight, height, goal, level, medicalCheck) => {
     try {
-        //await new RegisterPresenter().processProfiling(gender, age, weight, height, goal, level, medicalCheck);
-        //navigation.navigate('Register2', { gender, age, weight, height, goal, level, medicalCheck });
-        
+        // Call the presenter to process the profiling
         await new RegisterPresenter().processProfiling(gender, dob ? dob.toISOString() : null, weight, height, goal, level, medicalCheck);
+
+        // Navigate to the next screen
         navigation.navigate('Register2', { gender, dob : dob ? dob.toISOString() : null, weight, height, goal, level, medicalCheck });
     } catch (e) {
+      // Show error message
       changeModalVisible(true, e.message);
     }
   }
 
-  /*
-  <Text style={styles.label}>Age</Text>
-            <TextInput
-              placeholder="Enter your age"
-              value={age}
-              onChangeText={text => setAge(text)}
-              style={styles.input}
-              maxLength={2}
-              keyboardType="phone-pad"
-              returnKeyType='done'
-            />
-  */
   return (
     <KeyboardAvoidingView
       style={styles.container}

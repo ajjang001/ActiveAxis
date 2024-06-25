@@ -6,10 +6,12 @@ import {app, auth, db, storage} from '../../.expo/api/firebase';
 import { LoadingDialog } from '../components/Modal';
 
 const UserHomePage = ({navigation, route}) => {
+    // Get the user from the route params
     const {user} = route.params;
+    // State to store the image URL
     const [imageURL, setImageURL] = useState('');
 
-
+    // Get the image URL from the storage
     useEffect(() => {
         const getImageURL = async (u) => {
             const storageRef = ref(storage, u.profilePicture);

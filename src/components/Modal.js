@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 
 const MessageDialog = (props) =>{
+    // Function to open/close the modal
     closeModal = (bool) => {
         props.changeModalVisible(bool);
     }

@@ -34,9 +34,12 @@ class Account{
 
     async authenticate(email, password){
         try{
+            // Authenticate the user
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             return userCredential.user;
+
         }catch(e){
+            // Handle error
             if (e.code === 'auth/user-disabled') {
                 throw new Error("Your account is suspended\nPlease contact customer support.");
               } else if (e.code === 'auth/invalid-credential') {
