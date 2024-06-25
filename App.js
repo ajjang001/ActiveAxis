@@ -21,7 +21,6 @@ import UserStatistics from './src/view/UserStatistics';
 import UserHomePage from './src/view/UserHomePage';
 import CoachHomePage from './src/view/CoachHomePage';
 import SystemAdminHomePage from './src/view/SystemAdminHomePage';
-import TryConnectWearable from './src/view/TryConnectWearable';
 
 const Stack = createStackNavigator();
 
@@ -61,8 +60,6 @@ export default function App() {
         <Stack.Screen name="UserHomePage" component={UserHomePage} />
         <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} />
         <Stack.Screen name="CoachHomePage" component={CoachHomePage} />
-
-        <Stack.Screen name = "TryConnectWearable" component={TryConnectWearable} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
