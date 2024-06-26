@@ -51,7 +51,15 @@ const CoachRegisterPage = ({ navigation }) => {
     <View style={styles.uploadField}>
       <Text style={styles.label}>{label}</Text>
       <TouchableOpacity onPress={onSelect} style={styles.uploadButton}>
-        <Text style={styles.uploadButtonText}>{file ? file && <Text style={styles.fileName}>{"File Uploaded: " + file.name}</Text> : 'Upload your ' + label.toLowerCase()}</Text>
+       {file ? (
+        <Text numberOfLines={1} ellipsizeMode='tail' style={styles.fileName}>
+          File Uploaded: {file.name}
+        </Text>
+      ) : (
+        <Text style={styles.uploadButtonText}>
+          Upload your {label.toLowerCase()} here
+        </Text>
+      )}
       </TouchableOpacity>
     </View>
   );
@@ -74,7 +82,7 @@ const CoachRegisterPage = ({ navigation }) => {
   const handleSelectDocument = async (setter) => {
     try {
       const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
+        type: [DocumentPicker.types.images, DocumentPicker.types.pdf],
       });
       setter({ uri: res[0].uri, name: res[0].name });
     } catch (err) {
@@ -131,6 +139,8 @@ const CoachRegisterPage = ({ navigation }) => {
             open={open}
             date={dob || new Date()}
             mode='date'
+            minimumDate={new Date(1900, 0, 1)}
+            maximumDate={new Date()}
             onConfirm={(date) => {
               setOpen(false);
               setDob(date);
@@ -153,7 +163,7 @@ const CoachRegisterPage = ({ navigation }) => {
           <UploadField label="Photo" file={photo} onSelect={handleSelectPhoto} />
           <UploadField label="Resume" file={resume} onSelect={() => handleSelectDocument(setResume)} />
           <UploadField label="Certificate" file={certificate} onSelect={() => handleSelectDocument(setCertificate)} />
-          <UploadField label="Identification" file={identification} onSelect={() => handleSelectDocument(setIdentification)} />
+          <UploadField label="Identification (e.g. NRIC)" file={identification} onSelect={() => handleSelectDocument(setIdentification)} />
 
         </View>
         <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={() => changeModalVisible(false)}>
@@ -285,7 +295,7 @@ const styles = StyleSheet.create({
   },
   bottomDesign: {
     position: 'absolute',
-    bottom: 0,
+    bottom: -25,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
@@ -296,6 +306,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
     alignItems: 'flex-start',
+    width: '100%',
   },
   uploadButtonText: {
     color: '#555',
@@ -303,6 +314,7 @@ const styles = StyleSheet.create({
   fileName: {
     marginTop: 5,
     color: 'black',
+    width: '100%',
   },
 
 });

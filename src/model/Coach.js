@@ -1,7 +1,8 @@
 import { app, auth, db, storage } from '../../.expo/api/firebase';
 import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
 import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, orderBy } from "firebase/firestore";
-import { getStorage, ref } from "firebase/storage";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
+
 
 import Account from './Account';
 
@@ -32,8 +33,12 @@ class Coach extends Account {
                 const data = queryResult.data();
                 const is = data.isSuspended;
                 const ip = data.isPending;
+                const iv = coach.emailVerified;
 
-                if (ip) {
+                if (!iv) {
+                    // Account is not verified
+                    throw new Error('Please verify your email first\nCheck your email for the verification link.');
+                }else if (ip) {
                     // Account is pending
                     throw new Error('Your account is pending\nPlease wait for the admin to approve your account.');
                 } else if (is) {
@@ -97,13 +102,54 @@ class Coach extends Account {
                 url: "https://activeaxis-c49ed.firebaseapp.com",
             });
 
-            // insert photo/file logic to firebase storage
+            // Convert URI to Blob
+            const uriToBlob = (uri) => {
+                return new Promise((resolve, reject) => {
+                   const xhr = new XMLHttpRequest()
+                   xhr.onload = function () {
+                     // return the blob
+                     resolve(xhr.response)
+                   }
+                   xhr.onerror = function () {
+                     reject(new Error('uriToBlob failed'))
+                   }
+                   xhr.responseType = 'blob'
+                   xhr.open('GET', uri, true)
+               
+                   xhr.send(null)})
+                };
 
-            // get path of the photo/file that inserted to firebase storage
+                // Upload file to Firebase Storage
+            const uploadFile = async (file, folderPath) => {
+                if (!file || !file.uri) throw new Error('File URI is invalid');
 
-            // // Create the coach account in the firestore firestore database
+                const storageRef = ref(storage, folderPath + file.name);
+                const blobFile = await uriToBlob(file.uri);
+                try{
+                    await uploadBytes(storageRef, blobFile);
+                    return `${folderPath}${file.name}`;
+                }catch(e){
+                    throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support.");
+                    
+                }
+
+              };
+
+            // Folder path
+            const folderPath = `coach_registration/${email.split('@')[0]}/`;
+
+
+            // Upload files to Firebase Storage
+            const photoPath = await uploadFile(photo, folderPath);
+            const resumePath = await uploadFile(resume, folderPath);
+            const certificatePath = await uploadFile(certificate, folderPath);
+            const idPath = await uploadFile(identification, folderPath);
+            
+            
+
+            // Create the coach account in the firestore firestore database
             await setDoc(doc(db, "coach", userCredential.user.uid), {
-                //certificate: ,
+                certificate: certificatePath,
                 chargePerMonth: chargePM,
                 dob: Timestamp.fromDate(new Date(dob)),
                 email: email,
@@ -112,9 +158,9 @@ class Coach extends Account {
                 isPending: true,
                 isSuspended: false,
                 phoneNumber: phone,
-                //profilePicture: ,
-                //resume:,
-                //identification:,
+                profilePicture: photoPath,
+                resume: resumePath,
+                identification: idPath,
                 username: null,
             });
 
