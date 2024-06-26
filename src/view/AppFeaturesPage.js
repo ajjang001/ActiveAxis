@@ -28,7 +28,7 @@ const data = [
   },
 ];
 
-const View3 = () => {
+const AppFeaturesPage = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Functions & Features</Text>
@@ -85,4 +85,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default View3;
+export default AppFeaturesPage;

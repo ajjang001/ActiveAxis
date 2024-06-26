@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, ScrollView } from 'react-native';
 import FeedbackCard from '../components/FeedbackCard';
 import DisplayAppFeedbacksPresenter from '../presenter/DisplayAppFeedbacksPresenter';
 
-const AppFeedbacks = () => {
-  const [feedback, setFeedback] = useState(null);
+const AppFeedBackPage = () => {
+  const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(true);
   const presenter = new DisplayAppFeedbacksPresenter({
     displayFeedback: (data) => {
@@ -31,17 +31,19 @@ const AppFeedbacks = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle = {styles.contentContainer}>
       <Text style={styles.title}>App Feedbacks</Text>
-      {feedback && (
-        <FeedbackCard
-          avatar={feedback.profilePicture || feedback.avatar}
-          name={feedback.fullName || feedback.name}
-          rating={feedback.rating}
-          feedback={feedback.feedbackText}
-        />
-      )}
-    </View>
+      {feedback.map((feedbackItem, index) => (
+      <FeedbackCard
+        key={index}
+        avatar={feedbackItem.profilePicture || feedbackItem.avatar}
+        name={feedbackItem.fullName || feedbackItem.name}
+        rating={feedbackItem.rating}
+        feedback={feedbackItem.feedbackText}
+      />
+    ))}
+    
+    </ScrollView>
   );
 };
 
@@ -50,8 +52,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 20,
     backgroundColor: '#FBF5F3',
+  },
+  contentContainer:{
     alignItems: 'center',
-    justifyContent: 'center',
   },
   title: {
     fontSize: 24,
@@ -65,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppFeedbacks;
+export default AppFeedBackPage;

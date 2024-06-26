@@ -6,7 +6,7 @@ import { Dimensions } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
 
-const UserStatistics = () => {
+const UserStatisticsPage = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>User Statistics</Text>
@@ -89,4 +89,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserStatistics;
+export default UserStatisticsPage;

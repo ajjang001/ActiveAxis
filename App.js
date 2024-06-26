@@ -14,10 +14,10 @@ import CoachRegisterPage2 from './src/view/CoachRegisterPage2';
 import ResetPasswordPage from './src/view/ResetPasswordPage';
 import ResetPasswordPage2 from './src/view/ResetPasswordPage2';
 import AboutOurApp from './src/view/AboutOurApp';
-import AboutActiveAxis from './src/view/AboutActiveAxis';
-import FunctionsFeatures from './src/view/FunctionsFeatures';
-import AppFeedbacks from './src/view/AppFeedbacks';
-import UserStatistics from './src/view/UserStatistics';
+import AboutActiveAxisPage from './src/view/AboutActiveAxisPage';
+import AppFeaturesPage from './src/view/AppFeaturesPage';
+import AppFeedBackPage from './src/view/AppFeedbackPage';
+import UserStatisticsPage from './src/view/UserStatisticsPage';
 import UserHomePage from './src/view/UserHomePage';
 import CoachHomePage from './src/view/CoachHomePage';
 import SystemAdminHomePage from './src/view/SystemAdminHomePage';
@@ -51,10 +51,10 @@ export default function App() {
         <Stack.Screen name="ResetPassword" component={ResetPasswordPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
         <Stack.Screen name="ResetPassword2" component={ResetPasswordPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         <Stack.Screen name="AboutOurApp" component={AboutOurApp} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
-        <Stack.Screen name="AboutActiveAxis" component={AboutActiveAxis} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
-        <Stack.Screen name="FunctionsFeatures" component={FunctionsFeatures} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-        <Stack.Screen name="AppFeedbacks" component={AppFeedbacks} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-        <Stack.Screen name="UserStatistics" component={UserStatistics} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        <Stack.Screen name="AboutActiveAxisPage" component={AboutActiveAxisPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
+        <Stack.Screen name="AppFeaturesPage" component={AppFeaturesPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        <Stack.Screen name="AppFeedBackPage" component={AppFeedBackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        <Stack.Screen name="UserStatisticsPage" component={UserStatisticsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
 
         
         <Stack.Screen name="UserHomePage" component={UserHomePage} />

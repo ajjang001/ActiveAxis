@@ -3,7 +3,7 @@ import {db, storage} from '../../.expo/api/firebase';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
 
-class Feedbacks{
+class AppFeedback{
     #dateSubmitted;
     #feedbackText;
     #rating
@@ -40,7 +40,7 @@ class Feedbacks{
     
       static async fetchFeedbacks() {
         try {
-          const feedbacksCollection = collection(db, 'feedbacks');
+          const feedbacksCollection = collection(db, 'appfeedback');
           const feedbackSnapshot = await getDocs(feedbacksCollection);
           const feedbackList = await Promise.all(feedbackSnapshot.docs.map(async (feedbackDoc) => {
             const data = feedbackDoc.data();
@@ -66,7 +66,7 @@ class Feedbacks{
               }
             }
     
-            return new Feedbacks(data.dateSubmitted, data.feedbackText, data.rating, data.userID, data.avatar, userFullName, userProfilePicture);
+            return new AppFeedback(data.dateSubmitted, data.feedbackText, data.rating, data.userID, data.avatar, userFullName, userProfilePicture);
           }));
           return feedbackList;
         } catch (error) {
@@ -75,4 +75,4 @@ class Feedbacks{
       }
     }
 
-export default Feedbacks;
+export default AppFeedback;

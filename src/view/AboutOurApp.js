@@ -4,16 +4,16 @@ import { View, ScrollView, Text, TouchableOpacity, StyleSheet } from 'react-nati
 const AboutOurApp = ({ navigation }) => {
   const handlePress = (label) => {
     if (label === 'About ActiveAxis') {
-      navigation.navigate('AboutActiveAxis');
+      navigation.navigate('AboutActiveAxisPage');
     }
     if (label === 'Functions & Features'){
-      navigation.navigate('FunctionsFeatures');
+      navigation.navigate('AppFeaturesPage');
     }
     if (label === 'App Feedbacks'){
-      navigation.navigate('AppFeedbacks')
+      navigation.navigate('AppFeedBackPage')
     }
     if (label === 'User Statistics'){
-      navigation.navigate('UserStatistics')
+      navigation.navigate('UserStatisticsPage')
     }
   };
 
