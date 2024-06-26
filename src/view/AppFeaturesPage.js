@@ -1,47 +1,72 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
-
-const data = [
-  {
-    image: require('../../assets/activeaxislogo.png'),
-    text: 'This is the description for the ActiveAxis logo.',
-  },
-  {
-    image: require('../../assets/doublecircle.png'),
-    text: 'This is the description for a double circle.',
-  },
-  {
-    image: require('../../assets/favicon.png'),
-    text: 'This is the description for favicon.',
-  },
-  {
-    image: require('../../assets/icon.png'),
-    text: 'This is the description for an icon.',
-  },
-  {
-    image: require('../../assets/pen.png'),
-    text: 'This is the description for a pen.',
-  },
-  {
-    image: require('../../assets/fist.png'),
-    text: 'This is the description for a fist.',
-  },
-];
+import React, { useEffect, useState } from 'react';
+import { View, Text, Modal, StyleSheet, ScrollView } from 'react-native';
+import DisplayAppFeaturesPresenter from '../presenter/DisplayAppFeaturesPresenter';
+import { MessageDialog, LoadingDialog } from '../components/Modal';
 
 const AppFeaturesPage = () => {
+  const [features, setFeatures] = useState([]);
+
+  
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [modalMsg, setModalMsg] = useState('');
+
+  
+  
+  useEffect(() => {
+    const fetchFeatures = async () => {
+      setLoading(true);
+      try {
+        await new DisplayAppFeaturesPresenter({changeFeatures: setFeatures}).displayAppFeatures();
+      } catch (error) {
+        changeModalVisible(true, 'Error: ' + error);
+      }finally{
+        setLoading(false);
+      }
+    };
+    
+  
+    fetchFeatures();
+  }, []);
+
+   // change popup/modal visible
+  const changeLoadingVisible = (b)=>{
+    setLoading(b);
+  }
+
+    // change popup/modal visible
+  const changeModalVisible = (b, m)=>{
+    setModalMsg(m);
+    setIsModalVisible(b);
+  }
+
+  if (loading) {
+    return (
+      <Modal transparent={true} animationType='fade' visible={loading} nRequestClose={()=>changeLoadingVisible(false)}>
+          <LoadingDialog />
+      </Modal>
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Functions & Features</Text>
-      {data.map((item, index) => (
+      
+      {features.map((item, index) => (
         <View key={index} style={styles.row}>
-          <View style={styles.imageContainer}>
-            <Image source={item.image} style={styles.image} />
-          </View>
           <View style={styles.textContainer}>
-            <Text style={styles.text}>{item.text}</Text>
+            <Text style={styles.text}>{item}</Text>
           </View>
         </View>
       ))}
+
+      <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={()=>changeModalVisible(false)}>
+          <MessageDialog
+          message = {modalMsg} 
+          changeModalVisible = {changeModalVisible} 
+          />
+      </Modal>
+
     </ScrollView>
   );
 };
@@ -79,9 +104,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#D3D3D3',
     padding: 10,
+    marginLeft: 20,
+    marginRight: 20,
   },
   text: {
-    fontSize: 14,
+    fontSize: 15,
+    marginLeft: 20,
+    fontFamily: 'Inter',
   },
 });
 

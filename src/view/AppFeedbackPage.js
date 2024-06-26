@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, ScrollView } from 'react-native';
+import { StyleSheet, Text, Modal, ScrollView } from 'react-native';
 import FeedbackCard from '../components/FeedbackCard';
 import DisplayAppFeedbacksPresenter from '../presenter/DisplayAppFeedbacksPresenter';
+import { LoadingDialog } from '../components/Modal';
 
 const AppFeedBackPage = () => {
   const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(true);
+  
   const presenter = new DisplayAppFeedbacksPresenter({
     displayFeedback: (data) => {
       setFeedback(data);
@@ -22,11 +24,16 @@ const AppFeedBackPage = () => {
     presenter.loadFeedbacks();
   }, []);
 
+  // change popup/modal visible
+  const changeLoadingVisible = (b)=>{
+    setLoading(b);
+}
+
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000FF" />
-      </View>
+      <Modal transparent={true} animationType='fade' visible={loading} nRequestClose={()=>changeLoadingVisible(false)}>
+          <LoadingDialog />
+      </Modal>
     );
   }
 
