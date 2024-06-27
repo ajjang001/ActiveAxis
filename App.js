@@ -25,16 +25,20 @@ import SystemAdminHomePage from './src/view/SystemAdminHomePage';
 const Stack = createStackNavigator();
 
 export default function App() {
+
   const [fontsLoaded] = useFonts({
-    "Poppins SemiBold": require("./assets/fonts/Poppins SemiBold.ttf"),
-    "Poppins Medium": require("./assets/fonts/Poppins Medium.ttf"),
-    "Inter": require("./assets/fonts/Inter.ttf"),
-    "Inter SemiBold": require("./assets/fonts/Inter SemiBold.ttf"),
-    "Inter Medium": require("./assets/fonts/Inter Medium.ttf"), 
-    "Fuzzy Bubbles": require("./assets/fonts/Fuzzy Bubbles.ttf"), 
+     "Poppins-SemiBold": require("./assets/fonts/Poppins-SemiBold.ttf"),
+     "Poppins-Medium": require("./assets/fonts/Poppins-Medium.ttf"),
+     "Inter": require("./assets/fonts/Inter.ttf"),
+     "Inter-SemiBold": require("./assets/fonts/Inter-SemiBold.ttf"),
+     "Inter-Medium": require("./assets/fonts/Inter-Medium.ttf"), 
+     "Fuzzy-Bubbles": require("./assets/fonts/Fuzzy-Bubbles.ttf"),
+     "League-Spartan-Light": require("./assets/fonts/League-Spartan-Light.ttf"),
   });
 
+
   if (!fontsLoaded) {
+    console.log("Fonts not loaded");
     return null;
   }
 
@@ -58,8 +62,8 @@ export default function App() {
 
         
         <Stack.Screen name="UserHomePage" component={UserHomePage} />
-        <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} />
-        <Stack.Screen name="CoachHomePage" component={CoachHomePage} />
+        <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{headerShown:false}} />
+        <Stack.Screen name="CoachHomePage" component={CoachHomePage}   />
       </Stack.Navigator>
     </NavigationContainer>
   );

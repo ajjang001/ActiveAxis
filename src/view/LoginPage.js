@@ -193,11 +193,11 @@ const LoginPage = ({navigation})=>{
                 <View style={styles.oval}></View>
 
                 <View style = {styles.inTextOval}>
-                    <Text style={{fontFamily:'Inter Medium', fontSize:scale(14)}} >Don't have an account?  
+                    <Text style={{fontFamily:'Inter-Medium', fontSize:scale(14)}} >Don't have an account?  
                             <Text style = {{fontFamily:'Inter', fontWeight:'bold', fontSize:scale(14)}} onPress={()=>{navigation.navigate('Register')}}> Register Now</Text>
                     </Text>
 
-                    <Text style={{fontFamily:'Inter Medium', paddingTop:15, fontSize:scale(14)}}>Want to join us as a coach? 
+                    <Text style={{fontFamily:'Inter-Medium', paddingTop:15, fontSize:scale(14)}}>Want to join us as a coach? 
                         <Text style = {{fontFamily:'Inter', fontWeight:'bold', fontSize:scale(14)}} onPress = {() =>{navigation.navigate('CoachRegisterPage')}}> Click Here</Text>
                     </Text>
 
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     },
     title:{
         fontSize:scale(32),
-        fontFamily: 'Poppins SemiBold',
+        fontFamily: 'Poppins-SemiBold',
     },
     inputBox:{
         backgroundColor:'white',
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
     },
     itemText: {
         fontSize: scale(12),
-        fontFamily:'Poppins Medium'
+        fontFamily:'Poppins-Medium'
     },
 
 
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     },
     loginButtonText:{
         color:'white',
-        fontFamily:'Fuzzy Bubbles',
+        fontFamily:'Fuzzy-Bubbles',
         fontSize:scale(20),
         fontWeight:'bold',
     },
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
         
       },
       aboutAppText:{
-        fontFamily:'Poppins SemiBold',
+        fontFamily:'Poppins-SemiBold',
         fontSize:scale(11),
         color:'white',
         
