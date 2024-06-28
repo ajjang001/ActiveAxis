@@ -63,7 +63,7 @@ const SystemAdminHomePage = ({navigation, route}) => {
         {label: 'User Account List', onPress: () => console.log('User Account List')},
         {label: 'App Details', onPress: () => console.log('App Details')},
         {label: 'App Feedbacks', onPress: () => console.log('App Feedbacks')},
-        {label: 'Coach Account List', onPress: () => console.log('Coach Account List')},
+        {label: 'Coach', onPress: () => console.log('Coach')},
         {label: 'Log Out', onPress: () => changeModalVisible(true, 'Are you sure you want to log out?')}
     ];
 
