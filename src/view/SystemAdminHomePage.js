@@ -29,7 +29,7 @@ const SystemAdminHomePage = ({navigation, route}) => {
 
     // Function to log out the user
     const onPressLogout = async () =>{
-        changeModalVisible(true, 'Are you sure you want to log out?');
+        changeLoadingVisible(true);
         try{
             await new LogoutPresenter({getAccount: admin, setAccount: setAdmin}).logout();
             navigation.dispatch(
@@ -52,7 +52,6 @@ const SystemAdminHomePage = ({navigation, route}) => {
             return () => {
                 setAdmin(route.params.admin !== undefined ? route.params.admin : null);
                 setModalVisible(false);
-                setModalMsg('Are you sure you want to log out?');
             };
         }, [route.params.admin])
     );
@@ -65,7 +64,7 @@ const SystemAdminHomePage = ({navigation, route}) => {
         {label: 'App Details', onPress: () => console.log('App Details')},
         {label: 'App Feedbacks', onPress: () => console.log('App Feedbacks')},
         {label: 'Coach Account List', onPress: () => console.log('Coach Account List')},
-        {label: 'Log Out', onPress: () => onPressLogout()}
+        {label: 'Log Out', onPress: () => changeModalVisible(true, 'Are you sure you want to log out?')}
     ];
 
     return (
