@@ -38,7 +38,6 @@ export default function App() {
 
 
   if (!fontsLoaded) {
-    console.log("Fonts not loaded");
     return null;
   }
 

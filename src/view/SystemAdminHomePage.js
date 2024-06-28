@@ -1,11 +1,63 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useState, useCallback } from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal} from 'react-native';
+import { useFocusEffect, StackActions } from '@react-navigation/native';
+import { TransitionPresets } from '@react-navigation/stack';
 import {scale} from '../components/scale';
+import LogoutPresenter from '../presenter/LogoutPresenter';
+import { ActionDialog, LoadingDialog } from '../components/Modal';
 
-const SystemAdminHomePage = ({route}) => {
+const SystemAdminHomePage = ({navigation, route}) => {
     // Get the admin from the route params
-    const {admin} = route.params;
+    const [admin, setAdmin] = useState(route.params.admin !== undefined ? route.params.admin : null);
 
+    // State to control the visibility of the modal
+    const [isLoading, setIsLoading] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMsg, setModalMsg] = useState('');
+
+
+    // change popup/modal visible
+    const changeModalVisible = (b, m)=>{
+        setModalMsg(m);
+        setModalVisible(b);
+    }
+
+    // change popup/modal visible
+    const changeLoadingVisible = (b)=>{
+        setIsLoading(b);
+    }
+
+    // Function to log out the user
+    const onPressLogout = async () =>{
+        changeModalVisible(true, 'Are you sure you want to log out?');
+        try{
+            await new LogoutPresenter({getAccount: admin, setAccount: setAdmin}).logout();
+            navigation.dispatch(
+                StackActions.replace('LoginPage', null, { ...TransitionPresets.SlideFromRightIOS })
+            );
+            
+        }catch(error){
+            console.log(error);
+        }finally{
+            changeLoadingVisible(false);
+        }
+        
+        
+    }
+
+    // Reset the state when the component gains focus
+    useFocusEffect(
+        useCallback(() => {
+            // Reset state when the component gains focus
+            return () => {
+                setAdmin(route.params.admin !== undefined ? route.params.admin : null);
+                setModalVisible(false);
+                setModalMsg('Are you sure you want to log out?');
+            };
+        }, [route.params.admin])
+    );
+
+    // Options for the system admin
     const options = [
         {label: 'Account Settings', onPress: () => console.log('Account Settings')},
         {label: 'Achievements', onPress: () => console.log('Achievements')},
@@ -13,15 +65,17 @@ const SystemAdminHomePage = ({route}) => {
         {label: 'App Details', onPress: () => console.log('App Details')},
         {label: 'App Feedbacks', onPress: () => console.log('App Feedbacks')},
         {label: 'Coach Account List', onPress: () => console.log('Coach Account List')},
-        {label: 'Log Out', onPress: () => console.log('Logout')}
+        {label: 'Log Out', onPress: () => onPressLogout()}
     ];
 
     return (
         <ScrollView style = {styles.container}>
-            <View style = {styles.textContainer}>
-                <Text style = {styles.topText}>{admin.username}</Text>
-                <Text style = {styles.topText}>{admin.email}</Text>
-            </View>
+            {admin && (
+                <View style={styles.textContainer}>
+                    <Text style={styles.topText}>{admin.username}</Text>
+                    <Text style={styles.topText}>{admin.email}</Text>
+                </View>
+            )}
 
             {
                 options.map((option, index) => (
@@ -31,6 +85,17 @@ const SystemAdminHomePage = ({route}) => {
                 ))
                 
             }
+
+                <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+                    <ActionDialog
+                    message = {modalMsg}
+                    changeModalVisible = {changeModalVisible}
+                    action = {onPressLogout}
+                    />
+                </Modal>
+                <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
+                    <LoadingDialog />
+                </Modal>
 
 
             
@@ -63,7 +128,7 @@ const styles = StyleSheet.create({
     },
     buttonText:{
         fontFamily:'League-Spartan-Light',
-        fontSize: scale(20),
+        fontSize: scale(25),
         padding: scale(15),
         paddingVertical: scale(25),
 
