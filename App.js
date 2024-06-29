@@ -6,6 +6,7 @@ import { useFonts } from 'expo-font';
 import 'react-native-gesture-handler';
 
 import LoginPage from './src/view/LoginPage';
+
 import RegisterPage from './src/view/RegisterPage';
 import RegisterPage2 from './src/view/RegisterPage2';
 import RegisterPage3 from './src/view/RegisterPage3';
@@ -18,9 +19,13 @@ import AboutActiveAxisPage from './src/view/AboutActiveAxisPage';
 import AppFeaturesPage from './src/view/AppFeaturesPage';
 import AppFeedBackPage from './src/view/AppFeedbackPage';
 import UserStatisticsPage from './src/view/UserStatisticsPage';
+
 import UserHomePage from './src/view/UserHomePage';
+
 import CoachHomePage from './src/view/CoachHomePage';
+
 import SystemAdminHomePage from './src/view/SystemAdminHomePage';
+import CoachAccountListPage from './src/view/CoachAccountListPage';
 
 const Stack = createStackNavigator();
 
@@ -34,6 +39,8 @@ export default function App() {
      "Inter-Medium": require("./assets/fonts/Inter-Medium.ttf"), 
      "Fuzzy-Bubbles": require("./assets/fonts/Fuzzy-Bubbles.ttf"),
      "League-Spartan-Light": require("./assets/fonts/League-Spartan-Light.ttf"),
+     "League-Spartan": require("./assets/fonts/League-Spartan.ttf"),
+     "League-Spartan-SemiBold": require("./assets/fonts/League-Spartan-SemiBold.ttf"),
   });
 
 
@@ -62,6 +69,8 @@ export default function App() {
         
         <Stack.Screen name="UserHomePage" component={UserHomePage} />
         <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{headerShown:false}} />
+        <Stack.Screen name="CoachAccountListPage" component={CoachAccountListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS}} />
+
         <Stack.Screen name="CoachHomePage" component={CoachHomePage}   />
       </Stack.Navigator>
     </NavigationContainer>

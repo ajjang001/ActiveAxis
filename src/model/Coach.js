@@ -55,6 +55,8 @@ class Coach extends Account {
                     c.dob = data.dob;
                     c.gender = data.gender;
                     c.phoneNumber = data.phoneNumber;
+                    c.isPending = ip;
+                    c.isSuspended = is;
                     c.chargePerMonth = data.chargePerMonth;
 
                     return c;
@@ -85,6 +87,8 @@ class Coach extends Account {
             c.dob = data.dob;
             c.gender = data.gender;
             c.phoneNumber = data.phoneNumber;
+            c.isPending = data.isPending;
+            c.isSuspended = data.isSuspended;
             c.chargePerMonth = data.chargePerMonth;
 
             return c;
@@ -192,6 +196,37 @@ class Coach extends Account {
         }
         catch (e) {
             throw new Error("Failed to reset password. Please try again or contact support.");
+        }
+    }
+
+    async getCoachList() {
+        try {
+            const q = query(collection(db, 'coach'), where('isPending', '==', false));
+            const queryResult = await getDocs(q);
+            const coaches = [];
+
+            queryResult.forEach(doc => {
+                const data = doc.data();
+                const c = new Coach();
+
+                c.username = data.username;
+                c.email = data.email;
+                c.profilePicture = data.profilePicture;
+                c.fullName = data.fullName;
+                c.dob = data.dob;
+                c.gender = data.gender;
+                c.phoneNumber = data.phoneNumber;
+                c.isPending = data.isPending;
+                c.isSuspended = data.isSuspended;
+                c.chargePerMonth = data.chargePerMonth;
+
+                coaches.push({id: doc.id, coach: c});
+    
+            });
+
+            return coaches;
+        } catch (e) {
+            throw new Error(e.message);
         }
     }
 

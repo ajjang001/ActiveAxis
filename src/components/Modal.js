@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
         height:scale(110),
         backgroundColor:'white',
         borderWidth:scale(5),
-        padding:scale(15),
+        padding:scale(20),
 
         display:'flex',
         justifyContent:'center',
@@ -99,12 +99,13 @@ const styles = StyleSheet.create({
     buttonsView:{
         flexDirection:'row',
         width:scale(80),
-        height:scale(25),
+        height:scale(20),
     },
     button:{
         flex:1,
         alignItems:'center',
         backgroundColor:'#D9D9D9',
+        justifyContent:'center',
     }
     
 

@@ -63,7 +63,7 @@ const SystemAdminHomePage = ({navigation, route}) => {
         {label: 'User Account List', onPress: () => console.log('User Account List')},
         {label: 'App Details', onPress: () => console.log('App Details')},
         {label: 'App Feedbacks', onPress: () => console.log('App Feedbacks')},
-        {label: 'Coach', onPress: () => console.log('Coach')},
+        {label: 'Coach', onPress: () => navigation.navigate('CoachAccountListPage')},
         {label: 'Log Out', onPress: () => changeModalVisible(true, 'Are you sure you want to log out?')}
     ];
 
@@ -78,8 +78,8 @@ const SystemAdminHomePage = ({navigation, route}) => {
 
             {
                 options.map((option, index) => (
-                    <TouchableOpacity key={index} style = {styles.optionButton}>
-                        <Text style = {styles.buttonText} onPress = {option.onPress}>{option.label}</Text>
+                    <TouchableOpacity key={index} style = {styles.optionButton} activeOpacity={0.8} onPress = {option.onPress}>
+                        <Text style = {styles.buttonText}>{option.label}</Text>
                     </TouchableOpacity>
                 ))
                 
