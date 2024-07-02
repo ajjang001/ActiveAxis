@@ -28,21 +28,30 @@ const AccountListCard = (props)=>{
 
     return (
         <View style = {style.coachContainer}>
-            {imageURL !== '' ? <Image source={{uri: imageURL}} style = {style.coachImage}/> : <LoadingDialog />}
+            {imageURL !== '' ? <Image source={{uri: imageURL}} resizeMode='stretch' style = {style.coachImage}/> : <LoadingDialog />}
             
             
                 {account === null ? <LoadingDialog /> : 
                     <View style = {style.coachDetails}>
                         <Text style = {style.name}>{account.fullName}</Text>
-                        <Text style = {style.role}>{account.constructor.name}</Text>
+                        <Text style = {style.role}>
+                            {account.constructor.name === "Coach" ? 
+                            (account.isPending ? 
+                                `Pending Approval - ${account.constructor.name}` 
+                                : 
+                                account.constructor.name
+                            ) 
+                            : 
+                            account.constructor.name}
+                        </Text>
                         <View style ={style.optButtons}>
                             <TouchableOpacity activeOpacity={0.7} style = {{backgroundColor:'#D9D9D9'}}>
                                 <Text style={style.detailsText}>Details</Text>
                             </TouchableOpacity>
 
-                            {props.numOfButtons == 1 ? null :(
+                            {props.numOfButtons <= 1 ? null :(
                                 
-                                <TouchableOpacity activeOpacity={0.7} style = {[{width:scale(100)}, (account.isSuspended ? {backgroundColor: "#E28413"} : {backgroundColor: "#00AD3B"})]} >
+                                <TouchableOpacity onPress = { (account.isSuspended ? () => props.unsuspendHandler() : () => props.suspendHandler() ) } activeOpacity={0.7} style = {[{width:scale(100)}, (account.isSuspended ? {backgroundColor: "#E28413"} : {backgroundColor: "#00AD3B"})]} >
                                     <Text style={style.suspendText}>{account.isSuspended ? "UNSUSPEND" : "SUSPEND"}</Text>
                                 </TouchableOpacity>
                             )}

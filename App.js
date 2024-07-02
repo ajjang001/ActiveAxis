@@ -26,6 +26,8 @@ import CoachHomePage from './src/view/CoachHomePage';
 
 import SystemAdminHomePage from './src/view/SystemAdminHomePage';
 import CoachAccountListPage from './src/view/CoachAccountListPage';
+import CoachRegistrationListPage from './src/view/CoachRegistrationListPage';
+
 
 const Stack = createStackNavigator();
 
@@ -51,6 +53,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginPage">
+
         <Stack.Screen name="LoginPage" component={LoginPage} options={{headerShown:false}} />
         <Stack.Screen name="Register" component={RegisterPage} options={{title:'Back'}} />
         <Stack.Screen name="Register2" component={RegisterPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
@@ -59,6 +62,7 @@ export default function App() {
         <Stack.Screen name = "CoachRegisterPage2" component={CoachRegisterPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
 
         <Stack.Screen name="ResetPassword" component={ResetPasswordPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
+        {/*Reset Password 2 might be deleted*/}
         <Stack.Screen name="ResetPassword2" component={ResetPasswordPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         <Stack.Screen name="AboutOurApp" component={AboutOurApp} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
         <Stack.Screen name="AboutActiveAxisPage" component={AboutActiveAxisPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
@@ -70,6 +74,7 @@ export default function App() {
         <Stack.Screen name="UserHomePage" component={UserHomePage} />
         <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{headerShown:false}} />
         <Stack.Screen name="CoachAccountListPage" component={CoachAccountListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS}} />
+        <Stack.Screen name = "CoachRegistrationListPage" component={CoachRegistrationListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
 
         <Stack.Screen name="CoachHomePage" component={CoachHomePage}   />
       </Stack.Navigator>

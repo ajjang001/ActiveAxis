@@ -1,14 +1,18 @@
 import { app, auth, db, storage } from '../../.expo/api/firebase';
-import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
-import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, orderBy } from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
 
+import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
+import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt  } from "firebase/firestore";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
+import axios from 'axios';
 
 import Account from './Account';
 
 class Coach extends Account {
     #isPending;
     #chargePerMonth;
+    #certificate;
+    #id;
+    #resume;
 
 
     constructor() {
@@ -17,8 +21,16 @@ class Coach extends Account {
 
     get isPending() { return this.#isPending; }
     get chargePerMonth() { return this.#chargePerMonth; }
+    get certificate() { return this.#certificate; }
+    get id() { return this.#id; }
+    get resume() { return this.#resume; }
+
     set isPending(isPending) { this.#isPending = isPending; }
     set chargePerMonth(chargePerMonth) { this.#chargePerMonth = chargePerMonth; }
+    set certificate(certificate) { this.#certificate = certificate; }
+    set id(id) { this.#id = id; }
+    set resume(resume) { this.#resume = resume; }
+
 
     async login(email, password) {
         try {
@@ -58,6 +70,9 @@ class Coach extends Account {
                     c.isPending = ip;
                     c.isSuspended = is;
                     c.chargePerMonth = data.chargePerMonth;
+                    c.certificate = data.certificate;
+                    c.id = data.id;
+                    c.resume = data.resume;
 
                     return c;
                 }
@@ -90,6 +105,9 @@ class Coach extends Account {
             c.isPending = data.isPending;
             c.isSuspended = data.isSuspended;
             c.chargePerMonth = data.chargePerMonth;
+            c.certificate = data.certificate;
+            c.id = data.id;
+            c.resume = data.resume;
 
             return c;
 
@@ -219,6 +237,9 @@ class Coach extends Account {
                 c.isPending = data.isPending;
                 c.isSuspended = data.isSuspended;
                 c.chargePerMonth = data.chargePerMonth;
+                c.certificate = data.certificate;
+                c.id = data.id;
+                c.resume = data.resume;
 
                 coaches.push({id: doc.id, coach: c});
     
@@ -226,6 +247,112 @@ class Coach extends Account {
 
             return coaches;
         } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async search(search){
+        try{
+            
+            let q = null;
+            if(search.trim() === ''){
+                q = query(collection(db, 'coach'), where('isPending', '==', false));
+            }else{
+
+                q = query(collection(db, 'coach'), where('isPending', '==', false), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
+            }
+            
+            const queryResult = await getDocs(q);
+            const coaches = [];
+
+            
+            queryResult.forEach(doc => {
+                const data = doc.data();
+                const c = new Coach();
+
+                c.username = data.username;
+                c.email = data.email;
+                c.profilePicture = data.profilePicture;
+                c.fullName = data.fullName;
+                c.dob = data.dob;
+                c.gender = data.gender;
+                c.phoneNumber = data.phoneNumber;
+                c.isPending = data.isPending;
+                c.isSuspended = data.isSuspended;
+                c.chargePerMonth = data.chargePerMonth;
+                c.certificate = data.certificate;
+                c.id = data.id;
+                c.resume = data.resume;
+
+                coaches.push({id: doc.id, coach: c});
+    
+            });
+            return coaches;
+
+
+        }catch(e){
+            console.log(e);
+        }
+    }
+
+    async suspend(coachID){
+        try{
+            const q = doc(db, 'coach', coachID);
+            await updateDoc(q, {isSuspended: true});
+
+            const uid = coachID;
+            const res = await axios.post('http://10.33.246.244:3000/api/disable-user', { uid });
+            console.log(res.data.message);
+            
+        }catch(e){
+            throw new Error(e.message);
+        }
+    }
+
+    async unsuspend(coachID){
+        try{
+            const q = doc(db, 'coach', coachID);
+            await updateDoc(q, {isSuspended: false});
+
+            const uid = coachID;
+            const res = await axios.post('http://10.33.246.244:3000/api/enable-user', {uid});
+            console.log(res.data.message);
+        }catch(e){
+            throw new Error(e.message);
+        }
+    }
+
+    async getListOfCoachRegistration(){
+        try{
+            const q = query(collection(db, 'coach'), where('isPending', '==', true));
+            const queryResult = await getDocs(q);
+            const coaches = [];
+
+            queryResult.forEach(doc => {
+                const data = doc.data();
+                const c = new Coach();
+
+                c.username = data.username;
+                c.email = data.email;
+                c.profilePicture = data.profilePicture;
+                c.fullName = data.fullName;
+                c.dob = data.dob;
+                c.gender = data.gender;
+                c.phoneNumber = data.phoneNumber;
+                c.isPending = data.isPending;
+                c.isSuspended = data.isSuspended;
+                c.chargePerMonth = data.chargePerMonth;
+                c.certificate = data.certificate;
+                c.id = data.id;
+                c.resume = data.resume;
+
+                coaches.push({id: doc.id, coach: c});
+            });
+
+            return coaches;
+
+
+        }catch(e){
             throw new Error(e.message);
         }
     }

@@ -31,7 +31,7 @@ const SystemAdminHomePage = ({navigation, route}) => {
     const onPressLogout = async () =>{
         changeLoadingVisible(true);
         try{
-            await new LogoutPresenter({getAccount: admin, setAccount: setAdmin}).logout();
+            await new LogoutPresenter({getAccount: admin, setAccount: setAdmin}).logoutAccount();
             navigation.dispatch(
                 StackActions.replace('LoginPage', null, { ...TransitionPresets.SlideFromRightIOS })
             );

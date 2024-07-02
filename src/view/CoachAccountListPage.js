@@ -1,16 +1,40 @@
-import { View,Text, StyleSheet, TextInput, Image, ScrollView, Modal} from "react-native"
+import { View,Text, StyleSheet, TextInput, Image, ScrollView, Modal, TouchableOpacity} from "react-native"
 
 import AccountListCard from "../components/AccountListCard";
 import { scale } from "../components/scale";
 import React, { useEffect, useState } from "react";
 
-import { LoadingDialog } from "../components/Modal";
+import { LoadingDialog, MessageDialog, ActionDialog } from "../components/Modal";
 import DisplayCoachesPresenter from "../presenter/DisplayCoachesPresenter";
+import SearchCoachAccountPresenter from "../presenter/SearchCoachAccountPresenter";
+import SuspendCoachAccountPresenter from "../presenter/SuspendCoachAccountPresenter";
+import UnsuspendCoachAccountPresenter from "../presenter/UnsuspendCoachAccountPresenter";
 
-const CoachAccountListPage = ()=>{
+const CoachAccountListPage = ({navigation})=>{
     const [search, setSearch] = useState("");
     const [coaches, setCoaches] = useState([]);
+    const [selectedCoach, setSelectedCoach] = useState({});
+    const [wantSuspend, setWantSuspend] = useState(false);
+
     const [isLoading, setIsLoading] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMsg, setModalMsg] = useState('');
+    
+    const [confirmationVisible, setConfirmationVisible] = useState(false);
+    const [confirmMessage, setConfirmMessage] = useState('');
+
+
+    // change popup/modal visible
+    const changeConfirmVisible = (b, m)=>{
+        setConfirmMessage(m);
+        setConfirmationVisible(b);
+    }
+
+    // change popup/modal visible
+    const changeModalVisible = (b, m)=>{
+        setModalMsg(m);
+        setModalVisible(b);
+    }
 
     // change popup/modal visible
     const changeLoadingVisible = (b)=>{
@@ -26,12 +50,48 @@ const CoachAccountListPage = ()=>{
             throw new Error(error);
         }
     }
+
+    const searchHandler = async()=>{
+        try{
+            setCoaches([]);
+            await new SearchCoachAccountPresenter({updateCoachList: setCoaches}).searchCoachAccount(search);
+        }catch(e){
+            changeModalVisible(true, e.message);
+        }
+    }
+
+    const suspendHandler = async()=>{
+        try{
+            changeLoadingVisible(true);
+
+            await new SuspendCoachAccountPresenter(selectedCoach.coach).suspendCoach(selectedCoach.id);
+            setCoaches([]);
+            setSearch('');
+            await loadCoachList();
+        }catch(e){
+            changeModalVisible(true, e.message);
+        }finally{
+            changeLoadingVisible(false);
+        }
+    };
+
+    const unsuspendHandler = async()=>{
+        try{
+            changeLoadingVisible(true);
+            await new UnsuspendCoachAccountPresenter(selectedCoach.coach).unsuspendCoach(selectedCoach.id);
+            setCoaches([]);
+            setSearch('');
+            await loadCoachList();
+        }catch(e){
+            changeModalVisible(true, e.message);
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
     
 
     useEffect(()=>{
-        
         loadCoachList();
-        
     },[]);
 
     return(
@@ -45,17 +105,26 @@ const CoachAccountListPage = ()=>{
                 <View style = {style.topContentContainer}>
                     <View style = {style.searchBarContainer}>
                         <Image style = {style.searchLogo} source={require('../../assets/search_icon.png')} />    
-                        <TextInput onEndEditing = {()=>console.log(search)} onChangeText={setSearch} value = {search} placeholder = 'Search Coach' /> 
+                        <TextInput onEndEditing = {()=>searchHandler()} onChangeText={setSearch} value = {search} placeholder = 'Search Coach' /> 
                     </View>
                 </View>
                 <View style = {style.middleContentContainer}>
                     <ScrollView style = {style.coachListContainer} contentContainerStyle = {style.coachListContent}>
-                        {coaches.map((coach, index)=>{
+                        {coaches.length == 0 ? 
+                        <View>
+                            <Text style = {{color:'white', fontSize: scale(20)}}>No coaches found</Text>
+                        </View> 
+                        
+                        :
+
+                        coaches.map((coach, index)=>{
                             return(
                                 <AccountListCard 
                                 key = {index}
                                 numOfButtons = {2}
                                 account = {coach.coach}
+                                suspendHandler = {()=>{setSelectedCoach(coach); setWantSuspend(true) ;changeConfirmVisible(true, 'Are you sure you want to suspend this coach?')}}
+                                unsuspendHandler = {()=>{setSelectedCoach(coach); setWantSuspend(false); changeConfirmVisible(true, 'Are you sure you want to unsuspend this coach?')}}
                                 />
                             );
                         })}
@@ -67,16 +136,26 @@ const CoachAccountListPage = ()=>{
                 <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
                     <LoadingDialog />
                 </Modal>
+                <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+                    <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+                </Modal>
+                <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeConfirmVisible(false)}>
+                    <ActionDialog
+                    message = {confirmMessage}
+                    changeModalVisible = {changeConfirmVisible}
+                    action = {wantSuspend ? ()=>suspendHandler() : ()=>unsuspendHandler()}
+                    />
+                </Modal>
                 
                 <View style = {{display:'flex', alignItems:'center'}}>
                     <View style = {style.bottomContentContainer}>
-                        <View style = {style.coachRegistrationButton}>
+                        <TouchableOpacity onPress = {()=>navigation.navigate("CoachRegistrationListPage")} activeOpacity={0.7} style = {style.coachRegistrationButton}>
                             <Text style = {style.coachRegistrationText}>
                                 Coach Registration List
                             </Text>
                             <Image style = {style.rightTriangleIcon} source = {require('../../assets/right_triangle_icon.png')} />
 
-                        </View> 
+                        </TouchableOpacity> 
                     </View>
                 </View>
 
