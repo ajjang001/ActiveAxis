@@ -21,6 +21,10 @@ import UserStatisticsPage from './src/view/UserStatisticsPage';
 import UserHomePage from './src/view/UserHomePage';
 import CoachHomePage from './src/view/CoachHomePage';
 import SystemAdminHomePage from './src/view/SystemAdminHomePage';
+import SystemAdminAppDetails from './src/view/SystemAdminAppDetails';
+import SystemAdminAppFeedbacks from './src/view/SystemAdminAppFeedbacks';
+import UpdateAboutUsPage from './src/view/UpdateAboutUsPage';
+import UpdateAppFeaturesPage from './src/view/UpdateAppFeaturesPage';
 
 const Stack = createStackNavigator();
 
@@ -43,7 +47,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LoginPage">
+      <Stack.Navigator initialRouteName="SystemAdminAppDetails">
         <Stack.Screen name="LoginPage" component={LoginPage} options={{headerShown:false}} />
         <Stack.Screen name="Register" component={RegisterPage} options={{title:'Back'}} />
         <Stack.Screen name="Register2" component={RegisterPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
@@ -62,6 +66,10 @@ export default function App() {
         
         <Stack.Screen name="UserHomePage" component={UserHomePage} />
         <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{headerShown:false}} />
+        <Stack.Screen name="SystemAdminAppDetails" component={SystemAdminAppDetails} options={{headerShown:false}} />
+        <Stack.Screen name="SystemAdminAppFeedbacks" component={SystemAdminAppFeedbacks} options={{headerShown:false}} />
+        <Stack.Screen name="UpdateAboutUsPage" component={UpdateAboutUsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        <Stack.Screen name="UpdateAppFeaturesPage" component={UpdateAppFeaturesPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         <Stack.Screen name="CoachHomePage" component={CoachHomePage}   />
       </Stack.Navigator>
     </NavigationContainer>
