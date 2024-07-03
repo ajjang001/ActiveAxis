@@ -1,37 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { ref, getDownloadURL } from 'firebase/storage';
 
 import { scale } from './scale';
-import { storage } from '../../.expo/api/firebase';
 import { LoadingDialog } from './Modal';
 
 
 
 const AccountListCard = (props)=>{
     const account = props.account !== undefined ? props.account : null;
-
-        // State to store the image URL
-    const [imageURL, setImageURL] = useState('');
-
     
-
-    // Get the image URL from the storage
-    useEffect(() => {
-        const getImageURL = async (a) => {
-            const storageRef = ref(storage, a.profilePicture);
-            const url = await getDownloadURL(storageRef);
-            setImageURL(url);
-        }
-        getImageURL(account);
-    }, []);
-
     return (
         <View style = {style.coachContainer}>
-            {imageURL !== '' ? <Image source={{uri: imageURL}} resizeMode='stretch' style = {style.coachImage}/> : <LoadingDialog />}
-            
-            
                 {account === null ? <LoadingDialog /> : 
+                <>
+                <Image source={{uri: account.profilePicture}} resizeMode='stretch' style = {style.coachImage}/>
                     <View style = {style.coachDetails}>
                         <Text style = {style.name}>{account.fullName}</Text>
                         <Text style = {style.role}>
@@ -45,8 +27,14 @@ const AccountListCard = (props)=>{
                             account.constructor.name}
                         </Text>
                         <View style ={style.optButtons}>
-                            <TouchableOpacity activeOpacity={0.7} style = {{backgroundColor:'#D9D9D9'}}>
-                                <Text style={style.detailsText}>Details</Text>
+                            <TouchableOpacity onPress = {()=> props.detailsHandler()} activeOpacity={0.7} style = {{backgroundColor:'#D9D9D9'}}>
+                                <Text style={style.detailsText}>
+                                    {account.constructor.name === "Coach" ?(
+                                        account.isPending ? "Request Pending"
+                                        :
+                                        "Details"
+                                    ) : "Details"}
+                                </Text>
                             </TouchableOpacity>
 
                             {props.numOfButtons <= 1 ? null :(
@@ -58,6 +46,7 @@ const AccountListCard = (props)=>{
                             
                         </View>
                     </View>
+                    </>
                     
                 }
                 

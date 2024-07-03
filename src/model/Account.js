@@ -1,5 +1,7 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import {app, auth, db, storage} from '../../.expo/api/firebase';
+import { ref, getDownloadURL } from 'firebase/storage';
+
 
 class Account{
     _username;
@@ -50,6 +52,16 @@ class Account{
               } else {
                 throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support");
               }
+        }
+    }
+
+    async getProfilePictureURL(){
+        try{
+            const ppRef = ref(storage, this.profilePicture);
+            const ppURL = await getDownloadURL(ppRef);
+            return ppURL;
+        }catch(e){
+            throw new Error(e.message);
         }
     }
 }

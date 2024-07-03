@@ -63,7 +63,6 @@ const CoachAccountListPage = ({navigation})=>{
     const suspendHandler = async()=>{
         try{
             changeLoadingVisible(true);
-
             await new SuspendCoachAccountPresenter(selectedCoach.coach).suspendCoach(selectedCoach.id);
             setCoaches([]);
             setSearch('');
@@ -125,6 +124,7 @@ const CoachAccountListPage = ({navigation})=>{
                                 account = {coach.coach}
                                 suspendHandler = {()=>{setSelectedCoach(coach); setWantSuspend(true) ;changeConfirmVisible(true, 'Are you sure you want to suspend this coach?')}}
                                 unsuspendHandler = {()=>{setSelectedCoach(coach); setWantSuspend(false); changeConfirmVisible(true, 'Are you sure you want to unsuspend this coach?')}}
+                                detailsHandler = { ()=>{navigation.navigate('CoachDetailsPage', {coach} )} }
                                 />
                             );
                         })}

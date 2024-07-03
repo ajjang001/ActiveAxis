@@ -76,7 +76,7 @@ const RegisterPage2 = ({ navigation, route }) => {
                     <Text style={styles.label}>Phone Number</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="0000 0000"
+                        placeholder="XXXX XXXX"
                         keyboardType="phone-pad"
                         maxLength={8}
                         returnKeyType='done'

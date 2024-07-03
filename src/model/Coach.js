@@ -63,6 +63,7 @@ class Coach extends Account {
                     c.username = data.username;
                     c.email = email;
                     c.profilePicture = data.profilePicture;
+                    c.profilePicture = await c.getProfilePictureURL();
                     c.fullName = data.fullName;
                     c.dob = data.dob;
                     c.gender = data.gender;
@@ -98,6 +99,7 @@ class Coach extends Account {
             c.username = data.username;
             c.email = data.email;
             c.profilePicture = data.profilePicture;
+            c.profilePicture = await c.getProfilePictureURL();
             c.fullName = data.fullName;
             c.dob = data.dob;
             c.gender = data.gender;
@@ -223,7 +225,7 @@ class Coach extends Account {
             const queryResult = await getDocs(q);
             const coaches = [];
 
-            queryResult.forEach(doc => {
+            for (const doc of queryResult.docs){
                 const data = doc.data();
                 const c = new Coach();
 
@@ -241,9 +243,12 @@ class Coach extends Account {
                 c.id = data.id;
                 c.resume = data.resume;
 
+                // Call the superclass method and wait for the result
+                c.profilePicture = await c.getProfilePictureURL();
+
                 coaches.push({id: doc.id, coach: c});
-    
-            });
+
+            }
 
             return coaches;
         } catch (e) {
@@ -265,11 +270,9 @@ class Coach extends Account {
             const queryResult = await getDocs(q);
             const coaches = [];
 
-            
-            queryResult.forEach(doc => {
+            for (const doc of queryResult.docs){
                 const data = doc.data();
                 const c = new Coach();
-
                 c.username = data.username;
                 c.email = data.email;
                 c.profilePicture = data.profilePicture;
@@ -284,14 +287,20 @@ class Coach extends Account {
                 c.id = data.id;
                 c.resume = data.resume;
 
+                // Call the superclass method and wait for the result
+                c.profilePicture = await c.getProfilePictureURL();
+                
                 coaches.push({id: doc.id, coach: c});
     
-            });
+                
+
+            }
+            
             return coaches;
 
 
         }catch(e){
-            console.log(e);
+            throw new Error(e.message);
         }
     }
 
@@ -328,7 +337,7 @@ class Coach extends Account {
             const queryResult = await getDocs(q);
             const coaches = [];
 
-            queryResult.forEach(doc => {
+            for (const doc of queryResult.docs){
                 const data = doc.data();
                 const c = new Coach();
 
@@ -346,8 +355,13 @@ class Coach extends Account {
                 c.id = data.id;
                 c.resume = data.resume;
 
+                // Call the superclass method and wait for the result
+                c.profilePicture = await c.getProfilePictureURL();
+
                 coaches.push({id: doc.id, coach: c});
-            });
+
+            }
+
 
             return coaches;
 
@@ -356,6 +370,8 @@ class Coach extends Account {
             throw new Error(e.message);
         }
     }
+
+    
 
 }
 

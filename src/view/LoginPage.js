@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect} from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal, ActivityIndicator} from "react-native";
 import { Dropdown } from 'react-native-element-dropdown';
 import {scale} from '../components/scale';
 
 import LoginPresenter from '../presenter/LoginPresenter';
+import DisplayAboutActiveAxisPresenter from '../presenter/DisplayAboutActiveAxisPresenter';
 
 import {MessageDialog, LoadingDialog } from '../components/Modal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,6 +25,8 @@ const LoginPage = ({navigation})=>{
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
+    const [logo, setLogo] = useState(null);
+
     
     // to close dropdown
     const dropdownRef = useRef(null);
@@ -32,6 +35,17 @@ const LoginPage = ({navigation})=>{
     const changeLoadingVisible = (b)=>{
         setIsLoading(b);
     }
+
+    const loadLogo = async ()=>{
+        try{
+            changeLoadingVisible(true);
+            await new DisplayAboutActiveAxisPresenter({changeLogoURL: setLogo}).displayLogoURL();
+        }catch(e){
+            changeModalVisible(true, e.message);
+        }finally{
+            changeLoadingVisible(false);
+        }
+    };
      
     // Check User Session function
     const checkUserSession = async () =>{
@@ -52,8 +66,10 @@ const LoginPage = ({navigation})=>{
         }
     };
 
+
     // Check if User logged in
     useEffect(()=>{
+        loadLogo();
         checkUserSession();
     },[]);
 
@@ -124,7 +140,7 @@ const LoginPage = ({navigation})=>{
             
             
             <View style = {styles.topContainer}>
-                <Image style = {styles.logo} source={require('../../assets/activeaxislogo.png')} />
+                {logo === null ? <ActivityIndicator style = {styles.logo} size="large" /> : <Image style = {styles.logo} source={{uri:logo}} />}
                 <View style = {styles.redBox} />
             </View>
             

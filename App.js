@@ -27,6 +27,7 @@ import CoachHomePage from './src/view/CoachHomePage';
 import SystemAdminHomePage from './src/view/SystemAdminHomePage';
 import CoachAccountListPage from './src/view/CoachAccountListPage';
 import CoachRegistrationListPage from './src/view/CoachRegistrationListPage';
+import CoachDetailsPage from './src/view/CoachDetailsPage';
 
 
 const Stack = createStackNavigator();
@@ -75,6 +76,7 @@ export default function App() {
         <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{headerShown:false}} />
         <Stack.Screen name="CoachAccountListPage" component={CoachAccountListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS}} />
         <Stack.Screen name = "CoachRegistrationListPage" component={CoachRegistrationListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
+        <Stack.Screen name = "CoachDetailsPage" component={CoachDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
 
         <Stack.Screen name="CoachHomePage" component={CoachHomePage}   />
       </Stack.Navigator>
