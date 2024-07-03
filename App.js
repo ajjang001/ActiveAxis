@@ -53,7 +53,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LoginPage">
+      <Stack.Navigator initialRouteName="CoachAccountListPage">
 
         <Stack.Screen name="LoginPage" component={LoginPage} options={{headerShown:false}} />
         <Stack.Screen name="Register" component={RegisterPage} options={{title:'Back'}} />

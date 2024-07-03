@@ -1,7 +1,7 @@
 import { app, auth, db, storage } from '../../.expo/api/firebase';
 
 import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
-import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt  } from "firebase/firestore";
+import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, deleteDoc  } from "firebase/firestore";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import axios from 'axios';
 
@@ -326,6 +326,14 @@ class Coach extends Account {
             const uid = coachID;
             const res = await axios.post('http://10.33.246.244:3000/api/enable-user', {uid});
             console.log(res.data.message);
+        }catch(e){
+            throw new Error(e.message);
+        }
+    }
+
+    async delete(coachID){
+        try{
+
         }catch(e){
             throw new Error(e.message);
         }
