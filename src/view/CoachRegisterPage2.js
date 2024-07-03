@@ -68,7 +68,7 @@ const CoachRegisterPage2 = ({ navigation, route }) => {
                         onChangeText={text => setName(text)}
                         style={styles.input}
                     />
-                    <Text style={styles.label}>Phone Number (SG +65 only!)</Text>
+                    <Text style={styles.label}>Phone Number</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="XXXX XXXX"

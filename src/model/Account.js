@@ -1,5 +1,7 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import {app, auth, db, storage} from '../../.expo/api/firebase';
+import { ref, getDownloadURL } from 'firebase/storage';
+
 
 class Account{
     _username;
@@ -9,6 +11,7 @@ class Account{
     _dob;
     _gender;
     _phoneNumber;
+    _isSuspended;
 
     constructor() {
         if(this.constructor === Account){
@@ -23,6 +26,7 @@ class Account{
     get dob(){return this._dob;}
     get gender(){return this._gender;}
     get phoneNumber(){return this._phoneNumber;}
+    get isSuspended(){return this._isSuspended;}
 
     set username(username){this._username = username;}
     set email(email){this._email = email;}
@@ -31,6 +35,7 @@ class Account{
     set dob(dob){this._dob = dob;}
     set gender(gender){this._gender = gender;}
     set phoneNumber(phoneNumber){this._phoneNumber = phoneNumber;}
+    set isSuspended(isSuspended){this._isSuspended = isSuspended;}
 
     async authenticate(email, password){
         try{
@@ -47,6 +52,16 @@ class Account{
               } else {
                 throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support");
               }
+        }
+    }
+
+    async getProfilePictureURL(){
+        try{
+            const ppRef = ref(storage, this.profilePicture);
+            const ppURL = await getDownloadURL(ppRef);
+            return ppURL;
+        }catch(e){
+            throw new Error(e.message);
         }
     }
 }

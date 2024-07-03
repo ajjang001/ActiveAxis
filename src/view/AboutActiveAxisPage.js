@@ -1,33 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, Modal, ActivityIndicator } from 'react-native';
 import DisplayAboutActiveAxisPresenter from '../presenter/DisplayAboutActiveAxisPresenter';
+
+import {LoadingDialog} from '../components/Modal';
 
 const AboutActiveAxisPage = () => {
   const [about, setAbout] = useState([]);
   const [logoURL, setLogoURL] = useState('');
 
+  const [isLoading, setIsLoading] = useState(true);
+    
+  // change popup/modal visible
+  const changeLoadingVisible = (b)=>{
+      setIsLoading(b);
+  }
+
+  const loadData = async () => {
+    try{
+      changeLoadingVisible(true);
+      await new DisplayAboutActiveAxisPresenter({changeAbout: setAbout}).displayAboutActiveAxis();
+      await new DisplayAboutActiveAxisPresenter({changeLogoURL: setLogoURL}).displayLogoURL();
+    }catch(error){
+        console.error(error);
+    }finally{
+        changeLoadingVisible(false);
+    }
+    
+  }
+
   useEffect(() => {
-    const presenter = new DisplayAboutActiveAxisPresenter({ changeAbout, changeLogoURL });
-    presenter.displayAboutActiveAxis();
-    presenter.displayLogoURL();
+    loadData();
   }, []);
-
-  const changeAbout = (aboutData) => {
-    setAbout(aboutData);
-  };
-
-  const changeLogoURL = (url) => {
-    setLogoURL(url);
-  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>About ActiveAxis</Text>
-      {logoURL ? <Image source={{ uri: logoURL }} style={styles.logo} /> : null}
+      {logoURL ? <Image source={{ uri: logoURL }} style={styles.logo} /> : <ActivityIndicator style = {styles.logo} size = 'large' />}
       <View style={styles.divider} />
       {about.map((paragraph, index) => (
         <Text key={index} style={styles.paragraph}>{paragraph.trim()}</Text>
       ))}
+
+      <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
+          <LoadingDialog />
+      </Modal>
     </ScrollView>
   );
 };

@@ -24,6 +24,7 @@ const AppFeedBackPage = () => {
     presenter.loadFeedbacks();
   }, []);
 
+
   // change popup/modal visible
   const changeLoadingVisible = (b)=>{
     setLoading(b);

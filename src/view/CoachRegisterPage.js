@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal, Image } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { Dropdown } from 'react-native-element-dropdown';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
@@ -48,7 +48,7 @@ const CoachRegisterPage = ({ navigation }) => {
   }
 
   const UploadField = ({ label, file, onSelect }) => (
-    <View style={styles.uploadField}>
+    <View>
       <Text style={styles.label}>{label}</Text>
       <TouchableOpacity onPress={onSelect} style={styles.uploadButton}>
        {file ? (
@@ -60,6 +60,7 @@ const CoachRegisterPage = ({ navigation }) => {
           Upload your {label.toLowerCase()} here
         </Text>
       )}
+      <Image style = {styles.uploadIcon} source = {require("../../assets/upload_icon.png")} />
       </TouchableOpacity>
     </View>
   );
@@ -163,7 +164,7 @@ const CoachRegisterPage = ({ navigation }) => {
           <UploadField label="Photo" file={photo} onSelect={handleSelectPhoto} />
           <UploadField label="Resume" file={resume} onSelect={() => handleSelectDocument(setResume)} />
           <UploadField label="Certificate" file={certificate} onSelect={() => handleSelectDocument(setCertificate)} />
-          <UploadField label="Identification (e.g. NRIC)" file={identification} onSelect={() => handleSelectDocument(setIdentification)} />
+          <UploadField label="Identification" file={identification} onSelect={() => handleSelectDocument(setIdentification)} />
 
         </View>
         <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={() => changeModalVisible(false)}>
@@ -305,7 +306,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
-    alignItems: 'flex-start',
+    flexDirection:'row',
+    alignItems: 'center',
+    justifyContent:'space-between',
     width: '100%',
   },
   uploadButtonText: {
@@ -316,5 +319,9 @@ const styles = StyleSheet.create({
     color: 'black',
     width: '100%',
   },
+  uploadIcon:{
+    height:scale(15), 
+    width:(15)
+  }
 
 });
