@@ -1,5 +1,5 @@
 import {app, db, storage, auth} from '../../.expo/api/firebase';
-import {getDocs, collection} from 'firebase/firestore';
+import {getDocs, collection, doc, updateDoc} from 'firebase/firestore';
 import { getDownloadURL, ref } from "firebase/storage";
 
 class AppInfo {
@@ -35,7 +35,28 @@ class AppInfo {
         throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support");
       }
     }
-  
+    
+    async updateAboutActiveAxis(about){
+      try {
+        const querySnapshot = await getDocs(collection(db, "appinfo"));
+        const docId = querySnapshot.docs[0].id; // Assuming there's only one document
+        const docRef = doc(db, "appinfo", docId);
+        await updateDoc(docRef, { about });
+      } catch (e) {
+        throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support");
+      }
+    }
+
+    async updateFunctionsFeatures(newFeatures){
+      try {
+        const querySnapshot = await getDocs(collection(db, "appinfo"));
+        const docId = querySnapshot.docs[0].id; // Assuming there's only one document
+        const docRef = doc(db, "appinfo", docId);
+        await updateDoc(docRef, { features: newFeatures });
+      } catch (e) {
+        throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support");
+      }
+    }
   }
   
   export default AppInfo;

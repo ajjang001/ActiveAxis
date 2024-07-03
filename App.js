@@ -29,6 +29,10 @@ import CoachAccountListPage from './src/view/CoachAccountListPage';
 import CoachRegistrationListPage from './src/view/CoachRegistrationListPage';
 import CoachDetailsPage from './src/view/CoachDetailsPage';
 
+import SystemAdminAppDetails from './src/view/SystemAdminAppDetails';
+import SystemAdminAppFeedbacks from './src/view/SystemAdminAppFeedbacks';
+import UpdateAboutUsPage from './src/view/UpdateAboutUsPage';
+import UpdateAppFeaturesPage from './src/view/UpdateAppFeaturesPage';
 
 const Stack = createStackNavigator();
 
@@ -55,6 +59,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="CoachAccountListPage">
 
+      <Stack.Navigator initialRouteName="SystemAdminAppDetails">
         <Stack.Screen name="LoginPage" component={LoginPage} options={{headerShown:false}} />
         <Stack.Screen name="Register" component={RegisterPage} options={{title:'Back'}} />
         <Stack.Screen name="Register2" component={RegisterPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
@@ -78,6 +83,10 @@ export default function App() {
         <Stack.Screen name = "CoachRegistrationListPage" component={CoachRegistrationListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
         <Stack.Screen name = "CoachDetailsPage" component={CoachDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
 
+        <Stack.Screen name="SystemAdminAppDetails" component={SystemAdminAppDetails} options={{headerShown:false}} />
+        <Stack.Screen name="SystemAdminAppFeedbacks" component={SystemAdminAppFeedbacks} options={{headerShown:false}} />
+        <Stack.Screen name="UpdateAboutUsPage" component={UpdateAboutUsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        <Stack.Screen name="UpdateAppFeaturesPage" component={UpdateAppFeaturesPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         <Stack.Screen name="CoachHomePage" component={CoachHomePage}   />
       </Stack.Navigator>
     </NavigationContainer>
