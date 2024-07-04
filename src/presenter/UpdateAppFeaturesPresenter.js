@@ -3,11 +3,12 @@ import AppInfo from '../model/AppInfo.js';
 class UpdateAppFeaturesPresenter{
     constructor(view){
         this.view = view;
+        this.appInfo = new AppInfo();
     }
 
     async displayAppFeatures(){
         try{
-            const features = await new AppInfo().getFunctionsFeatures();
+            const features = await this.appInfo.getFunctionsFeatures();
             this.view.changeFeatures(features);
         }catch(error){
             console.error(error);
@@ -16,7 +17,7 @@ class UpdateAppFeaturesPresenter{
 
     async updateAppFeatures(newFeatures){
         try{
-          await new AppInfo().updateFunctionsFeatures(newFeatures);
+          await this.appInfo.updateFunctionsFeatures(newFeatures);
         }catch(error){
           console.error(error);
           throw error;

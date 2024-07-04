@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, ScrollView, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { scale } from '../components/scale';
 
 const SystemAdminAppDetails= ({ navigation }) => {
   const handlePress = (label) => {
@@ -12,15 +13,15 @@ const SystemAdminAppDetails= ({ navigation }) => {
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
+      
         <TouchableOpacity style={[styles.button, { backgroundColor: 'rgba(186, 0, 0, 0.2)' }]} onPress={() => handlePress('About ActiveAxis')}>
           <Text style={styles.buttonText}>About ActiveAxis</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.button, { backgroundColor: 'rgba(0, 117, 255, 0.2)' }]} onPress={() => handlePress('Functions & Features')}>
           <Text style={styles.buttonText}>Functions & Features</Text>
         </TouchableOpacity>
-      </View>
+      
     </ScrollView>
   );
 };
@@ -38,14 +39,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FBF5F3', // Background color of the entire view
-    padding: 10,
-    marginTop: 250,
+    padding: scale(10),
+    paddingBottom: scale(75),
   },
   button: {
     width: '90%',
-    padding: 20,
-    paddingVertical: 70,
-    marginVertical: 10,
+    padding: scale(20),
+    paddingVertical: scale(70),
+    marginVertical: scale(10),
     borderRadius: 15,
     borderWidth: 4,
     borderColor: '#000000',
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: scale(20),
     fontWeight: 'bold',
     color: '#000000',
   },

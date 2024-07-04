@@ -3,11 +3,12 @@ import Coach from '../model/Coach.js';
 class DisplayCoachesPresenter{
     constructor(view){
         this.view = view;
+        this.coach = new Coach();
     }
 
     async displayCoaches(){
         try{
-            this.view.updateCoachList(await new Coach().getCoachList());
+            this.view.updateCoachList(await this.coach.getCoachList());
         }catch(error){
             throw new Error(error);
         }

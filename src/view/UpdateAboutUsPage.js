@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TextInput, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
 import UpdateAboutUsPresenter from '../presenter/UpdateAboutUsPresenter';
+import { LoadingDialog } from '../components/Modal';
+import { scale } from '../components/scale';
 
 const UpdateAboutUsPage = () => {
     const [about, setAbout] = useState([]);
@@ -8,11 +10,26 @@ const UpdateAboutUsPage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedAbout, setEditedAbout] = useState([]);
 
-    useEffect(() => {
-        const presenter = new UpdateAboutUsPresenter({ changeAbout, changeLogoURL });
-        presenter.displayAboutActiveAxis();
-        presenter.displayLogoURL();
-    }, []);
+    const [isLoading, setIsLoading] = useState(false);
+    
+    // change popup/modal visible
+    const changeLoadingVisible = (b)=>{
+        setIsLoading(b);
+    }
+
+
+    const loadPage = async () => {
+        try{
+            changeLoadingVisible(true);
+            const presenter = new UpdateAboutUsPresenter({ changeAbout, changeLogoURL });
+            await presenter.displayAboutActiveAxis();
+            await presenter.displayLogoURL();
+        }catch(error){
+            console.error("Error loading page: ", error);
+        }finally{
+            changeLoadingVisible(false);
+        }
+    };
 
     const changeAbout = (aboutData) => {
         setAbout(aboutData);
@@ -44,79 +61,95 @@ const UpdateAboutUsPage = () => {
         setEditedAbout(newEditedAbout);
     };
 
+    useEffect(() => {
+        loadPage();
+    }, []);
+
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <TouchableOpacity onPress={isEditing ? handleSave : handleEdit} style={styles.button}>
                 <Text style={styles.buttonText}>{isEditing ? 'Save' : 'Edit'}</Text>
             </TouchableOpacity>
             <Text style={styles.title}>About ActiveAxis</Text>
-            {logoURL ? <Image source={{ uri: logoURL }} style={styles.logo} /> : null}
+            {logoURL ? <Image source={{ uri: logoURL }} style={styles.logo} /> : <ActivityIndicator size='large' color='blue' style={styles.logo} />}
             <View style={styles.divider} />
-            {isEditing ? (
-                editedAbout.map((paragraph, index) => (
-                    <TextInput
-                        key={index}
-                        style={styles.paragraphInput}
-                        value={paragraph}
-                        onChangeText={(text) => handleTextChange(text, index)}
-                        multiline
-                    />
-                ))
-            ) : (
-                about.map((paragraph, index) => (
-                    <Text key={index} style={styles.paragraph}>{paragraph.trim()}</Text>
-                ))
-            )}
+            <View style = {styles.paragraphView}>
+                {isEditing ? (
+                    editedAbout.map((paragraph, index) => (
+                        <TextInput
+                            key={index}
+                            style={styles.paragraphInput}
+                            value={paragraph}
+                            onChangeText={(text) => handleTextChange(text, index)}
+                            multiline
+                        />
+                    ))
+                ) : (
+                    about.map((paragraph, index) => (
+                        <Text key={index} style={styles.paragraph}>{paragraph.trim()}</Text>
+                    ))
+                )}
+            </View>
+
+            <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
+                <LoadingDialog />
+            </Modal>
         </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
+        flexGrow: scale(1),
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20,
-        paddingTop: -20,
+        padding: scale(20),
+        paddingTop: scale(-20),
         backgroundColor: '#FBF5F3',
     },
     title: {
-        fontSize: 24,
+        fontSize: scale(30),
         fontWeight: 'bold',
-        marginVertical: 20,
+        marginVertical: scale(20),
         alignSelf: 'center',
     },
     logo: {
-        width: 100,
-        height: 100,
-        marginBottom: 20,
+        width: scale(140),
+        height: scale(140),
+        borderRadius: scale(20),
+        marginBottom: scale(20),
     },
     divider: {
         width: '90%',
-        height: 5,
+        height: scale(5),
         backgroundColor: '#C42847',
-        marginVertical: 20,
+        marginVertical: scale(20),
+    },
+    paragraphView:{
+        width: '90%',
+        alignItems: 'center',
     },
     paragraph: {
-        fontSize: 16,
+        fontSize: scale(16),
         textAlign: 'left',
-        marginBottom: 10,
+        marginBottom: scale(10),
     },
     paragraphInput: {
-        fontSize: 16,
+        fontSize: scale(16),
         textAlign: 'left',
-        marginBottom: 10,
+        marginBottom: scale(10),
         borderWidth: 1,
         borderColor: '#C42847',
-        padding: 10,
+        padding: scale(10),
         borderRadius: 5,
         width: '100%',
     },
     button: {
         backgroundColor: '#C42847',
-        padding: 10,
+        padding: scale(10),
         borderRadius: 5,
-        marginTop: 20,
+        marginTop: scale(20),
         alignSelf: 'flex-end',
     },
     buttonText: {

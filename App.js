@@ -57,9 +57,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="CoachAccountListPage">
-
-      <Stack.Navigator initialRouteName="SystemAdminAppDetails">
+      <Stack.Navigator initialRouteName="LoginPage">
         <Stack.Screen name="LoginPage" component={LoginPage} options={{headerShown:false}} />
         <Stack.Screen name="Register" component={RegisterPage} options={{title:'Back'}} />
         <Stack.Screen name="Register2" component={RegisterPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
@@ -83,8 +81,8 @@ export default function App() {
         <Stack.Screen name = "CoachRegistrationListPage" component={CoachRegistrationListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
         <Stack.Screen name = "CoachDetailsPage" component={CoachDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
 
-        <Stack.Screen name="SystemAdminAppDetails" component={SystemAdminAppDetails} options={{headerShown:false}} />
-        <Stack.Screen name="SystemAdminAppFeedbacks" component={SystemAdminAppFeedbacks} options={{headerShown:false}} />
+        <Stack.Screen name="SystemAdminAppDetails" component={SystemAdminAppDetails} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
+        <Stack.Screen name="SystemAdminAppFeedbacks" component={SystemAdminAppFeedbacks} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
         <Stack.Screen name="UpdateAboutUsPage" component={UpdateAboutUsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         <Stack.Screen name="UpdateAppFeaturesPage" component={UpdateAppFeaturesPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         <Stack.Screen name="CoachHomePage" component={CoachHomePage}   />

@@ -61,8 +61,8 @@ const SystemAdminHomePage = ({navigation, route}) => {
         {label: 'Account Settings', onPress: () => console.log('Account Settings')},
         {label: 'Achievements', onPress: () => console.log('Achievements')},
         {label: 'User Account List', onPress: () => console.log('User Account List')},
-        {label: 'App Details', onPress: () => console.log('App Details')},
-        {label: 'App Feedbacks', onPress: () => console.log('App Feedbacks')},
+        {label: 'App Details', onPress: () => navigation.navigate('SystemAdminAppDetails')},
+        {label: 'App Feedbacks', onPress: () => navigation.navigate('SystemAdminAppFeedbacks')},
         {label: 'Coach', onPress: () => navigation.navigate('CoachAccountListPage')},
         {label: 'Log Out', onPress: () => changeModalVisible(true, 'Are you sure you want to log out?')}
     ];

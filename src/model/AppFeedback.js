@@ -38,7 +38,7 @@ class AppFeedback{
         this.profilePicture = profilePicture;
       }
     
-      static async fetchFeedbacks() {
+      async fetchFeedbacks() {
         try {
           // Fetch feedbacks
           const feedbacksCollection = collection(db, 'appfeedback');

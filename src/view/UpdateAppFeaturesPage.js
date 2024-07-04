@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import UpdateAppFeaturesPresenter from '../presenter/UpdateAppFeaturesPresenter';
 import { MessageDialog, LoadingDialog } from '../components/Modal';
+import { scale } from '../components/scale';
 
 const UpdateAppFeaturesPage = () => {
   const [features, setFeatures] = useState([]);
@@ -102,50 +103,50 @@ const UpdateAppFeaturesPage = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 20,
+    padding: scale(20),
     backgroundColor: '#FBF5F3',
   },
   title: {
-    fontSize: 24,
+    fontSize: scale(24),
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: scale(20),
     textAlign: 'center',
     alignSelf: 'center',
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
   textInput: {
     flex: 1,
     backgroundColor: '#D3D3D3',
-    padding: 10,
-    marginLeft: 20,
-    marginRight: 20,
+    padding: scale(10),
+    marginLeft: scale(20),
+    marginRight: scale(20),
   },
   textContainer: {
     flex: 1,
     backgroundColor: '#D3D3D3',
-    padding: 10,
-    marginLeft: 20,
-    marginRight: 20,
+    padding: scale(10),
+    marginLeft: scale(20),
+    marginRight: scale(20),
   },
   text: {
-    fontSize: 15,
-    marginLeft: 20,
+    fontSize: scale(15),
+    marginLeft: scale(20),
     fontFamily: 'Inter',
   },
   button: {
     backgroundColor: '#C42847',
-    padding: 10,
+    padding: scale(10),
     borderRadius: 5,
-    marginTop: 20,
+    marginTop: scale(20),
     alignSelf: 'flex-end',
 },
   buttonText: {
     color: '#FFF',
-    fontSize: 16,
+    fontSize: scale(16),
     fontWeight: 'bold',
   },
 });

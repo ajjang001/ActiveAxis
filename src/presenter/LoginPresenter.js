@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 class LoginPresenter{
     constructor(view){
         this.view = view;
+        this.loginAccount = null;
     }
 
     async processLogin(email, password, loginType){
@@ -23,19 +24,19 @@ class LoginPresenter{
         }else{
             try{
                 // Call the model to login the user
-                let loginAccount;
+                
                 switch(loginType){
                     case "u":
-                        loginAccount = new User();
+                        this.loginAccount = new User();
                         break;
                     case "c":
-                        loginAccount = new Coach();
+                        this.loginAccount = new Coach();
                         break;
                     case "a":
-                        loginAccount = new SystemAdmin();
+                        this.loginAccount = new SystemAdmin();
                         break;
                 }
-                const loginResult = await loginAccount.login(email, password);
+                const loginResult = await this.loginAccount.login(email, password);
 
                 // Save the login result to AsyncStorage for persistence
                 if(loginResult instanceof User || loginResult instanceof Coach){ 

@@ -4,6 +4,7 @@ import Coach from '../model/Coach';
 class RegisterPresenter {
   constructor(view) {
     this.view = view;
+    this.account = null;
   }
 
   async processProfiling(gender, dob, weight, height, goal, level, medicalCheck) {
@@ -33,7 +34,7 @@ class RegisterPresenter {
     // To if name is in valid format
     const namePattern = /^[a-zA-Z\s]+$/;
     // To if phone number is 8 digits
-    const phonePattern = /^\d{8}$/;
+    const phonePattern = /^\+65\d{8}$/;
 
     if (name.trim() === '' || email.trim() === '' || phone.trim() === '' || password.trim() === '') {
       // Check if all fields are filled
@@ -57,8 +58,8 @@ class RegisterPresenter {
     else {
       try {
         // Call the model to register the user
-        const user = new User();
-        await user.register(name.trim(), email.trim(), phone.trim(), password, gender, dob, parseFloat(weight), parseFloat(height), goal, level, medicalCheck);
+        this.account = new User();
+        await this.account.register(name.trim(), email.trim(), phone.trim(), password, gender, dob, parseFloat(weight), parseFloat(height), goal, level, medicalCheck);
 
       } catch (e) {
         // Throw error message
@@ -120,8 +121,8 @@ class RegisterPresenter {
     else {
       try {
         // Call the model to register the coach
-        const coach = new Coach();
-        await coach.register(name.trim(), email.trim(), phone.trim(), password, gender, dob, parseFloat(chargePM), photo, resume, certificate, identification);
+        this.account = new Coach();
+        await this.account.register(name.trim(), email.trim(), phone.trim(), password, gender, dob, parseFloat(chargePM), photo, resume, certificate, identification);
 
       } catch (e) {
         // Throw error message

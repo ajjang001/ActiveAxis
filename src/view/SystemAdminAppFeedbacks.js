@@ -3,6 +3,7 @@ import { StyleSheet, Text, Modal, ScrollView } from 'react-native';
 import FeedbackCard from '../components/FeedbackCard';
 import DisplayFeedbacksPresenter from '../presenter/DisplayFeedbacksPresenter';
 import { LoadingDialog } from '../components/Modal';
+import {scale} from '../components/scale';
 
 const SystemAdminAppFeedbacks = () => {
   const [feedback, setFeedback] = useState([]);
@@ -57,16 +58,16 @@ const SystemAdminAppFeedbacks = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 20,
+    paddingVertical: scale(20),
     backgroundColor: '#FBF5F3',
   },
   contentContainer:{
     alignItems: 'center',
   },
   title: {
-    fontSize: 24,
+    fontSize: scale(30),
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
   loadingContainer: {
     flex: 1,
