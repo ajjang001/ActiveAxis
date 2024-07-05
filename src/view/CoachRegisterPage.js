@@ -83,7 +83,7 @@ const CoachRegisterPage = ({ navigation }) => {
   const handleSelectDocument = async (setter) => {
     try {
       const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images, DocumentPicker.types.pdf],
+        type: [DocumentPicker.types.images],
       });
       setter({ uri: res[0].uri, name: res[0].name });
     } catch (err) {

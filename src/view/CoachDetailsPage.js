@@ -18,6 +18,18 @@ const CoachDetailsPage = ({route}) => {
 
     const [loading, setLoading] = useState(true);
 
+    const [dob, setDob] = useState(null);
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+
+    const convertToDate = (firebaseTimestamp) =>{
+        const date = firebaseTimestamp.toDate();
+        return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+    }
+
+    
+
      // change popup/modal visible
     const changeLoadingVisible = (b)=>{
         setLoading(b);
@@ -35,7 +47,9 @@ const CoachDetailsPage = ({route}) => {
     };
 
 
+
     useEffect(() => {
+        setDob(convertToDate(coach.coach.dob));
         loadFeedbacks();
       }, []);
 
@@ -59,13 +73,20 @@ const CoachDetailsPage = ({route}) => {
                     <View style = {styles.pictureContainer}>
                         <Image source={{uri: coach.coach.profilePicture}} resizeMode='stretch' style = {styles.coachImage}/>
                     </View>
-                    
+
                     <Text style = {styles.detailsTitle}>Name</Text>
                     <Text style = {styles.detailsText}>{coach.coach.fullName}</Text>
                     <Text style = {styles.detailsTitle}>Email</Text>
                     <Text style = {styles.detailsText}>{coach.coach.email}</Text>
                     <Text style = {styles.detailsTitle}>Phone Number</Text>
                     <Text style = {styles.detailsText}>{coach.coach.phoneNumber}</Text>
+                    <Text style = {styles.detailsTitle}>Gender</Text>
+                    <Text style = {styles.detailsText}>{coach.coach.gender === 'm' ? "Male" : "Female"}</Text>
+                    <Text style = {styles.detailsTitle}>Date of Birth</Text>
+                    <Text style = {styles.detailsText}>{dob}</Text>
+                    <Text style = {styles.detailsTitle}>Charge per Month</Text>
+                    <Text style = {styles.detailsText}>{`S$ ${coach.coach.chargePerMonth.toFixed(2)}`}</Text>
+                
                 </View>
                 <View style = {styles.filterView}>
                     {starFilter.map((star)=>(
@@ -137,8 +158,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     coachImage:{
-        width: scale(150),
-        height: scale(150),
+        width: scale(125),
+        height: scale(125),
         marginHorizontal: scale(25),
         backgroundColor:'white',
         borderRadius: scale(75),

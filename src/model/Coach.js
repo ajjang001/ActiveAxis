@@ -2,7 +2,7 @@ import { app, auth, db, storage } from '../../.expo/api/firebase';
 
 import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
 import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, deleteDoc  } from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import axios from 'axios';
 
 import Account from './Account';
@@ -72,7 +72,7 @@ class Coach extends Account {
                     c.isSuspended = is;
                     c.chargePerMonth = data.chargePerMonth;
                     c.certificate = data.certificate;
-                    c.id = data.id;
+                    c.id = data.photoID;
                     c.resume = data.resume;
 
                     return c;
@@ -108,7 +108,7 @@ class Coach extends Account {
             c.isSuspended = data.isSuspended;
             c.chargePerMonth = data.chargePerMonth;
             c.certificate = data.certificate;
-            c.id = data.id;
+            c.id = data.photoID;
             c.resume = data.resume;
 
             return c;
@@ -160,7 +160,7 @@ class Coach extends Account {
               };
 
             // Folder path
-            const folderPath = `coach_registration/${email.split('@')[0]}/`;
+            const folderPath = `coach/${email.split('@')[0]}/`;
 
 
             // Upload files to Firebase Storage
@@ -232,6 +232,7 @@ class Coach extends Account {
                 c.username = data.username;
                 c.email = data.email;
                 c.profilePicture = data.profilePicture;
+                c.profilePicture = await c.getProfilePictureURL();
                 c.fullName = data.fullName;
                 c.dob = data.dob;
                 c.gender = data.gender;
@@ -240,11 +241,10 @@ class Coach extends Account {
                 c.isSuspended = data.isSuspended;
                 c.chargePerMonth = data.chargePerMonth;
                 c.certificate = data.certificate;
-                c.id = data.id;
+                c.id = data.photoID;
                 c.resume = data.resume;
 
-                // Call the superclass method and wait for the result
-                c.profilePicture = await c.getProfilePictureURL();
+                
 
                 coaches.push({id: doc.id, coach: c});
 
@@ -276,6 +276,7 @@ class Coach extends Account {
                 c.username = data.username;
                 c.email = data.email;
                 c.profilePicture = data.profilePicture;
+                c.profilePicture = await c.getProfilePictureURL();
                 c.fullName = data.fullName;
                 c.dob = data.dob;
                 c.gender = data.gender;
@@ -284,11 +285,10 @@ class Coach extends Account {
                 c.isSuspended = data.isSuspended;
                 c.chargePerMonth = data.chargePerMonth;
                 c.certificate = data.certificate;
-                c.id = data.id;
+                c.id = data.photoID;
                 c.resume = data.resume;
 
-                // Call the superclass method and wait for the result
-                c.profilePicture = await c.getProfilePictureURL();
+                
                 
                 coaches.push({id: doc.id, coach: c});
     
@@ -310,7 +310,7 @@ class Coach extends Account {
             await updateDoc(q, {isSuspended: true});
 
             const uid = coachID;
-            const res = await axios.post('http://10.33.246.244:3000/api/disable-user', { uid });
+            const res = await axios.post('http://10.93.19.181:3000/api/disable-user', { uid });
             console.log(res.data.message);
             
         }catch(e){
@@ -324,20 +324,13 @@ class Coach extends Account {
             await updateDoc(q, {isSuspended: false});
 
             const uid = coachID;
-            const res = await axios.post('http://10.33.246.244:3000/api/enable-user', {uid});
+            const res = await axios.post('http://10.93.19.181:3000/api/enable-user', {uid});
             console.log(res.data.message);
         }catch(e){
             throw new Error(e.message);
         }
     }
 
-    async delete(coachID){
-        try{
-
-        }catch(e){
-            throw new Error(e.message);
-        }
-    }
 
     async getListOfCoachRegistration(){
         try{
@@ -352,6 +345,7 @@ class Coach extends Account {
                 c.username = data.username;
                 c.email = data.email;
                 c.profilePicture = data.profilePicture;
+                c.profilePicture = await c.getProfilePictureURL();
                 c.fullName = data.fullName;
                 c.dob = data.dob;
                 c.gender = data.gender;
@@ -360,11 +354,10 @@ class Coach extends Account {
                 c.isSuspended = data.isSuspended;
                 c.chargePerMonth = data.chargePerMonth;
                 c.certificate = data.certificate;
-                c.id = data.id;
+                c.id = data.photoID;
                 c.resume = data.resume;
 
-                // Call the superclass method and wait for the result
-                c.profilePicture = await c.getProfilePictureURL();
+                
 
                 coaches.push({id: doc.id, coach: c});
 
@@ -372,6 +365,80 @@ class Coach extends Account {
 
 
             return coaches;
+
+
+        }catch(e){
+            throw new Error(e.message);
+        }
+    }
+
+    async getDocuments(){
+        try{
+            const resumeRef = ref(storage, this.resume);
+            const certRef = ref(storage, this.certificate);
+            const idRef = ref(storage, this.id);
+
+            const resumeURL = await getDownloadURL(resumeRef);
+            const certURL = await getDownloadURL(certRef);
+            const idURL = await getDownloadURL(idRef);
+
+
+
+
+
+            return { resumeURL, certURL, idURL};
+        }catch(e){
+            throw new Error(e.message);
+        }
+    }
+
+    async approveCoach(coachID){
+        try{
+            const fullnameArr = this.fullName.split(' ');
+            let username = '';
+            for (let i = 1; i < fullnameArr.length; i++){
+                username += fullnameArr[i].charAt(0).toLowerCase();
+            }
+            username += fullnameArr[0].toLowerCase() + '_';
+
+            const q = query(collection(db, 'coach'), orderBy('username'), startAt(username), endAt(username + '\uf8ff'));
+            const queryResult = await getDocs(q);
+
+            if(queryResult.empty){
+                username += '1';
+            }else{
+
+                let i = 1;
+                let isFound = false;
+                for(const doc of queryResult.docs){
+                    const data = doc.data();
+                    const checkName = username + i;
+                    if(checkName !== data.username){
+                        username = checkName;
+                        isFound = true;
+                        break;
+                    }
+                    i++;
+                }
+
+                if(!isFound){
+                    username += i;
+                }
+
+
+
+            }
+
+            const coachRef = doc(db, 'coach', coachID);
+            await updateDoc(coachRef, {
+                isPending: false, 
+                username: username
+            });
+
+            
+            
+
+            
 
 
         }catch(e){

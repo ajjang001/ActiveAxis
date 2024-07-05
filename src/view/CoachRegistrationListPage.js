@@ -7,7 +7,7 @@ import DisplayCoachRegistrationPresenter from '../presenter/DisplayCoachRegistra
 import { scale } from '../components/scale';
 import { LoadingDialog, MessageDialog, ActionDialog } from '../components/Modal';
 
-const CoachRegistrationListPage = () =>{
+const CoachRegistrationListPage = ({route, navigation}) =>{
     const [coaches, setCoaches] = useState([]);
 
     
@@ -36,17 +36,7 @@ const CoachRegistrationListPage = () =>{
         setIsLoading(b);
     }
 
-    // const deleteUser = async () => {
-    //     try {
-    //         const uid = "VqcAdzQTf1VEL6O1zL4HuxQ0Qah1";
-    //         const res = await axios.post('http://192.168.1.74:3000/api/delete-user', { uid });
-    //         console.log(res.data.message);
-    //     } catch (error) {
-    //       console.error('Error deleting user:', error);
-    //       setResponse('Error deleting user');
-    //     }
-    //   };
-
+   
     const loadCoachRegistrationList = async () => {
         try{
             changeLoadingVisible(true);
@@ -58,13 +48,16 @@ const CoachRegistrationListPage = () =>{
     }
 
     useEffect(()=>{
+        if (route.params?.refresh){
+            loadCoachRegistrationList();
+            route.params.refresh = false;
+        }
+    },[route.params?.refresh]);
+
+    useEffect(()=>{
         loadCoachRegistrationList();  
     }, []);
 
-    // useEffect(()=>{
-    //     deleteUser();
-    // }, []);
-    
     return (
         <View style = {styles.container}>
             <View style = {styles.headerView}>
@@ -93,6 +86,7 @@ const CoachRegistrationListPage = () =>{
                                     key = {index}
                                     numOfButtons = {1}
                                     account = {coach.coach}
+                                    detailsHandler = {()=>{navigation.navigate('CoachRegistrationDetailsPage',{coach})}}
                                     />
                                 );
                             })}
