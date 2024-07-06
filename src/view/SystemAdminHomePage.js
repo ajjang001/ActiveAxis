@@ -58,7 +58,7 @@ const SystemAdminHomePage = ({navigation, route}) => {
 
     // Options for the system admin
     const options = [
-        {label: 'Account Settings', onPress: () => console.log('Account Settings')},
+        {label: 'Account Settings', onPress: () => navigation.navigate('AccountSettingPage', {admin}) },
         {label: 'Achievements', onPress: () => console.log('Achievements')},
         {label: 'User Account List', onPress: () => console.log('User Account List')},
         {label: 'App Details', onPress: () => navigation.navigate('SystemAdminAppDetails')},
