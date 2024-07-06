@@ -10,7 +10,7 @@ import SearchCoachAccountPresenter from "../presenter/SearchCoachAccountPresente
 import SuspendCoachAccountPresenter from "../presenter/SuspendCoachAccountPresenter";
 import UnsuspendCoachAccountPresenter from "../presenter/UnsuspendCoachAccountPresenter";
 
-const CoachAccountListPage = ({navigation})=>{
+const CoachAccountListPage = ({route, navigation})=>{
     const [search, setSearch] = useState("");
     const [coaches, setCoaches] = useState([]);
     const [selectedCoach, setSelectedCoach] = useState({});
@@ -87,6 +87,13 @@ const CoachAccountListPage = ({navigation})=>{
             changeLoadingVisible(false);
         }
     }
+
+    useEffect(()=>{
+        if (route.params?.refresh){
+            loadCoachList();
+            route.params.refresh = false;
+        }
+    },[route.params?.refresh]);
     
 
     useEffect(()=>{

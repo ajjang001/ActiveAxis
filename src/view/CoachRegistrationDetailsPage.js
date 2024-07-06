@@ -112,22 +112,22 @@ const CoachRegistrationDetailsPage = ({navigation, route}) => {
                 <Text style = {styles.detailsText}>{`S$ ${coach.coach.chargePerMonth.toFixed(2)}`}</Text>
 
                 <Text style = {styles.detailsTitle}>Photo</Text>
-                <TouchableOpacity onPress = {()=>{const pp = coach.coach.profilePicture;navigation.navigate('PhotoViewer', {photo: pp})}}>
+                <TouchableOpacity onPress = {()=>{const pp = coach.coach.profilePicture;  navigation.navigate('PhotoViewer', {photo: pp})}}>
                     <Text style = {styles.detailsText}>Tap here to view</Text>
                 </TouchableOpacity>
 
                 <Text style = {styles.detailsTitle}>Resume</Text>
-                <TouchableOpacity onPress = {()=>{navigation.navigate('PhotoViewer', {photo: resume})}}>
+                <TouchableOpacity onPress = {()=>{ navigation.navigate('PhotoViewer', {photo: resume})}}>
                     <Text style = {styles.detailsText}>Tap here to view</Text>
                 </TouchableOpacity>
 
                 <Text style = {styles.detailsTitle}>Certificate</Text>
-                <TouchableOpacity onPress = {()=>{navigation.navigate('PhotoViewer', {photo: certificate})}}>
+                <TouchableOpacity onPress = {()=>{ navigation.navigate('PhotoViewer', {photo: certificate})}}>
                     <Text style = {styles.detailsText}>Tap here to view</Text>
                 </TouchableOpacity>
 
                 <Text style = {styles.detailsTitle}>Identification</Text>
-                <TouchableOpacity  onPress = {()=>{navigation.navigate('PhotoViewer', {photo: identification})}}>
+                <TouchableOpacity  onPress = {()=>{ navigation.navigate('PhotoViewer', {photo: identification})}}>
                     <Text style = {styles.detailsText}>Tap here to view</Text>
                 </TouchableOpacity>
             </View>

@@ -74,18 +74,24 @@ const CoachRegisterPage = ({ navigation }) => {
       } else {
         const asset = response.assets[0];
         const uri = asset.uri;
-        const name = asset.fileName || uri.split('/').pop();
+        let name = asset.fileName || uri.split('/').pop();
+        const ext = name.split('.').pop();
+        name = `photo.${ext}`;
         setPhoto({ uri, name });
       }
     });
   };
 
-  const handleSelectDocument = async (setter) => {
+  const handleSelectDocument = async (setter, type) => {
     try {
+      
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.images],
       });
+      const ext = res[0].name.split('.').pop() || res[0].uri.split('.').pop();
+      res[0].name = `${type}.${ext}`;
       setter({ uri: res[0].uri, name: res[0].name });
+      
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('User cancelled document picker');
@@ -162,9 +168,9 @@ const CoachRegisterPage = ({ navigation }) => {
           />
 
           <UploadField label="Photo" file={photo} onSelect={handleSelectPhoto} />
-          <UploadField label="Resume" file={resume} onSelect={() => handleSelectDocument(setResume)} />
-          <UploadField label="Certificate" file={certificate} onSelect={() => handleSelectDocument(setCertificate)} />
-          <UploadField label="Identification" file={identification} onSelect={() => handleSelectDocument(setIdentification)} />
+          <UploadField label="Resume" file={resume} onSelect={() => handleSelectDocument(setResume, "resume")} />
+          <UploadField label="Certificate" file={certificate} onSelect={() => handleSelectDocument(setCertificate, "certificate")} />
+          <UploadField label="Identification" file={identification} onSelect={() => handleSelectDocument(setIdentification, "identification")} />
 
         </View>
         <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={() => changeModalVisible(false)}>

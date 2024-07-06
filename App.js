@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet} from 'react-native';
+import { StyleSheet, TouchableOpacity} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets  } from '@react-navigation/stack';
 import { useFonts } from 'expo-font';
+import {Ionicons} from '@expo/vector-icons';
 import 'react-native-gesture-handler';
 
 import LoginPage from './src/view/LoginPage';
@@ -81,7 +82,16 @@ export default function App() {
         <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{headerShown:false}} />
         <Stack.Screen name="CoachAccountListPage" component={CoachAccountListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS}} />
         <Stack.Screen name = "CoachDetailsPage" component={CoachDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
-        <Stack.Screen name = "CoachRegistrationListPage" component={CoachRegistrationListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
+        <Stack.Screen name = "CoachRegistrationListPage" component={CoachRegistrationListPage} options={({navigation}) =>({
+            title:'Back', 
+            headerStyle:{backgroundColor:'#FBF5F3'}, 
+            headerLeft:()=>(
+              <TouchableOpacity onPress={() => navigation.navigate('CoachAccountListPage', {refresh:true})}>
+                <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: 15 }} />
+              </TouchableOpacity>
+            ),
+            ...TransitionPresets.SlideFromRightIOS })} 
+        />
         <Stack.Screen name = "CoachRegistrationDetailsPage" component={CoachRegistrationDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
         <Stack.Screen name = "PhotoViewer" component={PhotoViewer} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
 

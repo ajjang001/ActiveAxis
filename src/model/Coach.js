@@ -184,7 +184,7 @@ class Coach extends Account {
                 phoneNumber: phone,
                 profilePicture: photoPath,
                 resume: resumePath,
-                identification: idPath,
+                photoID: idPath,
                 username: null,
             });
 
@@ -381,6 +381,7 @@ class Coach extends Account {
             const resumeURL = await getDownloadURL(resumeRef);
             const certURL = await getDownloadURL(certRef);
             const idURL = await getDownloadURL(idRef);
+
 
 
 

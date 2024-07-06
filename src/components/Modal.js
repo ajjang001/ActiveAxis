@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     },
     modal:{
         width:scale(300),
-        height:scale(110),
+        height:scale(125),
         backgroundColor:'white',
         borderWidth:scale(5),
         padding:scale(20),
