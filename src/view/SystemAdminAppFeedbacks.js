@@ -6,9 +6,11 @@ import { LoadingDialog } from '../components/Modal';
 import {scale} from '../components/scale';
 
 const SystemAdminAppFeedbacks = () => {
+  // state variables
   const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(true);
   
+  // load feedbacks
   const presenter = new DisplayFeedbacksPresenter({
     displayFeedbacks: (data) => {
       setFeedback(data);
@@ -20,6 +22,7 @@ const SystemAdminAppFeedbacks = () => {
     },
   });
 
+  // load feedbacks presenter
   useEffect(() => {
     setLoading(true);
     presenter.loadFeedbacks();

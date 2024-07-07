@@ -8,6 +8,7 @@ class AppInfo {
 
     async getAboutActiveAxis(){
       try{
+        // Get the about Active Axis
         const querySnapshot = await getDocs(collection(db, "appinfo"));
         const about = querySnapshot.docs[0].data().about;
         return about;
@@ -18,6 +19,7 @@ class AppInfo {
 
     async getLogoURL() {
       try {
+        // Get the logo URL
         const logoRef = ref(storage, 'assets/actaxislogo.png');
         const logoURL = await getDownloadURL(logoRef);
         return logoURL;
@@ -28,6 +30,7 @@ class AppInfo {
 
     async getFunctionsFeatures(){
       try{
+        // Get the features
         const querySnapshot = await getDocs(collection(db, "appinfo"));
         const features = querySnapshot.docs[0].data().features;
         return features;
@@ -38,6 +41,7 @@ class AppInfo {
     
     async updateAboutActiveAxis(about){
       try {
+        // Update the about Active Axis
         const querySnapshot = await getDocs(collection(db, "appinfo"));
         const docId = querySnapshot.docs[0].id; // Assuming there's only one document
         const docRef = doc(db, "appinfo", docId);
@@ -49,6 +53,7 @@ class AppInfo {
 
     async updateFunctionsFeatures(newFeatures){
       try {
+        // Update the features
         const querySnapshot = await getDocs(collection(db, "appinfo"));
         const docId = querySnapshot.docs[0].id; // Assuming there's only one document
         const docRef = doc(db, "appinfo", docId);

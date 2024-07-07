@@ -8,9 +8,11 @@ import { LoadingDialog, MessageDialog, ActionDialog } from "../components/Modal"
 
 import DisplayUsersPresenter from "../presenter/DisplayUsersPresenter";
 import SearchUserAccountPresenter from "../presenter/SearchUserAccountPresenter";
+import SuspendUserAccountPresenter from "../presenter/SuspendUserAccountPresenter";
+import UnsuspendUserAccountPresenter from "../presenter/UnsuspendUserAccountPresenter";
 
 const ListOfUserAccountsPage = ({route, navigation}) =>{
-
+    // state variables
     const [search, setSearch] = useState("");
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState({});
@@ -40,6 +42,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
         setIsLoading(b);
     }
 
+    // load user list
     const loadUserList = async()=>{
         try{
             changeLoadingVisible(true);
@@ -50,6 +53,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
         }
     }
 
+    // search user account
     const searchHandler = async()=>{
         try{
             changeLoadingVisible(true);
@@ -62,13 +66,14 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
         }
     }
 
+    // suspend user account
     const suspendHandler = async()=>{
         try{
             changeLoadingVisible(true);
-            //await new SuspendCoachAccountPresenter(selectedCoach.coach).suspendCoach(selectedCoach.id);
+            await new SuspendUserAccountPresenter(selectedUser.user).suspendUser(selectedUser.id);
             setUsers([]);
             setSearch('');
-            //await loadCoachList();
+            await loadUserList();
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
@@ -76,13 +81,14 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
         }
     };
 
+    // unsuspend user account
     const unsuspendHandler = async()=>{
         try{
             changeLoadingVisible(true);
-            //await new UnsuspendCoachAccountPresenter(selectedCoach.coach).unsuspendCoach(selectedCoach.id);
+            await new UnsuspendUserAccountPresenter(selectedUser.user).unsuspendUser(selectedUser.id);
             setUsers([]);
             setSearch('');
-            //await loadCoachList();
+            await loadUserList();
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
@@ -90,6 +96,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
         }
     }
 
+    // refresh user list
     useEffect(()=>{
         if (route.params?.refresh){
             loadUserList();
@@ -97,6 +104,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
         }
     },[route.params?.refresh]);
 
+    // load user list
     useEffect(()=>{
         loadUserList();
     },[]);

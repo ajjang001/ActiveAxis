@@ -6,14 +6,17 @@ import { LoadingDialog } from '../components/Modal';
 import ResetPasswordPresenter from '../presenter/ResetPasswordPresenter';
 
 const ResetPasswordPage = ({ navigation }) => {
-
+    // state variables
     const [email, setEmail] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
 
+    // Function to change the visibility of the modal
     const changeLoadingVisible = (b) => {
         setIsLoading(b);
     }
+
+    // Function to reset the password
     const processResetPassword = async (email) => {
         try {
             changeLoadingVisible(true);
@@ -27,6 +30,7 @@ const ResetPasswordPage = ({ navigation }) => {
             changeLoadingVisible(false);
         }
     };
+    
     return (
         <KeyboardAvoidingView
             style={styles.container}

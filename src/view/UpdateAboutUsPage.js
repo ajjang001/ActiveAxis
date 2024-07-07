@@ -5,6 +5,7 @@ import { LoadingDialog } from '../components/Modal';
 import { scale } from '../components/scale';
 
 const UpdateAboutUsPage = () => {
+    // state variables
     const [about, setAbout] = useState([]);
     const [logoURL, setLogoURL] = useState('');
     const [isEditing, setIsEditing] = useState(false);
@@ -18,10 +19,12 @@ const UpdateAboutUsPage = () => {
     }
 
 
+    // load page
     const loadPage = async () => {
         try{
             changeLoadingVisible(true);
             const presenter = new UpdateAboutUsPresenter({ changeAbout, changeLogoURL });
+            // load about and logo
             await presenter.displayAboutActiveAxis();
             await presenter.displayLogoURL();
         }catch(error){
@@ -31,19 +34,23 @@ const UpdateAboutUsPage = () => {
         }
     };
 
+    // change about 
     const changeAbout = (aboutData) => {
         setAbout(aboutData);
         setEditedAbout(aboutData);
     };
 
+    // change logo url
     const changeLogoURL = (url) => {
         setLogoURL(url);
     };
 
+    // handle edit
     const handleEdit = () => {
         setIsEditing(true);
     };
 
+    // handle save
     const handleSave = async () => {
         try {
             setIsEditing(false);
@@ -55,12 +62,14 @@ const UpdateAboutUsPage = () => {
         }
     };
 
+    // handle text change
     const handleTextChange = (text, index) => {
         const newEditedAbout = [...editedAbout];
         newEditedAbout[index] = text;
         setEditedAbout(newEditedAbout);
     };
 
+    // load page on component mount
     useEffect(() => {
         loadPage();
     }, []);

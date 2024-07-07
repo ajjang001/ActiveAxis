@@ -12,6 +12,7 @@ const CoachRegisterPage2 = ({ navigation, route }) => {
 
     const { gender, dob, chargePM, photo, resume, certificate, identification } = route.params;
 
+    // state variables
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
@@ -25,6 +26,7 @@ const CoachRegisterPage2 = ({ navigation, route }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
 
+    // change loading visible
     const changeLoadingVisible = (b) => {
         setIsLoading(b);
     }

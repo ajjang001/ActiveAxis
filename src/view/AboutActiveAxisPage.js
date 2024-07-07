@@ -15,6 +15,7 @@ const AboutActiveAxisPage = () => {
       setIsLoading(b);
   }
 
+  // load data
   const loadData = async () => {
     try{
       changeLoadingVisible(true);
@@ -28,6 +29,7 @@ const AboutActiveAxisPage = () => {
     
   }
 
+  // load data
   useEffect(() => {
     loadData();
   }, []);

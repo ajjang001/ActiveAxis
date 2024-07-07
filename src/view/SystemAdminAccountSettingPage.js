@@ -8,14 +8,17 @@ import UpdateAccountDetailsPresenter from '../presenter/UpdateAccountDetailsPres
 const SystemAdminAccountSettingPage = ({ navigation, route }) => {
 
     const { admin } = route.params;
+
     const email = admin.email;
     // State to control the visibility of the modal
     const [isLoading, setIsLoading] = useState(false);
 
+    // Function to change the visibility of the modal
     const changeLoadingVisible = (b) => {
         setIsLoading(b);
     }
 
+    // Function to update the account details
     const updateAccount = async (email) => {
         try {
             changeLoadingVisible(true);

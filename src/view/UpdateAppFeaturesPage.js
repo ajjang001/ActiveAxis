@@ -5,12 +5,14 @@ import { MessageDialog, LoadingDialog } from '../components/Modal';
 import { scale } from '../components/scale';
 
 const UpdateAppFeaturesPage = () => {
+  // state variables
   const [features, setFeatures] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [modalMsg, setModalMsg] = useState('');
   const [isEditing, setIsEditing] = useState(false);
 
+  // load features
   useEffect(() => {
     const fetchFeatures = async () => {
       setLoading(true);
@@ -26,16 +28,19 @@ const UpdateAppFeaturesPage = () => {
     fetchFeatures();
   }, []);
 
+  // handle feature change
   const handleFeatureChange = (text, index) => {
     const newFeatures = [...features];
     newFeatures[index] = text;
     setFeatures(newFeatures);
   };
 
+  // handle edit
   const handleEdit = () => {
     setIsEditing(true);
   };
 
+  // handle save
   const handleSave = async () => {
     setLoading(true);
     try {
@@ -60,6 +65,7 @@ const UpdateAppFeaturesPage = () => {
     setIsModalVisible(b);
   };
 
+  // render loading dialog
   if (loading) {
     return (
       <Modal transparent={true} animationType='fade' visible={loading} onRequestClose={() => changeLoadingVisible(false)}>

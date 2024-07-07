@@ -57,6 +57,7 @@ class Account{
 
     async getProfilePictureURL(){
         try{
+            // Get the profile picture URL
             const ppRef = ref(storage, this.profilePicture);
             const ppURL = await getDownloadURL(ppRef);
             return ppURL;

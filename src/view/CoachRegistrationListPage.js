@@ -8,9 +8,8 @@ import { scale } from '../components/scale';
 import { LoadingDialog, MessageDialog, ActionDialog } from '../components/Modal';
 
 const CoachRegistrationListPage = ({route, navigation}) =>{
+    // state variables
     const [coaches, setCoaches] = useState([]);
-
-    
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');

@@ -5,9 +5,11 @@ import DisplayAppFeedbacksPresenter from '../presenter/DisplayAppFeedbacksPresen
 import { LoadingDialog } from '../components/Modal';
 
 const AppFeedBackPage = () => {
+  // State to store the image URL
   const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(true);
   
+  // load feedbacks
   const presenter = new DisplayAppFeedbacksPresenter({
     displayFeedback: (data) => {
       setFeedback(data);
@@ -19,6 +21,7 @@ const AppFeedBackPage = () => {
     },
   });
 
+  // load feedbacks
   useEffect(() => {
     setLoading(true);
     presenter.loadFeedbacks();
@@ -30,6 +33,7 @@ const AppFeedBackPage = () => {
     setLoading(b);
 }
 
+// loading dialog
   if (loading) {
     return (
       <Modal transparent={true} animationType='fade' visible={loading} nRequestClose={()=>changeLoadingVisible(false)}>

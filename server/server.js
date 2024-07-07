@@ -21,7 +21,7 @@ app.get('/api/data', async (req, res) => {
   res.json(data);
 });
 
-app.post('/api/disable-user', async (req, res) => {
+app.post('/api/disable-account', async (req, res) => {
   const { uid } = req.body;
 
   try {
@@ -36,7 +36,7 @@ app.post('/api/disable-user', async (req, res) => {
   }
 });
 
-app.post('/api/enable-user', async (req, res) => {
+app.post('/api/enable-account', async (req, res) => {
   const { uid } = req.body;
 
   try {
@@ -52,7 +52,7 @@ app.post('/api/enable-user', async (req, res) => {
 });
 
 
-app.post('/api/delete-user', async (req, res) => {
+app.post('/api/delete-account', async (req, res) => {
   const { uid } = req.body;
 
   try {

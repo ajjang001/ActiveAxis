@@ -12,17 +12,17 @@ import { MessageDialog } from '../components/Modal';
 import RegisterPresenter from '../presenter/RegisterPresenter';
 
 const CoachRegisterPage = ({ navigation }) => {
+  // state variables
   const genderData = [
     { label: 'Male', value: 'm' },
     { label: 'Female', value: 'f' },
   ];
 
+  // state variables
   const [gender, setGender] = useState('');
   const [dob, setDob] = useState('');
   const [chargePM, setChargePM] = useState('');
-
   const [open, setOpen] = useState(false)
-
   const [photo, setPhoto] = useState(null);
   const [resume, setResume] = useState(null);
   const [certificate, setCertificate] = useState(null);
@@ -32,6 +32,7 @@ const CoachRegisterPage = ({ navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
 
+  // format date
   const formatDate = (date) => {
     if (!date) return "";
     return date.toLocaleDateString('en-US', {
@@ -47,6 +48,7 @@ const CoachRegisterPage = ({ navigation }) => {
     setIsModalVisible(b);
   }
 
+  // Upload Field
   const UploadField = ({ label, file, onSelect }) => (
     <View>
       <Text style={styles.label}>{label}</Text>
@@ -65,6 +67,7 @@ const CoachRegisterPage = ({ navigation }) => {
     </View>
   );
 
+  // handle select photo
   const handleSelectPhoto = () => {
     launchImageLibrary({ mediaType: 'photo' }, (response) => {
       if (response.didCancel) {
@@ -82,6 +85,7 @@ const CoachRegisterPage = ({ navigation }) => {
     });
   };
 
+  //  handle select document
   const handleSelectDocument = async (setter, type) => {
     try {
       
@@ -101,6 +105,7 @@ const CoachRegisterPage = ({ navigation }) => {
     }
   };
 
+  // process profiling coach
   const processProfilingCoach = async (gender, dob, chargePM, photo, resume, certificate, identification) => {
     try {
       // Call the presenter to process the profiling

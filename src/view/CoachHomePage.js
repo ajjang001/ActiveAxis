@@ -10,6 +10,7 @@ const CoachHomePage = ({route}) => {
     const {coach} = route.params;
     const [imageURL, setImageURL] = React.useState('');
 
+    // get image url
     useEffect(() => {
         const getImageURL = async (c) => {
             const storageRef = ref(storage, c.profilePicture);

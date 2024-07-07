@@ -1,6 +1,7 @@
 import { app, auth, db, storage } from '../../.expo/api/firebase';
-import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, orderBy, startAt, endAt } from "firebase/firestore";
+import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, orderBy, startAt, endAt, updateDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
+import axios from 'axios';
 import Account from './Account';
 
 class User extends Account{
@@ -207,8 +208,11 @@ class User extends Account{
 
     async resetPassword(email) {
         try {
+            // Check if the email exists
             const q = query(collection(db, 'user'), where('email', '==', email));
             const queryResult = await getDocs(q);
+
+            // Send password reset email
             if (queryResult.empty == true) {
                 throw new Error("There is no account associated with that email.");
             }
@@ -223,6 +227,7 @@ class User extends Account{
 
     async getUserList() {
         try {
+            // Get all users
             const q = query(collection(db, 'user'), orderBy('fullName'));
             const queryResult = await getDocs(q);
             const users = [];
@@ -262,7 +267,7 @@ class User extends Account{
 
     async search(search) {
         try {
-
+            // Search for users by name 
             let q = null;
             if (search.trim() === '') {
                 q = query(collection(db, 'user'), orderBy('fullName'));
@@ -295,14 +300,40 @@ class User extends Account{
                 u.fitnessLevel = data.fitnessLevel;
                 u.restInterval = data.restInterval;
 
-
-
+                // Add user to the list
                 users.push({ id: doc.id, user: u });
             }
 
             return users;
 
 
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+    
+    async suspend(userID) {
+        try {
+            // Suspend the user account
+            const q = doc(db, 'user', userID);
+            await updateDoc(q, { isSuspended: true });
+
+            const res = await axios.post('http://192.168.1.74:3000/api/disable-account', { uid: userID });
+            console.log(res.data.message);
+
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async unsuspend(userID) {
+        try {
+            // Unsuspend the user account
+            const q = doc(db, 'user', userID);
+            await updateDoc(q, { isSuspended: false });
+
+            const res = await axios.post('http://192.168.1.74:3000/api/enable-account', { uid: userID });
+            console.log(res.data.message);
         } catch (e) {
             throw new Error(e.message);
         }

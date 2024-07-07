@@ -58,8 +58,10 @@ class SystemAdmin{
 
     async resetPassword(email) {
         try {
+            // Check if the email exists
             const q = query(collection(db, 'systemadmin'), where('email', '==', email));
             const queryResult = await getDocs(q);
+            
             if (queryResult.empty == true) {
                 throw new Error("There is no account associated with that email.");
             }

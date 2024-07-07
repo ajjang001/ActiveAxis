@@ -10,8 +10,7 @@ import RejectCoachPresenter from "../presenter/RejectCoachPresenter";
 const CoachRegistrationDetailsPage = ({navigation, route}) => {
     const {coach} = route.params;
 
-    const [isLoading, setIsLoading] = useState(false);
-    
+    // state variables
     const [dob, setDob] = useState(null);
     const [resume, setResume] = useState(null);
     const [certificate, setCertificate] = useState(null);
@@ -20,8 +19,9 @@ const CoachRegistrationDetailsPage = ({navigation, route}) => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-
+    // month names
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
       ];
@@ -37,13 +37,14 @@ const CoachRegistrationDetailsPage = ({navigation, route}) => {
         setModalMsg(m);
         setModalVisible(b);
     }
-    
 
+    // convert firebase timestamp to date
     const convertToDate = (firebaseTimestamp) =>{
         const date = firebaseTimestamp.toDate();
         return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
     }
 
+    // load documents
     const loadDocuments = async () => {
         try{
             changeLoadingVisible(true);
@@ -55,6 +56,7 @@ const CoachRegistrationDetailsPage = ({navigation, route}) => {
         }
     };
 
+    // process request
     const processRequest = async () => {
         try{
             changeLoadingVisible(true);
@@ -71,6 +73,7 @@ const CoachRegistrationDetailsPage = ({navigation, route}) => {
         }
     };
 
+    // load documents and dob
     useEffect(() => {
         setDob(convertToDate(coach.coach.dob));
         loadDocuments();

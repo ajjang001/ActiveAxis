@@ -14,27 +14,27 @@ const CoachDetailsPage = ({route}) => {
     // State to store the image URL
     const [feedback, setFeedback] = useState([]);
     const [selectedStar, setSelectedStar] = useState(5);
-    const starFilter = [5, 4, 3, 2, 1];
-
     const [loading, setLoading] = useState(true);
-
     const [dob, setDob] = useState(null);
+
+    // star filter
+    const starFilter = [5, 4, 3, 2, 1];
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
       ];
 
+      // convert firebase timestamp to date
     const convertToDate = (firebaseTimestamp) =>{
         const date = firebaseTimestamp.toDate();
         return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
     }
-
-    
 
      // change popup/modal visible
     const changeLoadingVisible = (b)=>{
         setLoading(b);
     }
 
+    // load feedbacks
     const loadFeedbacks = async () => {
         try{
             changeLoadingVisible(true);
@@ -46,8 +46,7 @@ const CoachDetailsPage = ({route}) => {
         }
     };
 
-
-
+    // load feedbacks and dob
     useEffect(() => {
         setDob(convertToDate(coach.coach.dob));
         loadFeedbacks();

@@ -60,7 +60,7 @@ const SystemAdminHomePage = ({navigation, route}) => {
     const options = [
         {label: 'Account Settings', onPress: () => navigation.navigate('SystemAdminAccountSettingPage', {admin}) },
         {label: 'Achievements', onPress: () => console.log('Achievements')},
-        {label: 'User Account List', onPress: () => navigation.navigate('ListOfUserAccountsPage')},
+        {label: 'User Account List', onPress: () => navigation.navigate('UserAccountListPage')},
         {label: 'App Details', onPress: () => navigation.navigate('SystemAdminAppDetails')},
         {label: 'App Feedbacks', onPress: () => navigation.navigate('SystemAdminAppFeedbacks')},
         {label: 'Coach', onPress: () => navigation.navigate('CoachAccountListPage')},

@@ -11,6 +11,8 @@ import SuspendCoachAccountPresenter from "../presenter/SuspendCoachAccountPresen
 import UnsuspendCoachAccountPresenter from "../presenter/UnsuspendCoachAccountPresenter";
 
 const CoachAccountListPage = ({route, navigation})=>{
+
+    // state to store the search input
     const [search, setSearch] = useState("");
     const [coaches, setCoaches] = useState([]);
     const [selectedCoach, setSelectedCoach] = useState({});
@@ -41,6 +43,7 @@ const CoachAccountListPage = ({route, navigation})=>{
         setIsLoading(b);
     }
 
+    // load coach list
     const loadCoachList = async()=>{
         try{
             changeLoadingVisible(true);

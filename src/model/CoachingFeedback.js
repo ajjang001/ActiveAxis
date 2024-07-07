@@ -31,10 +31,12 @@ class CoachingFeedback{
 
     async getCoachFeedbacks(coachID){
         try{
+            // Get all feedbacks for a coach
             const feedbacks = [];
             const q = query (collection(db, 'coachingfeedback'), where('coachID', '==', coachID));
             const queryResult = await getDocs(q);
 
+            
             for(const d of queryResult.docs){
                 const data = d.data();
                 const docRef = doc(db, 'user', data.userID);
@@ -42,7 +44,8 @@ class CoachingFeedback{
 
                 const profilePicRef = ref(storage, docSnap.data().profilePicture);
                 const userProfilePicture = await getDownloadURL(profilePicRef);
-
+                
+                
                 feedbacks.push({fullName: docSnap.data().fullName, profilePicture: userProfilePicture, rating: data.rating, feedbackText: data.feedbackText});
             }
             

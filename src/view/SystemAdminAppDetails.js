@@ -3,7 +3,9 @@ import { View, ScrollView, Text, TouchableOpacity, StyleSheet } from 'react-nati
 import { scale } from '../components/scale';
 
 const SystemAdminAppDetails= ({ navigation }) => {
+  // handle button press
   const handlePress = (label) => {
+    // navigate to the selected page
     if (label === 'About ActiveAxis') {
       navigation.navigate('UpdateAboutUsPage');
     }

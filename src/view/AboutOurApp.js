@@ -2,6 +2,7 @@ import React from 'react';
 import { View, ScrollView, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const AboutOurApp = ({ navigation }) => {
+  // Function to handle button press
   const handlePress = (label) => {
     if (label === 'About ActiveAxis') {
       navigation.navigate('AboutActiveAxisPage');
