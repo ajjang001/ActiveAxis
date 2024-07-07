@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal, Alert } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
-import { LoadingDialog } from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
 import ResetPasswordPresenter from '../presenter/ResetPasswordPresenter';
 
 const ResetPasswordPage = ({ navigation }) => {
@@ -20,7 +20,6 @@ const ResetPasswordPage = ({ navigation }) => {
     const processResetPassword = async (email) => {
         try {
             changeLoadingVisible(true);
-            console.log({ email })
             await new ResetPasswordPresenter().processResetPassword(email);
             Alert.alert("Kindly check your email to reset your password!");
             navigation.navigate('LoginPage')

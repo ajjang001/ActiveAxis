@@ -2,13 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, Modal, ScrollView } from 'react-native';
 import FeedbackCard from '../components/FeedbackCard';
 import DisplayFeedbacksPresenter from '../presenter/DisplayFeedbacksPresenter';
-import { LoadingDialog } from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
+
 import {scale} from '../components/scale';
 
 const SystemAdminAppFeedbacks = () => {
   // state variables
   const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
+
+  // change popup/modal visible
+  const changeModalVisible = (b, m)=>{
+    setModalMsg(m);
+    setModalVisible(b);
+  }
   
   // load feedbacks
   const presenter = new DisplayFeedbacksPresenter({
@@ -17,7 +26,7 @@ const SystemAdminAppFeedbacks = () => {
       setLoading(false);
     },
     displayError: (message) => {
-      console.error(message);
+      changeModalVisible(true, message);
       setLoading(false);
     },
   });
@@ -53,7 +62,10 @@ const SystemAdminAppFeedbacks = () => {
         feedback={feedbackItem.feedbackText}
       />
     ))}
-    
+
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+        <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+      </Modal>
     </ScrollView>
   );
 };

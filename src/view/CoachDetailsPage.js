@@ -4,7 +4,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Modal, Act
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { scale } from '../components/scale';
-import { LoadingDialog } from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
 import FeedbackCard from '../components/FeedbackCard';
 import DisplayCoachDetailsPresenter from '../presenter/DisplayCoachDetailsPresenter';
 
@@ -15,6 +15,8 @@ const CoachDetailsPage = ({route}) => {
     const [feedback, setFeedback] = useState([]);
     const [selectedStar, setSelectedStar] = useState(5);
     const [loading, setLoading] = useState(true);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMsg, setModalMsg] = useState('');
     const [dob, setDob] = useState(null);
 
     // star filter
@@ -33,6 +35,13 @@ const CoachDetailsPage = ({route}) => {
     const changeLoadingVisible = (b)=>{
         setLoading(b);
     }
+    
+    // change popup/modal visible
+    const changeModalVisible = (b, m)=>{
+        setModalMsg(m);
+        setModalVisible(b);
+    }
+    
 
     // load feedbacks
     const loadFeedbacks = async () => {
@@ -40,7 +49,7 @@ const CoachDetailsPage = ({route}) => {
             changeLoadingVisible(true);
             await new DisplayCoachDetailsPresenter({updateFeedback: setFeedback, coachID: coach.id}).displayCoachFeedbacks(selectedStar);
         }catch(error){
-            console.error(error);
+            changeModalVisible(true, error.message);
         }finally{
             changeLoadingVisible(false);
         }
@@ -64,6 +73,9 @@ const CoachDetailsPage = ({route}) => {
 
             <Modal transparent={true} animationType='fade' visible={loading} nRequestClose={()=>changeLoadingVisible(false)}>
                 <LoadingDialog />
+            </Modal>
+            <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+                <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
             </Modal>
 
             <ScrollView contentContainerStyle = {styles.contentContainer}>

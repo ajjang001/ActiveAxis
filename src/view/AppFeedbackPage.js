@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, Modal, ScrollView } from 'react-native';
 import FeedbackCard from '../components/FeedbackCard';
 import DisplayAppFeedbacksPresenter from '../presenter/DisplayAppFeedbacksPresenter';
-import { LoadingDialog } from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
 
 const AppFeedBackPage = () => {
   // State to store the image URL
   const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
   
   // load feedbacks
   const presenter = new DisplayAppFeedbacksPresenter({
@@ -31,7 +33,13 @@ const AppFeedBackPage = () => {
   // change popup/modal visible
   const changeLoadingVisible = (b)=>{
     setLoading(b);
-}
+  }
+
+  // change popup/modal visible
+  const changeModalVisible = (b, m)=>{
+    setModalMsg(m);
+    setModalVisible(b);
+  }
 
 // loading dialog
   if (loading) {
@@ -54,6 +62,9 @@ const AppFeedBackPage = () => {
         feedback={feedbackItem.feedbackText}
       />
     ))}
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+          <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+      </Modal>
     
     </ScrollView>
   );

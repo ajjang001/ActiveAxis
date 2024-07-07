@@ -4,7 +4,7 @@ import { useFocusEffect, StackActions } from '@react-navigation/native';
 import { TransitionPresets } from '@react-navigation/stack';
 import {scale} from '../components/scale';
 import LogoutPresenter from '../presenter/LogoutPresenter';
-import { ActionDialog, LoadingDialog } from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
 
 const SystemAdminHomePage = ({navigation, route}) => {
     // Get the admin from the route params
@@ -14,6 +14,8 @@ const SystemAdminHomePage = ({navigation, route}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
+    const [confirmationVisible, setConfirmationVisible] = useState(false);
+    const [confirmMessage, setConfirmMessage] = useState('');
 
 
     // change popup/modal visible
@@ -27,6 +29,12 @@ const SystemAdminHomePage = ({navigation, route}) => {
         setIsLoading(b);
     }
 
+    // change popup/modal visible
+    const changeConfirmVisible = (b, m)=>{
+        setConfirmMessage(m);
+        setConfirmationVisible(b);
+    }
+
     // Function to log out the user
     const onPressLogout = async () =>{
         changeLoadingVisible(true);
@@ -37,7 +45,7 @@ const SystemAdminHomePage = ({navigation, route}) => {
             );
             
         }catch(error){
-            console.log(error);
+            changeModalVisible(true, error.message);
         }finally{
             changeLoadingVisible(false);
         }
@@ -64,7 +72,7 @@ const SystemAdminHomePage = ({navigation, route}) => {
         {label: 'App Details', onPress: () => navigation.navigate('SystemAdminAppDetails')},
         {label: 'App Feedbacks', onPress: () => navigation.navigate('SystemAdminAppFeedbacks')},
         {label: 'Coach', onPress: () => navigation.navigate('CoachAccountListPage')},
-        {label: 'Log Out', onPress: () => changeModalVisible(true, 'Are you sure you want to log out?')}
+        {label: 'Log Out', onPress: () => changeConfirmVisible(true, 'Are you sure you want to log out?')}
     ];
 
     return (
@@ -85,15 +93,18 @@ const SystemAdminHomePage = ({navigation, route}) => {
                 
             }
 
-                <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+                <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeConfirmVisible(false)}>
                     <ActionDialog
-                    message = {modalMsg}
-                    changeModalVisible = {changeModalVisible}
+                    message = {confirmMessage}
+                    changeModalVisible = {changeConfirmVisible}
                     action = {onPressLogout}
                     />
                 </Modal>
                 <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
                     <LoadingDialog />
+                </Modal>
+                <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+                    <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
                 </Modal>
 
 

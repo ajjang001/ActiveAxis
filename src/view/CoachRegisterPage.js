@@ -7,7 +7,7 @@ import DatePicker from 'react-native-date-picker';
 import { scale } from '../components/scale';
 import DocumentPicker from 'react-native-document-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { MessageDialog } from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
 
 import RegisterPresenter from '../presenter/RegisterPresenter';
 
@@ -133,7 +133,6 @@ const CoachRegisterPage = ({ navigation }) => {
             value={gender}
             onChange={item => {
               setGender(item.value);
-              console.log('selected', item);
             }}
           />
         </View>

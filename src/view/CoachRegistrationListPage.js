@@ -42,7 +42,7 @@ const CoachRegistrationListPage = ({route, navigation}) =>{
             await new DisplayCoachRegistrationPresenter({updateCoachList: setCoaches}).displayListOfCoachRegistration();
             changeLoadingVisible(false);
         }catch(error){
-            console.log(error);
+            changeModalVisible(true, error.message);
         }
     }
 

@@ -2,7 +2,7 @@ import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity, Modal } fr
 import { useEffect, useState } from "react";
 
 import { scale } from "../components/scale";
-import { LoadingDialog, ActionDialog } from "../components/Modal";
+import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
 import DisplayCoachRequestDetailsPresenter from "../presenter/DisplayCoachRequestDetailsPresenter";
 import ApproveCoachPresenter from "../presenter/ApproveCoachPresenter";
 import RejectCoachPresenter from "../presenter/RejectCoachPresenter";
@@ -20,6 +20,8 @@ const CoachRegistrationDetailsPage = ({navigation, route}) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [confirmationVisible, setConfirmationVisible] = useState(false);
+    const [confirmMessage, setConfirmMessage] = useState('');
 
     // month names
     const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -38,6 +40,12 @@ const CoachRegistrationDetailsPage = ({navigation, route}) => {
         setModalVisible(b);
     }
 
+    // change popup/modal visible
+    const changeConfirmVisible = (b, m)=>{
+        setConfirmMessage(m);
+        setConfirmationVisible(b);
+    }
+
     // convert firebase timestamp to date
     const convertToDate = (firebaseTimestamp) =>{
         const date = firebaseTimestamp.toDate();
@@ -50,7 +58,7 @@ const CoachRegistrationDetailsPage = ({navigation, route}) => {
             changeLoadingVisible(true);
             await new DisplayCoachRequestDetailsPresenter({coach: coach.coach, updateResume: setResume, updateCert: setCertificate, updateID: setIdentification}).displayDocuments();
         }catch(e){
-            console.log(e.message);
+            changeModalVisible(true, e.message);
         }finally{
             changeLoadingVisible(false);
         }
@@ -67,7 +75,7 @@ const CoachRegistrationDetailsPage = ({navigation, route}) => {
             }
             navigation.navigate('CoachRegistrationListPage', {refresh: true});
         }catch(e){
-            console.log(e.message);
+            changeModalVisible(true, e.message);
         }finally{
             changeLoadingVisible(false);
         }
@@ -94,12 +102,15 @@ const CoachRegistrationDetailsPage = ({navigation, route}) => {
                 <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
                     <LoadingDialog />
                 </Modal>
-                <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+                <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>(false)}>
                     <ActionDialog
-                    message = {modalMsg}
-                    changeModalVisible = {changeModalVisible}
+                    message = {confirmMessage}
+                    changeModalVisible = {setConfirmationVisible}
                     action = {processRequest}
                     />
+                </Modal>
+                <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+                    <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
                 </Modal>
 
                 <Text style = {styles.detailsTitle}>Name</Text>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal, Alert } from 'react-native';
 import { scale } from '../components/scale';
-import { LoadingDialog } from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
 import { TextInput } from 'react-native-gesture-handler';
 import UpdateAccountDetailsPresenter from '../presenter/UpdateAccountDetailsPresenter';
 
@@ -22,7 +22,6 @@ const SystemAdminAccountSettingPage = ({ navigation, route }) => {
     const updateAccount = async (email) => {
         try {
             changeLoadingVisible(true);
-            console.log({ email })
             await new UpdateAccountDetailsPresenter().updateAccount(email);
             Alert.alert("Kindly check your email to reset your password!");
             navigation.navigate('SystemAdminHomePage', {admin})

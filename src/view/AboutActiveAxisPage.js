@@ -2,17 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, Modal, ActivityIndicator } from 'react-native';
 import DisplayAboutActiveAxisPresenter from '../presenter/DisplayAboutActiveAxisPresenter';
 
-import {LoadingDialog} from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
 
 const AboutActiveAxisPage = () => {
   const [about, setAbout] = useState([]);
   const [logoURL, setLogoURL] = useState('');
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
   const [isLoading, setIsLoading] = useState(true);
     
   // change popup/modal visible
   const changeLoadingVisible = (b)=>{
       setIsLoading(b);
+  }
+  
+  // change popup/modal visible
+  const changeModalVisible = (b, m)=>{
+    setModalMsg(m);
+    setModalVisible(b);
   }
 
   // load data
@@ -22,7 +29,7 @@ const AboutActiveAxisPage = () => {
       await new DisplayAboutActiveAxisPresenter({changeAbout: setAbout}).displayAboutActiveAxis();
       await new DisplayAboutActiveAxisPresenter({changeLogoURL: setLogoURL}).displayLogoURL();
     }catch(error){
-        console.error(error);
+        changeModalVisible(true, error.message);
     }finally{
         changeLoadingVisible(false);
     }
@@ -45,6 +52,9 @@ const AboutActiveAxisPage = () => {
 
       <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
           <LoadingDialog />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+          <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
       </Modal>
     </ScrollView>
   );
