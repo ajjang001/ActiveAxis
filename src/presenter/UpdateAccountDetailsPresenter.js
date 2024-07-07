@@ -1,15 +1,17 @@
 import SystemAdmin from "../model/SystemAdmin";
 
-class UpdateAccountDetailsPresenter{
-    constructor(view){
+class UpdateAccountDetailsPresenter {
+    constructor(view) {
         this.view = view;
-        this.SystemAdmin = new SystemAdmin();
+        this.account = null;
     }
 
-    async updateAccount(){
-        try{
-            //
-        }catch(error){
+    async updateAccount(email) {
+        try {
+            this.account = new SystemAdmin();
+            await this.account.resetPassword(email)
+        } catch (error) {
+            console.log('Account not found.');
             throw new Error(error);
         }
     }

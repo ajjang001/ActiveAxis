@@ -1,12 +1,35 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal, Alert } from 'react-native';
 import { scale } from '../components/scale';
-
-
+import { LoadingDialog } from '../components/Modal';
+import { TextInput } from 'react-native-gesture-handler';
+import UpdateAccountDetailsPresenter from '../presenter/UpdateAccountDetailsPresenter';
 
 const SystemAdminAccountSettingPage = ({ navigation, route }) => {
 
-    const {admin} = route.params;
+    const { admin } = route.params;
+    const email = admin.email;
+    // State to control the visibility of the modal
+    const [isLoading, setIsLoading] = useState(false);
+
+    const changeLoadingVisible = (b) => {
+        setIsLoading(b);
+    }
+
+    const updateAccount = async (email) => {
+        try {
+            changeLoadingVisible(true);
+            console.log({ email })
+            await new UpdateAccountDetailsPresenter().updateAccount(email);
+            Alert.alert("Kindly check your email to reset your password!");
+            navigation.navigate('SystemAdminHomePage', {admin})
+        } catch (e) {
+            Alert.alert(e.message);
+        } finally {
+            changeLoadingVisible(false);
+        }
+    };
+
 
     return (
         <View style={styles.container}>
@@ -21,8 +44,11 @@ const SystemAdminAccountSettingPage = ({ navigation, route }) => {
                 <Text style={styles.detailsTitle}>Password</Text>
                 <Text style={styles.detailsText}>*********</Text>
             </View>
-            <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('UpdateAccountDetailsPage', {admin})}>
-                <Text style={styles.editText}>Edit</Text>
+            <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+                <LoadingDialog />
+            </Modal>
+            <TouchableOpacity style={styles.resetButton} onPress={() => updateAccount(email)}>
+                <Text style={styles.resetText}>Click here to reset password!</Text>
             </TouchableOpacity>
         </View>
     )
@@ -68,14 +94,15 @@ const styles = StyleSheet.create({
         borderRadius: scale(8),
         backgroundColor: 'white',
     },
-    editButton: {
+    resetButton: {
         borderWidth: 1,
         backgroundColor: '#E28413',
         paddingHorizontal: scale(50),
+        paddingVertical: scale(10),
         marginTop: 20,
 
     },
-    editText: {
+    resetText: {
         color: 'white',
         textAlign: 'center',
         fontFamily: 'Inter',
