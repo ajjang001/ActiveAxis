@@ -4,7 +4,7 @@ import { scale } from '../components/scale';
 import { ActionDialog, LoadingDialog } from '../components/Modal';
 import { TextInput } from 'react-native-gesture-handler';
 
-const UpdateAccountDetailsPage = ({ navigation, route }) => {
+const SystemAdminUpdateAccountDetailsPage = ({ navigation, route }) => {
 
     const {admin} = route.params;
 
@@ -65,7 +65,7 @@ const UpdateAccountDetailsPage = ({ navigation, route }) => {
         </View>
     )
 }
-export default UpdateAccountDetailsPage;
+export default SystemAdminUpdateAccountDetailsPage;
 
 const styles = StyleSheet.create({
     container: {

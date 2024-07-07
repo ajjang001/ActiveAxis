@@ -4,7 +4,7 @@ import { scale } from '../components/scale';
 
 
 
-const AccountSettingPage = ({ navigation, route }) => {
+const SystemAdminAccountSettingPage = ({ navigation, route }) => {
 
     const {admin} = route.params;
 
@@ -27,7 +27,7 @@ const AccountSettingPage = ({ navigation, route }) => {
         </View>
     )
 }
-export default AccountSettingPage;
+export default SystemAdminAccountSettingPage;
 
 const styles = StyleSheet.create({
     container: {

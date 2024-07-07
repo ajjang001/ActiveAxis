@@ -37,8 +37,8 @@ import SystemAdminAppFeedbacks from './src/view/SystemAdminAppFeedbacks';
 import UpdateAboutUsPage from './src/view/UpdateAboutUsPage';
 import UpdateAppFeaturesPage from './src/view/UpdateAppFeaturesPage';
 
-import AccountSettingPage from './src/view/AccountSettingPage';
-import UpdateAccountDetailsPage from './src/view/UpdateAccountDetailsPage';
+import SystemAdminAccountSettingPage from './src/view/SystemAdminAccountSettingPage';
+import SystemAdminUpdateAccountDetailsPage from './src/view/SystemAdminUpdateAccountDetailsPage';
 
 import ListOfUserAccountsPage from './src/view/ListOfUserAccountsPage';
 
@@ -107,8 +107,8 @@ export default function App() {
         <Stack.Screen name="UpdateAppFeaturesPage" component={UpdateAppFeaturesPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
 
         <Stack.Screen name="ListOfUserAccountsPage" component={ListOfUserAccountsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>        
-        <Stack.Screen name="AccountSettingPage" component={AccountSettingPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-        <Stack.Screen name="UpdateAccountDetailsPage" component={UpdateAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        <Stack.Screen name="SystemAdminAccountSettingPage" component={SystemAdminAccountSettingPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        <Stack.Screen name="SystemAdminUpdateAccountDetailsPage" component={SystemAdminUpdateAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
 
         <Stack.Screen name="CoachHomePage" component={CoachHomePage}   />
       </Stack.Navigator>
