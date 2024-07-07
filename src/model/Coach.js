@@ -1,7 +1,7 @@
 import { app, auth, db, storage } from '../../.expo/api/firebase';
 
 import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
-import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, deleteDoc  } from "firebase/firestore";
+import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, deleteDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import axios from 'axios';
 
@@ -50,7 +50,7 @@ class Coach extends Account {
                 if (!iv) {
                     // Account is not verified
                     throw new Error('Please verify your email first\nCheck your email for the verification link.');
-                }else if (ip) {
+                } else if (ip) {
                     // Account is pending
                     throw new Error('Your account is pending\nPlease wait for the admin to approve your account.');
                 } else if (is) {
@@ -129,35 +129,36 @@ class Coach extends Account {
             // Convert URI to Blob
             const uriToBlob = (uri) => {
                 return new Promise((resolve, reject) => {
-                   const xhr = new XMLHttpRequest()
-                   xhr.onload = function () {
-                     // return the blob
-                     resolve(xhr.response)
-                   }
-                   xhr.onerror = function () {
-                     reject(new Error('uriToBlob failed'))
-                   }
-                   xhr.responseType = 'blob'
-                   xhr.open('GET', uri, true)
-               
-                   xhr.send(null)})
-                };
+                    const xhr = new XMLHttpRequest()
+                    xhr.onload = function () {
+                        // return the blob
+                        resolve(xhr.response)
+                    }
+                    xhr.onerror = function () {
+                        reject(new Error('uriToBlob failed'))
+                    }
+                    xhr.responseType = 'blob'
+                    xhr.open('GET', uri, true)
 
-                // Upload file to Firebase Storage
+                    xhr.send(null)
+                })
+            };
+
+            // Upload file to Firebase Storage
             const uploadFile = async (file, folderPath) => {
                 if (!file || !file.uri) throw new Error('File URI is invalid');
 
                 const storageRef = ref(storage, folderPath + file.name);
                 const blobFile = await uriToBlob(file.uri);
-                try{
+                try {
                     await uploadBytes(storageRef, blobFile);
                     return `${folderPath}${file.name}`;
-                }catch(e){
+                } catch (e) {
                     throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support.");
-                    
+
                 }
 
-              };
+            };
 
             // Folder path
             const folderPath = `coach/${email.split('@')[0]}/`;
@@ -168,8 +169,8 @@ class Coach extends Account {
             const resumePath = await uploadFile(resume, folderPath);
             const certificatePath = await uploadFile(certificate, folderPath);
             const idPath = await uploadFile(identification, folderPath);
-            
-            
+
+
 
             // Create the coach account in the firestore firestore database
             await setDoc(doc(db, "coach", userCredential.user.uid), {
@@ -225,7 +226,7 @@ class Coach extends Account {
             const queryResult = await getDocs(q);
             const coaches = [];
 
-            for (const doc of queryResult.docs){
+            for (const doc of queryResult.docs) {
                 const data = doc.data();
                 const c = new Coach();
 
@@ -244,9 +245,9 @@ class Coach extends Account {
                 c.id = data.photoID;
                 c.resume = data.resume;
 
-                
 
-                coaches.push({id: doc.id, coach: c});
+
+                coaches.push({ id: doc.id, coach: c });
 
             }
 
@@ -256,21 +257,21 @@ class Coach extends Account {
         }
     }
 
-    async search(search){
-        try{
-            
+    async search(search) {
+        try {
+
             let q = null;
-            if(search.trim() === ''){
+            if (search.trim() === '') {
                 q = query(collection(db, 'coach'), where('isPending', '==', false));
-            }else{
+            } else {
 
                 q = query(collection(db, 'coach'), where('isPending', '==', false), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
             }
-            
+
             const queryResult = await getDocs(q);
             const coaches = [];
 
-            for (const doc of queryResult.docs){
+            for (const doc of queryResult.docs) {
                 const data = doc.data();
                 const c = new Coach();
                 c.username = data.username;
@@ -288,57 +289,55 @@ class Coach extends Account {
                 c.id = data.photoID;
                 c.resume = data.resume;
 
-                
-                
-                coaches.push({id: doc.id, coach: c});
-    
-                
+
+
+                coaches.push({ id: doc.id, coach: c });
+
+
 
             }
-            
+
             return coaches;
 
 
-        }catch(e){
+        } catch (e) {
             throw new Error(e.message);
         }
     }
 
-    async suspend(coachID){
-        try{
+    async suspend(coachID) {
+        try {
             const q = doc(db, 'coach', coachID);
-            await updateDoc(q, {isSuspended: true});
+            await updateDoc(q, { isSuspended: true });
 
-            const uid = coachID;
-            const res = await axios.post('http://10.93.19.181:3000/api/disable-user', { uid });
+            const res = await axios.post('http://192.168.1.74:3000/api/disable-user', { uid: coachID });
             console.log(res.data.message);
-            
-        }catch(e){
+
+        } catch (e) {
             throw new Error(e.message);
         }
     }
 
-    async unsuspend(coachID){
-        try{
+    async unsuspend(coachID) {
+        try {
             const q = doc(db, 'coach', coachID);
-            await updateDoc(q, {isSuspended: false});
+            await updateDoc(q, { isSuspended: false });
 
-            const uid = coachID;
-            const res = await axios.post('http://10.93.19.181:3000/api/enable-user', {uid});
+            const res = await axios.post('http://192.168.1.74:3000/api/enable-user', { uid: coachID });
             console.log(res.data.message);
-        }catch(e){
+        } catch (e) {
             throw new Error(e.message);
         }
     }
 
 
-    async getListOfCoachRegistration(){
-        try{
+    async getListOfCoachRegistration() {
+        try {
             const q = query(collection(db, 'coach'), where('isPending', '==', true));
             const queryResult = await getDocs(q);
             const coaches = [];
 
-            for (const doc of queryResult.docs){
+            for (const doc of queryResult.docs) {
                 const data = doc.data();
                 const c = new Coach();
 
@@ -357,9 +356,9 @@ class Coach extends Account {
                 c.id = data.photoID;
                 c.resume = data.resume;
 
-                
 
-                coaches.push({id: doc.id, coach: c});
+
+                coaches.push({ id: doc.id, coach: c });
 
             }
 
@@ -367,13 +366,13 @@ class Coach extends Account {
             return coaches;
 
 
-        }catch(e){
+        } catch (e) {
             throw new Error(e.message);
         }
     }
 
-    async getDocuments(){
-        try{
+    async getDocuments() {
+        try {
             const resumeRef = ref(storage, this.resume);
             const certRef = ref(storage, this.certificate);
             const idRef = ref(storage, this.id);
@@ -382,22 +381,17 @@ class Coach extends Account {
             const certURL = await getDownloadURL(certRef);
             const idURL = await getDownloadURL(idRef);
 
-
-
-
-
-
-            return { resumeURL, certURL, idURL};
-        }catch(e){
+            return { resumeURL, certURL, idURL };
+        } catch (e) {
             throw new Error(e.message);
         }
     }
 
-    async approveCoach(coachID){
-        try{
+    async approveCoach(coachID) {
+        try {
             const fullnameArr = this.fullName.split(' ');
             let username = '';
-            for (let i = 1; i < fullnameArr.length; i++){
+            for (let i = 1; i < fullnameArr.length; i++) {
                 username += fullnameArr[i].charAt(0).toLowerCase();
             }
             username += fullnameArr[0].toLowerCase() + '_';
@@ -405,16 +399,16 @@ class Coach extends Account {
             const q = query(collection(db, 'coach'), orderBy('username'), startAt(username), endAt(username + '\uf8ff'));
             const queryResult = await getDocs(q);
 
-            if(queryResult.empty){
+            if (queryResult.empty) {
                 username += '1';
-            }else{
+            } else {
 
                 let i = 1;
                 let isFound = false;
-                for(const doc of queryResult.docs){
+                for (const doc of queryResult.docs) {
                     const data = doc.data();
                     const checkName = username + i;
-                    if(checkName !== data.username){
+                    if (checkName !== data.username) {
                         username = checkName;
                         isFound = true;
                         break;
@@ -422,7 +416,7 @@ class Coach extends Account {
                     i++;
                 }
 
-                if(!isFound){
+                if (!isFound) {
                     username += i;
                 }
 
@@ -432,22 +426,51 @@ class Coach extends Account {
 
             const coachRef = doc(db, 'coach', coachID);
             await updateDoc(coachRef, {
-                isPending: false, 
+                isPending: false,
                 username: username
             });
 
-            
-            
-
-            
 
 
+
+
+
+
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async rejectCoach(coachID){
+        try{
+            // Delete storage
+            // Delete resume
+            const resumeRef = ref(storage, this.resume);
+            await deleteObject(resumeRef);
+            // Delete certificate
+            const certRef = ref(storage, this.certificate);
+            await deleteObject(certRef);
+            // Delete identification
+            const idRef = ref(storage, this.id);
+            await deleteObject(idRef);
+            // Delete profile picture
+            const profileRef = ref(storage, this.profilePicture);
+            await deleteObject(profileRef);
+
+            // Delete account in authentication
+            const res = await axios.post('http://192.168.1.74:3000/api/delete-user', { uid: coachID });
+            console.log(res.data.message);
+
+
+            // Delete document
+            const coachRef = doc(db, 'coach', coachID);
+            await deleteDoc(coachRef);
         }catch(e){
             throw new Error(e.message);
         }
     }
 
-    
+
 
 }
 

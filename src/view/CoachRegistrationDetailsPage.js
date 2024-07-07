@@ -5,6 +5,7 @@ import { scale } from "../components/scale";
 import { LoadingDialog, ActionDialog } from "../components/Modal";
 import DisplayCoachRequestDetailsPresenter from "../presenter/DisplayCoachRequestDetailsPresenter";
 import ApproveCoachPresenter from "../presenter/ApproveCoachPresenter";
+import RejectCoachPresenter from "../presenter/RejectCoachPresenter";
 
 const CoachRegistrationDetailsPage = ({navigation, route}) => {
     const {coach} = route.params;
@@ -60,7 +61,7 @@ const CoachRegistrationDetailsPage = ({navigation, route}) => {
             if(isPressAccept){
                 await new ApproveCoachPresenter({coach: coach.coach}).approveRequest(coach.id);
             }else{
-                console.log('Reject');
+                await new RejectCoachPresenter({coach: coach.coach}).rejectRequest(coach.id);
             }
             navigation.navigate('CoachRegistrationListPage', {refresh: true});
         }catch(e){
