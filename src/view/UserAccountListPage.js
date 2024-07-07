@@ -14,6 +14,7 @@ import UnsuspendUserAccountPresenter from "../presenter/UnsuspendUserAccountPres
 const ListOfUserAccountsPage = ({route, navigation}) =>{
     // state variables
     const [search, setSearch] = useState("");
+    const [filter, setFilter] = useState("all");
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState({});
     const [wantSuspend, setWantSuspend] = useState(false);
@@ -46,7 +47,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
     const loadUserList = async()=>{
         try{
             changeLoadingVisible(true);
-            await new DisplayUsersPresenter({updateUserList: setUsers}).displayUsers();
+            await new DisplayUsersPresenter({updateUserList: setUsers}).displayUsers(filter);
             changeLoadingVisible(false);
         }catch(error){
             throw new Error(error);
@@ -58,7 +59,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
         try{
             changeLoadingVisible(true);
             setUsers([]);
-            await new SearchUserAccountPresenter({updateUserList: setUsers}).searchUserAccount(search);
+            await new SearchUserAccountPresenter({updateUserList: setUsers}).searchUserAccount(search, filter);
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
@@ -106,8 +107,9 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
 
     // load user list
     useEffect(()=>{
+        setSearch('');
         loadUserList();
-    },[]);
+    },[filter]);
 
 
     return (
@@ -151,6 +153,22 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
 
                     </ScrollView>
                     
+                </View>
+
+                <View style = {{display:'flex', alignItems:'center'}}>
+                    <View style = {style.bottomContentContainer}>
+                        <TouchableOpacity onPress = {()=>setFilter('all')} style = {style.bottomButton}>
+                            <Text style = {style.bottomButtonText}>All Users</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress = {()=>setFilter('free')} style = {style.bottomButton}>
+                            <Text style = {style.bottomButtonText}>Free Users</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress = {()=>setFilter('premium')} style = {style.bottomButton}>
+                            <Text style = {style.bottomButtonText}>Premium Users</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
@@ -239,13 +257,24 @@ const style = StyleSheet.create({
         
         marginVertical: scale(20),
         display:'flex',
-        alignItems:'flex-end',
-        justifyContent:'center',
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'space-between',
 
         width: '85%',
         
         
     },
+    bottomButton:{
+        backgroundColor: 'white',
+        paddingHorizontal: scale(10),
+        width: scale(125),
+    },
+    bottomButtonText:{
+        color:'black',
+        textAlign:'center',
+        fontSize: scale(14),
+    }
 });
 
 export default ListOfUserAccountsPage;

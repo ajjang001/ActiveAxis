@@ -47,7 +47,7 @@ const CoachDetailsPage = ({route}) => {
     const loadFeedbacks = async () => {
         try{
             changeLoadingVisible(true);
-            await new DisplayCoachDetailsPresenter({updateFeedback: setFeedback, coachID: coach.id}).displayCoachFeedbacks(selectedStar);
+            await new DisplayCoachDetailsPresenter({updateFeedback: setFeedback, coachID: coach.id}).displayCoachFeedbacks();
         }catch(error){
             changeModalVisible(true, error.message);
         }finally{

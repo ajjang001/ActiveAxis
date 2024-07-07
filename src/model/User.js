@@ -225,10 +225,17 @@ class User extends Account{
         }
     }
 
-    async getUserList() {
+    async getUserList(filter) {
         try {
             // Get all users
-            const q = query(collection(db, 'user'), orderBy('fullName'));
+            let q = null;
+            if (filter === 'free') {
+                q = query(collection(db, 'user'), where('isPremium', '==', false), orderBy('fullName'));
+            }else if (filter === 'premium'){
+                q = query(collection(db, 'user'), where('isPremium', '==', true), orderBy('fullName'));
+            }else{
+                q = query(collection(db, 'user'), orderBy('fullName'));
+            }
             const queryResult = await getDocs(q);
             const users = [];
 
@@ -265,15 +272,31 @@ class User extends Account{
         }
     }
 
-    async search(search) {
+    async search(search, filter) {
         try {
             // Search for users by name 
+            console.log(search);
+            console.log(filter);
             let q = null;
             if (search.trim() === '') {
-                q = query(collection(db, 'user'), orderBy('fullName'));
+                if (filter === 'free') {
+                    q = query(collection(db, 'user'), where('isPremium', '==', false), orderBy('fullName'));
+                }else if (filter === 'premium'){
+                    q = query(collection(db, 'user'), where('isPremium', '==', true), orderBy('fullName'));
+                }else{
+                    q = query(collection(db, 'user'), orderBy('fullName'));
+                }
             } else {
 
-                q = query(collection(db, 'user'), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
+                if (filter === 'free') {
+                    q = query(collection(db, 'user'), where('isPremium', '==', false), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
+                }else if (filter === 'premium'){
+                    q = query(collection(db, 'user'), where('isPremium', '==', true), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
+                }else{
+                    q = query(collection(db, 'user'), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
+                }
+
+                
             }
 
             const queryResult = await getDocs(q);

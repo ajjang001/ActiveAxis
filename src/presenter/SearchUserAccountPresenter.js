@@ -6,9 +6,9 @@ class SearchUserAccountPresenter{
         this.user = new User();
     }
 
-    async searchUserAccount(search){
+    async searchUserAccount(search, filter){
         try{
-            this.view.updateUserList(await this.user.search(search.trim()));
+            this.view.updateUserList(await this.user.search(search.trim(), filter));
         }catch(e){
             throw new Error(e);
         }
