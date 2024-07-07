@@ -1,19 +1,19 @@
 import { View,Text, StyleSheet, TextInput, Image, ScrollView, Modal, TouchableOpacity} from "react-native"
+import React, { useEffect, useState } from "react";
 
 import AccountListCard from "../components/AccountListCard";
 import { scale } from "../components/scale";
-import React, { useEffect, useState } from "react";
-
 import { LoadingDialog, MessageDialog, ActionDialog } from "../components/Modal";
-import DisplayCoachesPresenter from "../presenter/DisplayCoachesPresenter";
-import SearchCoachAccountPresenter from "../presenter/SearchCoachAccountPresenter";
-import SuspendCoachAccountPresenter from "../presenter/SuspendCoachAccountPresenter";
-import UnsuspendCoachAccountPresenter from "../presenter/UnsuspendCoachAccountPresenter";
 
-const CoachAccountListPage = ({route, navigation})=>{
+
+import DisplayUsersPresenter from "../presenter/DisplayUsersPresenter";
+import SearchUserAccountPresenter from "../presenter/SearchUserAccountPresenter";
+
+const ListOfUserAccountsPage = ({route, navigation}) =>{
+
     const [search, setSearch] = useState("");
-    const [coaches, setCoaches] = useState([]);
-    const [selectedCoach, setSelectedCoach] = useState({});
+    const [users, setUsers] = useState([]);
+    const [selectedUser, setSelectedUser] = useState({});
     const [wantSuspend, setWantSuspend] = useState(false);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +22,6 @@ const CoachAccountListPage = ({route, navigation})=>{
     
     const [confirmationVisible, setConfirmationVisible] = useState(false);
     const [confirmMessage, setConfirmMessage] = useState('');
-
 
     // change popup/modal visible
     const changeConfirmVisible = (b, m)=>{
@@ -41,10 +40,10 @@ const CoachAccountListPage = ({route, navigation})=>{
         setIsLoading(b);
     }
 
-    const loadCoachList = async()=>{
+    const loadUserList = async()=>{
         try{
             changeLoadingVisible(true);
-            await new DisplayCoachesPresenter({updateCoachList: setCoaches}).displayCoaches();
+            await new DisplayUsersPresenter({updateUserList: setUsers}).displayUsers();
             changeLoadingVisible(false);
         }catch(error){
             throw new Error(error);
@@ -54,8 +53,8 @@ const CoachAccountListPage = ({route, navigation})=>{
     const searchHandler = async()=>{
         try{
             changeLoadingVisible(true);
-            setCoaches([]);
-            await new SearchCoachAccountPresenter({updateCoachList: setCoaches}).searchCoachAccount(search);
+            setUsers([]);
+            await new SearchUserAccountPresenter({updateUserList: setUsers}).searchUserAccount(search);
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
@@ -66,10 +65,10 @@ const CoachAccountListPage = ({route, navigation})=>{
     const suspendHandler = async()=>{
         try{
             changeLoadingVisible(true);
-            await new SuspendCoachAccountPresenter(selectedCoach.coach).suspendCoach(selectedCoach.id);
-            setCoaches([]);
+            //await new SuspendCoachAccountPresenter(selectedCoach.coach).suspendCoach(selectedCoach.id);
+            setUsers([]);
             setSearch('');
-            await loadCoachList();
+            //await loadCoachList();
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
@@ -80,10 +79,10 @@ const CoachAccountListPage = ({route, navigation})=>{
     const unsuspendHandler = async()=>{
         try{
             changeLoadingVisible(true);
-            await new UnsuspendCoachAccountPresenter(selectedCoach.coach).unsuspendCoach(selectedCoach.id);
-            setCoaches([]);
+            //await new UnsuspendCoachAccountPresenter(selectedCoach.coach).unsuspendCoach(selectedCoach.id);
+            setUsers([]);
             setSearch('');
-            await loadCoachList();
+            //await loadCoachList();
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
@@ -93,54 +92,57 @@ const CoachAccountListPage = ({route, navigation})=>{
 
     useEffect(()=>{
         if (route.params?.refresh){
-            loadCoachList();
+            loadUserList();
             route.params.refresh = false;
         }
     },[route.params?.refresh]);
-    
 
     useEffect(()=>{
-        loadCoachList();
+        loadUserList();
     },[]);
 
-    return(
+
+    return (
         <View>
             <View style = {style.titleView}>
-                <Text style = {style.title}>Coach Account List</Text>
+                <Text style = {style.title}>User Account List</Text>
             </View>
+
 
             <View style = {style.contentContainer}>
 
                 <View style = {style.topContentContainer}>
                     <View style = {style.searchBarContainer}>
                         <Image style = {style.searchLogo} source={require('../../assets/search_icon.png')} />    
-                        <TextInput onEndEditing = {()=>searchHandler()} onChangeText={setSearch} value = {search} placeholder = 'Search Coach' /> 
+                        <TextInput onEndEditing = {()=>searchHandler()} onChangeText={setSearch} value = {search} placeholder = 'Search User' /> 
                     </View>
                 </View>
+
                 <View style = {style.middleContentContainer}>
-                    <ScrollView style = {style.coachListContainer} contentContainerStyle = {style.coachListContent}>
-                        {coaches.length == 0 ? 
+                    <ScrollView style = {style.userListContainer} contentContainerStyle = {style.userListContent}>
+                        {users.length == 0 ? 
                         <View>
-                            <Text style = {{color:'white', fontSize: scale(20)}}>No coaches found</Text>
+                            <Text style = {{color:'white', fontSize: scale(20)}}>No users found</Text>
                         </View> 
                         
                         :
 
-                        coaches.map((coach, index)=>{
+                        users.map((user, index)=>{
                             return(
                                 <AccountListCard 
                                 key = {index}
                                 numOfButtons = {2}
-                                account = {coach.coach}
-                                suspendHandler = {()=>{setSelectedCoach(coach); setWantSuspend(true) ;changeConfirmVisible(true, 'Are you sure you want to suspend this coach?')}}
-                                unsuspendHandler = {()=>{setSelectedCoach(coach); setWantSuspend(false); changeConfirmVisible(true, 'Are you sure you want to unsuspend this coach?')}}
-                                detailsHandler = { ()=>{navigation.navigate('CoachDetailsPage', {coach} )} }
+                                account = {user.user}
+                                suspendHandler = {()=>{setSelectedUser(user); setWantSuspend(true) ;changeConfirmVisible(true, 'Are you sure you want to suspend this user?')}}
+                                unsuspendHandler = {()=>{setSelectedUser(user); setWantSuspend(false); changeConfirmVisible(true, 'Are you sure you want to unsuspend this user?')}}
+                                detailsHandler = { ()=>{navigation.navigate('UserAccountDetailsPage', {user} )} }
                                 />
                             );
                         })}
                         
 
                     </ScrollView>
+                    
                 </View>
 
                 <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
@@ -156,23 +158,11 @@ const CoachAccountListPage = ({route, navigation})=>{
                     action = {wantSuspend ? ()=>suspendHandler() : ()=>unsuspendHandler()}
                     />
                 </Modal>
-                
-                <View style = {{display:'flex', alignItems:'center'}}>
-                    <View style = {style.bottomContentContainer}>
-                        <TouchableOpacity onPress = {()=>navigation.navigate("CoachRegistrationListPage")} activeOpacity={0.7} style = {style.coachRegistrationButton}>
-                            <Text style = {style.coachRegistrationText}>
-                                Coach Registration List
-                            </Text>
-                            <Image style = {style.rightTriangleIcon} source = {require('../../assets/right_triangle_icon.png')} />
-
-                        </TouchableOpacity> 
-                    </View>
-                </View>
-
-
 
             </View>
         </View>
+
+
     );
 }
 
@@ -225,11 +215,12 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    coachListContainer:{
+    
+    userListContainer:{
         height: '65%',
         width: '85%',
     },
-    coachListContent:{
+    userListContent:{
         display:'flex',
         alignItems:'center',
         justifyContent:'center',
@@ -247,33 +238,6 @@ const style = StyleSheet.create({
         
         
     },
-    coachRegistrationText:{
-        fontSize: scale(15),
-        fontFamily: 'League-Spartan',
-        fontWeight: 'bold',
-    },
-
-    coachRegistrationButton:{
-        
-        display:'flex',
-        flexDirection:'row',
-        
-        alignItems:'center',
-        justifyContent:'center',
-
-        backgroundColor:'white',
-        paddingHorizontal: scale(20),
-
-        width: '65%',
-    },
-    rightTriangleIcon:{
-        width: scale(20),
-        height: scale(20)
-    },
-
-    
-
-
 });
 
-export default CoachAccountListPage;
+export default ListOfUserAccountsPage;

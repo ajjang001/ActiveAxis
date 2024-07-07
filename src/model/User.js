@@ -1,5 +1,5 @@
 import { app, auth, db, storage } from '../../.expo/api/firebase';
-import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, orderBy } from "firebase/firestore";
+import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, orderBy, startAt, endAt } from "firebase/firestore";
 import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
 import Account from './Account';
 
@@ -66,6 +66,7 @@ class User extends Account{
                     u.username = data.username;
                     u.email = email;
                     u.profilePicture = data.profilePicture;
+                    u.profilePicture = await u.getProfilePictureURL();
                     u.fullName = data.fullName;
                     u.dob = data.dob;
                     u.gender = data.gender;
@@ -105,12 +106,14 @@ class User extends Account{
             u.username = data.username;
             u.email = data.email;
             u.profilePicture = data.profilePicture;
+            u.profilePicture = await u.getProfilePictureURL();
             u.fullName = data.fullName;
             u.dob = data.dob;
             u.gender = data.gender;
             u.phoneNumber = data.phoneNumber;
             u.hasMedical = data.hasMedical;
             u.isPremium = data.isPremium;
+            u.isSuspended = data.isSuspended;
             u.weight = data.weight;
             u.height = data.height;
             u.fitnessGoal = data.fitnessGoal;
@@ -217,6 +220,94 @@ class User extends Account{
             throw new Error("Failed to reset password. Please try again or contact support.");
         }
     }
+
+    async getUserList() {
+        try {
+            const q = query(collection(db, 'user'), orderBy('fullName'));
+            const queryResult = await getDocs(q);
+            const users = [];
+
+            for (const doc of queryResult.docs) {
+                const data = doc.data();
+                const u = new User();
+
+                u.username = data.username;
+                u.email = data.email;
+                u.profilePicture = data.profilePicture;
+                u.profilePicture = await u.getProfilePictureURL();
+                u.fullName = data.fullName;
+                u.dob = data.dob;
+                u.gender = data.gender;
+                u.phoneNumber = data.phoneNumber;
+                u.hasMedical = data.hasMedical;
+                u.isPremium = data.isPremium;
+                u.isSuspended = data.isSuspended;
+                u.weight = data.weight;
+                u.height = data.height;
+                u.fitnessGoal = data.fitnessGoal;
+                u.fitnessLevel = data.fitnessLevel;
+                u.restInterval = data.restInterval;
+
+
+
+                users.push({ id: doc.id, user: u });
+
+            }
+
+            return users;
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async search(search) {
+        try {
+
+            let q = null;
+            if (search.trim() === '') {
+                q = query(collection(db, 'user'), orderBy('fullName'));
+            } else {
+
+                q = query(collection(db, 'user'), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
+            }
+
+            const queryResult = await getDocs(q);
+            const users = [];
+
+            for (const doc of queryResult.docs) {
+                const data = doc.data();
+                const u = new User();
+
+                u.username = data.username;
+                u.email = data.email;
+                u.profilePicture = data.profilePicture;
+                u.profilePicture = await u.getProfilePictureURL();
+                u.fullName = data.fullName;
+                u.dob = data.dob;
+                u.gender = data.gender;
+                u.phoneNumber = data.phoneNumber;
+                u.hasMedical = data.hasMedical;
+                u.isPremium = data.isPremium;
+                u.isSuspended = data.isSuspended;
+                u.weight = data.weight;
+                u.height = data.height;
+                u.fitnessGoal = data.fitnessGoal;
+                u.fitnessLevel = data.fitnessLevel;
+                u.restInterval = data.restInterval;
+
+
+
+                users.push({ id: doc.id, user: u });
+            }
+
+            return users;
+
+
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
 
 }
 

@@ -24,7 +24,13 @@ const AccountListCard = (props)=>{
                                 account.constructor.name
                             ) 
                             : 
-                            account.constructor.name}
+                            (account.constructor.name === "User" ?
+                                (
+                                    account.isPremium ? "Premium User" : "Free User"
+                                )    
+                                
+                            : account.constructor.name)
+                            }
                         </Text>
                         <View style ={style.optButtons}>
                             <TouchableOpacity onPress = {()=> props.detailsHandler()} activeOpacity={0.7} style = {{backgroundColor:'#D9D9D9'}}>
