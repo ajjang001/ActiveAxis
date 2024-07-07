@@ -65,6 +65,22 @@ app.post('/api/delete-account', async (req, res) => {
   }
 });
 
+app.post('/api/update-password', async (req, res) => {
+  const { uid, newPassword } = req.body;
+
+  try {
+    await admin.auth().updateUser(uid, {
+      password: newPassword
+    });
+
+    res.status(200).send({ message: `Successfully updated password for user with UID: ${uid}` });
+  } catch (error) {
+    console.error('Error updating password:', error);
+    res.status(500).send({ error: 'Error updating password', details: error });
+  }
+});
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

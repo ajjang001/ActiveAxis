@@ -362,6 +362,16 @@ class User extends Account{
         }
     }
 
+    async updatePassword(userID, newPassword) {
+        try {
+            // Send a request to the server to update the user's password in Firebase Auth
+            const res = await axios.post('http://192.168.10.118:3000/api/update-password', { uid: userID, newPassword });
+            console.log(res.data.message);
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
 
 }
 
