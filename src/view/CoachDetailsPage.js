@@ -14,7 +14,7 @@ const CoachDetailsPage = ({route}) => {
     // State to store the image URL
     const [feedback, setFeedback] = useState([]);
     const [selectedStar, setSelectedStar] = useState(5);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
     const [dob, setDob] = useState(null);
@@ -23,7 +23,7 @@ const CoachDetailsPage = ({route}) => {
     const starFilter = [5, 4, 3, 2, 1];
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
-      ];
+    ];
 
       // convert firebase timestamp to date
     const convertToDate = (firebaseTimestamp) =>{
@@ -87,6 +87,8 @@ const CoachDetailsPage = ({route}) => {
 
                     <Text style = {styles.detailsTitle}>Name</Text>
                     <Text style = {styles.detailsText}>{coach.coach.fullName}</Text>
+                    <Text style = {styles.detailsTitle}>Username</Text>
+                    <Text style = {styles.detailsText}>{coach.coach.username}</Text>
                     <Text style = {styles.detailsTitle}>Email</Text>
                     <Text style = {styles.detailsText}>{coach.coach.email}</Text>
                     <Text style = {styles.detailsTitle}>Phone Number</Text>
