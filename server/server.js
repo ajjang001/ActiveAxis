@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import admin from 'firebase-admin';
 import serviceAccount from '../.expo/api/serviceAccountKey.json' assert { type: 'json' };
+import functions from 'firebase-functions';
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -12,6 +13,7 @@ admin.initializeApp({
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
+
 
 app.get('/api/data', async (req, res) => {
   const data = await new Promise(resolve => {
@@ -85,3 +87,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+exports.api = functions.https.onRequest(app);

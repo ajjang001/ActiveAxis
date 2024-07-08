@@ -310,7 +310,7 @@ class Coach extends Account {
             const q = doc(db, 'coach', coachID);
             await updateDoc(q, { isSuspended: true });
 
-            const res = await axios.post('http://192.168.1.74:3000/api/disable-account', { uid: coachID });
+            const res = await axios.post('http://10.93.19.181:3000/api/disable-account', { uid: coachID });
             console.log(res.data.message);
 
         } catch (e) {
@@ -323,7 +323,8 @@ class Coach extends Account {
             const q = doc(db, 'coach', coachID);
             await updateDoc(q, { isSuspended: false });
 
-            const res = await axios.post('http://192.168.1.74:3000/api/enable-account', { uid: coachID });
+            const res = await axios.post('http://10.93.19.181:3000/api/enable-account', { uid: coachID });
+            
             console.log(res.data.message);
         } catch (e) {
             throw new Error(e.message);
@@ -458,7 +459,7 @@ class Coach extends Account {
             await deleteObject(profileRef);
 
             // Delete account in authentication
-            const res = await axios.post('http://192.168.1.74:3000/api/delete-account', { uid: coachID });
+            const res = await axios.post('http://10.93.19.181:3000/api/delete-account', { uid: coachID });
             console.log(res.data.message);
 
 
