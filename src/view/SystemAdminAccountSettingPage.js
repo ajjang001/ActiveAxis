@@ -39,7 +39,7 @@ const SystemAdminAccountSettingPage = ({ navigation, route }) => {
                 <Text style={styles.headerText}>Account Settings</Text>
             </View>
             <View style={styles.detailsBox}>
-                <Text style={styles.detailsTitle}>Name</Text>
+                <Text style={styles.detailsTitle}>Username</Text>
                 <Text style={styles.detailsText}>{admin.username}</Text>
                 <Text style={styles.detailsTitle}>Email</Text>
                 <Text style={styles.detailsText}>{admin.email}</Text>

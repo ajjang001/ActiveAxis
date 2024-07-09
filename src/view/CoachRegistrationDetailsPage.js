@@ -148,11 +148,11 @@ const CoachRegistrationDetailsPage = ({navigation, route}) => {
             </View>
 
             <View style = {styles.buttonView}>
-                <TouchableOpacity onPress ={()=>{setIsPressAccept(true); changeModalVisible(true, 'Are you sure you want to Accept?')}} style = {styles.ARButton}>
+                <TouchableOpacity onPress ={()=>{setIsPressAccept(true); changeConfirmVisible(true, 'Are you sure you want to Accept?')}} style = {styles.ARButton}>
                         <Image source={require('../../assets/check_icon.png')} style={styles.ARIcon}/>
                         <Text style = {styles.ARText}>ACCEPT</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress ={()=>{setIsPressAccept(false); changeModalVisible(true, 'Are you sure you want to Reject?')}} style = {styles.ARButton}>
+                <TouchableOpacity onPress ={()=>{setIsPressAccept(false); changeConfirmVisible(true, 'Are you sure you want to Reject?')}} style = {styles.ARButton}>
                         <Image source={require('../../assets/cross_icon.png')} style={styles.ARIcon}/>
                         <Text style = {styles.ARText}>REJECT</Text>
                 </TouchableOpacity>

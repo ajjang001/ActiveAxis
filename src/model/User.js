@@ -341,7 +341,7 @@ class User extends Account{
             const q = doc(db, 'user', userID);
             await updateDoc(q, { isSuspended: true });
 
-            const res = await axios.post('http://10.93.19.181:3000/api/disable-account', { uid: userID });
+            const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/disable-account', { uid: userID });
             console.log(res.data.message);
 
         } catch (e) {
@@ -355,7 +355,10 @@ class User extends Account{
             const q = doc(db, 'user', userID);
             await updateDoc(q, { isSuspended: false });
 
-            const res = await axios.post('http://10.93.19.181:3000/api/enable-account', { uid: userID });
+            const res1 = await axios.get('https://myapi-af5izkapwq-uc.a.run.app/test/data');
+            console.log(res1.data.message);
+
+            const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/enable-account', { uid: userID });
             console.log(res.data.message);
         } catch (e) {
             throw new Error(e.message);
@@ -365,13 +368,12 @@ class User extends Account{
     async updatePassword(userID, newPassword) {
         try {
             // Send a request to the server to update the user's password in Firebase Auth
-            const res = await axios.post('http://10.93.19.181:3000/api/update-password', { uid: userID, newPassword });
+            const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/update-password', { uid: userID, newPassword });
             console.log(res.data.message);
         } catch (e) {
             throw new Error(e.message);
         }
     }
-
 
 }
 
