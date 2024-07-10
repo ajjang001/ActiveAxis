@@ -6,9 +6,9 @@ import { CheckBox } from '@rneui/themed';
 import DatePicker from 'react-native-date-picker';
 
 
-import {MessageDialog} from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
-import RegisterPresenter from '../presenter/RegisterPresenter';
+import RegisterPresenter from '../../presenter/RegisterPresenter';
 
 const RegisterPage = ({ navigation }) => {
 
@@ -91,7 +91,6 @@ const RegisterPage = ({ navigation }) => {
               value={gender}
               onChange={item => {
                 setGender(item.value);
-                console.log('selected', item);
               }}
             />
           </View>
@@ -151,7 +150,6 @@ const RegisterPage = ({ navigation }) => {
               value={goal}
               onChange={item => {
                 setGoal(item.value);
-                console.log('selected', item);
               }}
             />
           </View>
@@ -166,7 +164,6 @@ const RegisterPage = ({ navigation }) => {
               value={level}
               onChange={item => {
                 setLevel(item.value);
-                console.log('selected', item);
               }}
             />
           </View>

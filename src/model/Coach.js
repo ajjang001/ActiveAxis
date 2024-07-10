@@ -1,14 +1,18 @@
 import { app, auth, db, storage } from '../../.expo/api/firebase';
-import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
-import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, orderBy } from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
 
+import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
+import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, deleteDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import axios from 'axios';
 
 import Account from './Account';
 
 class Coach extends Account {
     #isPending;
     #chargePerMonth;
+    #certificate;
+    #id;
+    #resume;
 
 
     constructor() {
@@ -17,8 +21,16 @@ class Coach extends Account {
 
     get isPending() { return this.#isPending; }
     get chargePerMonth() { return this.#chargePerMonth; }
+    get certificate() { return this.#certificate; }
+    get id() { return this.#id; }
+    get resume() { return this.#resume; }
+
     set isPending(isPending) { this.#isPending = isPending; }
     set chargePerMonth(chargePerMonth) { this.#chargePerMonth = chargePerMonth; }
+    set certificate(certificate) { this.#certificate = certificate; }
+    set id(id) { this.#id = id; }
+    set resume(resume) { this.#resume = resume; }
+
 
     async login(email, password) {
         try {
@@ -38,7 +50,7 @@ class Coach extends Account {
                 if (!iv) {
                     // Account is not verified
                     throw new Error('Please verify your email first\nCheck your email for the verification link.');
-                }else if (ip) {
+                } else if (ip) {
                     // Account is pending
                     throw new Error('Your account is pending\nPlease wait for the admin to approve your account.');
                 } else if (is) {
@@ -51,11 +63,17 @@ class Coach extends Account {
                     c.username = data.username;
                     c.email = email;
                     c.profilePicture = data.profilePicture;
+                    c.profilePicture = await c.getProfilePictureURL();
                     c.fullName = data.fullName;
                     c.dob = data.dob;
                     c.gender = data.gender;
                     c.phoneNumber = data.phoneNumber;
+                    c.isPending = ip;
+                    c.isSuspended = is;
                     c.chargePerMonth = data.chargePerMonth;
+                    c.certificate = data.certificate;
+                    c.id = data.photoID;
+                    c.resume = data.resume;
 
                     return c;
                 }
@@ -81,11 +99,17 @@ class Coach extends Account {
             c.username = data.username;
             c.email = data.email;
             c.profilePicture = data.profilePicture;
+            c.profilePicture = await c.getProfilePictureURL();
             c.fullName = data.fullName;
             c.dob = data.dob;
             c.gender = data.gender;
             c.phoneNumber = data.phoneNumber;
+            c.isPending = data.isPending;
+            c.isSuspended = data.isSuspended;
             c.chargePerMonth = data.chargePerMonth;
+            c.certificate = data.certificate;
+            c.id = data.photoID;
+            c.resume = data.resume;
 
             return c;
 
@@ -105,38 +129,39 @@ class Coach extends Account {
             // Convert URI to Blob
             const uriToBlob = (uri) => {
                 return new Promise((resolve, reject) => {
-                   const xhr = new XMLHttpRequest()
-                   xhr.onload = function () {
-                     // return the blob
-                     resolve(xhr.response)
-                   }
-                   xhr.onerror = function () {
-                     reject(new Error('uriToBlob failed'))
-                   }
-                   xhr.responseType = 'blob'
-                   xhr.open('GET', uri, true)
-               
-                   xhr.send(null)})
-                };
+                    const xhr = new XMLHttpRequest()
+                    xhr.onload = function () {
+                        // return the blob
+                        resolve(xhr.response)
+                    }
+                    xhr.onerror = function () {
+                        reject(new Error('uriToBlob failed'))
+                    }
+                    xhr.responseType = 'blob'
+                    xhr.open('GET', uri, true)
 
-                // Upload file to Firebase Storage
+                    xhr.send(null)
+                })
+            };
+
+            // Upload file to Firebase Storage
             const uploadFile = async (file, folderPath) => {
                 if (!file || !file.uri) throw new Error('File URI is invalid');
 
                 const storageRef = ref(storage, folderPath + file.name);
                 const blobFile = await uriToBlob(file.uri);
-                try{
+                try {
                     await uploadBytes(storageRef, blobFile);
                     return `${folderPath}${file.name}`;
-                }catch(e){
+                } catch (e) {
                     throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support.");
-                    
+
                 }
 
-              };
+            };
 
             // Folder path
-            const folderPath = `coach_registration/${email.split('@')[0]}/`;
+            const folderPath = `coach/${email.split('@')[0]}/`;
 
 
             // Upload files to Firebase Storage
@@ -144,8 +169,8 @@ class Coach extends Account {
             const resumePath = await uploadFile(resume, folderPath);
             const certificatePath = await uploadFile(certificate, folderPath);
             const idPath = await uploadFile(identification, folderPath);
-            
-            
+
+
 
             // Create the coach account in the firestore firestore database
             await setDoc(doc(db, "coach", userCredential.user.uid), {
@@ -160,7 +185,7 @@ class Coach extends Account {
                 phoneNumber: phone,
                 profilePicture: photoPath,
                 resume: resumePath,
-                identification: idPath,
+                photoID: idPath,
                 username: null,
             });
 
@@ -194,6 +219,260 @@ class Coach extends Account {
             throw new Error("Failed to reset password. Please try again or contact support.");
         }
     }
+
+    async getCoachList() {
+        try {
+            const q = query(collection(db, 'coach'), where('isPending', '==', false));
+            const queryResult = await getDocs(q);
+            const coaches = [];
+
+            for (const doc of queryResult.docs) {
+                const data = doc.data();
+                const c = new Coach();
+
+                c.username = data.username;
+                c.email = data.email;
+                c.profilePicture = data.profilePicture;
+                c.profilePicture = await c.getProfilePictureURL();
+                c.fullName = data.fullName;
+                c.dob = data.dob;
+                c.gender = data.gender;
+                c.phoneNumber = data.phoneNumber;
+                c.isPending = data.isPending;
+                c.isSuspended = data.isSuspended;
+                c.chargePerMonth = data.chargePerMonth;
+                c.certificate = data.certificate;
+                c.id = data.photoID;
+                c.resume = data.resume;
+
+
+
+                coaches.push({ id: doc.id, coach: c });
+
+            }
+
+            return coaches;
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async search(search) {
+        try {
+
+            let q = null;
+            if (search.trim() === '') {
+                q = query(collection(db, 'coach'), where('isPending', '==', false));
+            } else {
+
+                q = query(collection(db, 'coach'), where('isPending', '==', false), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
+            }
+
+            const queryResult = await getDocs(q);
+            const coaches = [];
+
+            for (const doc of queryResult.docs) {
+                const data = doc.data();
+                const c = new Coach();
+                c.username = data.username;
+                c.email = data.email;
+                c.profilePicture = data.profilePicture;
+                c.profilePicture = await c.getProfilePictureURL();
+                c.fullName = data.fullName;
+                c.dob = data.dob;
+                c.gender = data.gender;
+                c.phoneNumber = data.phoneNumber;
+                c.isPending = data.isPending;
+                c.isSuspended = data.isSuspended;
+                c.chargePerMonth = data.chargePerMonth;
+                c.certificate = data.certificate;
+                c.id = data.photoID;
+                c.resume = data.resume;
+
+
+
+                coaches.push({ id: doc.id, coach: c });
+
+
+
+            }
+
+            return coaches;
+
+
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async suspend(coachID) {
+        try {
+            const q = doc(db, 'coach', coachID);
+            await updateDoc(q, { isSuspended: true });
+
+            const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/disable-account', { uid: coachID });
+            console.log(res.data.message);
+
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async unsuspend(coachID) {
+        try {
+            const q = doc(db, 'coach', coachID);
+            await updateDoc(q, { isSuspended: false });
+
+            const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/enable-account', { uid: coachID });
+            
+            console.log(res.data.message);
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+
+    async getListOfCoachRegistration() {
+        try {
+            const q = query(collection(db, 'coach'), where('isPending', '==', true));
+            const queryResult = await getDocs(q);
+            const coaches = [];
+
+            for (const doc of queryResult.docs) {
+                const data = doc.data();
+                const c = new Coach();
+
+                c.username = data.username;
+                c.email = data.email;
+                c.profilePicture = data.profilePicture;
+                c.profilePicture = await c.getProfilePictureURL();
+                c.fullName = data.fullName;
+                c.dob = data.dob;
+                c.gender = data.gender;
+                c.phoneNumber = data.phoneNumber;
+                c.isPending = data.isPending;
+                c.isSuspended = data.isSuspended;
+                c.chargePerMonth = data.chargePerMonth;
+                c.certificate = data.certificate;
+                c.id = data.photoID;
+                c.resume = data.resume;
+
+
+
+                coaches.push({ id: doc.id, coach: c });
+
+            }
+
+
+            return coaches;
+
+
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async getDocuments() {
+        try {
+            const resumeRef = ref(storage, this.resume);
+            const certRef = ref(storage, this.certificate);
+            const idRef = ref(storage, this.id);
+
+            const resumeURL = await getDownloadURL(resumeRef);
+            const certURL = await getDownloadURL(certRef);
+            const idURL = await getDownloadURL(idRef);
+
+            return { resumeURL, certURL, idURL };
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async approveCoach(coachID) {
+        try {
+            const fullnameArr = this.fullName.split(' ');
+            let username = '';
+            for (let i = 1; i < fullnameArr.length; i++) {
+                username += fullnameArr[i].charAt(0).toLowerCase();
+            }
+            username += fullnameArr[0].toLowerCase() + '_';
+
+            const q = query(collection(db, 'coach'), orderBy('username'), startAt(username), endAt(username + '\uf8ff'));
+            const queryResult = await getDocs(q);
+
+            if (queryResult.empty) {
+                username += '1';
+            } else {
+
+                let i = 1;
+                let isFound = false;
+                for (const doc of queryResult.docs) {
+                    const data = doc.data();
+                    const checkName = username + i;
+                    if (checkName !== data.username) {
+                        username = checkName;
+                        isFound = true;
+                        break;
+                    }
+                    i++;
+                }
+
+                if (!isFound) {
+                    username += i;
+                }
+
+
+
+            }
+
+            const coachRef = doc(db, 'coach', coachID);
+            await updateDoc(coachRef, {
+                isPending: false,
+                username: username
+            });
+
+
+
+
+
+
+
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async rejectCoach(coachID){
+        try{
+            // Delete storage
+            // Delete resume
+            const resumeRef = ref(storage, this.resume);
+            await deleteObject(resumeRef);
+            // Delete certificate
+            const certRef = ref(storage, this.certificate);
+            await deleteObject(certRef);
+            // Delete identification
+            const idRef = ref(storage, this.id);
+            await deleteObject(idRef);
+            // Delete profile picture
+            const profileRef = ref(storage, this.profilePicture);
+            await deleteObject(profileRef);
+
+            // Delete account in authentication
+            const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/delete-account', { uid: coachID });
+            console.log(res.data.message);
+            
+
+
+            // Delete document
+            const coachRef = doc(db, 'coach', coachID);
+            await deleteDoc(coachRef);
+        }catch(e){
+            throw new Error(e.message);
+        }
+    }
+
+
 
 }
 

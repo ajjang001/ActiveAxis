@@ -2,22 +2,24 @@ import React, { useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal, Alert } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
-import { LoadingDialog } from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
 import ResetPasswordPresenter from '../presenter/ResetPasswordPresenter';
 
 const ResetPasswordPage = ({ navigation }) => {
-
+    // state variables
     const [email, setEmail] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
 
+    // Function to change the visibility of the modal
     const changeLoadingVisible = (b) => {
         setIsLoading(b);
     }
+
+    // Function to reset the password
     const processResetPassword = async (email) => {
         try {
             changeLoadingVisible(true);
-            console.log({ email })
             await new ResetPasswordPresenter().processResetPassword(email);
             Alert.alert("Kindly check your email to reset your password!");
             navigation.navigate('LoginPage')
@@ -27,6 +29,7 @@ const ResetPasswordPage = ({ navigation }) => {
             changeLoadingVisible(false);
         }
     };
+    
     return (
         <KeyboardAvoidingView
             style={styles.container}

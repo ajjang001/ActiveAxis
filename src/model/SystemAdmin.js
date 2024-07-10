@@ -1,6 +1,6 @@
 import {app, auth, db, storage} from '../../.expo/api/firebase';
 
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { getDoc, doc, getDocs, query, collection, where } from "firebase/firestore";
 
 class SystemAdmin{
@@ -53,6 +53,24 @@ class SystemAdmin{
             }
         }catch(e){
             throw new Error(e.message);
+        }
+    }
+
+    async resetPassword(email) {
+        try {
+            // Check if the email exists
+            const q = query(collection(db, 'systemadmin'), where('email', '==', email));
+            const queryResult = await getDocs(q);
+            
+            if (queryResult.empty == true) {
+                throw new Error("There is no account associated with that email.");
+            }
+            else {
+                await sendPasswordResetEmail(auth, email)
+            }
+        }
+        catch (e) {
+            throw new Error("Failed to reset password. Please try again or contact support.");
         }
     }
 

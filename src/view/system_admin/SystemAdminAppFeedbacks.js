@@ -1,24 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, Modal, ScrollView } from 'react-native';
-import FeedbackCard from '../components/FeedbackCard';
-import DisplayAppFeedbacksPresenter from '../presenter/DisplayAppFeedbacksPresenter';
-import { LoadingDialog } from '../components/Modal';
+import FeedbackCard from '../../components/FeedbackCard';
+import DisplayFeedbacksPresenter from '../../presenter/DisplayFeedbacksPresenter';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
-const AppFeedBackPage = () => {
+import {scale} from '../../components/scale';
+
+const SystemAdminAppFeedbacks = () => {
+  // state variables
   const [feedback, setFeedback] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
+
+  // change popup/modal visible
+  const changeModalVisible = (b, m)=>{
+    setModalMsg(m);
+    setModalVisible(b);
+  }
   
-  const presenter = new DisplayAppFeedbacksPresenter({
-    displayFeedback: (data) => {
+  // load feedbacks
+  const presenter = new DisplayFeedbacksPresenter({
+    displayFeedbacks: (data) => {
       setFeedback(data);
       setLoading(false);
     },
     displayError: (message) => {
-      console.error(message);
+      changeModalVisible(true, message);
       setLoading(false);
     },
   });
 
+  // load feedbacks presenter
   useEffect(() => {
     setLoading(true);
     presenter.loadFeedbacks();
@@ -49,7 +62,10 @@ const AppFeedBackPage = () => {
         feedback={feedbackItem.feedbackText}
       />
     ))}
-    
+
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+        <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+      </Modal>
     </ScrollView>
   );
 };
@@ -57,16 +73,16 @@ const AppFeedBackPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 20,
+    paddingVertical: scale(20),
     backgroundColor: '#FBF5F3',
   },
   contentContainer:{
     alignItems: 'center',
   },
   title: {
-    fontSize: 24,
+    fontSize: scale(30),
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
   loadingContainer: {
     flex: 1,
@@ -75,4 +91,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppFeedBackPage;
+export default SystemAdminAppFeedbacks;

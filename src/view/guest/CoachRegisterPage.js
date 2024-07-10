@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal, Image } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { Dropdown } from 'react-native-element-dropdown';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import DatePicker from 'react-native-date-picker';
-import { scale } from '../components/scale';
+import { scale } from '../../components/scale';
 import DocumentPicker from 'react-native-document-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { MessageDialog } from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
-import RegisterPresenter from '../presenter/RegisterPresenter';
+import RegisterPresenter from '../../presenter/RegisterPresenter';
 
 const CoachRegisterPage = ({ navigation }) => {
+  // state variables
   const genderData = [
     { label: 'Male', value: 'm' },
     { label: 'Female', value: 'f' },
   ];
 
+  // state variables
   const [gender, setGender] = useState('');
   const [dob, setDob] = useState('');
   const [chargePM, setChargePM] = useState('');
-
   const [open, setOpen] = useState(false)
-
   const [photo, setPhoto] = useState(null);
   const [resume, setResume] = useState(null);
   const [certificate, setCertificate] = useState(null);
@@ -32,6 +32,7 @@ const CoachRegisterPage = ({ navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
 
+  // format date
   const formatDate = (date) => {
     if (!date) return "";
     return date.toLocaleDateString('en-US', {
@@ -47,8 +48,9 @@ const CoachRegisterPage = ({ navigation }) => {
     setIsModalVisible(b);
   }
 
+  // Upload Field
   const UploadField = ({ label, file, onSelect }) => (
-    <View style={styles.uploadField}>
+    <View>
       <Text style={styles.label}>{label}</Text>
       <TouchableOpacity onPress={onSelect} style={styles.uploadButton}>
        {file ? (
@@ -60,10 +62,12 @@ const CoachRegisterPage = ({ navigation }) => {
           Upload your {label.toLowerCase()} here
         </Text>
       )}
+      <Image style = {styles.uploadIcon} source = {require("../../../assets/upload_icon.png")} />
       </TouchableOpacity>
     </View>
   );
 
+  // handle select photo
   const handleSelectPhoto = () => {
     launchImageLibrary({ mediaType: 'photo' }, (response) => {
       if (response.didCancel) {
@@ -73,18 +77,25 @@ const CoachRegisterPage = ({ navigation }) => {
       } else {
         const asset = response.assets[0];
         const uri = asset.uri;
-        const name = asset.fileName || uri.split('/').pop();
+        let name = asset.fileName || uri.split('/').pop();
+        const ext = name.split('.').pop();
+        name = `photo.${ext}`;
         setPhoto({ uri, name });
       }
     });
   };
 
-  const handleSelectDocument = async (setter) => {
+  //  handle select document
+  const handleSelectDocument = async (setter, type) => {
     try {
+      
       const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images, DocumentPicker.types.pdf],
+        type: [DocumentPicker.types.images],
       });
+      const ext = res[0].name.split('.').pop() || res[0].uri.split('.').pop();
+      res[0].name = `${type}.${ext}`;
       setter({ uri: res[0].uri, name: res[0].name });
+      
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('User cancelled document picker');
@@ -94,6 +105,7 @@ const CoachRegisterPage = ({ navigation }) => {
     }
   };
 
+  // process profiling coach
   const processProfilingCoach = async (gender, dob, chargePM, photo, resume, certificate, identification) => {
     try {
       // Call the presenter to process the profiling
@@ -121,7 +133,6 @@ const CoachRegisterPage = ({ navigation }) => {
             value={gender}
             onChange={item => {
               setGender(item.value);
-              console.log('selected', item);
             }}
           />
         </View>
@@ -161,9 +172,9 @@ const CoachRegisterPage = ({ navigation }) => {
           />
 
           <UploadField label="Photo" file={photo} onSelect={handleSelectPhoto} />
-          <UploadField label="Resume" file={resume} onSelect={() => handleSelectDocument(setResume)} />
-          <UploadField label="Certificate" file={certificate} onSelect={() => handleSelectDocument(setCertificate)} />
-          <UploadField label="Identification (e.g. NRIC)" file={identification} onSelect={() => handleSelectDocument(setIdentification)} />
+          <UploadField label="Resume" file={resume} onSelect={() => handleSelectDocument(setResume, "resume")} />
+          <UploadField label="Certificate" file={certificate} onSelect={() => handleSelectDocument(setCertificate, "certificate")} />
+          <UploadField label="Identification" file={identification} onSelect={() => handleSelectDocument(setIdentification, "identification")} />
 
         </View>
         <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={() => changeModalVisible(false)}>
@@ -305,7 +316,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
-    alignItems: 'flex-start',
+    flexDirection:'row',
+    alignItems: 'center',
+    justifyContent:'space-between',
     width: '100%',
   },
   uploadButtonText: {
@@ -316,5 +329,9 @@ const styles = StyleSheet.create({
     color: 'black',
     width: '100%',
   },
+  uploadIcon:{
+    height:scale(15), 
+    width:(15)
+  }
 
 });

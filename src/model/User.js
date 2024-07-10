@@ -1,6 +1,7 @@
 import { app, auth, db, storage } from '../../.expo/api/firebase';
-import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, orderBy } from "firebase/firestore";
+import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, orderBy, startAt, endAt, updateDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
+import axios from 'axios';
 import Account from './Account';
 
 class User extends Account{
@@ -66,6 +67,7 @@ class User extends Account{
                     u.username = data.username;
                     u.email = email;
                     u.profilePicture = data.profilePicture;
+                    u.profilePicture = await u.getProfilePictureURL();
                     u.fullName = data.fullName;
                     u.dob = data.dob;
                     u.gender = data.gender;
@@ -105,12 +107,14 @@ class User extends Account{
             u.username = data.username;
             u.email = data.email;
             u.profilePicture = data.profilePicture;
+            u.profilePicture = await u.getProfilePictureURL();
             u.fullName = data.fullName;
             u.dob = data.dob;
             u.gender = data.gender;
             u.phoneNumber = data.phoneNumber;
             u.hasMedical = data.hasMedical;
             u.isPremium = data.isPremium;
+            u.isSuspended = data.isSuspended;
             u.weight = data.weight;
             u.height = data.height;
             u.fitnessGoal = data.fitnessGoal;
@@ -204,8 +208,11 @@ class User extends Account{
 
     async resetPassword(email) {
         try {
+            // Check if the email exists
             const q = query(collection(db, 'user'), where('email', '==', email));
             const queryResult = await getDocs(q);
+
+            // Send password reset email
             if (queryResult.empty == true) {
                 throw new Error("There is no account associated with that email.");
             }
@@ -215,6 +222,156 @@ class User extends Account{
         }
         catch (e) {
             throw new Error("Failed to reset password. Please try again or contact support.");
+        }
+    }
+
+    async getUserList(filter) {
+        try {
+            // Get all users
+            let q = null;
+            if (filter === 'free') {
+                q = query(collection(db, 'user'), where('isPremium', '==', false), orderBy('fullName'));
+            }else if (filter === 'premium'){
+                q = query(collection(db, 'user'), where('isPremium', '==', true), orderBy('fullName'));
+            }else{
+                q = query(collection(db, 'user'), orderBy('fullName'));
+            }
+            const queryResult = await getDocs(q);
+            const users = [];
+
+            for (const doc of queryResult.docs) {
+                const data = doc.data();
+                const u = new User();
+
+                u.username = data.username;
+                u.email = data.email;
+                u.profilePicture = data.profilePicture;
+                u.profilePicture = await u.getProfilePictureURL();
+                u.fullName = data.fullName;
+                u.dob = data.dob;
+                u.gender = data.gender;
+                u.phoneNumber = data.phoneNumber;
+                u.hasMedical = data.hasMedical;
+                u.isPremium = data.isPremium;
+                u.isSuspended = data.isSuspended;
+                u.weight = data.weight;
+                u.height = data.height;
+                u.fitnessGoal = data.fitnessGoal;
+                u.fitnessLevel = data.fitnessLevel;
+                u.restInterval = data.restInterval;
+
+
+
+                users.push({ id: doc.id, user: u });
+
+            }
+
+            return users;
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async search(search, filter) {
+        try {
+            // Search for users by name 
+            console.log(search);
+            console.log(filter);
+            let q = null;
+            if (search.trim() === '') {
+                if (filter === 'free') {
+                    q = query(collection(db, 'user'), where('isPremium', '==', false), orderBy('fullName'));
+                }else if (filter === 'premium'){
+                    q = query(collection(db, 'user'), where('isPremium', '==', true), orderBy('fullName'));
+                }else{
+                    q = query(collection(db, 'user'), orderBy('fullName'));
+                }
+            } else {
+
+                if (filter === 'free') {
+                    q = query(collection(db, 'user'), where('isPremium', '==', false), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
+                }else if (filter === 'premium'){
+                    q = query(collection(db, 'user'), where('isPremium', '==', true), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
+                }else{
+                    q = query(collection(db, 'user'), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
+                }
+
+                
+            }
+
+            const queryResult = await getDocs(q);
+            const users = [];
+
+            for (const doc of queryResult.docs) {
+                const data = doc.data();
+                const u = new User();
+
+                u.username = data.username;
+                u.email = data.email;
+                u.profilePicture = data.profilePicture;
+                u.profilePicture = await u.getProfilePictureURL();
+                u.fullName = data.fullName;
+                u.dob = data.dob;
+                u.gender = data.gender;
+                u.phoneNumber = data.phoneNumber;
+                u.hasMedical = data.hasMedical;
+                u.isPremium = data.isPremium;
+                u.isSuspended = data.isSuspended;
+                u.weight = data.weight;
+                u.height = data.height;
+                u.fitnessGoal = data.fitnessGoal;
+                u.fitnessLevel = data.fitnessLevel;
+                u.restInterval = data.restInterval;
+
+                // Add user to the list
+                users.push({ id: doc.id, user: u });
+            }
+
+            return users;
+
+
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+    
+    async suspend(userID) {
+        try {
+            // Suspend the user account
+            const q = doc(db, 'user', userID);
+            await updateDoc(q, { isSuspended: true });
+
+            const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/disable-account', { uid: userID });
+            console.log(res.data.message);
+
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async unsuspend(userID) {
+        try {
+            // Unsuspend the user account
+            const q = doc(db, 'user', userID);
+            await updateDoc(q, { isSuspended: false });
+
+            const res1 = await axios.get('https://myapi-af5izkapwq-uc.a.run.app/test/data');
+            console.log(res1.data.message);
+
+            const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/enable-account', { uid: userID });
+            console.log(res.data.message);
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async updatePassword(userID, newPassword) {
+        try {
+            // Send a request to the server to update the user's password in Firebase Auth
+            const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/update-password', { uid: userID, newPassword });
+            console.log(res.data.message);
+        } catch (e) {
+            throw new Error(e.message);
         }
     }
 

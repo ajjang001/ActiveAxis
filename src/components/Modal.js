@@ -77,10 +77,10 @@ const styles = StyleSheet.create({
     },
     modal:{
         width:scale(300),
-        height:scale(110),
+        height:scale(125),
         backgroundColor:'white',
         borderWidth:scale(5),
-        padding:scale(15),
+        padding:scale(20),
 
         display:'flex',
         justifyContent:'center',
@@ -99,12 +99,13 @@ const styles = StyleSheet.create({
     buttonsView:{
         flexDirection:'row',
         width:scale(80),
-        height:scale(25),
+        height:scale(20),
     },
     button:{
         flex:1,
         alignItems:'center',
         backgroundColor:'#D9D9D9',
+        justifyContent:'center',
     }
     
 

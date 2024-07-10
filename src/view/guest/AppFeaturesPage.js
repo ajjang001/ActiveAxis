@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, StyleSheet, ScrollView } from 'react-native';
-import DisplayAppFeaturesPresenter from '../presenter/DisplayAppFeaturesPresenter';
-import { MessageDialog, LoadingDialog } from '../components/Modal';
+import DisplayAppFeaturesPresenter from '../../presenter/DisplayAppFeaturesPresenter';
+import { MessageDialog, LoadingDialog } from '../../components/Modal';
 
 const AppFeaturesPage = () => {
+  // State to store the features list
   const [features, setFeatures] = useState([]);
 
-  
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [modalMsg, setModalMsg] = useState('');
 
   
-  
+  // load features
   useEffect(() => {
     const fetchFeatures = async () => {
       setLoading(true);
@@ -40,6 +40,7 @@ const AppFeaturesPage = () => {
     setIsModalVisible(b);
   }
 
+  // loading dialog
   if (loading) {
     return (
       <Modal transparent={true} animationType='fade' visible={loading} nRequestClose={()=>changeLoadingVisible(false)}>

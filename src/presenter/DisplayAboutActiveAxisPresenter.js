@@ -3,12 +3,12 @@ import AppInfo from '../model/AppInfo.js';
 class DisplayAboutActiveAxisPresenter {
   constructor(view) {
     this.view = view;
+    this.appInfo = new AppInfo();
   }
 
   async displayAboutActiveAxis() {
     try {
-      const appInfo = new AppInfo();
-      const about = await appInfo.getAboutActiveAxis();
+      const about = await this.appInfo.getAboutActiveAxis();
       this.view.changeAbout(about);
     } catch (error) {
       console.error(error);
@@ -17,8 +17,7 @@ class DisplayAboutActiveAxisPresenter {
 
   async displayLogoURL() {
     try {
-      const appInfo = new AppInfo();
-      const logoURL = await appInfo.getLogoURL();
+      const logoURL = await this.appInfo.getLogoURL();
       this.view.changeLogoURL(logoURL);
     } catch (error) {
       console.error(error);

@@ -3,9 +3,8 @@ import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal }
 import { TextInput } from 'react-native-gesture-handler';
 import { CheckBox } from '@rneui/themed';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
-import RegisterPresenter from '../presenter/RegisterPresenter';
-import { LoadingDialog } from '../components/Modal';
-import {MessageDialog} from '../components/Modal';
+import RegisterPresenter from '../../presenter/RegisterPresenter';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
 
 
@@ -44,8 +43,7 @@ const RegisterPage2 = ({ navigation, route }) => {
         try {
             // Show loading screen
             changeLoadingVisible(true);
-            console.log({ name, email, password, gender, dob, weight, height, goal, level, phone, checkTC, medicalCheck })
-
+            
             // Call the presenter to process the registration
             await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck);
             // Navigate to the next screen
@@ -76,7 +74,7 @@ const RegisterPage2 = ({ navigation, route }) => {
                     <Text style={styles.label}>Phone Number</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="0000 0000"
+                        placeholder="XXXX XXXX"
                         keyboardType="phone-pad"
                         maxLength={8}
                         returnKeyType='done'

@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
 import { View, Text, Image} from 'react-native';
 import {ref, getDownloadURL} from 'firebase/storage';
-import {app, auth, db, storage} from '../../.expo/api/firebase';
-import { LoadingDialog } from '../components/Modal';
+import {app, auth, db, storage} from '../../../.expo/api/firebase';
+import { LoadingDialog } from '../../components/Modal';
 
 
 
@@ -10,6 +10,7 @@ const CoachHomePage = ({route}) => {
     const {coach} = route.params;
     const [imageURL, setImageURL] = React.useState('');
 
+    // get image url
     useEffect(() => {
         const getImageURL = async (c) => {
             const storageRef = ref(storage, c.profilePicture);

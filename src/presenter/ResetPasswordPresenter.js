@@ -4,6 +4,7 @@ import Coach from '../model/Coach';
 class ResetPasswordPresenter {
     constructor(view) {
         this.view = view;
+        this.account = null;
     }
     async processResetPassword(email) {
         // To if email is in valid format
@@ -16,13 +17,13 @@ class ResetPasswordPresenter {
         }
         else {
             try {
-                const user = new User();
-                await user.resetPassword(email)
+                this.account = new User();
+                await this.account.resetPassword(email)
             } catch (e) {
                 console.log('User not found. Searching for valid coach.');
                 try{
-                    const coach = new Coach();
-                    return coach.resetPassword(email);
+                    this.account = new Coach();
+                    return this.account.resetPassword(email);
                 }
                 catch{
                     throw new Error(e.message);

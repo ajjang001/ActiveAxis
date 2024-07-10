@@ -3,15 +3,16 @@ import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal }
 import { TextInput } from 'react-native-gesture-handler';
 import { CheckBox } from '@rneui/themed';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
-import { LoadingDialog, MessageDialog } from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
-import RegisterPresenter from '../presenter/RegisterPresenter';
+import RegisterPresenter from '../../presenter/RegisterPresenter';
 
 
 const CoachRegisterPage2 = ({ navigation, route }) => {
 
     const { gender, dob, chargePM, photo, resume, certificate, identification } = route.params;
 
+    // state variables
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
@@ -25,6 +26,7 @@ const CoachRegisterPage2 = ({ navigation, route }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
 
+    // change loading visible
     const changeLoadingVisible = (b) => {
         setIsLoading(b);
     }
@@ -41,7 +43,7 @@ const CoachRegisterPage2 = ({ navigation, route }) => {
             changeLoadingVisible(true);
             // Call the presenter to process the registration
             await new RegisterPresenter().processRegisterCoach(name, email, phone, password, checkTC, gender, dob, chargePM, photo, resume, certificate, identification);
-            console.log({ name, email, phone, password, checkTC, gender, dob, chargePM, photo, resume, certificate, identification })
+            
             // Navigate to the next screen
             navigation.navigate('Register3')
         } catch (e) {
@@ -68,7 +70,7 @@ const CoachRegisterPage2 = ({ navigation, route }) => {
                         onChangeText={text => setName(text)}
                         style={styles.input}
                     />
-                    <Text style={styles.label}>Phone Number (SG +65 only!)</Text>
+                    <Text style={styles.label}>Phone Number</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="XXXX XXXX"
