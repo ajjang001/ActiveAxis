@@ -36,6 +36,9 @@ import SystemAdminAppDetails from './src/view/SystemAdminAppDetails';
 import SystemAdminAppFeedbacks from './src/view/SystemAdminAppFeedbacks';
 import UpdateAboutUsPage from './src/view/UpdateAboutUsPage';
 import UpdateAppFeaturesPage from './src/view/UpdateAppFeaturesPage';
+import AchievementsPage from './src/view/AchievementsPage';
+import CreateAchievementsPage from './src/view/CreateAchievementsPage';
+import EditAchievementsPage from './src/view/EditAchievementsPage';
 
 import SystemAdminAccountSettingPage from './src/view/SystemAdminAccountSettingPage';
 import SystemAdminUpdateAccountDetailsPage from './src/view/SystemAdminUpdateAccountDetailsPage';
@@ -107,6 +110,9 @@ export default function App() {
         <Stack.Screen name="SystemAdminAppFeedbacks" component={SystemAdminAppFeedbacks} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
         <Stack.Screen name="UpdateAboutUsPage" component={UpdateAboutUsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         <Stack.Screen name="UpdateAppFeaturesPage" component={UpdateAppFeaturesPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        <Stack.Screen name="AchievementsPage" component={AchievementsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        <Stack.Screen name="CreateAchievementsPage" component={CreateAchievementsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        <Stack.Screen name="EditAchievementsPage" component={EditAchievementsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
 
         <Stack.Screen name="UserAccountListPage" component={UserAccountListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>  
         <Stack.Screen name="UserAccountDetailsPage" component={UserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/> 
