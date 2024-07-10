@@ -1,11 +1,11 @@
 import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity, Modal } from "react-native";
 import { useEffect, useState } from "react";
 
-import { scale } from "../components/scale";
-import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
-import DisplayCoachRequestDetailsPresenter from "../presenter/DisplayCoachRequestDetailsPresenter";
-import ApproveCoachPresenter from "../presenter/ApproveCoachPresenter";
-import RejectCoachPresenter from "../presenter/RejectCoachPresenter";
+import { scale } from "../../components/scale";
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
+import DisplayCoachRequestDetailsPresenter from "../../presenter/DisplayCoachRequestDetailsPresenter";
+import ApproveCoachPresenter from "../../presenter/ApproveCoachPresenter";
+import RejectCoachPresenter from "../../presenter/RejectCoachPresenter";
 
 const CoachRegistrationDetailsPage = ({navigation, route}) => {
     const {coach} = route.params;
@@ -149,11 +149,11 @@ const CoachRegistrationDetailsPage = ({navigation, route}) => {
 
             <View style = {styles.buttonView}>
                 <TouchableOpacity onPress ={()=>{setIsPressAccept(true); changeConfirmVisible(true, 'Are you sure you want to Accept?')}} style = {styles.ARButton}>
-                        <Image source={require('../../assets/check_icon.png')} style={styles.ARIcon}/>
+                        <Image source={require('../../../assets/check_icon.png')} style={styles.ARIcon}/>
                         <Text style = {styles.ARText}>ACCEPT</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress ={()=>{setIsPressAccept(false); changeConfirmVisible(true, 'Are you sure you want to Reject?')}} style = {styles.ARButton}>
-                        <Image source={require('../../assets/cross_icon.png')} style={styles.ARIcon}/>
+                        <Image source={require('../../../assets/cross_icon.png')} style={styles.ARIcon}/>
                         <Text style = {styles.ARText}>REJECT</Text>
                 </TouchableOpacity>
             </View>

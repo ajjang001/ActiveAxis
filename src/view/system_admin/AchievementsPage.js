@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, SectionList, Image } from 'react-native';
-import { scale } from '../components/scale';
+import { scale } from '../../components/scale';
 
 const allAchievements = [
   {
     title: 'Competitions Won',
     data: [
-      { id: '1', type: 'First Run', icon: require('../../assets/people-icon.png') },
+      { id: '1', type: 'First Run', icon: require('../../../assets/people-icon.png') },
       { id: '2', type: 'Empty' },
       { id: '3', type: 'Empty' },
       { id: '4', type: 'Empty' },

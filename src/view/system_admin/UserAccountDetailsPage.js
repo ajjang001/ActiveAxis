@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Image, Modal, TouchableOpacity } from 'react-native';
-import { scale } from '../components/scale';
-import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
+import { scale } from '../../components/scale';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
 
 const UserAccountDetailsPage = ({ navigation , route }) => {

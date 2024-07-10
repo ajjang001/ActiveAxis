@@ -1,15 +1,15 @@
 import { View,Text, StyleSheet, TextInput, Image, ScrollView, Modal, TouchableOpacity} from "react-native"
 import React, { useEffect, useState } from "react";
 
-import AccountListCard from "../components/AccountListCard";
-import { scale } from "../components/scale";
-import { LoadingDialog, MessageDialog, ActionDialog } from "../components/Modal";
+import AccountListCard from "../../components/AccountListCard";
+import { scale } from "../../components/scale";
+import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Modal";
 
 
-import DisplayUsersPresenter from "../presenter/DisplayUsersPresenter";
-import SearchUserAccountPresenter from "../presenter/SearchUserAccountPresenter";
-import SuspendUserAccountPresenter from "../presenter/SuspendUserAccountPresenter";
-import UnsuspendUserAccountPresenter from "../presenter/UnsuspendUserAccountPresenter";
+import DisplayUsersPresenter from "../../presenter/DisplayUsersPresenter";
+import SearchUserAccountPresenter from "../../presenter/SearchUserAccountPresenter";
+import SuspendUserAccountPresenter from "../../presenter/SuspendUserAccountPresenter";
+import UnsuspendUserAccountPresenter from "../../presenter/UnsuspendUserAccountPresenter";
 
 const ListOfUserAccountsPage = ({route, navigation}) =>{
     // state variables
@@ -123,7 +123,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
 
                 <View style = {style.topContentContainer}>
                     <View style = {style.searchBarContainer}>
-                        <Image style = {style.searchLogo} source={require('../../assets/search_icon.png')} />    
+                        <Image style = {style.searchLogo} source={require('../../../assets/search_icon.png')} />    
                         <TextInput onEndEditing = {()=>searchHandler()} onChangeText={setSearch} value = {search} placeholder = 'Search User' /> 
                     </View>
                 </View>

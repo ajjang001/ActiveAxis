@@ -3,47 +3,49 @@ import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal }
 import { TextInput } from 'react-native-gesture-handler';
 import { CheckBox } from '@rneui/themed';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
-import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
+import RegisterPresenter from '../../presenter/RegisterPresenter';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
-import RegisterPresenter from '../presenter/RegisterPresenter';
 
 
-const CoachRegisterPage2 = ({ navigation, route }) => {
+const RegisterPage2 = ({ navigation, route }) => {
+    // Get data from previous screen
+    const { gender, dob, weight, height, goal, level, medicalCheck } = route.params;
 
-    const { gender, dob, chargePM, photo, resume, certificate, identification } = route.params;
-
-    // state variables
+    // State to store the user input
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
+    // State to store the checkbox value
     const [checkTC, setCheckTC] = useState(false);
 
+    // Loading message
     const [isLoading, setIsLoading] = useState(false);
-
-    // Modal/Display Message
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [modalMsg, setModalMsg] = useState('');
-
-    // change loading visible
+    
+  // Modal/Display Message
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
+  
+  // change loading visible
     const changeLoadingVisible = (b) => {
         setIsLoading(b);
     }
+
     // change popup/modal visible
-    const changeModalVisible = (b, m) => {
+    const changeModalVisible = (b, m)=>{
         setModalMsg(m);
         setIsModalVisible(b);
     }
 
     // Process the registration
-    const processRegisterCoach = async (name, email, phone, password, checkTC, gender, dob, chargePM, photo, resume, certificate, identification) => {
+    const processRegister = async (name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck) => {
         try {
             // Show loading screen
             changeLoadingVisible(true);
-            // Call the presenter to process the registration
-            await new RegisterPresenter().processRegisterCoach(name, email, phone, password, checkTC, gender, dob, chargePM, photo, resume, certificate, identification);
             
+            // Call the presenter to process the registration
+            await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck);
             // Navigate to the next screen
             navigation.navigate('Register3')
         } catch (e) {
@@ -54,7 +56,6 @@ const CoachRegisterPage2 = ({ navigation, route }) => {
             changeLoadingVisible(false);
         }
     };
-
     return (
         <KeyboardAvoidingView
             style={styles.container}
@@ -83,6 +84,7 @@ const CoachRegisterPage2 = ({ navigation, route }) => {
                     <Text style={styles.label}>Email</Text>
                     <TextInput
                         placeholder="Enter your email"
+                        autoCapitalize='none'
                         value={email}
                         onChangeText={text => setEmail(text.toLowerCase())}
                         style={styles.input}
@@ -114,10 +116,10 @@ const CoachRegisterPage2 = ({ navigation, route }) => {
                     containerStyle={{ backgroundColor: 'transparent' }}
                 />
             </View>
-            <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={() => changeModalVisible(false)}>
+            <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={()=>changeModalVisible(false)}>
                 <MessageDialog
-                    message={modalMsg}
-                    changeModalVisible={changeModalVisible}
+                message = {modalMsg} 
+                changeModalVisible = {changeModalVisible} 
                 />
             </Modal>
             <View style={styles.buttonContainer}>
@@ -125,7 +127,9 @@ const CoachRegisterPage2 = ({ navigation, route }) => {
                     <LoadingDialog />
                 </Modal>
                 <TouchableOpacity
-                    onPress={() => processRegisterCoach(name, email, '+65' + phone, password, checkTC, gender, dob, chargePM, photo, resume, certificate, identification)}
+                    //onPress={() => processRegister(name, email, '+65'+phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck)}
+                    onPress={() => processRegister(name, email, '+65'+phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck)}
+                    
                     style={styles.button}
                 >
                     <Text style={styles.buttonText}>REGISTER</Text>
@@ -165,7 +169,7 @@ const CoachRegisterPage2 = ({ navigation, route }) => {
 }
 
 
-export default CoachRegisterPage2;
+export default RegisterPage2;
 
 const styles = StyleSheet.create({
     container: {

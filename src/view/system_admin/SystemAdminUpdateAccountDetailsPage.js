@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Modal, Alert } from 'react-native';
-import { scale } from '../components/scale';
-import { ActionDialog, LoadingDialog } from '../components/Modal';
+import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
+import { scale } from '../../components/scale';
+import { ActionDialog, LoadingDialog } from '../../components/Modal';
 import { TextInput } from 'react-native-gesture-handler';
-import EditUserAccountDetailsPresenter from '../presenter/EditUserAccountDetailsPresenter';
+//Page currently not in use//
+const SystemAdminUpdateAccountDetailsPage = ({ navigation, route }) => {
 
-const EditUserAccountDetailsPage = ({ navigation, route }) => {
-
-    const { user } = route.params;
-    const userID = user.id;
-
-    const [newPassword, setnewPassword] = useState('');
-    const [confirmnewPassword, setconfirmnewPassword] = useState('');
+    const {admin} = route.params;
 
     // State to control the visibility of the modal
     const [isLoading, setIsLoading] = useState(false);
@@ -34,15 +29,9 @@ const EditUserAccountDetailsPage = ({ navigation, route }) => {
     const onPressSave = async () => {
         changeLoadingVisible(true);
         try {
-            console.log(userID);
-            //console.log(newPassword);
-            //console.log(confirmnewPassword);
-            await new EditUserAccountDetailsPresenter().updatePassword(userID, newPassword, confirmnewPassword)
-            Alert.alert('Successfully updated password for user!')
-            navigation.navigate('UserAccountListPage')
+
         } catch (error) {
             console.log(error);
-            Alert.alert(error.message);
         } finally {
             changeLoadingVisible(false);
         }
@@ -52,14 +41,13 @@ const EditUserAccountDetailsPage = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.headerView}>
-                <Text style={styles.headerText}>Edit Account Password</Text>
-            </View>
             <View style={styles.detailsBox}>
+                <Text style={styles.detailsTitle}>Name</Text>
+                <TextInput style={styles.detailsText}>{admin.username}</TextInput>
+                <Text style={styles.detailsTitle}>Email</Text>
+                <TextInput style={styles.detailsText}>{admin.email}</TextInput>
                 <Text style={styles.detailsTitle}>Password</Text>
-                <TextInput style={styles.detailsText} placeholder='Enter new password' onChangeText={text => setnewPassword(text) } secureTextEntry></TextInput>
-                <Text style={styles.detailsTitle}>Confirm New Password</Text>
-                <TextInput style={styles.detailsText} placeholder='Confirm new password' onChangeText={text => setconfirmnewPassword(text) } secureTextEntry></TextInput>
+                <TextInput style={styles.detailsText} placeholder='Enter new password'></TextInput>
             </View>
             <TouchableOpacity style={styles.saveButton} onPress={() => changeModalVisible(true, 'Do you want to save changes?')}>
                 <Text style={styles.saveButtonText}>SAVE</Text>
@@ -77,25 +65,14 @@ const EditUserAccountDetailsPage = ({ navigation, route }) => {
         </View>
     )
 }
-export default EditUserAccountDetailsPage;
+export default SystemAdminUpdateAccountDetailsPage;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#C42847',
         alignItems: 'center',
-    },
-    headerView: {
-        backgroundColor: '#E28413',
-        width: '100%',
-        height: '10%',
-    },
-    headerText: {
-        fontSize: scale(36),
-        fontFamily: 'League-Spartan',
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginVertical: scale(20),
+        justifyContent: 'center'
     },
     detailsBox: {
         width: '90%',
@@ -103,7 +80,6 @@ const styles = StyleSheet.create({
         padding: scale(20),
         borderWidth: 2,
         borderRadius: scale(36),
-        marginVertical: scale(40),
 
     },
     detailsTitle: {
@@ -126,6 +102,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '85%',
         justifyContent: 'center',
+        marginTop: 30,
     },
     saveButtonText: {
         color: 'white',

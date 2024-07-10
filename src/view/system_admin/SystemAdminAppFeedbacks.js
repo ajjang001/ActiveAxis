@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, Modal, ScrollView } from 'react-native';
-import FeedbackCard from '../components/FeedbackCard';
-import DisplayFeedbacksPresenter from '../presenter/DisplayFeedbacksPresenter';
-import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
+import FeedbackCard from '../../components/FeedbackCard';
+import DisplayFeedbacksPresenter from '../../presenter/DisplayFeedbacksPresenter';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
-import {scale} from '../components/scale';
+import {scale} from '../../components/scale';
 
 const SystemAdminAppFeedbacks = () => {
   // state variables

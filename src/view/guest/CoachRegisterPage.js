@@ -4,12 +4,12 @@ import { TextInput } from 'react-native-gesture-handler';
 import { Dropdown } from 'react-native-element-dropdown';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import DatePicker from 'react-native-date-picker';
-import { scale } from '../components/scale';
+import { scale } from '../../components/scale';
 import DocumentPicker from 'react-native-document-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
-import RegisterPresenter from '../presenter/RegisterPresenter';
+import RegisterPresenter from '../../presenter/RegisterPresenter';
 
 const CoachRegisterPage = ({ navigation }) => {
   // state variables
@@ -62,7 +62,7 @@ const CoachRegisterPage = ({ navigation }) => {
           Upload your {label.toLowerCase()} here
         </Text>
       )}
-      <Image style = {styles.uploadIcon} source = {require("../../assets/upload_icon.png")} />
+      <Image style = {styles.uploadIcon} source = {require("../../../assets/upload_icon.png")} />
       </TouchableOpacity>
     </View>
   );

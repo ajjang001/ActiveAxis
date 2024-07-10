@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, Modal, ActivityIndicator } from 'react-native';
-import DisplayAboutActiveAxisPresenter from '../presenter/DisplayAboutActiveAxisPresenter';
+import DisplayAboutActiveAxisPresenter from '../../presenter/DisplayAboutActiveAxisPresenter';
 
-import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
 const AboutActiveAxisPage = () => {
   const [about, setAbout] = useState([]);

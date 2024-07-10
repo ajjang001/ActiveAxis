@@ -8,44 +8,44 @@ import 'react-native-gesture-handler';
 
 import LoginPage from './src/view/LoginPage';
 
-import RegisterPage from './src/view/RegisterPage';
-import RegisterPage2 from './src/view/RegisterPage2';
-import RegisterPage3 from './src/view/RegisterPage3';
-import CoachRegisterPage from './src/view/CoachRegisterPage';
-import CoachRegisterPage2 from './src/view/CoachRegisterPage2';
+import RegisterPage from './src/view/guest/RegisterPage';
+import RegisterPage2 from './src/view/guest/RegisterPage2';
+import RegisterPage3 from './src/view/guest/RegisterPage3';
+import CoachRegisterPage from './src/view/guest/CoachRegisterPage';
+import CoachRegisterPage2 from './src/view/guest/CoachRegisterPage2';
 import ResetPasswordPage from './src/view/ResetPasswordPage';
 import ResetPasswordPage2 from './src/view/ResetPasswordPage2';
-import AboutOurApp from './src/view/AboutOurApp';
-import AboutActiveAxisPage from './src/view/AboutActiveAxisPage';
-import AppFeaturesPage from './src/view/AppFeaturesPage';
-import AppFeedBackPage from './src/view/AppFeedbackPage';
-import UserStatisticsPage from './src/view/UserStatisticsPage';
+import AboutOurApp from './src/view/guest/AboutOurApp';
+import AboutActiveAxisPage from './src/view/guest/AboutActiveAxisPage';
+import AppFeaturesPage from './src/view/guest/AppFeaturesPage';
+import AppFeedBackPage from './src/view/guest/AppFeedbackPage';
+import UserStatisticsPage from './src/view/guest/UserStatisticsPage';
 
-import UserHomePage from './src/view/UserHomePage';
+import UserHomePage from './src/view/user/UserHomePage';
 
-import CoachHomePage from './src/view/CoachHomePage';
+import CoachHomePage from './src/view/coach/CoachHomePage';
 
-import SystemAdminHomePage from './src/view/SystemAdminHomePage';
-import CoachAccountListPage from './src/view/CoachAccountListPage';
-import CoachDetailsPage from './src/view/CoachDetailsPage';
-import CoachRegistrationListPage from './src/view/CoachRegistrationListPage';
-import CoachRegistrationDetailsPage from './src/view/CoachRegistrationDetailsPage';
-import PhotoViewer from './src/view/PhotoViewer';
+import SystemAdminHomePage from './src/view/system_admin/SystemAdminHomePage';
+import CoachAccountListPage from './src/view/system_admin/CoachAccountListPage';
+import CoachDetailsPage from './src/view/system_admin/CoachDetailsPage';
+import CoachRegistrationListPage from './src/view/system_admin/CoachRegistrationListPage';
+import CoachRegistrationDetailsPage from './src/view/system_admin/CoachRegistrationDetailsPage';
+import PhotoViewer from './src/view/system_admin/PhotoViewer';
 
-import SystemAdminAppDetails from './src/view/SystemAdminAppDetails';
-import SystemAdminAppFeedbacks from './src/view/SystemAdminAppFeedbacks';
-import UpdateAboutUsPage from './src/view/UpdateAboutUsPage';
-import UpdateAppFeaturesPage from './src/view/UpdateAppFeaturesPage';
-import AchievementsPage from './src/view/AchievementsPage';
-import CreateAchievementsPage from './src/view/CreateAchievementsPage';
-import EditAchievementsPage from './src/view/EditAchievementsPage';
+import SystemAdminAppDetails from './src/view/system_admin/SystemAdminAppDetails';
+import SystemAdminAppFeedbacks from './src/view/system_admin/SystemAdminAppFeedbacks';
+import UpdateAboutUsPage from './src/view/system_admin/UpdateAboutUsPage';
+import UpdateAppFeaturesPage from './src/view/system_admin/UpdateAppFeaturesPage';
+import AchievementsPage from './src/view/system_admin/AchievementsPage';
+import CreateAchievementsPage from './src/view/system_admin/CreateAchievementsPage';
+import EditAchievementsPage from './src/view/system_admin/EditAchievementsPage';
 
-import SystemAdminAccountSettingPage from './src/view/SystemAdminAccountSettingPage';
-import SystemAdminUpdateAccountDetailsPage from './src/view/SystemAdminUpdateAccountDetailsPage';
+import SystemAdminAccountSettingPage from './src/view/system_admin/SystemAdminAccountSettingPage';
+import SystemAdminUpdateAccountDetailsPage from './src/view/system_admin/SystemAdminUpdateAccountDetailsPage';
 
-import UserAccountListPage from './src/view/UserAccountListPage';
-import UserAccountDetailsPage from './src/view/UserAccountDetailsPage';
-import EditUserAccountDetailsPage from './src/view/EditUserAccountDetailsPage';
+import UserAccountListPage from './src/view/system_admin/UserAccountListPage';
+import UserAccountDetailsPage from './src/view/system_admin/UserAccountDetailsPage';
+import EditUserAccountDetailsPage from './src/view/system_admin/EditUserAccountDetailsPage';
 
 
 const Stack = createStackNavigator();

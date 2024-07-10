@@ -6,9 +6,9 @@ const EditAchievementsPage = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Edit Achievements</Text>
       <View style={styles.imageContainer}>
-        <Image source={require('../../assets/people-icon.png')} style={styles.image} />
+        <Image source={require('../../../assets/people-icon.png')} style={styles.image} />
         <TouchableOpacity style={styles.deleteButton} onPress={() => { }}>
-          <Image source={require('../../assets/delete-icon.png')} style={styles.deleteIcon} />
+          <Image source={require('../../../assets/delete-icon.png')} style={styles.deleteIcon} />
         </TouchableOpacity>
       </View>
       <Text style={styles.detailsTitle}>Achievement Details:</Text>

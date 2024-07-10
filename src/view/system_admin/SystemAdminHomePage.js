@@ -2,9 +2,9 @@ import React, {useState, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal} from 'react-native';
 import { useFocusEffect, StackActions } from '@react-navigation/native';
 import { TransitionPresets } from '@react-navigation/stack';
-import {scale} from '../components/scale';
-import LogoutPresenter from '../presenter/LogoutPresenter';
-import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
+import {scale} from '../../components/scale';
+import LogoutPresenter from '../../presenter/LogoutPresenter';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
 const SystemAdminHomePage = ({navigation, route}) => {
     // Get the admin from the route params

@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
 import { View, Text, Image} from 'react-native';
 import {ref, getDownloadURL} from 'firebase/storage';
-import {app, auth, db, storage} from '../../.expo/api/firebase';
-import { LoadingDialog } from '../components/Modal';
+import {app, auth, db, storage} from '../../../.expo/api/firebase';
+import { LoadingDialog } from '../../components/Modal';
 
 
 

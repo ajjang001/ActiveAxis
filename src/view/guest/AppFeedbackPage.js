@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, Modal, ScrollView } from 'react-native';
-import FeedbackCard from '../components/FeedbackCard';
-import DisplayAppFeedbacksPresenter from '../presenter/DisplayAppFeedbacksPresenter';
-import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
+import FeedbackCard from '../../components/FeedbackCard';
+import DisplayAppFeedbacksPresenter from '../../presenter/DisplayAppFeedbacksPresenter';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
 const AppFeedBackPage = () => {
   // State to store the image URL

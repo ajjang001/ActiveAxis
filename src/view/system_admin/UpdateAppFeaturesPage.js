@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
-import UpdateAppFeaturesPresenter from '../presenter/UpdateAppFeaturesPresenter';
-import { MessageDialog, LoadingDialog } from '../components/Modal';
-import { scale } from '../components/scale';
+import UpdateAppFeaturesPresenter from '../../presenter/UpdateAppFeaturesPresenter';
+import { MessageDialog, LoadingDialog } from '../../components/Modal';
+import { scale } from '../../components/scale';
 
 const UpdateAppFeaturesPage = () => {
   // state variables

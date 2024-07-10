@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal, Alert } from 'react-native';
-import { scale } from '../components/scale';
-import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
-import { TextInput } from 'react-native-gesture-handler';
-import UpdateAccountDetailsPresenter from '../presenter/UpdateAccountDetailsPresenter';
+import { scale } from '../../components/scale';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
+import UpdateAccountDetailsPresenter from '../../presenter/UpdateAccountDetailsPresenter';
 
 const SystemAdminAccountSettingPage = ({ navigation, route }) => {
 

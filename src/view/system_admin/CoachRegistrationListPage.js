@@ -2,10 +2,10 @@ import React, {useState, useEffect} from 'react';
 import {Text, View, StyleSheet, ScrollView, Modal} from 'react-native';
 import axios from 'axios';
 
-import AccountListCard from '../components/AccountListCard';
-import DisplayCoachRegistrationPresenter from '../presenter/DisplayCoachRegistrationPresenter';
-import { scale } from '../components/scale';
-import { LoadingDialog, MessageDialog, ActionDialog } from '../components/Modal';
+import AccountListCard from '../../components/AccountListCard';
+import DisplayCoachRegistrationPresenter from '../../presenter/DisplayCoachRegistrationPresenter';
+import { scale } from '../../components/scale';
+import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
 
 const CoachRegistrationListPage = ({route, navigation}) =>{
     // state variables

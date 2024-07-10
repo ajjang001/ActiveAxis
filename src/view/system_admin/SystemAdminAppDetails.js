@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ScrollView, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { scale } from '../components/scale';
+import { scale } from '../../components/scale';
 
 const SystemAdminAppDetails= ({ navigation }) => {
   // handle button press

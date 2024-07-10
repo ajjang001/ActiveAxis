@@ -1,14 +1,14 @@
 import { View,Text, StyleSheet, TextInput, Image, ScrollView, Modal, TouchableOpacity} from "react-native"
 
-import AccountListCard from "../components/AccountListCard";
-import { scale } from "../components/scale";
+import AccountListCard from "../../components/AccountListCard";
+import { scale } from "../../components/scale";
 import React, { useEffect, useState } from "react";
 
-import { LoadingDialog, MessageDialog, ActionDialog } from "../components/Modal";
-import DisplayCoachesPresenter from "../presenter/DisplayCoachesPresenter";
-import SearchCoachAccountPresenter from "../presenter/SearchCoachAccountPresenter";
-import SuspendCoachAccountPresenter from "../presenter/SuspendCoachAccountPresenter";
-import UnsuspendCoachAccountPresenter from "../presenter/UnsuspendCoachAccountPresenter";
+import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Modal";
+import DisplayCoachesPresenter from "../../presenter/DisplayCoachesPresenter";
+import SearchCoachAccountPresenter from "../../presenter/SearchCoachAccountPresenter";
+import SuspendCoachAccountPresenter from "../../presenter/SuspendCoachAccountPresenter";
+import UnsuspendCoachAccountPresenter from "../../presenter/UnsuspendCoachAccountPresenter";
 
 const CoachAccountListPage = ({route, navigation})=>{
 
@@ -116,7 +116,7 @@ const CoachAccountListPage = ({route, navigation})=>{
 
                 <View style = {style.topContentContainer}>
                     <View style = {style.searchBarContainer}>
-                        <Image style = {style.searchLogo} source={require('../../assets/search_icon.png')} />    
+                        <Image style = {style.searchLogo} source={require('../../../assets/search_icon.png')} />    
                         <TextInput onEndEditing = {()=>searchHandler()} onChangeText={setSearch} value = {search} placeholder = 'Search Coach' /> 
                     </View>
                 </View>
@@ -166,7 +166,7 @@ const CoachAccountListPage = ({route, navigation})=>{
                             <Text style = {style.coachRegistrationText}>
                                 Coach Registration List
                             </Text>
-                            <Image style = {style.rightTriangleIcon} source = {require('../../assets/right_triangle_icon.png')} />
+                            <Image style = {style.rightTriangleIcon} source = {require('../../../assets/right_triangle_icon.png')} />
 
                         </TouchableOpacity> 
                     </View>

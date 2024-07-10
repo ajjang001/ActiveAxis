@@ -6,9 +6,9 @@ import { CheckBox } from '@rneui/themed';
 import DatePicker from 'react-native-date-picker';
 
 
-import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
-import RegisterPresenter from '../presenter/RegisterPresenter';
+import RegisterPresenter from '../../presenter/RegisterPresenter';
 
 const RegisterPage = ({ navigation }) => {
 

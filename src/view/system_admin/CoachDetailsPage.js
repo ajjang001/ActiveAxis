@@ -3,10 +3,10 @@ import React, {useState, useEffect} from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Modal, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { scale } from '../components/scale';
-import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
-import FeedbackCard from '../components/FeedbackCard';
-import DisplayCoachDetailsPresenter from '../presenter/DisplayCoachDetailsPresenter';
+import { scale } from '../../components/scale';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
+import FeedbackCard from '../../components/FeedbackCard';
+import DisplayCoachDetailsPresenter from '../../presenter/DisplayCoachDetailsPresenter';
 
 const CoachDetailsPage = ({route}) => {
     const {coach} = route.params;

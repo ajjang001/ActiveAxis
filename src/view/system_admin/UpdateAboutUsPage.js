@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TextInput, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
-import UpdateAboutUsPresenter from '../presenter/UpdateAboutUsPresenter';
-import { LoadingDialog } from '../components/Modal';
-import { scale } from '../components/scale';
+import UpdateAboutUsPresenter from '../../presenter/UpdateAboutUsPresenter';
+import { LoadingDialog } from '../../components/Modal';
+import { scale } from '../../components/scale';
 
 const UpdateAboutUsPage = () => {
     // state variables

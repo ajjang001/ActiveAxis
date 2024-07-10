@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, StyleSheet, ScrollView } from 'react-native';
-import DisplayAppFeaturesPresenter from '../presenter/DisplayAppFeaturesPresenter';
-import { MessageDialog, LoadingDialog } from '../components/Modal';
+import DisplayAppFeaturesPresenter from '../../presenter/DisplayAppFeaturesPresenter';
+import { MessageDialog, LoadingDialog } from '../../components/Modal';
 
 const AppFeaturesPage = () => {
   // State to store the features list
