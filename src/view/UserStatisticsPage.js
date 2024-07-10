@@ -1,12 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Card } from 'react-native-elements';
 import { Dimensions } from 'react-native';
+import DisplayUserStatisticsPresenter from '../presenter/DisplayUserStatisticsPresenter';
 
 const screenWidth = Dimensions.get('window').width;
 
 const UserStatisticsPage = () => {
+  const [totalFeedback, setTotalFeedback] = useState(0);
+  
+  // function buat panggil controller
+  const loadData = async () => {
+    try{
+      await new DisplayUserStatisticsPresenter({changeTotalFeedback: setTotalFeedback}).displayTotalAppFeedback();
+    } catch (e){
+      console.log(e.message);
+    }
+  }
+
+  useEffect(()=>{
+    loadData();
+  },[]);
+  // tmpt simpen total reviews
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>User Statistics</Text>
@@ -52,7 +69,7 @@ const UserStatisticsPage = () => {
       </Card>
       <Card containerStyle={styles.card}>
         <Text style={styles.cardTitle}>Total Reviews</Text>
-        <Text style={styles.cardValue}>0</Text>
+        <Text style={styles.cardValue}>{totalFeedback}</Text>
         <Text style={styles.cardSubtitle}>Number of Reviews</Text>
       </Card>
     </ScrollView>

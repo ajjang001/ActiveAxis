@@ -35,6 +35,16 @@ class AppInfo {
         throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support");
       }
     }
+
+    async getAppFeedbackCount(){
+       try{
+        const querySnapshot = await getDocs(collection(db, "appfeedback"));
+        const feedbackCount = querySnapshot.size;
+        return feedbackCount;
+       }catch(e){
+        throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support");
+       }
+    }
   
   }
   
