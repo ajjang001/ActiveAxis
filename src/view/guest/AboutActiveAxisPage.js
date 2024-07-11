@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, Modal, ActivityIndicator } from 'react-native';
 import DisplayAboutActiveAxisPresenter from '../../presenter/DisplayAboutActiveAxisPresenter';
-
+import {scale} from '../../components/scale';
 import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
 const AboutActiveAxisPage = () => {
@@ -70,25 +70,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#FBF5F3',
   },
   title: {
-    fontSize: 24,
+    fontSize: scale(30),
     fontWeight: 'bold',
-    marginVertical: 20,
+    marginVertical: scale(10),
+    alignSelf: 'center',
   },
   logo: {
-    width: 100,
-    height: 100,
-    marginBottom: 20,
+    width: scale(140),
+    height: scale(140),
+    borderRadius: scale(20),
   },
   divider: {
-    width: '90%',
-    height: 5,
-    backgroundColor: '#C42847',
-    marginVertical: 20,
+    backgroundColor:'#C42847',
+    height:scale(15),
+    width:'100%',
+    marginTop:scale(20),
+    marginBottom: scale(10),
   },
   paragraph: {
     fontSize: 16,
     textAlign: 'left',
     marginBottom: 10,
+    alignSelf: 'flex-start',
   },
 });
 
