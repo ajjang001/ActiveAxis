@@ -35,59 +35,52 @@ const allAchievements = [
 
 const AchievementsPage = ({ navigation }) => {
 
-  // const renderItem = ({ item }) => {
-  //   return(
-  //     <View style={styles.achievementBox}>
-  //       {item.icon ? (
-  //           <Image source={item.icon} style={styles.icon} />
-  //         ) : (
-  //           <View style={styles.blankIcon} />
-  //         )}
-  //         <Text style={styles.achievementText}>{item.type}</Text>
-  //     </View>
-  //   );
-      
-  // };
-
-  // const renderSection = ( item ) => {
-  //   return(
-  //       <FlatList
-  //         data={item}
-  //         keyExtractor={(item) => item.id}
-  //         contentContainerStyle={styles.sectionContent}
-  //         renderItem={({ item }) => renderItem({ item })}
-  //         numColumns={3}
-  //       />
-  //   );
-    
-    
-  //   };
-
   const renderHeader = () => (
-    <TouchableOpacity style={styles.createButton} onPress={() => { /* Navigate to Create screen */ }}>
+    <TouchableOpacity style={styles.createButton} onPress={() => { navigation.navigate('CreateAchievementsPage') }}>
       <Text style={styles.createButtonText}>Create</Text>
     </TouchableOpacity>
   );
 
-  // const renderSectionHeader = ({ section: { title } }) => (
-  //   <Text style={styles.sectionHeader}>{title}</Text>
-  // );
+  const renderSectionHeader = ({ section }) => (
+    <Text style={styles.sectionHeader}>{section.title}</Text>
+  );
+
+  const renderSection = ({ item }) => (
+    <View style={styles.section}>
+      {allAchievements.map((category) => {
+          return (
+            <View style={styles.section}>
+              {renderSectionHeader({ section: category })}
+              <FlatList
+                data={category.data}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={styles.sectionContent}
+                renderItem={({ item }) => (
+                  <View style={styles.achievementBox}>
+                    {item.icon ? (
+                      <Image source={item.icon} style={styles.icon} />
+                    ) : (
+                      <View style={styles.blankIcon} />
+                    )}
+                    <Text style={styles.achievementText}>{item.type}</Text>
+                  </View>
+                )}
+                numColumns={3}
+              />
+            </View>
+          );
+          
+        })}
+    </View>
+  )
 
   return (
     <View style={styles.container}>
       {renderHeader()}
       <View style={styles.section} >
-        
+        {renderSection({ item: allAchievements })}
       </View>
-      {/* 
-        <SectionList
-          sections={allAchievements}
-          keyExtractor={(item) => item.id}
-          renderSectionHeader={renderSectionHeader}
-          renderItem={({item})=>renderSection({item})}
-          contentContainerStyle={styles.sectionListContainer}
-        />
-      */}
+      
     </View>
   );
 };
