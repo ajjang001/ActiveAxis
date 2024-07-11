@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Card } from 'react-native-elements';
 import { Dimensions } from 'react-native';
-import DisplayUserStatisticsPresenter from '../presenter/DisplayUserStatisticsPresenter';
+import DisplayUserStatisticsPresenter from '../../presenter/DisplayUserStatisticsPresenter';
 
 const screenWidth = Dimensions.get('window').width;
 

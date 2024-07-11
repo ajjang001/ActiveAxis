@@ -34,16 +34,34 @@ const allAchievements = [
 ];
 
 const AchievementsPage = ({ navigation }) => {
-  const renderItem = ({ item }) => (
-    <View style={styles.achievementBox}>
-      {item.icon ? (
-        <Image source={item.icon} style={styles.icon} />
-      ) : (
-        <View style={styles.blankIcon} />
-      )}
-      <Text style={styles.achievementText}>{item.type}</Text>
-    </View>
-  );
+
+  // const renderItem = ({ item }) => {
+  //   return(
+  //     <View style={styles.achievementBox}>
+  //       {item.icon ? (
+  //           <Image source={item.icon} style={styles.icon} />
+  //         ) : (
+  //           <View style={styles.blankIcon} />
+  //         )}
+  //         <Text style={styles.achievementText}>{item.type}</Text>
+  //     </View>
+  //   );
+      
+  // };
+
+  // const renderSection = ( item ) => {
+  //   return(
+  //       <FlatList
+  //         data={item}
+  //         keyExtractor={(item) => item.id}
+  //         contentContainerStyle={styles.sectionContent}
+  //         renderItem={({ item }) => renderItem({ item })}
+  //         numColumns={3}
+  //       />
+  //   );
+    
+    
+  //   };
 
   const renderHeader = () => (
     <TouchableOpacity style={styles.createButton} onPress={() => { /* Navigate to Create screen */ }}>
@@ -51,20 +69,25 @@ const AchievementsPage = ({ navigation }) => {
     </TouchableOpacity>
   );
 
-  const renderSectionHeader = ({ section: { title } }) => (
-    <Text style={styles.sectionHeader}>{title}</Text>
-  );
+  // const renderSectionHeader = ({ section: { title } }) => (
+  //   <Text style={styles.sectionHeader}>{title}</Text>
+  // );
 
   return (
     <View style={styles.container}>
       {renderHeader()}
-      <SectionList
-        sections={allAchievements}
-        keyExtractor={(item) => item.id}
-        renderSectionHeader={({ section }) => renderSectionHeader({ section })}
-        renderItem={({ item }) => renderItem({ item })}
-        contentContainerStyle={styles.sectionListContainer}
-      />
+      <View style={styles.section} >
+        
+      </View>
+      {/* 
+        <SectionList
+          sections={allAchievements}
+          keyExtractor={(item) => item.id}
+          renderSectionHeader={renderSectionHeader}
+          renderItem={({item})=>renderSection({item})}
+          contentContainerStyle={styles.sectionListContainer}
+        />
+      */}
     </View>
   );
 };
@@ -100,7 +123,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   section: {
-    marginBottom: 20,
   },
   achievementBox: {
     width: '30%',
