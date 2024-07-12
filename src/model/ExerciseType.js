@@ -19,7 +19,7 @@ class ExerciseType{
     async getExerciseType(){
         try{
             const types = [];
-            const querySnapshot = await getDocs(collection(db, 'exercisetype'));
+            const querySnapshot = await getDocs(collection(db, 'exercisetype'), orderBy('exerciseTypeID'));
             
             querySnapshot.forEach((doc) => {
                 const d = doc.data();
@@ -28,6 +28,12 @@ class ExerciseType{
                 t.exerciseTypeName = d.exerciseTypeName;
                 types.push(t);
             });
+
+            // sort the array by exerciseTypeName
+            types.sort((a, b) => {
+                return a.exerciseTypeName.localeCompare(b.exerciseTypeName);
+            });
+
             return types;
         }catch(error){
             throw new Error (error);

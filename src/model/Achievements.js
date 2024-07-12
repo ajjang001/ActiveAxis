@@ -73,6 +73,15 @@ class Achievements{
             throw new Error(e);
         }
     }
+
+    async createAchievement(){
+        try{
+            
+        }
+        catch(error){
+            throw new Error(error);
+        }
+    }
     
     
 

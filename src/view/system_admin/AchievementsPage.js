@@ -84,7 +84,6 @@ const changeLoadingVisible = (b)=>{
   };
 
   useEffect(() => {
-
     loadAchievements();
   }, []);
 
@@ -141,7 +140,7 @@ const styles = StyleSheet.create({
     width: '30%',
     aspectRatio: 1,
     margin: 5,
-    backgroundColor: '#FFF',
+    backgroundColor: 'black',
     borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
@@ -161,6 +160,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: 'white',
   },
 });
 

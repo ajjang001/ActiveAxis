@@ -1,21 +1,66 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, Modal } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 import CreateAchievementPresenter from '../../presenter/CreateAchievementPresenter';
 import { scale } from '../../components/scale';
+import { ScrollView } from 'react-native-gesture-handler';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
 
 const CreateAchievementsPage = ({ navigation }) => {
   const [photo, setPhoto] = useState(null);
-  const [exerciseType, setExerciseType] = useState();
+  const [exerciseType, setExerciseType] = useState(1);
   const [details, setDetails] = useState('');
+  const [name, setName] = useState('');
+  const [target, setTarget] = useState(0);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState('');
+
   const [dropdownOpt, setDropdownOpt] = useState([]);
-
-  const [isPhotoSet, setIsPhotoSet] = useState(false);
-
+  
   // to close dropdown
   const dropdownRef = useRef(null);
+
+  // change popup/modal visible
+  const changeLoadingVisible = (b)=>{
+    setIsLoading(b);
+}
+
+// change popup/modal visible
+const changeModalVisible = (b, m)=>{
+    setModalMsg(m);
+    setModalVisible(b);
+}
+
+// change popup/modal visible
+const changeConfirmVisible = (b, m)=>{
+    setConfirmMessage(m);
+    setConfirmationVisible(b);
+}
+
+  // handle select photo
+  const handleSelectPhoto = () => {
+    launchImageLibrary({ mediaType: 'photo' }, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+      } else {
+        const asset = response.assets[0];
+        const uri = asset.uri;
+        let name = asset.fileName || uri.split('/').pop();
+        const ext = name.split('.').pop();
+        name = `photo.${ext}`;
+        setPhoto({ uri, name });
+      }
+    });
+  };
 
 
 // Render Dropdown options
@@ -23,17 +68,40 @@ const renderItem=(item)=>{
   return(
     <TouchableOpacity activeOpacity={.7} style={styles.item}
     onPress={()=>{
-        setExerciseType(item.id);
+        setExerciseType(item.exerciseTypeID);
         dropdownRef.current.close();
     }}
     >
-            <Text style={styles.itemText}>{item.name}</Text>
+            <Text style={styles.itemText}>{item.exerciseTypeName}</Text>
     </TouchableOpacity> 
     );
   };
 
   const loadType = async () => {
-    await new CreateAchievementPresenter({setOptions:setDropdownOpt}).getExerciseType();
+    try{
+      changeLoadingVisible(true);
+      setDropdownOpt([]);
+      await new CreateAchievementPresenter({setOptions:setDropdownOpt}).getExerciseType();
+    }catch(error){
+      changeModalVisible(true, error.message);
+    }finally{
+      changeLoadingVisible(false);
+    }
+  };
+
+  const createHandler = async () => {
+    try{
+        changeLoadingVisible(true);
+        await new CreateAchievementPresenter({category:exerciseType, name:name, description:details, target:target}).createAchievement();
+    }catch(e){
+        let errorMessage = e.message;
+        if (errorMessage.startsWith("Error: ")) {
+          errorMessage = errorMessage.slice(7); // Remove "Error: " prefix
+        }
+        changeModalVisible(true, errorMessage);
+    }finally{
+        changeLoadingVisible(false);
+    }
   };
 
   useEffect(() => {
@@ -45,75 +113,139 @@ const renderItem=(item)=>{
 
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={{alignItems: 'center'}}>
+      
       <Text style={styles.title}>Create Achievement</Text>
       
-      <View style={styles.imagePlaceholder} />
-      <Text style={styles.detailsTitle}>Achievement Details:</Text>
-        <Dropdown
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            data={dropdownOpt}
-            maxHeight={300}
-            labelField="name"
-            valueField="id"
-            placeholder="Select Type"
-            value={exerciseType}
-            onChange={type => {
-                setExerciseType(type);
-            }}
-            renderItem={renderItem}
-            ref={dropdownRef}
-        />
+      <TouchableOpacity style={styles.imagePlaceholder} onPress={handleSelectPhoto}>
+        {
+          photo ? 
+          (
+            <Image source={{uri:photo.uri}} style={{width: scale(200), height: scale(200)}} />
+          )
+          :
+          (
+            
+              <Image source={require('../../../assets/upload_icon.png')} style={{width: scale(200), height: scale(200)}} />
+            
+          )
 
+        }
+        
+      </TouchableOpacity>
+
+      <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
+          <LoadingDialog />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>(false)}>
+          <ActionDialog
+          message = {confirmMessage}
+          changeModalVisible = {setConfirmationVisible}
+          action = {()=>console.log('Action')}
+          />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+          <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+      </Modal>
+      
+      
+
+      <View style={styles.categoryView}>
+        <Text style={styles.detailsTitle}>Category:</Text>
+          <Dropdown
+              style={styles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              data={dropdownOpt}
+              maxHeight={300}
+              labelField="exerciseTypeName"
+              valueField="exerciseTypeID"
+              placeholder="Select Type"
+              value={exerciseType}
+              onChange={type => {
+                  setExerciseType(type);
+              }}
+              renderItem={renderItem}
+              ref={dropdownRef}
+          />
+        </View>
+
+      <Text style={styles.detailsTitle}>Achievement Name:</Text>
       <TextInput
         style={styles.detailsInput}
-        placeholder="Enter details here..."
+        placeholder="Enter achievement name here..."
+        value={name}
+        onChangeText={(text) => setName(text)}
+      />
+
+      <Text style={styles.detailsTitle}>Achievement Descriptions:</Text>
+      <TextInput
+        style={styles.detailsInput}
+        placeholder="Enter descriptions here..."
         value={details}
         onChangeText={(text) => setDetails(text)}
-        multiline
+        
       />
-      <TouchableOpacity style={styles.postButton} onPress={() => { /* Handle post action */ }}>
-        <Text style={styles.postButtonText}>POST</Text>
+
+      <Text style={styles.detailsTitle}>Achievement Target:</Text>
+      <TextInput
+          style={styles.detailsInput}
+          placeholder='Enter target here...'
+          keyboardType="phone-pad"
+          returnKeyType='done'
+          value={target}
+          onChangeText={num => setTarget(num)}
+      />
+      <TouchableOpacity style={styles.postButton} onPress={createHandler}>
+        <Text style={styles.postButtonText}>CREATE</Text>
       </TouchableOpacity>
-    </View>
+      
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: scale(20),
     backgroundColor: '#FBF5F3',
-    alignItems: 'center',
+    
   },
   title: {
-    fontSize: 24,
+    fontSize: scale(24),
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
   imagePlaceholder: {
-    width: 200,
-    height: 200,
+    width: scale(200),
+    height: scale(200),
     backgroundColor: '#D3D3D3',
-    marginBottom: 20,
+    marginBottom: scale(20),
     justifyContent: 'center',
     alignItems: 'center',
   },
+  
   detailsTitle: {
     alignSelf: 'flex-start',
-    fontSize: 16,
+    fontSize: scale(15),
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: scale(10),
+  },
+  categoryView:{
+    flexDirection:'row',
+    alignItems:'center',
+    display:'flex',
+    width:'100%',
+
+    marginBottom: scale(15),
   },
   dropdown: {
     height: scale(30),
     width: '40%',
-    margin:5,
+    marginHorizontal:scale(10),
     padding:scale(10),
     borderBottomColor: 'gray',
-    borderBottomWidth: 0.5,
+    borderBottomWidth: scale(0.5),
     backgroundColor: 'white',
     borderRadius:8,
     alignSelf:'flex-start',
@@ -138,17 +270,16 @@ const styles = StyleSheet.create({
 
   detailsInput: {
     width: '100%',
-    height: 100,
     backgroundColor: '#FFF',
-    padding: 10,
+    padding: scale(10),
     borderColor: '#CCC',
     borderWidth: 1,
     borderRadius: 5,
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
   postButton: {
     width: '100%',
-    padding: 15,
+    padding: scale(15),
     backgroundColor: '#B22222',
     borderRadius: 5,
     alignItems: 'center',
@@ -156,7 +287,7 @@ const styles = StyleSheet.create({
   postButtonText: {
     color: '#FFF',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: scale(16),
   },
 });
 
