@@ -1,8 +1,10 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity} from 'react-native';
+import { StyleSheet, TouchableOpacity, Image} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets  } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useFonts } from 'expo-font';
+import { scale } from './src/components/scale';
 import {Ionicons} from '@expo/vector-icons';
 import 'react-native-gesture-handler';
 
@@ -24,6 +26,7 @@ import UserStatisticsPage from './src/view/guest/UserStatisticsPage';
 import UserHomePage from './src/view/user/UserHomePage';
 
 import CoachHomePage from './src/view/coach/CoachHomePage';
+import MyCoacheePage from './src/view/coach/MyCoacheePage';
 
 import SystemAdminHomePage from './src/view/system_admin/SystemAdminHomePage';
 import CoachAccountListPage from './src/view/system_admin/CoachAccountListPage';
@@ -49,6 +52,44 @@ import EditUserAccountDetailsPage from './src/view/system_admin/EditUserAccountD
 
 
 const Stack = createStackNavigator();
+const coachTab = createBottomTabNavigator();
+
+const CoachTabs = ({route}) => {
+  const { coach } = route.params;
+  return (
+      <coachTab.Navigator
+          screenOptions={({ route }) => ({
+              tabBarIcon: ({ size }) => {
+                  let iconSource;
+                  if (route.name === 'Home') {
+                      iconSource = require('./assets/home_icon.png');
+                  } else if (route.name === 'My Coachee') {
+                      iconSource = require('./assets/my_coachee_icon.png');
+                  } else if (route.name === 'Account') {
+                      iconSource = require('./assets/account_icon.png');
+                  }
+                  return <Image source={iconSource} style={{ width: size, height: size }} />;
+              },
+              tabBarActiveTintColor: '#FFFFFF',
+              tabBarInactiveTintColor: '#FFFFFF',
+              tabBarActiveBackgroundColor: '#fbc08e',
+              tabBarStyle: {
+                  backgroundColor: '#E28413',
+                  height: scale(65),
+              },
+              tabBarLabelStyle: {
+                  fontSize: 14,
+                  fontWeight: 'bold',
+              },
+          })}
+      >
+          <coachTab.Screen name="Home" component={CoachHomePage} initialParams={{ coach }} options={{ headerShown: false }} />
+          <coachTab.Screen name="My Coachee" component={MyCoacheePage} initialParams={{ coach }} options={{ headerShown: false }} />
+          {/* Account Settings page edit */}
+          <coachTab.Screen name="Account" component={CoachHomePage} initialParams={{ coach }} options={{ headerShown: false }} />
+      </coachTab.Navigator>
+  );
+};
 
 export default function App() {
 
@@ -121,7 +162,8 @@ export default function App() {
         {/*SystemAdminUpdateAccountDetailsPage might be deleted*/}
         <Stack.Screen name="SystemAdminUpdateAccountDetailsPage" component={SystemAdminUpdateAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
 
-        <Stack.Screen name="CoachHomePage" component={CoachHomePage}   />
+        <Stack.Screen name="CoachHomePage" component={CoachTabs}   />
+        {/* <Stack.Screen name="CoachTabs" component={CoachTabs} options={{ headerShown: false }} /> Add CoachTabs to the stack */}
       </Stack.Navigator>
     </NavigationContainer>
   );
