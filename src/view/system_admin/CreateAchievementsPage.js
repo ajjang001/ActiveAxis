@@ -54,9 +54,8 @@ const changeConfirmVisible = (b, m)=>{
       } else {
         const asset = response.assets[0];
         const uri = asset.uri;
-        let name = asset.fileName || uri.split('/').pop();
-        const ext = name.split('.').pop();
-        name = `photo.${ext}`;
+        const name = asset.fileName || uri.split('/').pop();
+        
         setPhoto({ uri, name });
       }
     });
@@ -69,6 +68,7 @@ const renderItem=(item)=>{
     <TouchableOpacity activeOpacity={.7} style={styles.item}
     onPress={()=>{
         setExerciseType(item.exerciseTypeID);
+
         dropdownRef.current.close();
     }}
     >
@@ -81,7 +81,7 @@ const renderItem=(item)=>{
     try{
       changeLoadingVisible(true);
       setDropdownOpt([]);
-      await new CreateAchievementPresenter({setOptions:setDropdownOpt}).getExerciseType();
+      await new CreateAchievementPresenter({setOptions:setDropdownOpt}).getExerciseTypes();
     }catch(error){
       changeModalVisible(true, error.message);
     }finally{
@@ -92,11 +92,11 @@ const renderItem=(item)=>{
   const createHandler = async () => {
     try{
         changeLoadingVisible(true);
-        await new CreateAchievementPresenter({category:exerciseType, name:name, description:details, target:target}).createAchievement();
+        await new CreateAchievementPresenter({typeID:exerciseType, name:name, description:details, target:target, photo: photo}).createAchievement();
     }catch(e){
         let errorMessage = e.message;
         if (errorMessage.startsWith("Error: ")) {
-          errorMessage = errorMessage.slice(7); // Remove "Error: " prefix
+          errorMessage = errorMessage.slice(7); 
         }
         changeModalVisible(true, errorMessage);
     }finally{
@@ -151,7 +151,7 @@ const renderItem=(item)=>{
       
 
       <View style={styles.categoryView}>
-        <Text style={styles.detailsTitle}>Category:</Text>
+        <Text style={styles.detailsTitle}>Type:</Text>
           <Dropdown
               style={styles.dropdown}
               placeholderStyle={styles.placeholderStyle}

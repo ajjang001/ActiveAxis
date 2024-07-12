@@ -1,7 +1,8 @@
 import ExerciseType from "./ExerciseType";
 import { app, auth, db, storage } from '../../.expo/api/firebase.js';
-import { getDocs, collection, query, where, orderBy } from 'firebase/firestore';
-import { ref, getDownloadURL } from 'firebase/storage';
+import { getDocs, collection, query, where, orderBy, addDoc, doc } from 'firebase/firestore';
+import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
+
 
 class Achievements{
     _achievementName;
@@ -38,7 +39,7 @@ class Achievements{
 
     async getListOfAchievements() {
         try {
-            const types = await new ExerciseType().getExerciseType();
+            const types = await new ExerciseType().getExerciseTypes();
             let achArray = [];
     
             // Use for loop instead of map for better async/await handling
@@ -74,9 +75,59 @@ class Achievements{
         }
     }
 
-    async createAchievement(){
+    async createAchievement(typeID, name, description, target, photo){
         try{
-            
+            const typeName = await new ExerciseType().getExerciseType(typeID);
+
+            // Convert URI to Blob
+            const uriToBlob = (uri) => {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest()
+                    xhr.onload = function () {
+                        // return the blob
+                        resolve(xhr.response)
+                    }
+                    xhr.onerror = function () {
+                        reject(new Error('uriToBlob failed'))
+                    }
+                    xhr.responseType = 'blob'
+                    xhr.open('GET', uri, true)
+
+                    xhr.send(null)
+                })
+            };
+
+            // Upload file to Firebase Storage
+            const uploadFile = async (file, folderPath) => {
+                if (!file || !file.uri) throw new Error('File URI is invalid');
+
+                const storageRef = ref(storage, folderPath + file.name);
+                const blobFile = await uriToBlob(file.uri);
+                try {
+                    await uploadBytes(storageRef, blobFile);
+                    return `${folderPath}${file.name}`;
+                } catch (e) {
+                    throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support.");
+
+                }
+
+            };
+
+            const folderPath = `achievements/${
+                (typeName === 'Competitions Won' ? 'Competitions' : typeName)
+            }/`;
+
+            const photoPath = await uploadFile(photo, folderPath);
+
+            // Add to database
+            await addDoc(collection(db, 'achievements'), {
+                achievementName: name,
+                achievementPicture: photoPath,
+                description: description,
+                exerciseTypeID: typeID,
+                maxProgress: target
+            });
+
         }
         catch(error){
             throw new Error(error);
