@@ -1,39 +1,28 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, SectionList, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView, Image } from 'react-native';
 import { scale } from '../../components/scale';
+import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Modal";
+import DisplayListOfAchievements from '../../presenter/DisplayListOfAchievement';
 
-const allAchievements = [
-  {
-    title: 'Competitions Won',
-    data: [
-      { id: '1', type: 'First Run', icon: require('../../../assets/people-icon.png') },
-      { id: '2', type: 'Empty' },
-      { id: '3', type: 'Empty' },
-      { id: '4', type: 'Empty' },
-      { id: '10', type: 'Empty' },
-      // Add more achievements for the Won category
-    ],
-  },
-  {
-    title: 'Running',
-    data: [
-      { id: '5', type: 'Empty' },
-      { id: '6', type: 'Empty' },
-      // Add more achievements for the Running category
-    ],
-  },
-  {
-    title: 'Steps',
-    data: [
-      { id: '7', type: 'Empty' },
-      { id: '8', type: 'Empty' },
-      { id: '9', type: 'Empty' },
-      // Add more achievements for the Steps category
-    ],
-  },
-];
+
 
 const AchievementsPage = ({ navigation }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
+
+  const [allAchievements, setAllAchievements] = useState([]);
+
+  // change popup/modal visible
+  const changeModalVisible = (b, m)=>{
+    setModalMsg(m);
+    setModalVisible(b);
+}
+
+// change popup/modal visible
+const changeLoadingVisible = (b)=>{
+    setIsLoading(b);
+}
 
   const renderHeader = () => (
     <TouchableOpacity style={styles.createButton} onPress={() => { navigation.navigate('CreateAchievementsPage') }}>
@@ -42,44 +31,75 @@ const AchievementsPage = ({ navigation }) => {
   );
 
   const renderSectionHeader = ({ section }) => (
-    <Text style={styles.sectionHeader}>{section.title}</Text>
+    <Text style={styles.sectionHeader}>{section.type}</Text>
   );
 
-  const renderSection = ({ item }) => (
-    <View style={styles.section}>
+  const loadSectionContent = (category) =>{
+    return(
+      category.data.map((item) => {
+
+      
+        return (
+          <View style={styles.achievementBox} key = {item.achievementName}>
+            {item.achievementPicture ? (
+              <Image source={{uri:item.achievementPicture}} style={styles.icon} />
+            ) : (
+              <View style={styles.blankIcon} />
+            )}
+            <Text style={styles.achievementText}>{item.achievementName}</Text>
+          </View>
+        );
+      })
+    );
+  };
+
+  const renderSection = () => (
+    <>
       {allAchievements.map((category) => {
+        
           return (
-            <View style={styles.section}>
+            <View style={styles.section} key = {category.type}>
               {renderSectionHeader({ section: category })}
-              <FlatList
-                data={category.data}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={styles.sectionContent}
-                renderItem={({ item }) => (
-                  <View style={styles.achievementBox}>
-                    {item.icon ? (
-                      <Image source={item.icon} style={styles.icon} />
-                    ) : (
-                      <View style={styles.blankIcon} />
-                    )}
-                    <Text style={styles.achievementText}>{item.type}</Text>
-                  </View>
-                )}
-                numColumns={3}
-              />
+
+              <View style = {styles.sectionContent}>
+                {loadSectionContent(category)}
+              </View>
             </View>
           );
           
         })}
-    </View>
-  )
+    </>
+  );
+
+  const loadAchievements = async () => {
+    try{
+      changeLoadingVisible(true);
+      setAllAchievements([]);
+      await new DisplayListOfAchievements({displayAchievements:setAllAchievements}).getAchievements();
+    }catch(e){
+      console.log(e);
+    }finally{
+      changeLoadingVisible(false);
+    }
+  };
+
+  useEffect(() => {
+
+    loadAchievements();
+  }, []);
 
   return (
     <View style={styles.container}>
+      <ScrollView>
       {renderHeader()}
-      <View style={styles.section} >
-        {renderSection({ item: allAchievements })}
-      </View>
+      <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
+          <LoadingDialog />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+          <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+      </Modal>
+      {renderSection({ item: allAchievements })}
+      </ScrollView>
       
     </View>
   );
@@ -113,9 +133,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   sectionContent: {
-    justifyContent: 'space-between',
-  },
-  section: {
+    display:'flex', 
+    flexDirection:'row', 
+    flexWrap:'wrap',
   },
   achievementBox: {
     width: '30%',

@@ -1,36 +1,46 @@
 import React, {useEffect, useState, useRef} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
+
+import CreateAchievementPresenter from '../../presenter/CreateAchievementPresenter';
+import { scale } from '../../components/scale';
+
 
 const CreateAchievementsPage = ({ navigation }) => {
   const [photo, setPhoto] = useState(null);
-  //const [loginType, setLoginType] = useState('u');
+  const [exerciseType, setExerciseType] = useState();
   const [details, setDetails] = useState('');
+  const [dropdownOpt, setDropdownOpt] = useState([]);
 
   const [isPhotoSet, setIsPhotoSet] = useState(false);
 
   // to close dropdown
   const dropdownRef = useRef(null);
 
-  // Dropdown - Login type
-//   const dropdownOpt = [
-//     {label: 'USER', value:'u'},
-//     {label: 'COACH', value:'c'},
-//     {label: 'SYSTEM ADMIN', value:'a'},
-// ]
 
 // Render Dropdown options
-// const renderItem=(item)=>{
-//   return(
-//   <TouchableOpacity activeOpacity={.7} style={styles.item}
-//   onPress={()=>{
-//       setLoginType(item.value);
-//       dropdownRef.current.close();
-//   }}
-//   >
-//           <Text style={styles.itemText}>{item.label}</Text>
-//   </TouchableOpacity> 
-//   );
-// };
+const renderItem=(item)=>{
+  return(
+    <TouchableOpacity activeOpacity={.7} style={styles.item}
+    onPress={()=>{
+        setExerciseType(item.id);
+        dropdownRef.current.close();
+    }}
+    >
+            <Text style={styles.itemText}>{item.name}</Text>
+    </TouchableOpacity> 
+    );
+  };
+
+  const loadType = async () => {
+    await new CreateAchievementPresenter({setOptions:setDropdownOpt}).getExerciseType();
+  };
+
+  useEffect(() => {
+    loadType();
+  },[]);
+
+
 
 
 
@@ -40,6 +50,23 @@ const CreateAchievementsPage = ({ navigation }) => {
       
       <View style={styles.imagePlaceholder} />
       <Text style={styles.detailsTitle}>Achievement Details:</Text>
+        <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            data={dropdownOpt}
+            maxHeight={300}
+            labelField="name"
+            valueField="id"
+            placeholder="Select Type"
+            value={exerciseType}
+            onChange={type => {
+                setExerciseType(type);
+            }}
+            renderItem={renderItem}
+            ref={dropdownRef}
+        />
+
       <TextInput
         style={styles.detailsInput}
         placeholder="Enter details here..."
@@ -80,6 +107,35 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
+  dropdown: {
+    height: scale(30),
+    width: '40%',
+    margin:5,
+    padding:scale(10),
+    borderBottomColor: 'gray',
+    borderBottomWidth: 0.5,
+    backgroundColor: 'white',
+    borderRadius:8,
+    alignSelf:'flex-start',
+  },
+  placeholderStyle: {
+      fontSize: scale(13)
+  },
+  selectedTextStyle: {
+      fontSize: scale(15),
+      height:scale(18),
+  },
+  item: {
+      paddingLeft: scale(5),
+      height:scale(25),
+      borderWidth:1,
+      borderColor: 'lightgrey',
+  },
+  itemText: {
+      fontSize: scale(12),
+      fontFamily:'Poppins-Medium'
+  },
+
   detailsInput: {
     width: '100%',
     height: 100,
