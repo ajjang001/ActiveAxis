@@ -27,6 +27,7 @@ import UserHomePage from './src/view/user/UserHomePage';
 
 import CoachHomePage from './src/view/coach/CoachHomePage';
 import MyCoacheePage from './src/view/coach/MyCoacheePage';
+import ViewCoacheeDetails from './src/view/coach/ViewCoacheeDetails';
 
 import SystemAdminHomePage from './src/view/system_admin/SystemAdminHomePage';
 import CoachAccountListPage from './src/view/system_admin/CoachAccountListPage';
@@ -161,9 +162,10 @@ export default function App() {
         <Stack.Screen name="SystemAdminAccountSettingPage" component={SystemAdminAccountSettingPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         {/*SystemAdminUpdateAccountDetailsPage might be deleted*/}
         <Stack.Screen name="SystemAdminUpdateAccountDetailsPage" component={SystemAdminUpdateAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        {/*Headershown false when logout implemented */}
+        <Stack.Screen name="CoachHomePage" component={CoachTabs}  />
+        <Stack.Screen name="ViewCoacheeDetails" component={ViewCoacheeDetails} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
 
-        <Stack.Screen name="CoachHomePage" component={CoachTabs}   />
-        {/* <Stack.Screen name="CoachTabs" component={CoachTabs} options={{ headerShown: false }} /> Add CoachTabs to the stack */}
       </Stack.Navigator>
     </NavigationContainer>
   );

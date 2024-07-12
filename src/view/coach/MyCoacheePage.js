@@ -1,17 +1,15 @@
 import { View, Text, StyleSheet, TextInput, Image, ScrollView, Modal, TouchableOpacity } from "react-native"
-
 import AccountListCard from "../../components/AccountListCard";
 import { scale } from "../../components/scale";
 import React, { useEffect, useState } from "react";
-
 import { LoadingDialog, MessageDialog } from "../../components/Modal";
 
-const MyCoacheePage = ({ route }) => {
+const MyCoacheePage = ({ navigation, route }) => {
 
     const { coach } = route.params;
 
     //debugging log
-    console.log({coach});
+    console.log({ coach });
 
     // state variables
     const [isLoading, setIsLoading] = useState(false);
@@ -19,19 +17,19 @@ const MyCoacheePage = ({ route }) => {
     const [modalMsg, setModalMsg] = useState('');
 
     // change popup/modal visible
-    const changeConfirmVisible = (b, m)=>{
+    const changeConfirmVisible = (b, m) => {
         setConfirmMessage(m);
         setConfirmationVisible(b);
     }
 
     // change popup/modal visible
-    const changeModalVisible = (b, m)=>{
+    const changeModalVisible = (b, m) => {
         setModalMsg(m);
         setModalVisible(b);
     }
 
     // change popup/modal visible
-    const changeLoadingVisible = (b)=>{
+    const changeLoadingVisible = (b) => {
         setIsLoading(b);
     }
 
@@ -65,6 +63,11 @@ const MyCoacheePage = ({ route }) => {
                     <Text style={{ color: 'white', fontSize: scale(20) }}>No Coachee Found</Text>
                 </View>
                 {/* insert code  */}
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate('ViewCoacheeDetails', {coach})
+                }}>
+                    <Text>Click here to see details test</Text>
+                </TouchableOpacity>
             </ScrollView>
         </View>)
 }
