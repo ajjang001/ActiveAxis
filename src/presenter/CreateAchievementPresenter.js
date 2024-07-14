@@ -9,7 +9,6 @@ class CreateAchievementPresenter{
 
     async createAchievement(){
         try{
-            const alphanumeric = /^[a-zA-Z0-9\s]+$/;
             const decimal = /^\d+(\.\d+)?$/;
 
             const typeID = this.view.typeID;
@@ -21,11 +20,7 @@ class CreateAchievementPresenter{
 
             if (photo === null) {
                 throw new Error("Please upload an image.");
-            }else if (!name.match(alphanumeric)) {
-                throw new Error("Achievement name must be alphanumeric.");
-            } else if (!description.match(alphanumeric)) {
-                throw new Error("Description must be alphanumeric.");
-            } else if (isNaN(target)) {
+            }else if (isNaN(target)) {
                 throw new Error("Target must be a number.");
             } else if (parseFloat(target) < 0) {
                 throw new Error("Target must be a positive number.");

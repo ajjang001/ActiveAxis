@@ -6,7 +6,7 @@ import DisplayListOfAchievementsPresenter from '../../presenter/DisplayListOfAch
 
 
 
-const AchievementsPage = ({ navigation }) => {
+const AchievementsPage = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
@@ -81,6 +81,13 @@ const changeLoadingVisible = (b)=>{
       changeLoadingVisible(false);
     }
   };
+
+  useEffect(()=>{
+    if (route.params?.refresh){
+        loadAchievements();
+        route.params.refresh = false;
+    }
+  },[route.params?.refresh]);
 
   useEffect(() => {
     loadAchievements();

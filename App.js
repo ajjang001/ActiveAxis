@@ -154,8 +154,26 @@ export default function App() {
         <Stack.Screen name="UpdateAboutUsPage" component={UpdateAboutUsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         <Stack.Screen name="UpdateAppFeaturesPage" component={UpdateAppFeaturesPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         <Stack.Screen name="AchievementsPage" component={AchievementsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-        <Stack.Screen name = "AchievementDetailsPage" component={AchievementDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
-        <Stack.Screen name="CreateAchievementsPage" component={CreateAchievementsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        <Stack.Screen name = "AchievementDetailsPage" component={AchievementDetailsPage} options={({navigation}) =>({
+            title:'Back', 
+            headerStyle:{backgroundColor:'#FBF5F3'}, 
+            headerLeft:()=>(
+              <TouchableOpacity onPress={() => navigation.navigate('AchievementsPage', {refresh:true})}>
+                <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: 15 }} />
+              </TouchableOpacity>
+            ),
+            ...TransitionPresets.SlideFromRightIOS })} 
+        />
+        <Stack.Screen name="CreateAchievementsPage" component={CreateAchievementsPage} options={({navigation}) =>({
+            title:'Back', 
+            headerStyle:{backgroundColor:'#FBF5F3'}, 
+            headerLeft:()=>(
+              <TouchableOpacity onPress={() => navigation.navigate('AchievementsPage', {refresh:true})}>
+                <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: 15 }} />
+              </TouchableOpacity>
+            ),
+            ...TransitionPresets.SlideFromRightIOS })} 
+        />
         <Stack.Screen name="EditAchievementsPage" component={EditAchievementsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
 
         <Stack.Screen name="UserAccountListPage" component={UserAccountListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>  

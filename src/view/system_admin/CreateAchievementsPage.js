@@ -93,6 +93,7 @@ const renderItem=(item)=>{
     try{
         changeLoadingVisible(true);
         await new CreateAchievementPresenter({typeID:competitionType, name:name, description:details, target:target, photo: photo}).createAchievement();
+        navigation.navigate('AchievementsPage', {refresh: true});
     }catch(e){
         let errorMessage = e.message;
         if (errorMessage.startsWith("Error: ")) {
@@ -137,13 +138,6 @@ const renderItem=(item)=>{
       <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
           <LoadingDialog />
       </Modal>
-      <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>(false)}>
-          <ActionDialog
-          message = {confirmMessage}
-          changeModalVisible = {setConfirmationVisible}
-          action = {()=>console.log('Action')}
-          />
-      </Modal>
       <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
           <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
       </Modal>
@@ -160,6 +154,7 @@ const renderItem=(item)=>{
         placeholder="Enter achievement name here..."
         value={name}
         onChangeText={(text) => setName(text)}
+        maxLength={18}
       />
 
       <Text style={styles.detailsTitle}>Achievement Descriptions:</Text>
