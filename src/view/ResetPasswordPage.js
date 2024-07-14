@@ -4,7 +4,7 @@ import { TextInput } from 'react-native-gesture-handler';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { ActionDialog, LoadingDialog, MessageDialog } from '../components/Modal';
 import ResetPasswordPresenter from '../presenter/ResetPasswordPresenter';
-import {scale} from '../components/scale';
+import { scale } from "../components/scale";
 
 const ResetPasswordPage = ({ navigation }) => {
     // state variables
