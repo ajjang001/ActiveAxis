@@ -1,27 +1,30 @@
-import ExerciseType from "./ExerciseType";
+import CompetitionType from "./CompetitionType";
 import { app, auth, db, storage } from '../../.expo/api/firebase.js';
-import { getDocs, collection, query, where, orderBy, addDoc, doc } from 'firebase/firestore';
+import { getDocs, getDoc, collection, query, where, orderBy, addDoc, doc } from 'firebase/firestore';
 import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
 
 
 class Achievements{
+    _achievementID;
     _achievementName;
     _achievementPicture;
-    _exerciseType;
+    _competitionType;
     _description;
     _maxProgress;
 
     constructor () {}
 
+    get achievementID() {return this._achievementID;}
     get achievementName() {return this._achievementName;}
     get achievementPicture() {return this._achievementPicture;}
-    get exerciseType() {return this._exerciseType;}
+    get competitionType() {return this._competitionType;}
     get description() {return this._description;}
     get maxProgress() {return this._maxProgress;}
 
+    set achievementID(achievementID) {this._achievementID = achievementID;}
     set achievementName(achievementName) {this._achievementName = achievementName;}
     set achievementPicture(achievementPicture) {this._achievementPicture = achievementPicture;}
-    set exerciseType(exerciseType) {this._exerciseType = exerciseType;}
+    set competitionType(competitionType) {this._competitionType = competitionType;}
     set description(description) {this._description = description;}
     set maxProgress(maxProgress) {this._maxProgress = maxProgress;}
 
@@ -36,15 +39,43 @@ class Achievements{
         }
     }
 
+    async getAchievement(achievementID){
+        try{
+            const docRef = doc(db, "achievements", achievementID);
+            const docSnap = await getDoc(docRef);
+
+
+            if (!docSnap.empty) {
+                const d = docSnap.data();
+                const a = new Achievements();
+
+                a.achievementID = docSnap.id;
+                a.achievementName = d.achievementName;
+                a.achievementPicture = await this.getURL(d.achievementPicture);
+                a.competitionType = await new CompetitionType().getCompetitionType(d.competitionTypeID);
+                a.description = d.description;
+                a.maxProgress = d.maxProgress;
+
+
+                return a;
+            }else{
+                return null;
+            }
+            
+        }catch(e){
+            throw new Error(e.message);
+        }
+    }
+
 
     async getListOfAchievements() {
         try {
-            const types = await new ExerciseType().getExerciseTypes();
+            const types = await new CompetitionType().getCompetitionTypes();
             let achArray = [];
     
             // Use for loop instead of map for better async/await handling
             for (const type of types) {
-                const q = query(collection(db, "achievements"),  where("exerciseTypeID", "==", type.exerciseTypeID), orderBy("maxProgress", 'asc'));
+                const q = query(collection(db, "achievements"),  where("competitionTypeID", "==", type.competitionTypeID), orderBy("maxProgress", 'asc'));
                 const querySnapshot = await getDocs(q);
     
                 let dataArr = [];
@@ -53,9 +84,10 @@ class Achievements{
                     const d = doc.data();
                     const a = new Achievements();
                     
+                    a.achievementID = doc.id;
                     a.achievementName = d.achievementName;
                     a.achievementPicture = await this.getURL(d.achievementPicture);
-                    a.exerciseType = type.exerciseTypeName;
+                    a.competitionType = type.competitionTypeName;
                     a.description = d.description;
                     a.maxProgress = d.maxProgress;
                     
@@ -66,7 +98,7 @@ class Achievements{
 
                 dataArr.sort((a, b) => a.maxProgress - b.maxProgress); 
 
-                achArray.push({ id: type.exerciseTypeID, type: type.exerciseTypeName, data: dataArr });
+                achArray.push({ id: type.competitionTypeID, type: type.competitionTypeName, data: dataArr });
             }
     
             return achArray;
@@ -77,7 +109,7 @@ class Achievements{
 
     async createAchievement(typeID, name, description, target, photo){
         try{
-            const typeName = await new ExerciseType().getExerciseType(typeID);
+            const typeName = await new CompetitionType().getCompetitionType(typeID);
 
             // Convert URI to Blob
             const uriToBlob = (uri) => {
@@ -124,7 +156,7 @@ class Achievements{
                 achievementName: name,
                 achievementPicture: photoPath,
                 description: description,
-                exerciseTypeID: typeID,
+                competitionTypeID: typeID,
                 maxProgress: target
             });
 

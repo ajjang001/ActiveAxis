@@ -41,6 +41,7 @@ import SystemAdminAppFeedbacks from './src/view/system_admin/SystemAdminAppFeedb
 import UpdateAboutUsPage from './src/view/system_admin/UpdateAboutUsPage';
 import UpdateAppFeaturesPage from './src/view/system_admin/UpdateAppFeaturesPage';
 import AchievementsPage from './src/view/system_admin/AchievementsPage';
+import AchievementDetailsPage from './src/view/system_admin/AchievementDetailsPage';
 import CreateAchievementsPage from './src/view/system_admin/CreateAchievementsPage';
 import EditAchievementsPage from './src/view/system_admin/EditAchievementsPage';
 
@@ -113,7 +114,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="LoginPage">
+      <Stack.Navigator initialRouteName="AchievementsPage">
         <Stack.Screen name="LoginPage" component={LoginPage} options={{headerShown:false}} />
         <Stack.Screen name="Register" component={RegisterPage} options={{title:'Back'}} />
         <Stack.Screen name="Register2" component={RegisterPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
@@ -153,6 +154,7 @@ export default function App() {
         <Stack.Screen name="UpdateAboutUsPage" component={UpdateAboutUsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         <Stack.Screen name="UpdateAppFeaturesPage" component={UpdateAppFeaturesPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         <Stack.Screen name="AchievementsPage" component={AchievementsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        <Stack.Screen name = "AchievementDetailsPage" component={AchievementDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
         <Stack.Screen name="CreateAchievementsPage" component={CreateAchievementsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         <Stack.Screen name="EditAchievementsPage" component={EditAchievementsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
 

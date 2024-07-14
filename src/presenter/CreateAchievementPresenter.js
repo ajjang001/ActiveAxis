@@ -1,5 +1,5 @@
 import Achievements from '../model/Achievements.js';
-import ExerciseType from '../model/ExerciseType.js';
+import CompetitionType from '../model/CompetitionType.js';
 
 class CreateAchievementPresenter{
     constructor(view){
@@ -41,9 +41,9 @@ class CreateAchievementPresenter{
         }
     }
 
-    async getExerciseTypes(){
+    async getCompetitionTypes(){
         try{
-            this.view.setOptions(await new ExerciseType().getExerciseTypes());
+            this.view.setOptions(await new CompetitionType().getCompetitionTypes());
         }catch(error){
             throw new Error (error);
         }

@@ -11,7 +11,7 @@ import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Mod
 
 const CreateAchievementsPage = ({ navigation }) => {
   const [photo, setPhoto] = useState(null);
-  const [exerciseType, setExerciseType] = useState(1);
+  const [competitionType, setCompetitionType] = useState(1);
   const [details, setDetails] = useState('');
   const [name, setName] = useState('');
   const [target, setTarget] = useState(0);
@@ -67,12 +67,12 @@ const renderItem=(item)=>{
   return(
     <TouchableOpacity activeOpacity={.7} style={styles.item}
     onPress={()=>{
-        setExerciseType(item.exerciseTypeID);
+        setCompetitionType(item.competitionTypeID);
 
         dropdownRef.current.close();
     }}
     >
-            <Text style={styles.itemText}>{item.exerciseTypeName}</Text>
+            <Text style={styles.itemText}>{item.competitionTypeName}</Text>
     </TouchableOpacity> 
     );
   };
@@ -81,7 +81,7 @@ const renderItem=(item)=>{
     try{
       changeLoadingVisible(true);
       setDropdownOpt([]);
-      await new CreateAchievementPresenter({setOptions:setDropdownOpt}).getExerciseTypes();
+      await new CreateAchievementPresenter({setOptions:setDropdownOpt}).getCompetitionTypes();
     }catch(error){
       changeModalVisible(true, error.message);
     }finally{
@@ -92,7 +92,7 @@ const renderItem=(item)=>{
   const createHandler = async () => {
     try{
         changeLoadingVisible(true);
-        await new CreateAchievementPresenter({typeID:exerciseType, name:name, description:details, target:target, photo: photo}).createAchievement();
+        await new CreateAchievementPresenter({typeID:competitionType, name:name, description:details, target:target, photo: photo}).createAchievement();
     }catch(e){
         let errorMessage = e.message;
         if (errorMessage.startsWith("Error: ")) {
@@ -150,25 +150,9 @@ const renderItem=(item)=>{
       
       
 
-      <View style={styles.categoryView}>
-        <Text style={styles.detailsTitle}>Type:</Text>
-          <Dropdown
-              style={styles.dropdown}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              data={dropdownOpt}
-              maxHeight={300}
-              labelField="exerciseTypeName"
-              valueField="exerciseTypeID"
-              placeholder="Select Type"
-              value={exerciseType}
-              onChange={type => {
-                  setExerciseType(type);
-              }}
-              renderItem={renderItem}
-              ref={dropdownRef}
-          />
-        </View>
+      
+
+      
 
       <Text style={styles.detailsTitle}>Achievement Name:</Text>
       <TextInput
@@ -185,6 +169,24 @@ const renderItem=(item)=>{
         value={details}
         onChangeText={(text) => setDetails(text)}
         
+      />
+
+      <Text style={styles.detailsTitle}>Type:</Text>
+      <Dropdown
+          style={styles.dropdown}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          data={dropdownOpt}
+          maxHeight={300}
+          labelField="competitionTypeName"
+          valueField="competitionTypeID"
+          placeholder="Select Type"
+          value={competitionType}
+          onChange={type => {
+              setCompetitionType(type);
+          }}
+          renderItem={renderItem}
+          ref={dropdownRef}
       />
 
       <Text style={styles.detailsTitle}>Achievement Target:</Text>
@@ -231,24 +233,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: scale(10),
   },
-  categoryView:{
-    flexDirection:'row',
-    alignItems:'center',
-    display:'flex',
-    width:'100%',
-
-    marginBottom: scale(15),
-  },
   dropdown: {
-    height: scale(30),
-    width: '40%',
-    marginHorizontal:scale(10),
+    height: scale(50),
+    width: '100%',
     padding:scale(10),
-    borderBottomColor: 'gray',
-    borderBottomWidth: scale(0.5),
     backgroundColor: 'white',
-    borderRadius:8,
-    alignSelf:'flex-start',
+    borderColor: '#CCC',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: scale(20),
   },
   placeholderStyle: {
       fontSize: scale(13)
@@ -259,9 +252,10 @@ const styles = StyleSheet.create({
   },
   item: {
       paddingLeft: scale(5),
-      height:scale(25),
+      height:scale(30),
       borderWidth:1,
       borderColor: 'lightgrey',
+      paddingVertical: scale(5),
   },
   itemText: {
       fontSize: scale(12),
