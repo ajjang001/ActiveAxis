@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { signOut } from "firebase/auth";
 
-import { auth } from "../../.expo/api/firebase";
+import { auth } from "../firebase/firebaseConfig";
 import User from "../model/User";
 import Coach from "../model/Coach";
 

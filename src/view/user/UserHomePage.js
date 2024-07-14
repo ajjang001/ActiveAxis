@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity} from 'react-native';
 import {ref, getDownloadURL} from 'firebase/storage';
 
-import {app, auth, db, storage} from '../../../.expo/api/firebase';
+import { storage } from '../../firebase/firebaseConfig';
 import { LoadingDialog } from '../../components/Modal';
 
 const UserHomePage = ({navigation, route}) => {

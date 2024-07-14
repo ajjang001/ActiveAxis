@@ -9,6 +9,7 @@ import DatePicker from 'react-native-date-picker';
 import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
 import RegisterPresenter from '../../presenter/RegisterPresenter';
+import { scale } from '../../components/scale';
 
 const RegisterPage = ({ navigation }) => {
 
@@ -179,7 +180,7 @@ const RegisterPage = ({ navigation }) => {
               checked={medicalCheck}
               onPress={() => setmedicalCheck(!medicalCheck)}
               title={
-                <Text style={{ marginLeft: 10 }}>
+                <Text style={{ marginLeft: 10, maxWidth:'80%' }}>
                   I have a medical condition that might affect my ability to exercise.
                 </Text>}
               iconType="material-community"
@@ -222,24 +223,24 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 15,
-    paddingBottom: 40,
+    paddingTop: scale(15),
+    paddingBottom: scale(40),
   },
   container2: {
     backgroundColor: '#E6E6E6',
     width: '90%',
     alignItems: 'center',
-    borderRadius: 25,
-    marginTop: 20,
-    paddingTop: 10,
-    paddingBottom: 25,
+    borderRadius: scale(25),
+    marginTop: scale(20),
+    paddingTop: scale(10),
+    paddingBottom: scale(25),
     borderColor: '#C42847',
     borderWidth: 3,
   },
   label: {
-    paddingLeft: 5,
-    marginTop: 10,
-    marginBottom: 5,
+    paddingLeft: scale(5),
+    marginTop: scale(10),
+    marginBottom: scale(5),
     fontWeight: 'bold',
   },
   inputContainer: {
@@ -251,26 +252,26 @@ const styles = StyleSheet.create({
   dropdown: {
     backgroundColor: 'white',
     borderBottomColor: 'gray',
-    paddingHorizontal: 15,
-    paddingVertical: 0,
-    borderRadius: 10,
+    paddingHorizontal: scale(15),
+    paddingVertical: scale(0),
+    borderRadius: scale(10),
   },
   input: {
     backgroundColor: 'white',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingHorizontal: scale(15),
+    paddingVertical: scale(10),
     borderRadius: 10,
   },
   buttonContainer: {
     width: '70%',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 15,
+    marginTop: scale(15),
   },
   button: {
     backgroundColor: 'black',
     width: '75%',
-    padding: 10,
+    padding: scale(10),
     borderRadius: 25,
     alignItems: 'center',
 
@@ -278,12 +279,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: scale(18),
   },
   checkboxContainer: {
     width: '100%',
-    alignItems: 'center',
-    marginTop: 10,
+    marginTop: scale(10),
 
   },
 })

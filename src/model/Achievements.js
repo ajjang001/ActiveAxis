@@ -1,5 +1,5 @@
 import CompetitionType from "./CompetitionType";
-import { app, auth, db, storage } from '../../.expo/api/firebase.js';
+import { db, storage } from '../firebase/firebaseConfig';
 import { getDocs, getDoc, collection, query, where, orderBy, addDoc, doc } from 'firebase/firestore';
 import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
 

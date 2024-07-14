@@ -1,5 +1,5 @@
 
-import { app, auth, db, storage } from '../../.expo/api/firebase.js';
+import { db } from '../firebase/firebaseConfig';
 import { getDocs, collection, orderBy, where, query } from 'firebase/firestore';
 
 class CompetitionType{

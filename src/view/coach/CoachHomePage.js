@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { LoadingDialog } from '../../components/Modal';
-import { app, auth, db, storage } from '../../../.expo/api/firebase';
+import { app, auth, db, storage } from '../../firebase/firebaseConfig';
 
 const CoachHomePage = ({ route }) => {
     

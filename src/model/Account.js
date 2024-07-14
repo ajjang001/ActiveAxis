@@ -1,6 +1,6 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
-import {app, auth, db, storage} from '../../.expo/api/firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
+import { auth, storage} from '../firebase/firebaseConfig';
 
 
 class Account{

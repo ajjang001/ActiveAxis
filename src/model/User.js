@@ -1,4 +1,5 @@
-import { app, auth, db, storage } from '../../.expo/api/firebase';
+
+import { db, auth } from '../firebase/firebaseConfig';
 import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, orderBy, startAt, endAt, updateDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
 import axios from 'axios';
