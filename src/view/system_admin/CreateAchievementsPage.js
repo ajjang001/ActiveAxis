@@ -92,7 +92,9 @@ const renderItem=(item)=>{
   const createHandler = async () => {
     try{
         changeLoadingVisible(true);
-        await new CreateAchievementPresenter({typeID:competitionType, name:name, description:details, target:target, photo: photo}).createAchievement();
+        const typeName = dropdownOpt.find((item) => item.competitionTypeID === competitionType).competitionTypeName;
+        
+        await new CreateAchievementPresenter({type:{typeID: competitionType,typeName: typeName}, name:name, description:details, target:target, photo: photo}).createAchievement();
         navigation.navigate('AchievementsPage', {refresh: true});
     }catch(e){
         let errorMessage = e.message;

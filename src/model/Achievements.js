@@ -1,6 +1,6 @@
 import CompetitionType from "./CompetitionType";
 import { db, storage } from '../firebase/firebaseConfig';
-import { getDocs, getDoc, deleteDoc, collection, query, where, orderBy, addDoc, doc } from 'firebase/firestore';
+import { getDocs, getDoc, deleteDoc, collection, query, where, orderBy, addDoc, doc, updateDoc } from 'firebase/firestore';
 
 import { ref, getDownloadURL, uploadBytes, deleteObject } from 'firebase/storage';
 
@@ -113,9 +113,10 @@ class Achievements{
         }
     }
 
-    async createAchievement(typeID, name, description, target, photo){
+    async createAchievement(type, name, description, target, photo){
         try{
-            const typeName = await new CompetitionType().getCompetitionType(typeID);
+            const typeName = type.typeName;
+            const typeID = type.typeID;
 
             // Convert URI to Blob
             const uriToBlob = (uri) => {
@@ -169,6 +170,82 @@ class Achievements{
         }
         catch(error){
             throw new Error(error);
+        }
+    }
+
+    async editAchievement(type, name, description, target, photo){
+        try{
+            const typeName = type.typeName;
+            const typeID = type.typeID;
+
+            // Convert URI to Blob
+            const uriToBlob = (uri) => {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest()
+                    xhr.onload = function () {
+                        // return the blob
+                        resolve(xhr.response)
+                    }
+                    xhr.onerror = function () {
+                        reject(new Error('uriToBlob failed'))
+                    }
+                    xhr.responseType = 'blob'
+                    xhr.open('GET', uri, true)
+
+                    xhr.send(null)
+                })
+            };
+
+            // Upload file to Firebase Storage
+            const uploadFile = async (file, folderPath) => {
+                if (!file || !file.uri) throw new Error('File URI is invalid');
+
+                const storageRef = ref(storage, folderPath + file.name);
+                const blobFile = await uriToBlob(file.uri);
+                try {
+                    await uploadBytes(storageRef, blobFile);
+                    return `${folderPath}${file.name}`;
+                } catch (e) {
+                    throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support.");
+
+                }
+
+            };
+
+            let photoPath = null;
+
+            if (photo !== null) {
+                // Delete the old photo
+                const ppRef = ref(storage, this.achievementPicture);
+                await deleteObject(ppRef);
+
+                const folderPath = `achievements/${
+                    (typeName === 'Competitions Won' ? 'Competitions' : typeName)
+                }/`;
+    
+                photoPath = await uploadFile(photo, folderPath);
+
+
+            }
+            
+
+            // Modify database
+            const docRef = doc(db, "achievements", this.achievementID);
+            await updateDoc(docRef, {
+                achievementName: name,
+                description: description,
+                competitionTypeID: typeID,
+                maxProgress: target
+            });
+
+            if(photoPath !== null){
+                await updateDoc(docRef, {
+                    achievementPicture: photoPath
+                });
+            }
+
+        }catch(e){
+            throw new Error(e.message);
         }
     }
 

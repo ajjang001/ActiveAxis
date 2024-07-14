@@ -95,7 +95,8 @@ const renderItem=(item)=>{
   const saveHandler = async () => {
     try{
         changeLoadingVisible(true);
-        await new EditAchievementPresenter({typeID:competitionType, name:name, description:details, target:target, photo: photo}).editAchievement();
+        const typeName = dropdownOpt.find((item) => item.competitionTypeID === competitionType).competitionTypeName;
+        await new EditAchievementPresenter({type:{typeID: competitionType,typeName: typeName}, name:name, description:details, target:target, photo: (photo === achievement.achievementPicture ? null : photo) , oldAchievement: achievement}).editAchievement();
         navigation.navigate('AchievementsPage', {refresh: true});
     }catch(e){
         let errorMessage = e.message;
@@ -151,6 +152,13 @@ const renderItem=(item)=>{
       <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
           <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
       </Modal>
+      <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeConfirmVisible(false)}>
+          <ActionDialog
+          message = {confirmMessage}
+          changeModalVisible = {changeConfirmVisible}
+          action = {saveHandler}
+          />
+      </Modal>
       
       
 
@@ -200,10 +208,10 @@ const renderItem=(item)=>{
           placeholder='Enter target here...'
           keyboardType="phone-pad"
           returnKeyType='done'
-          value={target}
+          value={target.toString()}
           onChangeText={num => setTarget(num)}
       />
-      <TouchableOpacity style={styles.postButton} onPress={saveHandler}>
+      <TouchableOpacity style={styles.postButton} onPress={()=>changeConfirmVisible (true, 'Are you sure you want to save changes?')}>
         <Text style={styles.postButtonText}>SAVE</Text>
       </TouchableOpacity>
       
@@ -279,7 +287,7 @@ const styles = StyleSheet.create({
   postButton: {
     width: '100%',
     padding: scale(15),
-    backgroundColor: '#B22222',
+    backgroundColor: 'black',
     borderRadius: 5,
     alignItems: 'center',
   },
