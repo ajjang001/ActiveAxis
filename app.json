@@ -2,6 +2,7 @@
   "expo": {
     "name": "ActiveAxis",
     "slug": "ActiveAxis",
+    "owner": "activeaxisdevs",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/activeaxislogo.png",
