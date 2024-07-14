@@ -42,7 +42,7 @@ import UpdateAppFeaturesPage from './src/view/system_admin/UpdateAppFeaturesPage
 import AchievementsPage from './src/view/system_admin/AchievementsPage';
 import AchievementDetailsPage from './src/view/system_admin/AchievementDetailsPage';
 import CreateAchievementsPage from './src/view/system_admin/CreateAchievementsPage';
-import EditAchievementsPage from './src/view/system_admin/EditAchievementsPage';
+import EditAchievementPage from './src/view/system_admin/EditAchievementPage';
 
 import SystemAdminAccountSettingPage from './src/view/system_admin/SystemAdminAccountSettingPage';
 
@@ -170,7 +170,7 @@ export default function App() {
             ),
             ...TransitionPresets.SlideFromRightIOS })} 
         />
-        <Stack.Screen name="EditAchievementsPage" component={EditAchievementsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+        <Stack.Screen name="EditAchievementPage" component={EditAchievementPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
 
         <Stack.Screen name="UserAccountListPage" component={UserAccountListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>  
         <Stack.Screen name="UserAccountDetailsPage" component={UserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/> 

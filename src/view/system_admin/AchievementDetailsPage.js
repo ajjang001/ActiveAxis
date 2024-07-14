@@ -99,7 +99,7 @@ const AchievementDetailsPage = ({navigation, route}) => {
             </View>
 
             <View style = {styles.buttonsView}>
-                <TouchableOpacity style = {styles.edit}>
+                <TouchableOpacity style = {styles.edit} onPress = {()=>navigation.navigate('EditAchievementPage', {achievement})}>
                     <Text style ={styles.buttonText}>EDIT</Text>
                 </TouchableOpacity>
 
