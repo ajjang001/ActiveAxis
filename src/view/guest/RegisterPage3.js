@@ -12,28 +12,7 @@ const RegisterPage3 = ({ navigation }) => {
             <Text style={styles.header}>Verification</Text>
             <View style={styles.container2}>
             <Text style={styles.header2}>We have sent you a verification link to your email.{"\n"}Kindly verify your account before logging in.</Text>
-                {/* <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Email Verification Code</Text>
-                    <TextInput
-                        placeholder="Enter the email verification code"
-                        // value = { }
-                        // onChangeText = {text => }
-                        style={styles.input}
-                        maxLength={6}
-                        keyboardType="phone-pad"
-                        returnKeyType='done'
-                    />
-                    <Text style={styles.label}>Phone Verification Code</Text>
-                    <TextInput
-                        placeholder="Enter the phone verification code"
-                        // value = { }
-                        // onChangeText = {text => }
-                        style={styles.input}
-                        maxLength={6}
-                        keyboardType="phone-pad"
-                        returnKeyType='done'
-                    />
-                </View> */}
+                
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity

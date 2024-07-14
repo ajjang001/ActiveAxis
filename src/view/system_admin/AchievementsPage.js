@@ -76,7 +76,7 @@ const changeLoadingVisible = (b)=>{
       setAllAchievements([]);
       await new DisplayListOfAchievementsPresenter({displayAchievements:setAllAchievements}).getAchievements();
     }catch(e){
-      console.log(e);
+      changeModalVisible(true, e.message);
     }finally{
       changeLoadingVisible(false);
     }

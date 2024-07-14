@@ -16,7 +16,6 @@ import RegisterPage3 from './src/view/guest/RegisterPage3';
 import CoachRegisterPage from './src/view/guest/CoachRegisterPage';
 import CoachRegisterPage2 from './src/view/guest/CoachRegisterPage2';
 import ResetPasswordPage from './src/view/ResetPasswordPage';
-import ResetPasswordPage2 from './src/view/ResetPasswordPage2';
 import AboutOurApp from './src/view/guest/AboutOurApp';
 import AboutActiveAxisPage from './src/view/guest/AboutActiveAxisPage';
 import AppFeaturesPage from './src/view/guest/AppFeaturesPage';
@@ -46,7 +45,6 @@ import CreateAchievementsPage from './src/view/system_admin/CreateAchievementsPa
 import EditAchievementsPage from './src/view/system_admin/EditAchievementsPage';
 
 import SystemAdminAccountSettingPage from './src/view/system_admin/SystemAdminAccountSettingPage';
-import SystemAdminUpdateAccountDetailsPage from './src/view/system_admin/SystemAdminUpdateAccountDetailsPage';
 
 import UserAccountListPage from './src/view/system_admin/UserAccountListPage';
 import UserAccountDetailsPage from './src/view/system_admin/UserAccountDetailsPage';
@@ -123,8 +121,6 @@ export default function App() {
         <Stack.Screen name = "CoachRegisterPage2" component={CoachRegisterPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
 
         <Stack.Screen name="ResetPassword" component={ResetPasswordPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
-        {/*Reset Password 2 might be deleted*/}
-        <Stack.Screen name="ResetPassword2" component={ResetPasswordPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         <Stack.Screen name="AboutOurApp" component={AboutOurApp} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'} }}/>
         <Stack.Screen name="AboutActiveAxisPage" component={AboutActiveAxisPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
         <Stack.Screen name="AppFeaturesPage" component={AppFeaturesPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
@@ -180,8 +176,6 @@ export default function App() {
         <Stack.Screen name="UserAccountDetailsPage" component={UserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/> 
         <Stack.Screen name="EditUserAccountDetailsPage" component={EditUserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>     
         <Stack.Screen name="SystemAdminAccountSettingPage" component={SystemAdminAccountSettingPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-        {/*SystemAdminUpdateAccountDetailsPage might be deleted*/}
-        <Stack.Screen name="SystemAdminUpdateAccountDetailsPage" component={SystemAdminUpdateAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         {/*Headershown false when logout implemented */}
         <Stack.Screen name="CoachHomePage" component={CoachTabs}  />
         <Stack.Screen name="ViewCoacheeDetails" component={ViewCoacheeDetails} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
