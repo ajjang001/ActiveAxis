@@ -26,7 +26,9 @@ import UserHomePage from './src/view/user/UserHomePage';
 
 import CoachHomePage from './src/view/coach/CoachHomePage';
 import MyCoacheePage from './src/view/coach/MyCoacheePage';
+import CoachAccountSettingPage from './src/view/coach/CoachAccountSettingPage';
 import ViewCoacheeDetails from './src/view/coach/ViewCoacheeDetails';
+import CoacheeFeedbackPage from './src/view/coach/CoacheeFeedbackPage';
 
 import SystemAdminHomePage from './src/view/system_admin/SystemAdminHomePage';
 import CoachAccountListPage from './src/view/system_admin/CoachAccountListPage';
@@ -85,8 +87,7 @@ const CoachTabs = ({route}) => {
       >
           <coachTab.Screen name="Home" component={CoachHomePage} initialParams={{ coach }} options={{ headerShown: false }} />
           <coachTab.Screen name="My Coachee" component={MyCoacheePage} initialParams={{ coach }} options={{ headerShown: false }} />
-          {/* Account Settings page edit */}
-          <coachTab.Screen name="Account" component={CoachHomePage} initialParams={{ coach }} options={{ headerShown: false }} />
+          <coachTab.Screen name="Account" component={CoachAccountSettingPage} initialParams={{ coach }} options={{ headerShown: false }} />
       </coachTab.Navigator>
   );
 };
@@ -176,10 +177,11 @@ export default function App() {
         <Stack.Screen name="UserAccountDetailsPage" component={UserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/> 
         <Stack.Screen name="EditUserAccountDetailsPage" component={EditUserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>     
         <Stack.Screen name="SystemAdminAccountSettingPage" component={SystemAdminAccountSettingPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-        {/*Headershown false when logout implemented */}
-        <Stack.Screen name="CoachHomePage" component={CoachTabs}  />
+        
+        <Stack.Screen name="CoachHomePage" component={CoachTabs} options={{headerShown:false}} />
         <Stack.Screen name="ViewCoacheeDetails" component={ViewCoacheeDetails} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
-
+        <Stack.Screen name="CoacheeFeedbackPage" component={CoacheeFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+      
       </Stack.Navigator>
     </NavigationContainer>
   );
