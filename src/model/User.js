@@ -376,6 +376,87 @@ class User extends Account{
         }
     }
 
+    async getListOfCoachee(coachEmail) {
+        try {
+            //get doc.id
+            const coachQuery = query(collection(db, 'coach'), where('email', '==', coachEmail));
+            const coachSnapshot = await getDocs(coachQuery);
+            const coachDoc = coachSnapshot.docs[0];
+            const coachID = coachDoc.id;
+
+            const q = query(collection(db, 'coachinghistory'), where('coachID', '==', coachID));
+            const queryResult = await getDocs(q);
+            const coachees = [];
+
+            for (const coachingDoc of queryResult.docs) {
+                const coachingData = coachingDoc.data();
+                const userDocRef = doc(db, 'user', coachingData.userID);
+                const userDoc = await getDoc(userDocRef);
+
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    const u = new User();
+
+                    u.username = data.username;
+                    u.email = data.email;
+                    u.profilePicture = data.profilePicture;
+                    u.profilePicture = await u.getProfilePictureURL();
+                    u.fullName = data.fullName;
+                    u.dob = data.dob;
+                    u.gender = data.gender;
+                    u.phoneNumber = data.phoneNumber;
+                    u.isPremium = data.isPremium;
+
+                    coachees.push({ id: coachingDoc.id, user: u });
+                }
+            }
+
+            return coachees;
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async getCoacheeDetails(userEmail) {
+        try {
+            const q = query(collection(db, 'user'), where('email', '==', userEmail));
+            const queryResult = await getDocs(q);
+            const users = [];
+
+            for (const doc of queryResult.docs) {
+                const data = doc.data();
+                const u = new User();
+
+                u.username = data.username;
+                u.email = data.email;
+                u.profilePicture = data.profilePicture;
+                u.profilePicture = await u.getProfilePictureURL();
+                u.fullName = data.fullName;
+                u.dob = data.dob;
+                u.gender = data.gender;
+                u.phoneNumber = data.phoneNumber;
+                u.hasMedical = data.hasMedical;
+                u.isPremium = data.isPremium;
+                u.isSuspended = data.isSuspended;
+                u.weight = data.weight;
+                u.height = data.height;
+                u.fitnessGoal = data.fitnessGoal;
+                u.fitnessLevel = data.fitnessLevel;
+                u.restInterval = data.restInterval;
+
+
+
+                users.push({ id: doc.id, user: u });
+
+            }
+
+            return users;
+        } catch (e) {
+            throw new Error(e.message);
+        }
+
+    }
+
 }
 
 export default User;

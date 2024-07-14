@@ -1,26 +1,24 @@
-import { View, Text, StyleSheet, TextInput, Image, ScrollView, Modal, TouchableOpacity } from "react-native"
+import { View, Text, StyleSheet, ScrollView, Modal} from "react-native"
 import AccountListCard from "../../components/AccountListCard";
 import { scale } from "../../components/scale";
-import React, { useEffect, useState } from "react";
+import { useIsFocused } from '@react-navigation/native';
+import React, { useEffect, useState, useCallback } from "react";
 import { LoadingDialog, MessageDialog } from "../../components/Modal";
+import DisplayCoacheesPresenter from '../../presenter/DisplayCoacheesPresenter';
 
 const MyCoacheePage = ({ navigation, route }) => {
 
     const { coach } = route.params;
+    coachEmail = coach.email;
 
-    //debugging log
-    console.log({ coach });
+    //check when this tab is focus
+    const isFocused = useIsFocused(); // Get the focused state of the screen
 
     // state variables
+    const [coachee, setCoachee] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
-
-    // change popup/modal visible
-    const changeConfirmVisible = (b, m) => {
-        setConfirmMessage(m);
-        setConfirmationVisible(b);
-    }
 
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
@@ -33,16 +31,28 @@ const MyCoacheePage = ({ navigation, route }) => {
         setIsLoading(b);
     }
 
-    // useEffect(()=>{
-    //     if (route.params?.refresh){
-    //         loadCoachRegistrationList();
-    //         route.params.refresh = false;
-    //     }
-    // },[route.params?.refresh]);
+    // callback to enable refresh when changing tabs
+    const loadCoacheeList = useCallback(async () => {
+        try {
+            setIsLoading(true);
+            await new DisplayCoacheesPresenter({ updateCoacheeList: setCoachee }).displayCoachees(coachEmail);
+            setIsLoading(false);
+        } catch (error) {
+            setModalVisible(true);
+            setModalMsg(error.message);
+        }
+    }, []);
 
-    // useEffect(()=>{
-    //     loadCoachRegistrationList();  
-    // }, []);
+    //refresh when focus back this tab
+    useEffect(() => {
+        if (isFocused) {
+            loadCoacheeList();
+        }
+    }, [isFocused, loadCoacheeList]);
+
+    useEffect(() => {
+        loadCoacheeList();
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -59,15 +69,23 @@ const MyCoacheePage = ({ navigation, route }) => {
             </Modal>
 
             <ScrollView contentContainerStyle={styles.contentView}>
-                <View>
-                    <Text style={{ color: 'white', fontSize: scale(20) }}>No Coachee Found</Text>
-                </View>
-                {/* insert code  */}
-                <TouchableOpacity onPress={() => {
-                    navigation.navigate('ViewCoacheeDetails', {coach})
-                }}>
-                    <Text>Click here to see details test</Text>
-                </TouchableOpacity>
+                {coachee.length == 0 ?
+                    <View>
+                        <Text style={{ color: 'white', fontSize: scale(20) }}>No Coachee Found</Text>
+                    </View>
+                    :
+
+                    coachee.map((user, index) => {
+                        //console.log({ user });
+                        return (
+                            <AccountListCard
+                                key={index}
+                                numOfButtons={1}
+                                account={user.user}
+                                detailsHandler={() => { navigation.navigate('ViewCoacheeDetails', { user }) }}
+                            />
+                        );
+                    })}
             </ScrollView>
         </View>)
 }
@@ -77,6 +95,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#C42847',
         alignItems: 'center',
+        marginTop: scale(50),
     },
     headerView: {
         backgroundColor: 'white',
