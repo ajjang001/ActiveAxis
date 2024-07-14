@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
         padding: scale(20),
         borderWidth: 2,
         borderRadius: scale(36),
-        marginTop: 35,
+        marginTop: scale(35),
     },
     detailsTitle: {
         fontFamily: 'Inter-SemiBold',
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#E28413',
         paddingHorizontal: scale(50),
         paddingVertical: scale(10),
-        marginTop: 20,
+        marginTop: scale(25),
 
     },
     resetText: {
