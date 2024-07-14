@@ -1,7 +1,9 @@
 import CompetitionType from "./CompetitionType";
 import { db, storage } from '../firebase/firebaseConfig';
-import { getDocs, getDoc, collection, query, where, orderBy, addDoc, doc } from 'firebase/firestore';
-import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
+import { getDocs, getDoc, deleteDoc, collection, query, where, orderBy, addDoc, doc } from 'firebase/firestore';
+
+import { ref, getDownloadURL, uploadBytes, deleteObject } from 'firebase/storage';
+
 
 
 class Achievements{
@@ -41,11 +43,13 @@ class Achievements{
 
     async getAchievement(achievementID){
         try{
+            // Get the achievement details
             const docRef = doc(db, "achievements", achievementID);
             const docSnap = await getDoc(docRef);
 
 
             if (!docSnap.empty) {
+                // Get the data
                 const d = docSnap.data();
                 const a = new Achievements();
 
@@ -73,7 +77,7 @@ class Achievements{
             const types = await new CompetitionType().getCompetitionTypes();
             let achArray = [];
     
-            // Use for loop instead of map for better async/await handling
+            // Get the achievements for each competition type
             for (const type of types) {
                 const q = query(collection(db, "achievements"),  where("competitionTypeID", "==", type.competitionTypeID), orderBy("maxProgress", 'asc'));
                 const querySnapshot = await getDocs(q);
@@ -96,8 +100,10 @@ class Achievements{
     
                 await Promise.all(dataPromises); 
 
+                // Sort the data array
                 dataArr.sort((a, b) => a.maxProgress - b.maxProgress); 
 
+                // add to achArray
                 achArray.push({ id: type.competitionTypeID, type: type.competitionTypeName, data: dataArr });
             }
     
@@ -163,6 +169,32 @@ class Achievements{
         }
         catch(error){
             throw new Error(error);
+        }
+    }
+
+    async deleteAchievement(){
+        try{
+            // Delete from achievement table
+            const docRef = doc(db, "achievements", this.achievementID);
+            await deleteDoc(docRef);
+
+            // Delete from the storage
+            const ppRef = ref(storage, this.achievementPicture);
+            await deleteObject(ppRef);
+
+            // Delete from achievement obtained table
+            const q = query(collection(db, "achievementsobtained"), where("achievementID", "==", this.achievementID));
+            const querySnapshot = await getDocs(q);
+            
+
+            querySnapshot.forEach(async (doc) => {
+                await deleteDoc(doc.ref);
+            });
+
+            
+
+        }catch(e){
+            throw new Error(e.message);
         }
     }
     
