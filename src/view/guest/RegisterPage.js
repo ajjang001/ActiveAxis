@@ -218,13 +218,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white'
   },
   orange: {
-    flex: 0.9,
     backgroundColor: '#E28413',
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: scale(15),
-    paddingBottom: scale(40),
+    paddingTop: scale(40),
+    paddingBottom: scale(70),
   },
   container2: {
     backgroundColor: '#E6E6E6',
@@ -264,9 +263,8 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: '70%',
-    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: scale(15),
+    marginTop: scale(40),
   },
   button: {
     backgroundColor: 'black',
