@@ -20,7 +20,9 @@ class EditAchievementPresenter{
 
             if (isNaN(target)) {
                 throw new Error("Target must be a number.");
-            } else if (parseFloat(target) < 0) {
+            }else if ( name === "" || description === "" || target === "") {
+                throw new Error("Please fill up all fields.");
+            }else if (parseFloat(target) < 0) {
                 throw new Error("Target must be a positive number.");
             } else {
                 await this.achievement.editAchievement( type, name, description, (target.match(decimal) ? parseFloat(target) : parseInt(target)), photo);

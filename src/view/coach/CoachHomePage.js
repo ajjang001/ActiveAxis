@@ -107,10 +107,14 @@ const CoachHomePage = ({ route }) => {
             <View style = {styles.planDirectView}>
 
                 <TouchableOpacity style = {styles.planDirectButton}>
-                    <ImageBackground resizeMode="contain" source={require('../../../assets/plan_button_img.png')} >
-                        <Text style={styles.planDirectButtonText}>Plan Direct</Text>      
+                    
+                    <ImageBackground imageStyle = {styles.imageStyle} resizeMode='stretch' source={require('../../../assets/plan_button_img.png')} >
+                        <View style = {styles.buttonTextView}>
+                            <Text style={styles.planDirectButtonText}>My Fitness Plans</Text>      
+                        </View>
                     </ImageBackground>
                 </TouchableOpacity>
+                
 
             </View>
         </View>
@@ -153,21 +157,35 @@ const styles = StyleSheet.create({
     calendar:{
         width: scale(450),
         backgroundColor: '#C42847',
-        
-        
-
     },
     planDirectView:{
-        backgroundColor: 'yellow',
         width: '100%',
         height: scale(150),
+        justifyContent: 'center'
     },
     planDirectButton:{
-        margin: scale(10),
+        marginHorizontal: scale(20)
+    },
+    imageStyle:{
+        borderRadius:scale(20), 
+        opacity:0.9,
+    },
+    buttonTextView:{
+        height:scale(120),
+        justifyContent: 'center',
+        borderWidth: scale(1),
+        borderRadius: scale(20),
     },
     planDirectButtonText:{
-        borderRadius: scale(10),
-        height:scale(100)
+        
+        paddingHorizontal: scale(20),
+
+        fontFamily: 'Fuzzy-Bubbles',
+        fontWeight: 'bold',
+        fontSize: scale(23),
+        textAlign:'right',
+
+
     }
 });
 
