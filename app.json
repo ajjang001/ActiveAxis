@@ -5,10 +5,10 @@
     "owner": "activeaxisdevs",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/activeaxislogo.png",
+    "icon": "./assets/ActiveAxisLoading.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/activeaxislogo.png",
+      "image": "./assets/ActiveAxisLoading.png",
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
@@ -18,14 +18,14 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/activeaxislogo.png",
+        "foregroundImage": "./assets/ActiveAxisLoading.png",
         "backgroundColor": "#ffffff"
       },
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.anonymous.ActiveAxis"
     },
     "web": {
-      "favicon": "./assets/activeaxislogo.png"
+      "favicon": "./assets/ActiveAxisLoading.png"
     },
     "plugins": [
       "react-native-health-connect",

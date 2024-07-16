@@ -18,7 +18,9 @@ class CreateAchievementPresenter{
             const photo = this.view.photo;
             
 
-            if (photo === null) {
+            if (name === "" || description === "" || target === "") {
+                throw new Error("Please fill out all fields.");
+            }else if (photo === null) {
                 throw new Error("Please upload an image.");
             }else if (isNaN(target)) {
                 throw new Error("Target must be a number.");

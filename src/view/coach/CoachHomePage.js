@@ -1,7 +1,6 @@
 // src/view/coach/CoachHomePage.js
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
-import { ref, getDownloadURL } from 'firebase/storage';
+import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { scale } from '../../components/scale';
@@ -9,6 +8,7 @@ import { scale } from '../../components/scale';
 
 import { LoadingDialog } from '../../components/Modal';
 import { app, auth, db, storage } from '../../firebase/firebaseConfig';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const CoachHomePage = ({ route }) => {
     
@@ -104,6 +104,15 @@ const CoachHomePage = ({ route }) => {
                       }}
                 />
             </View>
+            <View style = {styles.planDirectView}>
+
+                <TouchableOpacity style = {styles.planDirectButton}>
+                    <ImageBackground resizeMode="contain" source={require('../../../assets/plan_button_img.png')} >
+                        <Text style={styles.planDirectButtonText}>Plan Direct</Text>      
+                    </ImageBackground>
+                </TouchableOpacity>
+
+            </View>
         </View>
     );
 };
@@ -147,6 +156,18 @@ const styles = StyleSheet.create({
         
         
 
+    },
+    planDirectView:{
+        backgroundColor: 'yellow',
+        width: '100%',
+        height: scale(150),
+    },
+    planDirectButton:{
+        margin: scale(10),
+    },
+    planDirectButtonText:{
+        borderRadius: scale(10),
+        height:scale(100)
     }
 });
 
