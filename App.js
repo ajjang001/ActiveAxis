@@ -80,7 +80,7 @@ const CoachTabs = ({route}) => {
                   height: scale(65),
               },
               tabBarLabelStyle: {
-                  fontSize: 14,
+                  fontSize: scale(14),
                   fontWeight: 'bold',
               },
           })}
@@ -138,7 +138,7 @@ export default function App() {
             headerStyle:{backgroundColor:'#FBF5F3'}, 
             headerLeft:()=>(
               <TouchableOpacity onPress={() => navigation.navigate('CoachAccountListPage', {refresh:true})}>
-                <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: 15 }} />
+                <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: scale(15) }} />
               </TouchableOpacity>
             ),
             ...TransitionPresets.SlideFromRightIOS })} 
@@ -156,7 +156,7 @@ export default function App() {
             headerStyle:{backgroundColor:'#FBF5F3'}, 
             headerLeft:()=>(
               <TouchableOpacity onPress={() => navigation.navigate('AchievementsPage', {refresh:true})}>
-                <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: 15 }} />
+                <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: scale(15) }} />
               </TouchableOpacity>
             ),
             ...TransitionPresets.SlideFromRightIOS })} 
@@ -166,7 +166,7 @@ export default function App() {
             headerStyle:{backgroundColor:'#FBF5F3'}, 
             headerLeft:()=>(
               <TouchableOpacity onPress={() => navigation.navigate('AchievementsPage', {refresh:true})}>
-                <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: 15 }} />
+                <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: scale(15) }} />
               </TouchableOpacity>
             ),
             ...TransitionPresets.SlideFromRightIOS })} 

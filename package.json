@@ -35,6 +35,7 @@
     "react-native-asset": "^2.1.1",
     "react-native-base64": "^0.2.1",
     "react-native-ble-plx": "^3.2.0",
+    "react-native-calendars": "^1.1305.0",
     "react-native-chart-kit": "^6.12.0",
     "react-native-date-picker": "^5.0.4",
     "react-native-document-picker": "^9.3.0",

@@ -50,7 +50,7 @@ const LoginPage = ({navigation})=>{
     // Check User Session function
     const checkUserSession = async () =>{
         // Remove remember me
-        await AsyncStorage.removeItem('remember');
+        //await AsyncStorage.removeItem('remember');
 
         // Display loading screen
         changeLoadingVisible(true);
