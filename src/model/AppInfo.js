@@ -1,4 +1,5 @@
-import {app, db, storage, auth} from '../../.expo/api/firebase';
+
+import { db, storage } from '../firebase/firebaseConfig';
 import {getDocs, collection, doc, updateDoc} from 'firebase/firestore';
 import { getDownloadURL, ref } from "firebase/storage";
 

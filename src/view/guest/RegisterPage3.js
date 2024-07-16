@@ -1,6 +1,7 @@
 import React from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
+import { scale } from "../../components/scale";
 
 const RegisterPage3 = ({ navigation }) => {
 
@@ -12,28 +13,7 @@ const RegisterPage3 = ({ navigation }) => {
             <Text style={styles.header}>Verification</Text>
             <View style={styles.container2}>
             <Text style={styles.header2}>We have sent you a verification link to your email.{"\n"}Kindly verify your account before logging in.</Text>
-                {/* <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Email Verification Code</Text>
-                    <TextInput
-                        placeholder="Enter the email verification code"
-                        // value = { }
-                        // onChangeText = {text => }
-                        style={styles.input}
-                        maxLength={6}
-                        keyboardType="phone-pad"
-                        returnKeyType='done'
-                    />
-                    <Text style={styles.label}>Phone Verification Code</Text>
-                    <TextInput
-                        placeholder="Enter the phone verification code"
-                        // value = { }
-                        // onChangeText = {text => }
-                        style={styles.input}
-                        maxLength={6}
-                        keyboardType="phone-pad"
-                        returnKeyType='done'
-                    />
-                </View> */}
+                
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
@@ -94,7 +74,7 @@ const styles = StyleSheet.create({
     },
     header2: {
         fontSize: 15,
-        paddingTop: 10,
+        paddingTop: scale(10),
         fontWeight: 'bold',
         alignItems: 'center',
         textAlign: 'center',
@@ -104,17 +84,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#E6E6E6',
         width: '90%',
         alignItems: 'center',
-        borderRadius: 25,
-        marginTop: 15,
-        paddingTop: 5,
-        paddingBottom: 20,
+        borderRadius: scale(25),
+        marginTop: scale(15),
+        paddingTop: scale(5),
+        paddingBottom: scale(20),
         borderColor: '#C42847',
         borderWidth: 3,
     },
     label: {
-        paddingLeft: 5,
-        marginTop: 5,
-        marginBottom: 5,
+        paddingLeft: scale(5),
+        marginTop: scale(5),
+        marginBottom: scale(5),
         fontWeight: 'bold',
     },
     inputContainer: {
@@ -122,22 +102,22 @@ const styles = StyleSheet.create({
     },
     input: {
         backgroundColor: 'white',
-        paddingHorizontal: 10,
-        paddingVertical: 10,
+        paddingHorizontal: scale(10),
+        paddingVertical: scale(10),
         borderRadius: 10,
     },
     buttonContainer: {
         width: '85%',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 30,
-        marginBottom: 150,
+        marginTop: scale(30),
+        marginBottom: scale(150),
     },
     button: {
         backgroundColor: '#000022',
         width: '100%',
-        padding: 10,
-        borderRadius: 10,
+        padding: scale(10),
+        borderRadius: scale(10),
         alignItems: 'center',
     },
     buttonText: {

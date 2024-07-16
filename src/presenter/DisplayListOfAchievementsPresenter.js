@@ -1,6 +1,6 @@
 import Achievements from "../model/Achievements";
 
-class DisplayListOfAchievements{
+class DisplayListOfAchievementsPresenter{
     constructor(view){
         this.view = view;
         this.achievement = new Achievements();
@@ -16,4 +16,4 @@ class DisplayListOfAchievements{
     }
 }
 
-export default DisplayListOfAchievements;
+export default DisplayListOfAchievementsPresenter;

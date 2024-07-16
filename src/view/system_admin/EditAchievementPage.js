@@ -3,18 +3,21 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image, Modal } fro
 import { Dropdown } from 'react-native-element-dropdown';
 import { launchImageLibrary } from 'react-native-image-picker';
 
-import CreateAchievementPresenter from '../../presenter/CreateAchievementPresenter';
+import EditAchievementPresenter from '../../presenter/EditAchievementPresenter';
 import { scale } from '../../components/scale';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
 
-const CreateAchievementsPage = ({ navigation }) => {
-  const [photo, setPhoto] = useState(null);
+const EditAchievementPage = ({ navigation, route }) => {
+  const {achievement} = route.params;
+  
+  const [photo, setPhoto] = useState(achievement.achievementPicture);
   const [competitionType, setCompetitionType] = useState(1);
-  const [details, setDetails] = useState('');
-  const [name, setName] = useState('');
-  const [target, setTarget] = useState(0);
+  const [details, setDetails] = useState(achievement.description);
+  const [name, setName] = useState(achievement.achievementName);
+  const [target, setTarget] = useState(achievement.maxProgress);
+
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
@@ -81,7 +84,7 @@ const renderItem=(item)=>{
     try{
       changeLoadingVisible(true);
       setDropdownOpt([]);
-      await new CreateAchievementPresenter({setOptions:setDropdownOpt}).getCompetitionTypes();
+      await new EditAchievementPresenter({setOptions:setDropdownOpt}).getCompetitionTypes();
     }catch(error){
       changeModalVisible(true, error.message);
     }finally{
@@ -89,12 +92,11 @@ const renderItem=(item)=>{
     }
   };
 
-  const createHandler = async () => {
+  const saveHandler = async () => {
     try{
         changeLoadingVisible(true);
         const typeName = dropdownOpt.find((item) => item.competitionTypeID === competitionType).competitionTypeName;
-        
-        await new CreateAchievementPresenter({type:{typeID: competitionType,typeName: typeName}, name:name, description:details, target:target, photo: photo}).createAchievement();
+        await new EditAchievementPresenter({type:{typeID: competitionType,typeName: typeName}, name:name, description:details, target:target, photo: (photo === achievement.achievementPicture ? null : photo) , oldAchievement: achievement}).editAchievement();
         navigation.navigate('AchievementsPage', {refresh: true});
     }catch(e){
         let errorMessage = e.message;
@@ -111,6 +113,13 @@ const renderItem=(item)=>{
     loadType();
   },[]);
 
+  useEffect(() => {
+    if(dropdownOpt.length > 0){
+        const type = dropdownOpt.find((item) => item.competitionTypeName === achievement.competitionType);
+        setCompetitionType(type.competitionTypeID);
+    }
+  }, [dropdownOpt]);
+
 
 
 
@@ -118,13 +127,13 @@ const renderItem=(item)=>{
   return (
     <ScrollView style={styles.container} contentContainerStyle={{alignItems: 'center'}}>
       
-      <Text style={styles.title}>Create Achievement</Text>
+      <Text style={styles.title}>Edit Achievement</Text>
       
       <TouchableOpacity style={styles.imagePlaceholder} onPress={handleSelectPhoto}>
         {
           photo ? 
           (
-            <Image source={{uri:photo.uri}} style={{width: scale(200), height: scale(200)}} />
+            <Image source={{uri:photo.uri || photo}} style={{width: scale(200), height: scale(200)}} />
           )
           :
           (
@@ -142,6 +151,13 @@ const renderItem=(item)=>{
       </Modal>
       <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
           <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeConfirmVisible(false)}>
+          <ActionDialog
+          message = {confirmMessage}
+          changeModalVisible = {changeConfirmVisible}
+          action = {saveHandler}
+          />
       </Modal>
       
       
@@ -192,11 +208,11 @@ const renderItem=(item)=>{
           placeholder='Enter target here...'
           keyboardType="phone-pad"
           returnKeyType='done'
-          value={target}
+          value={target.toString()}
           onChangeText={num => setTarget(num)}
       />
-      <TouchableOpacity style={styles.postButton} onPress={createHandler}>
-        <Text style={styles.postButtonText}>CREATE</Text>
+      <TouchableOpacity style={styles.postButton} onPress={()=>changeConfirmVisible (true, 'Are you sure you want to save changes?')}>
+        <Text style={styles.postButtonText}>SAVE</Text>
       </TouchableOpacity>
       
     </ScrollView>
@@ -271,7 +287,7 @@ const styles = StyleSheet.create({
   postButton: {
     width: '100%',
     padding: scale(15),
-    backgroundColor: '#B22222',
+    backgroundColor: 'black',
     borderRadius: 5,
     alignItems: 'center',
   },
@@ -282,4 +298,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateAchievementsPage;
+export default EditAchievementPage;

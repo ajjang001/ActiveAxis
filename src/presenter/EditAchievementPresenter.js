@@ -1,13 +1,13 @@
-import Achievements from '../model/Achievements.js';
+
 import CompetitionType from '../model/CompetitionType.js';
 
-class CreateAchievementPresenter{
+class EditAchievementPresenter{
     constructor(view){
         this.view = view;
-        this.achievement = new Achievements();
+        this.achievement = this.view.oldAchievement;
     }
 
-    async createAchievement(){
+    async editAchievement(){
         try{
             const decimal = /^\d+(\.\d+)?$/;
 
@@ -18,14 +18,12 @@ class CreateAchievementPresenter{
             const photo = this.view.photo;
             
 
-            if (photo === null) {
-                throw new Error("Please upload an image.");
-            }else if (isNaN(target)) {
+            if (isNaN(target)) {
                 throw new Error("Target must be a number.");
             } else if (parseFloat(target) < 0) {
                 throw new Error("Target must be a positive number.");
             } else {
-                await this.achievement.createAchievement(type, name, description, (target.match(decimal) ? parseFloat(target) : parseInt(target)), photo);
+                await this.achievement.editAchievement( type, name, description, (target.match(decimal) ? parseFloat(target) : parseInt(target)), photo);
             }
 
 
@@ -34,6 +32,7 @@ class CreateAchievementPresenter{
         }catch(error){
             throw new Error (error);
         }
+    
     }
 
     async getCompetitionTypes(){
@@ -45,4 +44,4 @@ class CreateAchievementPresenter{
     }
 }
 
-export default CreateAchievementPresenter;
+export default EditAchievementPresenter;

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView, Image } from 'react-native';
 import { scale } from '../../components/scale';
 import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Modal";
-import DisplayListOfAchievements from '../../presenter/DisplayListOfAchievement';
+import DisplayListOfAchievementsPresenter from '../../presenter/DisplayListOfAchievementsPresenter';
 
 
 
-const AchievementsPage = ({ navigation }) => {
+const AchievementsPage = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
@@ -37,17 +37,16 @@ const changeLoadingVisible = (b)=>{
   const loadSectionContent = (category) =>{
     return(
       category.data.map((item) => {
-
       
         return (
-          <View style={styles.achievementBox} key = {item.achievementName}>
+          <TouchableOpacity onPress = {()=>{navigation.navigate('AchievementDetailsPage', {achievementID: item.achievementID})}} style={styles.achievementBox} key = {item.achievementID}>
             {item.achievementPicture ? (
               <Image source={{uri:item.achievementPicture}} style={styles.icon} />
             ) : (
               <View style={styles.blankIcon} />
             )}
             <Text style={styles.achievementText}>{item.achievementName}</Text>
-          </View>
+          </TouchableOpacity>
         );
       })
     );
@@ -75,16 +74,22 @@ const changeLoadingVisible = (b)=>{
     try{
       changeLoadingVisible(true);
       setAllAchievements([]);
-      await new DisplayListOfAchievements({displayAchievements:setAllAchievements}).getAchievements();
+      await new DisplayListOfAchievementsPresenter({displayAchievements:setAllAchievements}).getAchievements();
     }catch(e){
-      console.log(e);
+      changeModalVisible(true, e.message);
     }finally{
       changeLoadingVisible(false);
     }
   };
 
-  useEffect(() => {
+  useEffect(()=>{
+    if (route.params?.refresh){
+        loadAchievements();
+        route.params.refresh = false;
+    }
+  },[route.params?.refresh]);
 
+  useEffect(() => {
     loadAchievements();
   }, []);
 
@@ -141,7 +146,7 @@ const styles = StyleSheet.create({
     width: '30%',
     aspectRatio: 1,
     margin: 5,
-    backgroundColor: '#FFF',
+    backgroundColor: 'black',
     borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
@@ -161,6 +166,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: 'white',
   },
 });
 

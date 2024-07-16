@@ -1,0 +1,49 @@
+# Learn more https://expo.fyi/eas-build-archive
+
+# dependencies
+
+node_modules/
+.vscode/
+
+# Expo
+
+.expo/
+dist/
+web-build/
+
+# Native
+
+_.orig._
+_.jks
+_.p8
+_.p12
+_.key
+\*.mobileprovision
+
+# Metro
+
+.metro-health-check\*
+
+# debug
+
+npm-debug._
+yarn-debug._
+yarn-error.\*
+
+# macOS
+
+.DS_Store
+\*.pem
+
+# local env files
+
+.env
+.env\*.local
+
+# typescript
+
+\*.tsbuildinfo
+
+# server
+
+/server/

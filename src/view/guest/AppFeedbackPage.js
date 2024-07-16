@@ -3,6 +3,7 @@ import { StyleSheet, Text, Modal, ScrollView } from 'react-native';
 import FeedbackCard from '../../components/FeedbackCard';
 import DisplayAppFeedbacksPresenter from '../../presenter/DisplayAppFeedbacksPresenter';
 import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
+import { scale } from '../../components/scale';
 
 const AppFeedBackPage = () => {
   // State to store the image URL
@@ -73,16 +74,16 @@ const AppFeedBackPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 20,
+    paddingVertical: scale(20),
     backgroundColor: '#FBF5F3',
   },
   contentContainer:{
     alignItems: 'center',
   },
   title: {
-    fontSize: 24,
+    fontSize: scale(24),
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
   loadingContainer: {
     flex: 1,

@@ -5,6 +5,7 @@ import { CheckBox } from '@rneui/themed';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
+import { scale } from '../../components/scale';
 import RegisterPresenter from '../../presenter/RegisterPresenter';
 
 
@@ -132,7 +133,7 @@ const CoachRegisterPage2 = ({ navigation, route }) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.bottomDesign}>
-                <Text style={{ top: 70, zIndex: 2 }}>Already have an account? <Text style={{ fontWeight: 'bold', zIndex: 2, }} onPress={() => { navigation.navigate('LoginPage') }}>Login Now</Text></Text>
+                <Text style={{ top: scale(70), zIndex: 2 }}>Already have an account? <Text style={{ fontWeight: 'bold', zIndex: 2, }} onPress={() => { navigation.navigate('LoginPage') }}>Login Now</Text></Text>
                 <Svg style={{ zIndex: 1 }}
                     width="1000"
                     height="150"
@@ -175,15 +176,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#FBF5F3',
     },
     header: {
-        marginTop: 10,
-        fontSize: 30,
+        marginTop: scale(10),
+        fontSize: scale(30),
         fontWeight: 'bold',
         alignItems: 'center',
     },
     label: {
-        paddingLeft: 5,
-        marginTop: 5,
-        marginBottom: 5,
+        paddingLeft: scale(5),
+        marginTop: scale(5),
+        marginBottom: scale(5),
         fontWeight: 'bold',
     },
     container2: {
@@ -192,9 +193,9 @@ const styles = StyleSheet.create({
         width: '90%',
         alignItems: 'center',
         borderRadius: 25,
-        marginTop: 15,
-        paddingTop: 5,
-        paddingBottom: 20,
+        marginTop: scale(15),
+        paddingTop: scale(5),
+        paddingBottom: scale(20),
         borderColor: '#C42847',
         borderWidth: 3,
     },
@@ -203,8 +204,8 @@ const styles = StyleSheet.create({
     },
     input: {
         backgroundColor: 'white',
-        paddingHorizontal: 10,
-        paddingVertical: 10,
+        paddingHorizontal: scale(10),
+        paddingVertical: scale(10),
         borderRadius: 10,
     },
     checkboxContainer: {
@@ -214,19 +215,19 @@ const styles = StyleSheet.create({
         width: '85%',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 15,
+        marginTop: scale(15),
     },
     button: {
         backgroundColor: '#000022',
         width: '100%',
-        padding: 10,
+        padding: scale(10),
         borderRadius: 10,
         alignItems: 'center',
     },
     buttonText: {
         color: 'white',
         fontWeight: 'bold',
-        fontSize: 18,
+        fontSize: scale(18),
     },
     bottomDesign: {
         position: 'absolute',

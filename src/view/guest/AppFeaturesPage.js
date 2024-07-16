@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, StyleSheet, ScrollView } from 'react-native';
 import DisplayAppFeaturesPresenter from '../../presenter/DisplayAppFeaturesPresenter';
 import { MessageDialog, LoadingDialog } from '../../components/Modal';
+import {scale} from '../../components/scale';
 
 const AppFeaturesPage = () => {
   // State to store the features list
@@ -75,42 +76,42 @@ const AppFeaturesPage = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 20,
+    padding: scale(20),
     backgroundColor: '#FBF5F3',
   },
   title: {
-    fontSize: 24,
+    fontSize: scale(24),
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: scale(20),
     textAlign: 'center',
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
   imageContainer: {
-    width: 50,
-    height: 50,
+    width: scale(50),
+    height: scale(50),
     backgroundColor: '#D3D3D3',
-    marginRight: 10,
+    marginRight: scale(10),
     justifyContent: 'center',
     alignItems: 'center',
   },
   image: {
-    width: 40,
-    height: 40,
+    width: scale(40),
+    height: scale(40),
   },
   textContainer: {
     flex: 1,
     backgroundColor: '#D3D3D3',
-    padding: 10,
-    marginLeft: 20,
-    marginRight: 20,
+    padding: scale(10),
+    marginLeft: scale(20),
+    marginRight: scale(20),
   },
   text: {
-    fontSize: 15,
-    marginLeft: 20,
+    fontSize: scale(15),
+    marginLeft: scale(20),
     fontFamily: 'Inter',
   },
 });
