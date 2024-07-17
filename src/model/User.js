@@ -326,9 +326,6 @@ class User extends Account{
             const q = doc(db, 'user', userID);
             await updateDoc(q, { isSuspended: false });
 
-            const res1 = await axios.get('https://myapi-af5izkapwq-uc.a.run.app/test/data');
-            console.log(res1.data.message);
-
             const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/enable-account', { uid: userID });
             console.log(res.data.message);
         } catch (e) {

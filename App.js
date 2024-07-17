@@ -35,6 +35,7 @@ import ViewCoacheeDetails from './src/view/coach/ViewCoacheeDetails';
 import CoacheeFeedbackPage from './src/view/coach/CoacheeFeedbackPage';
 import CoachListOfFitnessPlansPage from './src/view/coach/CoachListOfFitnessPlansPage';
 import CoachCreateFitnessPlanPage from './src/view/coach/CoachCreateFitnessPlanPage';
+import CoachCreateFitnessPlanPage2 from './src/view/coach/CoachCreateFitnessPlanPage2';
 
 
 // System Admin Pages
@@ -232,7 +233,8 @@ export default function App() {
 
         <Stack.Screen name="CoachHomePage" component={CoachTabs} options={{headerShown:false}} />
         <Stack.Screen name = "CoachListOfFitnessPlansPage" component={CoachListOfFitnessPlansPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
-        <Stack.Screen name = "CoachCreateFitnessPlanPage" component={CoachCreateFitnessPlanPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
+        <Stack.Screen name = "CoachCreateFitnessPlanPage" component={CoachCreateFitnessPlanPage} options={{headerShown:false, ...TransitionPresets.SlideFromRightIOS}} />
+        <Stack.Screen name = "CoachCreateFitnessPlanPage2" component={CoachCreateFitnessPlanPage2} options={{headerShown:false, ...TransitionPresets.SlideFromRightIOS}} />
         <Stack.Screen name="ViewCoacheeDetails" component={ViewCoacheeDetails} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
         <Stack.Screen name="CoacheeFeedbackPage" component={CoacheeFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
       

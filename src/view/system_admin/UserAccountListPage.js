@@ -74,6 +74,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
             setUsers([]);
             setSearch('');
             await loadUserList();
+            changeModalVisible(true, 'User account suspended successfully');
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
@@ -89,6 +90,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
             setUsers([]);
             setSearch('');
             await loadUserList();
+            changeModalVisible(true, 'User account unsuspended successfully');
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{

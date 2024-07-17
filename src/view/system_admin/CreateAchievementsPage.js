@@ -29,20 +29,20 @@ const CreateAchievementsPage = ({ navigation }) => {
 
   // change popup/modal visible
   const changeLoadingVisible = (b)=>{
-    setIsLoading(b);
-}
+      setIsLoading(b);
+  }
 
-// change popup/modal visible
-const changeModalVisible = (b, m)=>{
-    setModalMsg(m);
-    setModalVisible(b);
-}
+  // change popup/modal visible
+  const changeModalVisible = (b, m)=>{
+      setModalMsg(m);
+      setModalVisible(b);
+  }
 
-// change popup/modal visible
-const changeConfirmVisible = (b, m)=>{
-    setConfirmMessage(m);
-    setConfirmationVisible(b);
-}
+  // change popup/modal visible
+  const changeConfirmVisible = (b, m)=>{
+      setConfirmMessage(m);
+      setConfirmationVisible(b);
+  }
 
   // handle select photo
   const handleSelectPhoto = () => {

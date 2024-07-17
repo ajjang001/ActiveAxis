@@ -73,6 +73,7 @@ const CoachAccountListPage = ({route, navigation})=>{
             setCoaches([]);
             setSearch('');
             await loadCoachList();
+            changeModalVisible(true, 'Coach has been suspended');
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
@@ -87,6 +88,7 @@ const CoachAccountListPage = ({route, navigation})=>{
             setCoaches([]);
             setSearch('');
             await loadCoachList();
+            changeModalVisible(true, 'Coach has been unsuspended');
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{

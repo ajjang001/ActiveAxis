@@ -7,7 +7,6 @@ import LoginPresenter from '../presenter/LoginPresenter';
 import DisplayAboutActiveAxisPresenter from '../presenter/DisplayAboutActiveAxisPresenter';
 
 import {MessageDialog, LoadingDialog } from '../components/Modal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -67,11 +66,7 @@ const LoginPage = ({navigation})=>{
     };
 
 
-    // Check if User logged in
-    useEffect(()=>{
-        loadLogo();
-        checkUserSession();
-    },[]);
+    
 
     // Process Login function
     const processLogin = async (email, password, loginType) => {
@@ -91,8 +86,8 @@ const LoginPage = ({navigation})=>{
         
     };
 
-    // Redirection when account is set and ready to login
-    useEffect(()=>{
+    const redirect = () =>{
+        changeLoadingVisible(true);
         if(loginAccount !== null){
             if(loginType === "u"){
                 navigation.navigate('UserHomePage', {user:loginAccount});
@@ -104,6 +99,19 @@ const LoginPage = ({navigation})=>{
                 navigation.navigate('SystemAdminHomePage', {admin:loginAccount});
             }
         }
+        changeLoadingVisible(false);
+
+    };
+
+    // Check if User logged in
+    useEffect(()=>{
+        loadLogo();
+        checkUserSession();
+    },[]);
+
+    // Redirection when account is set and ready to login
+    useEffect(()=>{
+        redirect();
     },[loginAccount]);
 
     
