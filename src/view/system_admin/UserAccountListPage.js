@@ -14,7 +14,6 @@ import UnsuspendUserAccountPresenter from "../../presenter/UnsuspendUserAccountP
 const ListOfUserAccountsPage = ({route, navigation}) =>{
     // state variables
     const [search, setSearch] = useState("");
-    const [filter, setFilter] = useState("all");
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState({});
     const [wantSuspend, setWantSuspend] = useState(false);
@@ -47,7 +46,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
     const loadUserList = async()=>{
         try{
             changeLoadingVisible(true);
-            await new DisplayUsersPresenter({updateUserList: setUsers}).displayUsers(filter);
+            await new DisplayUsersPresenter({updateUserList: setUsers}).displayUsers();
             changeLoadingVisible(false);
         }catch(error){
             throw new Error(error);
@@ -59,7 +58,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
         try{
             changeLoadingVisible(true);
             setUsers([]);
-            await new SearchUserAccountPresenter({updateUserList: setUsers}).searchUserAccount(search, filter);
+            await new SearchUserAccountPresenter({updateUserList: setUsers}).searchUserAccount(search);
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
@@ -109,7 +108,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
     useEffect(()=>{
         setSearch('');
         loadUserList();
-    },[filter]);
+    },[]);
 
 
     return (
@@ -155,21 +154,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
                     
                 </View>
 
-                <View style = {{display:'flex', alignItems:'center'}}>
-                    <View style = {style.bottomContentContainer}>
-                        <TouchableOpacity onPress = {()=>setFilter('all')} style = {style.bottomButton}>
-                            <Text style = {style.bottomButtonText}>All Users</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity onPress = {()=>setFilter('free')} style = {style.bottomButton}>
-                            <Text style = {style.bottomButtonText}>Free Users</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity onPress = {()=>setFilter('premium')} style = {style.bottomButton}>
-                            <Text style = {style.bottomButtonText}>Premium Users</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                
 
                 <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
                     <LoadingDialog />
@@ -252,28 +237,6 @@ const style = StyleSheet.create({
         justifyContent:'center',
         
         
-    },
-    bottomContentContainer:{
-        
-        marginVertical: scale(20),
-        display:'flex',
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'space-between',
-
-        width: '85%',
-        
-        
-    },
-    bottomButton:{
-        backgroundColor: 'white',
-        paddingHorizontal: scale(10),
-        width: scale(125),
-    },
-    bottomButtonText:{
-        color:'black',
-        textAlign:'center',
-        fontSize: scale(14),
     }
 });
 

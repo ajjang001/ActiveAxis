@@ -7,9 +7,9 @@ class DisplayUsersPresenter{
         this.user = new User();
     }
 
-    async displayUsers(filter){
+    async displayUsers(){
         try{
-            this.view.updateUserList(await this.user.getUserList(filter));
+            this.view.updateUserList(await this.user.getUserList());
         }catch(error){
             throw new Error(error);
         }

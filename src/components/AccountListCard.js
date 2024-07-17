@@ -18,18 +18,13 @@ const AccountListCard = (props)=>{
                         <Text style = {style.name}>{account.fullName}</Text>
                         <Text style = {style.role}>
                             {account.constructor.name === "Coach" ? 
-                            (account.isPending ? 
-                                `Pending Approval - ${account.constructor.name}` 
-                                : 
-                                account.constructor.name
-                            ) 
+                                (account.isPending ? 
+                                    `Pending Approval - ${account.constructor.name}` 
+                                    : 
+                                    account.constructor.name
+                                ) 
                             : 
-                            (account.constructor.name === "User" ?
-                                (
-                                    account.isPremium ? "Premium User" : "Free User"
-                                )    
-                                
-                            : account.constructor.name)
+                                account.constructor.name
                             }
                         </Text>
                         <View style ={style.optButtons}>

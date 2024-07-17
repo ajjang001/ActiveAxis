@@ -10,6 +10,7 @@ import 'react-native-gesture-handler';
 
 import LoginPage from './src/view/LoginPage';
 
+// Guest Pages
 import RegisterPage from './src/view/guest/RegisterPage';
 import RegisterPage2 from './src/view/guest/RegisterPage2';
 import RegisterPage3 from './src/view/guest/RegisterPage3';
@@ -22,21 +23,27 @@ import AppFeaturesPage from './src/view/guest/AppFeaturesPage';
 import AppFeedBackPage from './src/view/guest/AppFeedbackPage';
 import UserStatisticsPage from './src/view/guest/UserStatisticsPage';
 
+// User Pages
 import UserHomePage from './src/view/user/UserHomePage';
 
+
+// Coach Pages
 import CoachHomePage from './src/view/coach/CoachHomePage';
 import MyCoacheePage from './src/view/coach/MyCoacheePage';
 import CoachAccountSettingPage from './src/view/coach/CoachAccountSettingPage';
 import ViewCoacheeDetails from './src/view/coach/ViewCoacheeDetails';
 import CoacheeFeedbackPage from './src/view/coach/CoacheeFeedbackPage';
+import CoachListOfFitnessPlansPage from './src/view/coach/CoachListOfFitnessPlansPage';
+import CoachCreateFitnessPlanPage from './src/view/coach/CoachCreateFitnessPlanPage';
 
+
+// System Admin Pages
 import SystemAdminHomePage from './src/view/system_admin/SystemAdminHomePage';
 import CoachAccountListPage from './src/view/system_admin/CoachAccountListPage';
 import CoachDetailsPage from './src/view/system_admin/CoachDetailsPage';
 import CoachRegistrationListPage from './src/view/system_admin/CoachRegistrationListPage';
 import CoachRegistrationDetailsPage from './src/view/system_admin/CoachRegistrationDetailsPage';
 import PhotoViewer from './src/view/system_admin/PhotoViewer';
-
 import SystemAdminAppDetails from './src/view/system_admin/SystemAdminAppDetails';
 import SystemAdminAppFeedbacks from './src/view/system_admin/SystemAdminAppFeedbacks';
 import UpdateAboutUsPage from './src/view/system_admin/UpdateAboutUsPage';
@@ -45,9 +52,7 @@ import AchievementsPage from './src/view/system_admin/AchievementsPage';
 import AchievementDetailsPage from './src/view/system_admin/AchievementDetailsPage';
 import CreateAchievementsPage from './src/view/system_admin/CreateAchievementsPage';
 import EditAchievementPage from './src/view/system_admin/EditAchievementPage';
-
 import SystemAdminAccountSettingPage from './src/view/system_admin/SystemAdminAccountSettingPage';
-
 import UserAccountListPage from './src/view/system_admin/UserAccountListPage';
 import UserAccountDetailsPage from './src/view/system_admin/UserAccountDetailsPage';
 import EditUserAccountDetailsPage from './src/view/system_admin/EditUserAccountDetailsPage';
@@ -145,7 +150,6 @@ export default function App() {
         />
         <Stack.Screen name = "CoachRegistrationDetailsPage" component={CoachRegistrationDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
         <Stack.Screen name = "PhotoViewer" component={PhotoViewer} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
-
         <Stack.Screen name="SystemAdminAppDetails" component={SystemAdminAppDetails} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
         <Stack.Screen name="SystemAdminAppFeedbacks" component={SystemAdminAppFeedbacks} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
         <Stack.Screen name="UpdateAboutUsPage" component={UpdateAboutUsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
@@ -172,13 +176,15 @@ export default function App() {
             ...TransitionPresets.SlideFromRightIOS })} 
         />
         <Stack.Screen name="EditAchievementPage" component={EditAchievementPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-
         <Stack.Screen name="UserAccountListPage" component={UserAccountListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>  
         <Stack.Screen name="UserAccountDetailsPage" component={UserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/> 
         <Stack.Screen name="EditUserAccountDetailsPage" component={EditUserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>     
         <Stack.Screen name="SystemAdminAccountSettingPage" component={SystemAdminAccountSettingPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
         
+
         <Stack.Screen name="CoachHomePage" component={CoachTabs} options={{headerShown:false}} />
+        <Stack.Screen name = "CoachListOfFitnessPlansPage" component={CoachListOfFitnessPlansPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+        <Stack.Screen name = "CoachCreateFitnessPlanPage" component={CoachCreateFitnessPlanPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
         <Stack.Screen name="ViewCoacheeDetails" component={ViewCoacheeDetails} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
         <Stack.Screen name="CoacheeFeedbackPage" component={CoacheeFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
       

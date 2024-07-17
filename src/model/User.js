@@ -7,7 +7,6 @@ import Account from './Account';
 
 class User extends Account{
     #hasMedical;
-    #isPremium;
     #weight;
     #height;
     #fitnessGoal;
@@ -20,7 +19,6 @@ class User extends Account{
     }
 
     get hasMedical(){return this.#hasMedical;}
-    get isPremium(){return this.#isPremium;}
     get weight(){return this.#weight;}
     get height(){return this.#height;}
     get fitnessGoal(){return this.#fitnessGoal;}
@@ -28,7 +26,6 @@ class User extends Account{
     get restInterval(){return this.#restInterval;}
     
     set hasMedical(hasMedical){this.#hasMedical = hasMedical;}
-    set isPremium(isPremium){this.#isPremium = isPremium;}
     set weight(weight){this.#weight = weight;}
     set height(height){this.#height = height;}
     set fitnessGoal(fitnessGoal){this.#fitnessGoal = fitnessGoal;}
@@ -74,7 +71,6 @@ class User extends Account{
                     u.gender = data.gender;
                     u.phoneNumber = data.phoneNumber;
                     u.hasMedical = data.hasMedical;
-                    u.isPremium = data.isPremium;
                     u.weight = data.weight;
                     u.height = data.height;
                     u.fitnessGoal = data.fitnessGoal;
@@ -114,7 +110,6 @@ class User extends Account{
             u.gender = data.gender;
             u.phoneNumber = data.phoneNumber;
             u.hasMedical = data.hasMedical;
-            u.isPremium = data.isPremium;
             u.isSuspended = data.isSuspended;
             u.weight = data.weight;
             u.height = data.height;
@@ -183,7 +178,6 @@ class User extends Account{
                 gender: gender,
                 hasMedical: medicalCheck,
                 height: height,
-                isPremium: false,
                 isSuspended: false,
                 phoneNumber: phone,
                 profilePicture: "user/default_pp.png",
@@ -226,17 +220,11 @@ class User extends Account{
         }
     }
 
-    async getUserList(filter) {
+    async getUserList() {
         try {
             // Get all users
-            let q = null;
-            if (filter === 'free') {
-                q = query(collection(db, 'user'), where('isPremium', '==', false), orderBy('fullName'));
-            }else if (filter === 'premium'){
-                q = query(collection(db, 'user'), where('isPremium', '==', true), orderBy('fullName'));
-            }else{
-                q = query(collection(db, 'user'), orderBy('fullName'));
-            }
+            let q = query(collection(db, 'user'), orderBy('fullName'));
+            
             const queryResult = await getDocs(q);
             const users = [];
 
@@ -253,7 +241,6 @@ class User extends Account{
                 u.gender = data.gender;
                 u.phoneNumber = data.phoneNumber;
                 u.hasMedical = data.hasMedical;
-                u.isPremium = data.isPremium;
                 u.isSuspended = data.isSuspended;
                 u.weight = data.weight;
                 u.height = data.height;
@@ -273,31 +260,15 @@ class User extends Account{
         }
     }
 
-    async search(search, filter) {
+    async search(search) {
         try {
             // Search for users by name 
             console.log(search);
-            console.log(filter);
             let q = null;
             if (search.trim() === '') {
-                if (filter === 'free') {
-                    q = query(collection(db, 'user'), where('isPremium', '==', false), orderBy('fullName'));
-                }else if (filter === 'premium'){
-                    q = query(collection(db, 'user'), where('isPremium', '==', true), orderBy('fullName'));
-                }else{
-                    q = query(collection(db, 'user'), orderBy('fullName'));
-                }
+                q = query(collection(db, 'user'), orderBy('fullName'));
             } else {
-
-                if (filter === 'free') {
-                    q = query(collection(db, 'user'), where('isPremium', '==', false), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
-                }else if (filter === 'premium'){
-                    q = query(collection(db, 'user'), where('isPremium', '==', true), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
-                }else{
-                    q = query(collection(db, 'user'), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
-                }
-
-                
+                q = query(collection(db, 'user'), orderBy('fullName'), startAt(search), endAt(search + '\uf8ff'));
             }
 
             const queryResult = await getDocs(q);
@@ -316,7 +287,6 @@ class User extends Account{
                 u.gender = data.gender;
                 u.phoneNumber = data.phoneNumber;
                 u.hasMedical = data.hasMedical;
-                u.isPremium = data.isPremium;
                 u.isSuspended = data.isSuspended;
                 u.weight = data.weight;
                 u.height = data.height;
@@ -405,7 +375,6 @@ class User extends Account{
                     u.dob = data.dob;
                     u.gender = data.gender;
                     u.phoneNumber = data.phoneNumber;
-                    u.isPremium = data.isPremium;
 
                     coachees.push({ id: coachingDoc.id, user: u });
                 }
@@ -436,7 +405,6 @@ class User extends Account{
                 u.gender = data.gender;
                 u.phoneNumber = data.phoneNumber;
                 u.hasMedical = data.hasMedical;
-                u.isPremium = data.isPremium;
                 u.isSuspended = data.isSuspended;
                 u.weight = data.weight;
                 u.height = data.height;
