@@ -9,9 +9,9 @@ import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Mod
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase/firebaseConfig';
 
-const CoachAccountSettingPage = ({ navigation, route }) => {
+const UserAccountSettingPage = ({ navigation, route }) => {
 
-    const [coach, setCoach] = useState(route.params.coach !== undefined ? route.params.coach : null);
+    const [user, setUser] = useState(route.params.user !== undefined ? route.params.user : null);
 
     const [imageURL, setImageURL] = useState('');
 
@@ -22,7 +22,7 @@ const CoachAccountSettingPage = ({ navigation, route }) => {
             const url = await getDownloadURL(storageRef);
             setImageURL(url);
         };
-        getImageURL(coach);
+        getImageURL(user);
     }, []);
 
     // State to control the visibility of the modal
@@ -53,7 +53,7 @@ const CoachAccountSettingPage = ({ navigation, route }) => {
     const onPressLogout = async () => {
         changeLoadingVisible(true);
         try {
-            await new LogoutPresenter({ getAccount: coach, setAccount: setCoach }).logoutAccount();
+            await new LogoutPresenter({ getAccount: user, setAccount: setUser }).logoutAccount();
             navigation.dispatch(
                 StackActions.replace('LoginPage', null, { ...TransitionPresets.SlideFromRightIOS })
             );
@@ -70,24 +70,27 @@ const CoachAccountSettingPage = ({ navigation, route }) => {
         useCallback(() => {
             // Reset state when the component gains focus
             return () => {
-                setCoach(route.params.coach !== undefined ? route.params.coach : null);
+                setUser(route.params.user !== undefined ? route.params.user : null);
                 setModalVisible(false);
             };
-        }, [route.params.coach])
+        }, [route.params.user])
     );
 
-    // Options for the coach
+    // Options for the user
     const options = [
+        { label: 'Remove Advertisements', onPress: () => console.log("Remove Advertisements") },
         { label: 'Account Details', onPress: () => console.log("Account Details") },
-        { label: 'Coachees Feedback', onPress: () => navigation.navigate('CoacheeFeedbackPage', { coach }) },
+        { label: 'Friends', onPress: () => console.log("Friends") },
         { label: 'App Feedbacks', onPress: () => console.log("App Feedbacks") },
+        { label: 'Achievements', onPress: () => console.log("Achievements") },
+        { label: 'Connect Smart Wearables', onPress: () => console.log("Connect Smart Wearables") },
         { label: 'Delete Account', onPress: () => console.log("Delete Account") },
         { label: 'Log Out', onPress: () => changeConfirmVisible(true, 'Are you sure you want to log out?') }
     ];
 
     return (
         <ScrollView style={styles.container}>
-            {coach && (
+            {user && (
                 <View style={styles.profileContainer}>
                     <View style={styles.imageContainer}>
                         {imageURL !== '' ? (
@@ -97,9 +100,9 @@ const CoachAccountSettingPage = ({ navigation, route }) => {
                         )}
                     </View>
                     <View style={styles.textContainer}>
-                        <Text style={styles.topText}>{coach.fullName}</Text>
-                        <Text style={styles.topText}>{coach.email}</Text>
-                        <Text style={styles.topText}>{coach.phoneNumber}</Text>
+                        <Text style={styles.topText}>{user.fullName}</Text>
+                        <Text style={styles.topText}>{user.email}</Text>
+                        <Text style={styles.topText}>{user.phoneNumber}</Text>
                     </View>
                 </View>
             )}
@@ -126,9 +129,6 @@ const CoachAccountSettingPage = ({ navigation, route }) => {
             <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
                 <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
             </Modal>
-
-
-
         </ScrollView>
     );
 };
@@ -177,4 +177,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default CoachAccountSettingPage;
+export default UserAccountSettingPage;

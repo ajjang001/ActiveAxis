@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, Modal} from "react-native"
+import { View, Text, StyleSheet, ScrollView, Modal } from "react-native"
 import AccountListCard from "../../components/AccountListCard";
 import { scale } from "../../components/scale";
 import { useIsFocused } from '@react-navigation/native';
@@ -70,11 +70,8 @@ const MyCoacheePage = ({ navigation, route }) => {
 
             <ScrollView contentContainerStyle={styles.contentView}>
                 {coachee.length == 0 ?
-                    <View>
-                        <Text style={{ color: 'white', fontSize: scale(20) }}>No Coachee Found</Text>
-                    </View>
+                    <Text style={{ color: 'white', fontSize: scale(20), alignSelf: 'center' }}>No Coachee Found</Text>
                     :
-
                     coachee.map((user, index) => {
                         //console.log({ user });
                         return (
@@ -93,28 +90,25 @@ const MyCoacheePage = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#C42847',
         alignItems: 'center',
         marginTop: scale(50),
     },
     headerView: {
-        backgroundColor: 'white',
         width: '100%',
-        height: '10%',
     },
     headerText: {
         fontSize: scale(36),
         fontFamily: 'League-Spartan',
         fontWeight: 'bold',
         textAlign: 'center',
-        marginVertical: scale(20),
+        marginVertical: scale(15),
     },
     contentView: {
-        width: '100%',
+        backgroundColor: '#C42847',
+        minWidth: '100%',
         height: '100%',
         padding: scale(35),
-
-    }
+    },
 });
 
 export default MyCoacheePage;
