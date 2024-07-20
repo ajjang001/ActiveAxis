@@ -82,7 +82,9 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
     };
 
     useEffect(() => {
-        if(route.params?.isSave){
+        // isSave can be true or false
+        // redirectAction: {isSave, refresh: true},
+        if(route.params?.refresh){
             setCoach(route.params.coach);
             setName(route.params.name);
             setPhoto(route.params.photo);
@@ -91,9 +93,14 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
             setmedicalCheck(route.params.medicalCheck);
             setRoutines(route.params.routines);
 
-            route.params.isSave = false;
+            route.params.refresh = false;
         }
-    },[route.params?.isSave]);
+
+        console.log('days: ')
+        routines.forEach(routine=>{
+            console.log(routine.dayNumber);
+        })
+    },[route.params?.refresh]);
 
 
     return (
@@ -102,7 +109,7 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
                     <TouchableOpacity style = {styles.topButtons} onPress = {() => changeConfirmVisible( true, 'Are you sure you want to discard this plan?')} >
                         <Text style = {styles.topButtonText}>Discard</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style = {styles.topButtons} onPress = {() => console.log(routines.length)}>
+                    <TouchableOpacity style = {styles.topButtons} onPress = {() => console.log(routines)}>
                         <Text style = {styles.topButtonText}>Create</Text>
                     </TouchableOpacity>
                 </View>
@@ -194,7 +201,7 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
                         onPress={() => setmedicalCheck(!medicalCheck)}
                         title={
                             <Text style={{ marginLeft: scale(10), maxWidth:'80%' }}>
-                                Suitable for users with medical conditions
+                                Suitable for users with any medical conditions
                             </Text>}
                         iconType="material-community"
                         checkedIcon="checkbox-outline"

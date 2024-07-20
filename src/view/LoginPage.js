@@ -35,6 +35,34 @@ const LoginPage = ({navigation})=>{
         setIsLoading(b);
     }
 
+    // change popup/modal visible
+    const changeModalVisible = (b, m)=>{
+        setModalMsg(m);
+        setIsModalVisible(b);
+    }
+
+    // Dropdown - Login type
+    const dropdownOpt = [
+        {label: 'USER', value:'u'},
+        {label: 'COACH', value:'c'},
+        {label: 'SYSTEM ADMIN', value:'a'},
+    ]
+    
+
+    // Render Dropdown options
+    const renderItem=(item)=>{
+        return(
+        <TouchableOpacity activeOpacity={.7} style={styles.item}
+        onPress={()=>{
+            setLoginType(item.value);
+            dropdownRef.current.close();
+        }}
+        >
+                <Text style={styles.itemText}>{item.label}</Text>
+        </TouchableOpacity> 
+        );
+    };
+
     const loadLogo = async ()=>{
         try{
             changeLoadingVisible(true);
@@ -42,7 +70,7 @@ const LoginPage = ({navigation})=>{
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
-            changeLoadingVisible(false);
+            setTimeout(()=>changeLoadingVisible(false), 1000);
         }
     };
      
@@ -51,17 +79,18 @@ const LoginPage = ({navigation})=>{
         // Remove remember me
         //await AsyncStorage.removeItem('remember');
 
-        // Display loading screen
-        changeLoadingVisible(true);
         try{
+            // Display loading screen
+            changeLoadingVisible(true);
             // Check if user is logged in
             await new LoginPresenter({updateLoginAcc: setLoginAccount, updateLoginType: setLoginType}).checkSession();
+            
         }catch(e){
             // Display error message
             changeModalVisible(true, e.message);
         }finally{
             // Hide loading screen
-            changeLoadingVisible(false);
+            setTimeout(()=>changeLoadingVisible(false), 1000);
         }
     };
 
@@ -103,6 +132,13 @@ const LoginPage = ({navigation})=>{
 
     };
 
+    
+
+    
+    
+
+    
+
     // Check if User logged in
     useEffect(()=>{
         loadLogo();
@@ -114,37 +150,18 @@ const LoginPage = ({navigation})=>{
         redirect();
     },[loginAccount]);
 
-    
-    // Dropdown - Login type
-    const dropdownOpt = [
-        {label: 'USER', value:'u'},
-        {label: 'COACH', value:'c'},
-        {label: 'SYSTEM ADMIN', value:'a'},
-    ]
-    
-
-    // Render Dropdown options
-    const renderItem=(item)=>{
-        return(
-        <TouchableOpacity activeOpacity={.7} style={styles.item}
-        onPress={()=>{
-            setLoginType(item.value);
-            dropdownRef.current.close();
-        }}
-        >
-                <Text style={styles.itemText}>{item.label}</Text>
-        </TouchableOpacity> 
-        );
-    };
-
-    // change popup/modal visible
-    const changeModalVisible = (b, m)=>{
-        setModalMsg(m);
-        setIsModalVisible(b);
-    }
-
     return(
         <View style = {styles.container}>
+            <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={()=>changeModalVisible(false)}>
+                <MessageDialog
+                message = {modalMsg} 
+                changeModalVisible = {changeModalVisible} 
+                />
+            </Modal>
+
+            <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
+                <LoadingDialog />
+            </Modal>
             
             
             <View style = {styles.topContainer}>
@@ -192,16 +209,7 @@ const LoginPage = ({navigation})=>{
                     <Text style={styles.loginButtonText}>LOGIN</Text>
                 </TouchableOpacity>
 
-                <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={()=>changeModalVisible(false)}>
-                    <MessageDialog
-                    message = {modalMsg} 
-                    changeModalVisible = {changeModalVisible} 
-                    />
-                </Modal>
-
-                <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
-                    <LoadingDialog />
-                </Modal>
+                
 
                 <Text style={styles.privacyPolicyText}>
                     By clicking login, you agree to our 
@@ -233,6 +241,8 @@ const LoginPage = ({navigation})=>{
                     </TouchableOpacity>
                 </View>
             </View>
+
+            
 
 
             

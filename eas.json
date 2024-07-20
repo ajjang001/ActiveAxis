@@ -13,7 +13,9 @@
         "FIREBASE_STORAGE_BUCKET": "{{secrets.FIREBASE_STORAGE_BUCKET}}",
         "FIREBASE_MESSAGING_SENDER_ID": "{{secrets.FIREBASE_MESSAGING_SENDER_ID}}",
         "FIREBASE_APP_ID": "{{secrets.FIREBASE_APP_ID}}",
-        "FIREBASE_MEASUREMENT_ID": "{{secrets.FIREBASE_MEASUREMENT_ID}}"
+        "FIREBASE_MEASUREMENT_ID": "{{secrets.FIREBASE_MEASUREMENT_ID}}",
+        "EXERCISE_NINJA_API_KEY": "{{secrets.EXERCISE_NINJA_API_KEY}}",
+        "EXERCISE_NINJA_HOST": "{{secrets.EXERCISE_NINJA_HOST}}"
       }
     },
     "preview": {
@@ -27,7 +29,9 @@
         "FIREBASE_STORAGE_BUCKET": "{{secrets.FIREBASE_STORAGE_BUCKET}}",
         "FIREBASE_MESSAGING_SENDER_ID": "{{secrets.FIREBASE_MESSAGING_SENDER_ID}}",
         "FIREBASE_APP_ID": "{{secrets.FIREBASE_APP_ID}}",
-        "FIREBASE_MEASUREMENT_ID": "{{secrets.FIREBASE_MEASUREMENT_ID}}"
+        "FIREBASE_MEASUREMENT_ID": "{{secrets.FIREBASE_MEASUREMENT_ID}}",
+        "EXERCISE_NINJA_API_KEY": "{{secrets.EXERCISE_NINJA_API_KEY}}",
+        "EXERCISE_NINJA_HOST": "{{secrets.EXERCISE_NINJA_HOST}}"
       },
       "android": {
         "buildType": "apk"
@@ -37,4 +41,5 @@
   "submit": {
     "production": {}
   }
+  
 }

@@ -6,6 +6,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useFonts } from 'expo-font';
 import { scale } from './src/components/scale';
 import { Ionicons } from '@expo/vector-icons';
+import { RefreshProvider } from './src/components/RefreshContext';
+
 import 'react-native-gesture-handler';
 
 import LoginPage from './src/view/LoginPage';
@@ -36,6 +38,8 @@ import CoacheeFeedbackPage from './src/view/coach/CoacheeFeedbackPage';
 import CoachListOfFitnessPlansPage from './src/view/coach/CoachListOfFitnessPlansPage';
 import CoachCreateFitnessPlanPage from './src/view/coach/CoachCreateFitnessPlanPage';
 import CoachCreateFitnessPlanPage2 from './src/view/coach/CoachCreateFitnessPlanPage2';
+import SelectExerciseListPage from './src/view/coach/SelectExerciseListPage';
+import SelectExerciseDetailsPage from './src/view/coach/SelectExerciseDetailsPage';
 
 
 // System Admin Pages
@@ -162,84 +166,88 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="LoginPage">
-        <Stack.Screen name="LoginPage" component={LoginPage} options={{ headerShown: false }} />
-        <Stack.Screen name="Register" component={RegisterPage} options={{ title: 'Back' }} />
-        <Stack.Screen name="Register2" component={RegisterPage2} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
-        <Stack.Screen name="Register3" component={RegisterPage3} options={{ headerShown: false }} />
-        <Stack.Screen name="CoachRegisterPage" component={CoachRegisterPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' } }} />
-        <Stack.Screen name="CoachRegisterPage2" component={CoachRegisterPage2} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+    <RefreshProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="LoginPage">
+          <Stack.Screen name="LoginPage" component={LoginPage} options={{ headerShown: false }} />
+          <Stack.Screen name="Register" component={RegisterPage} options={{ title: 'Back' }} />
+          <Stack.Screen name="Register2" component={RegisterPage2} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="Register3" component={RegisterPage3} options={{ headerShown: false }} />
+          <Stack.Screen name="CoachRegisterPage" component={CoachRegisterPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' } }} />
+          <Stack.Screen name="CoachRegisterPage2" component={CoachRegisterPage2} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
 
-        <Stack.Screen name="ResetPassword" component={ResetPasswordPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' } }} />
-        <Stack.Screen name="AboutOurApp" component={AboutOurApp} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' } }} />
-        <Stack.Screen name="AboutActiveAxisPage" component={AboutActiveAxisPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
-        <Stack.Screen name="AppFeaturesPage" component={AppFeaturesPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
-        <Stack.Screen name="AppFeedBackPage" component={AppFeedBackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
-        <Stack.Screen name="UserStatisticsPage" component={UserStatisticsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="ResetPassword" component={ResetPasswordPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' } }} />
+          <Stack.Screen name="AboutOurApp" component={AboutOurApp} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' } }} />
+          <Stack.Screen name="AboutActiveAxisPage" component={AboutActiveAxisPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="AppFeaturesPage" component={AppFeaturesPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="AppFeedBackPage" component={AppFeedBackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserStatisticsPage" component={UserStatisticsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
 
 
-        <Stack.Screen name="UserHomePage" component={UserTabs} options={{ headerShown: false }} />
-        {/* Add user pages here */}
+          <Stack.Screen name="UserHomePage" component={UserTabs} options={{ headerShown: false }} />
+          {/* Add user pages here */}
 
-        <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{ headerShown: false }} />
-        <Stack.Screen name="CoachAccountListPage" component={CoachAccountListPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
-        <Stack.Screen name="CoachDetailsPage" component={CoachDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
-        <Stack.Screen name="CoachRegistrationListPage" component={CoachRegistrationListPage} options={({ navigation }) => ({
-          title: 'Back',
-          headerStyle: { backgroundColor: '#FBF5F3' },
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.navigate('CoachAccountListPage', { refresh: true })}>
-              <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: scale(15) }} />
-            </TouchableOpacity>
-          ),
-          ...TransitionPresets.SlideFromRightIOS
-        })}
-        />
-        <Stack.Screen name = "CoachRegistrationDetailsPage" component={CoachRegistrationDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
-        <Stack.Screen name = "PhotoViewer" component={PhotoViewer} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
-        <Stack.Screen name="SystemAdminAppDetails" component={SystemAdminAppDetails} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
-        <Stack.Screen name="SystemAdminAppFeedbacks" component={SystemAdminAppFeedbacks} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
-        <Stack.Screen name="UpdateAboutUsPage" component={UpdateAboutUsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-        <Stack.Screen name="UpdateAppFeaturesPage" component={UpdateAppFeaturesPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-        <Stack.Screen name="AchievementsPage" component={AchievementsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-        <Stack.Screen name = "AchievementDetailsPage" component={AchievementDetailsPage} options={({navigation}) =>({
-            title:'Back', 
-            headerStyle:{backgroundColor:'#FBF5F3'}, 
-            headerLeft:()=>(
-              <TouchableOpacity onPress={() => navigation.navigate('AchievementsPage', {refresh:true})}>
+          <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{ headerShown: false }} />
+          <Stack.Screen name="CoachAccountListPage" component={CoachAccountListPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="CoachDetailsPage" component={CoachDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="CoachRegistrationListPage" component={CoachRegistrationListPage} options={({ navigation }) => ({
+            title: 'Back',
+            headerStyle: { backgroundColor: '#FBF5F3' },
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.navigate('CoachAccountListPage', { refresh: true })}>
                 <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: scale(15) }} />
               </TouchableOpacity>
             ),
-            ...TransitionPresets.SlideFromRightIOS })} 
-        />
-        <Stack.Screen name="CreateAchievementsPage" component={CreateAchievementsPage} options={({ navigation }) => ({
-          title: 'Back',
-          headerStyle: { backgroundColor: '#FBF5F3' },
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.navigate('AchievementsPage', { refresh: true })}>
-              <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: scale(15) }} />
-            </TouchableOpacity>
-          ),
-          ...TransitionPresets.SlideFromRightIOS
-        })}
-        />
-        <Stack.Screen name="EditAchievementPage" component={EditAchievementPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-        <Stack.Screen name="UserAccountListPage" component={UserAccountListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>  
-        <Stack.Screen name="UserAccountDetailsPage" component={UserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/> 
-        <Stack.Screen name="EditUserAccountDetailsPage" component={EditUserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>     
-        <Stack.Screen name="SystemAdminAccountSettingPage" component={SystemAdminAccountSettingPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-        
+            ...TransitionPresets.SlideFromRightIOS
+          })}
+          />
+          <Stack.Screen name = "CoachRegistrationDetailsPage" component={CoachRegistrationDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name = "PhotoViewer" component={PhotoViewer} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="SystemAdminAppDetails" component={SystemAdminAppDetails} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="SystemAdminAppFeedbacks" component={SystemAdminAppFeedbacks} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UpdateAboutUsPage" component={UpdateAboutUsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+          <Stack.Screen name="UpdateAppFeaturesPage" component={UpdateAppFeaturesPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+          <Stack.Screen name="AchievementsPage" component={AchievementsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+          <Stack.Screen name = "AchievementDetailsPage" component={AchievementDetailsPage} options={({navigation}) =>({
+              title:'Back', 
+              headerStyle:{backgroundColor:'#FBF5F3'}, 
+              headerLeft:()=>(
+                <TouchableOpacity onPress={() => navigation.navigate('AchievementsPage', {refresh:true})}>
+                  <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: scale(15) }} />
+                </TouchableOpacity>
+              ),
+              ...TransitionPresets.SlideFromRightIOS })} 
+          />
+          <Stack.Screen name="CreateAchievementsPage" component={CreateAchievementsPage} options={({ navigation }) => ({
+            title: 'Back',
+            headerStyle: { backgroundColor: '#FBF5F3' },
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.navigate('AchievementsPage', { refresh: true })}>
+                <Ionicons name="arrow-back" size={24} color="black" style={{ marginLeft: scale(15) }} />
+              </TouchableOpacity>
+            ),
+            ...TransitionPresets.SlideFromRightIOS
+          })}
+          />
+          <Stack.Screen name="EditAchievementPage" component={EditAchievementPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+          <Stack.Screen name="UserAccountListPage" component={UserAccountListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>  
+          <Stack.Screen name="UserAccountDetailsPage" component={UserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/> 
+          <Stack.Screen name="EditUserAccountDetailsPage" component={EditUserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>     
+          <Stack.Screen name="SystemAdminAccountSettingPage" component={SystemAdminAccountSettingPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+          
 
-        <Stack.Screen name="CoachHomePage" component={CoachTabs} options={{headerShown:false}} />
-        <Stack.Screen name = "CoachListOfFitnessPlansPage" component={CoachListOfFitnessPlansPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
-        <Stack.Screen name = "CoachCreateFitnessPlanPage" component={CoachCreateFitnessPlanPage} options={{headerShown:false, ...TransitionPresets.SlideFromRightIOS}} />
-        <Stack.Screen name = "CoachCreateFitnessPlanPage2" component={CoachCreateFitnessPlanPage2} options={{headerShown:false, ...TransitionPresets.SlideFromRightIOS}} />
-        <Stack.Screen name="ViewCoacheeDetails" component={ViewCoacheeDetails} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
-        <Stack.Screen name="CoacheeFeedbackPage" component={CoacheeFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
-      
-      </Stack.Navigator>
-    </NavigationContainer>
+          <Stack.Screen name="CoachHomePage" component={CoachTabs} options={{headerShown:false}} />
+          <Stack.Screen name = "CoachListOfFitnessPlansPage" component={CoachListOfFitnessPlansPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+          <Stack.Screen name = "CoachCreateFitnessPlanPage" component={CoachCreateFitnessPlanPage} options={{headerShown:false, ...TransitionPresets.SlideFromRightIOS}} />
+          <Stack.Screen name = "CoachCreateFitnessPlanPage2" component={CoachCreateFitnessPlanPage2} options={{headerShown:false, ...TransitionPresets.SlideFromRightIOS}} />
+          <Stack.Screen name = "SelectExerciseListPage" component={SelectExerciseListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+          <Stack.Screen name = "SelectExerciseDetailsPage" component={SelectExerciseDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+          <Stack.Screen name="ViewCoacheeDetails" component={ViewCoacheeDetails} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+          <Stack.Screen name="CoacheeFeedbackPage" component={CoacheeFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+        
+        </Stack.Navigator>
+      </NavigationContainer>
+    </RefreshProvider>
   );
 }
 
