@@ -79,7 +79,7 @@ const UserAccountSettingPage = ({ navigation, route }) => {
     // Options for the user
     const options = [
         { label: 'Remove Advertisements', onPress: () => console.log("Remove Advertisements") },
-        { label: 'Account Details', onPress: () => console.log("Account Details") },
+        { label: 'Account Details', onPress: () => navigation.navigate("UserAccountDetailsPage1", {user}) },
         { label: 'Friends', onPress: () => console.log("Friends") },
         { label: 'App Feedbacks', onPress: () => console.log("App Feedbacks") },
         { label: 'Achievements', onPress: () => console.log("Achievements") },
@@ -137,10 +137,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#C42847',
-        marginTop: scale(50),
     },
     profileContainer: {
         padding: scale(20),
+        marginTop: scale(35),
         flexDirection: 'row',
     }
     ,

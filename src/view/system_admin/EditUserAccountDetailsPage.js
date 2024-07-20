@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Modal, Alert } from 'react-native';
 import { scale } from '../../components/scale';
-import { ActionDialog, LoadingDialog } from '../../components/Modal';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 import { TextInput } from 'react-native-gesture-handler';
 import EditUserAccountDetailsPresenter from '../../presenter/EditUserAccountDetailsPresenter';
 
@@ -16,6 +16,7 @@ const EditUserAccountDetailsPage = ({ navigation, route }) => {
     // State to control the visibility of the modal
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [modal1Visible, setModal1Visible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
 
 
@@ -23,6 +24,12 @@ const EditUserAccountDetailsPage = ({ navigation, route }) => {
     const changeModalVisible = (b, m) => {
         setModalMsg(m);
         setModalVisible(b);
+    }
+
+    // change popup/modal visible
+    const changeModal1Visible = (b, m) => {
+        setModalMsg(m);
+        setModal1Visible(b);
     }
 
     // change popup/modal visible
@@ -40,9 +47,10 @@ const EditUserAccountDetailsPage = ({ navigation, route }) => {
             await new EditUserAccountDetailsPresenter().updatePassword(userID, newPassword, confirmnewPassword)
             Alert.alert('Successfully updated password for user!')
             navigation.navigate('UserAccountListPage')
-        } catch (error) {
-            console.log(error);
-            Alert.alert(error.message);
+        } catch (e) {
+            console.log(e);
+            changeModal1Visible(true, e.message);
+            //Alert.alert(e.message);
         } finally {
             changeLoadingVisible(false);
         }
@@ -57,9 +65,9 @@ const EditUserAccountDetailsPage = ({ navigation, route }) => {
             </View>
             <View style={styles.detailsBox}>
                 <Text style={styles.detailsTitle}>Password</Text>
-                <TextInput style={styles.detailsText} placeholder='Enter new password' onChangeText={text => setnewPassword(text) } secureTextEntry></TextInput>
+                <TextInput style={styles.detailsText} placeholder='Enter new password' onChangeText={text => setnewPassword(text)} secureTextEntry></TextInput>
                 <Text style={styles.detailsTitle}>Confirm New Password</Text>
-                <TextInput style={styles.detailsText} placeholder='Confirm new password' onChangeText={text => setconfirmnewPassword(text) } secureTextEntry></TextInput>
+                <TextInput style={styles.detailsText} placeholder='Confirm new password' onChangeText={text => setconfirmnewPassword(text)} secureTextEntry></TextInput>
             </View>
             <TouchableOpacity style={styles.saveButton} onPress={() => changeModalVisible(true, 'Do you want to save changes?')}>
                 <Text style={styles.saveButtonText}>SAVE</Text>
@@ -73,6 +81,12 @@ const EditUserAccountDetailsPage = ({ navigation, route }) => {
             </Modal>
             <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
                 <LoadingDialog />
+            </Modal>
+            <Modal transparent={true} animationType='fade' visible={modal1Visible} nRequestClose={() => changeModal1Visible(false)}>
+                <MessageDialog
+                    message={modalMsg}
+                    changeModalVisible={changeModal1Visible}
+                />
             </Modal>
         </View>
     )

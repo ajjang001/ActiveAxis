@@ -26,7 +26,9 @@ import UserStatisticsPage from './src/view/guest/UserStatisticsPage';
 
 // User Pages
 import UserHomePage from './src/view/user/UserHomePage';
-
+import UserAccountSettingPage from './src/view/user/UserAccountSettingPage';
+import UserAccountDetailsPage1 from './src/view/user/UserAccountDetailsPage';
+import UserUpdateAccountDetailsPage from './src/view/user/UserUpdateAccountDetailsPage';
 
 // Coach Pages
 import CoachHomePage from './src/view/coach/CoachHomePage';
@@ -183,6 +185,8 @@ export default function App() {
 
 
           <Stack.Screen name="UserHomePage" component={UserTabs} options={{ headerShown: false }} />
+          <Stack.Screen name="UserAccountDetailsPage1" component={UserAccountDetailsPage1} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserUpdateAccountDetailsPage" component={UserUpdateAccountDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           {/* Add user pages here */}
 
           <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{ headerShown: false }} />

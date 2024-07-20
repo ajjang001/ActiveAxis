@@ -422,6 +422,40 @@ class User extends Account{
 
     }
 
+    async updateAccountDetails(email, gender, phoneNumber, weight, height, fitnessGoal, fitnessLevel, hasMedical){
+
+        console.log({email, gender, phoneNumber, weight, height, fitnessGoal, fitnessLevel, hasMedical});
+
+        try {
+            // Check if the email exists
+            const q = query(collection(db, 'user'), where('email', '==', email));
+            const queryResult = await getDocs(q);
+    
+            if (queryResult.empty) {
+                throw new Error('User not found');
+            }
+    
+            // Get the document ID of the first matching user (assuming email is unique)
+            const userDocId = queryResult.docs[0].id;
+    
+            // Update the document with new values
+            const userDocRef = doc(db, 'user', userDocId);
+            await updateDoc(userDocRef, {
+                gender,
+                phoneNumber,
+                weight,
+                height,
+                fitnessGoal,
+                fitnessLevel,
+                hasMedical
+            });
+    
+            console.log('User details updated successfully');
+        } catch (e) {
+            console.error('Error updating user details:', e.message);
+            throw new Error(e.message);
+        }
+    }
 }
 
 export default User;
