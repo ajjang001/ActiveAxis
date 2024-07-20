@@ -6,7 +6,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useFonts } from 'expo-font';
 import { scale } from './src/components/scale';
 import { Ionicons } from '@expo/vector-icons';
-import { RefreshProvider } from './src/components/RefreshContext';
 
 import 'react-native-gesture-handler';
 
@@ -166,7 +165,6 @@ export default function App() {
   }
 
   return (
-    <RefreshProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="LoginPage">
           <Stack.Screen name="LoginPage" component={LoginPage} options={{ headerShown: false }} />
@@ -247,7 +245,6 @@ export default function App() {
         
         </Stack.Navigator>
       </NavigationContainer>
-    </RefreshProvider>
   );
 }
 

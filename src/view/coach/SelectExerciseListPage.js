@@ -8,7 +8,7 @@ import CreateFitnessPlanPresenter from '../../presenter/CreateFitnessPlanPresent
 
 
 const SelectExerciseListPage = ({route, navigation}) => {
-    const {routine, onGoBack} = route.params; 
+    const {routineIndex, routines, planInfo} = route.params; 
 
     const [exercises, setExercises] = useState([]);
 
@@ -143,6 +143,9 @@ const SelectExerciseListPage = ({route, navigation}) => {
 
     useEffect(()=>{
         loadExercises();
+        searchHandler();
+        console.log('loadedOnce');
+
     },[]);
 
 
@@ -213,7 +216,7 @@ const SelectExerciseListPage = ({route, navigation}) => {
                  :
                     exercises.map((exercise, index)=>{
                         return(
-                            <TouchableOpacity key={index} onPress = {()=>{navigation.navigate('SelectExerciseDetailsPage', {exercise, routine, onGoBack})}} style = {styles.exerciseItemButton}>
+                            <TouchableOpacity key={index} onPress = {()=>{navigation.navigate('SelectExerciseDetailsPage', {exercise, routineIndex, routines, planInfo})}} style = {styles.exerciseItemButton}>
                                 <Text style = {styles.exerciseItemTitle}>{exercise.exerciseName.toUpperCase()}</Text>
                                 <Text style = {styles.exerciseItemSubTitle}>{`${modifyText(exercise.equipment)} - ${modifyText(exercise.difficulty)}`}</Text>
                             </TouchableOpacity>
@@ -325,6 +328,7 @@ const styles = StyleSheet.create({
         fontSize: scale(32),
         fontFamily: 'Poppins-Medium',
         paddingVertical: scale(10),
+        marginVertical: scale(100),
         textAlign: 'center',
     },
     exerciseItemButton:{

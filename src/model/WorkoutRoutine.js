@@ -26,6 +26,17 @@ class WorkoutRoutine{
         this._isRestDay = false;
     }
 
+    // Custom clone method for deep copying
+    clone() {
+        const clone = new WorkoutRoutine();
+        clone.routineID = this.routineID;
+        clone.fitnessPlanID = this.fitnessPlanID;
+        clone.dayNumber = this.dayNumber;
+        clone.exercisesList = this.exercisesList.map(exercise => exercise.clone());
+        clone.isRestDay = this.isRestDay;
+        return clone;
+    }
+
     addExerciseToList(exercise){
         this._exercisesList.push(exercise);
     }

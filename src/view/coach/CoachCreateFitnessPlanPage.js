@@ -93,13 +93,11 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
             setmedicalCheck(route.params.medicalCheck);
             setRoutines(route.params.routines);
 
+            console.log(route.params.routines);
+
             route.params.refresh = false;
         }
 
-        console.log('days: ')
-        routines.forEach(routine=>{
-            console.log(routine.dayNumber);
-        })
     },[route.params?.refresh]);
 
 
@@ -152,7 +150,7 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
                 <View style = {styles.statisticsView}>
                     <View style = {styles.stat}>
                         <Image source={require('../../../assets/clock_icon.png')} style={styles.icon} />
-                        <Text style = {styles.iconText}>00 Days</Text>
+                        <Text style = {styles.iconText}>{`${routines.length || 0}`} Days</Text>
                     </View>
                     <View style = {styles.stat}>
                         <Image source={require('../../../assets/fire_icon.png')} style={styles.icon} />

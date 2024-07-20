@@ -3,24 +3,31 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, Image, Button, Alert }
 import { ScrollView } from 'react-native-gesture-handler';
 import { scale } from '../../components/scale';
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
-import { useRefresh } from '../../components/RefreshContext';
 
 import CreateFitnessPlanPresenter from '../../presenter/CreateFitnessPlanPresenter';
-
-// import YoutubePlayer from "react-native-youtube-iframe";
 
 
 const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
     
-    const {coach, photo, goalType, details, name, medicalCheck } = route.params;
-    const { refresh, refreshData, setRefresh } = useRefresh();
 
-    // Copy the routines from the previous page
-    const [routines, setRoutines] = useState([...route.params.routines]);
-
-    //const [r, setR] = useState(false);
-    const [isSave, setIsSave] = useState(false);
+    const [planInfo, setPlanInfo] = useState({
+        coach: route.params.coach,
+        photo: route.params.photo,
+        goalType: route.params.goalType,
+        details: route.params.details,
+        name: route.params.name,
+        medicalCheck: route.params.medicalCheck
+    });
     
+    // Copy the routines from the previous page
+    const [tempOriginalRoutines, setTempOriginalRoutines] = useState([...route.params.routines]);
+    const [routines, setRoutines] = useState(()=>{    
+        
+        return new CreateFitnessPlanPresenter().deepCopy(tempOriginalRoutines);
+    });
+
+    const [refresh, setRefresh] = useState(false);
+    const [isSave, setIsSave] = useState(false);    
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
@@ -45,28 +52,23 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
         setConfirmationVisible(b);
     }
 
-    // const refreshDataFunc = () => {
-    //     setR(true);
-    // };
 
     // Save the routines to the array on the previous page
     const saveRoutines = () => {
         try{
             changeLoadingVisible(true);
 
-
             // Save the routines to array on previous page
             navigation.navigate('CoachCreateFitnessPlanPage', {
                 refresh:true,
-                coach: coach,
-                photo: photo,
-                goalType: goalType,
-                details: details,
-                name: name,
-                medicalCheck: medicalCheck,
-                routines: routines
-            }
-            );
+                coach: planInfo.coach,
+                photo: planInfo.photo,
+                goalType: planInfo.goalType,
+                details: planInfo.details,
+                name: planInfo.name,
+                medicalCheck: planInfo.medicalCheck,
+                routines: routines   
+            });
         }catch(e){
             changeModalVisible(true, e.message);
         }finally{
@@ -78,7 +80,16 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
         try{
             // Go back to the previous page
             // Without saving the current change
-            navigation.goBack();
+            navigation.navigate('CoachCreateFitnessPlanPage', {
+                refresh:true,
+                coach: planInfo.coach,
+                photo: planInfo.photo,
+                goalType: planInfo.goalType,
+                details: planInfo.details,
+                name: planInfo.name,
+                medicalCheck: planInfo.medicalCheck,
+                routines: tempOriginalRoutines
+            });
         }catch(e){
             changeModalVisible(true, e.message);
         }
@@ -139,16 +150,18 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
 
     // Repeater Functions
     const loadRoutines = () => (
-        routines.length === 0 ? null : routines.map((routine, index) => {
+        routines.length === 0 ? 
+        <Text style = {styles.noAvailText}>{`No Routine\nAvailable`}</Text> 
+        : routines.map((routine, routineIndex) => {
             return (
-                <View key = {index}>
+                <View key = {routineIndex}>
                     <View style = {styles.dayTitleView}>
                         <Text style = {styles.dayTitleText}>{`Day ${routine.dayNumber}`}</Text>
                         <View style = {{flexDirection:'row', gap:scale(15)}}>
-                            <TouchableOpacity onPress = {swapDay.bind(this, index)}>
+                            <TouchableOpacity onPress = {swapDay.bind(this, routineIndex)}>
                                 <Image style = {styles.icon}  source = {require('../../../assets/swap_horizontal_icon.png')} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress = {removeDay.bind(this, index)}>
+                            <TouchableOpacity onPress = {removeDay.bind(this, routineIndex)}>
                                 <Image style = {styles.icon}  source = {require('../../../assets/trash_icon.png')} />
                             </TouchableOpacity>
                         </View>
@@ -159,7 +172,8 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                             <Text style = {styles.restDayText}>Rest Day</Text> : 
                             <>
                                 {
-                                    routine.exercisesList.map((e, index) => {
+                                    
+                                    routine.exercisesList.length == 0 ? null : routine.exercisesList.map((e, index) => {
                                         return (
                                             <View key = {index}>
                                                 <Text>{e.exerciseName}</Text>
@@ -167,22 +181,13 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                                         );
                                     })
                                 }
-                                <TouchableOpacity onPress={()=>navigation.navigate('SelectExerciseListPage', {routine, onGoBack: refreshData})}  style = {styles.addExerciseButton}>
+                                <TouchableOpacity onPress={()=>navigation.navigate('SelectExerciseListPage', {routineIndex, routines, planInfo})}  style = {styles.addExerciseButton}>
                                     <Image style = {styles.icon} source = {require('../../../assets/add_box_icon.png')} />
                                 </TouchableOpacity>
                             </>
                         }
                     </View>
-                    {/*
-                        video !== '' ?
-                        (<View>
-                            <YoutubePlayer
-                              height={300}
-                              play={'play'}
-                              videoId={video}
-                            />
-                          </View>) : null
-                    */}
+                    
                 </View>
             );
         })
@@ -192,17 +197,11 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
 
     useEffect(() => {
           
-        // if (route.params?.refresh){
-        //     route.params.refresh = false;
-        //     console.log('refreshed params');
-        // }
         
         if (refresh){
-            console.log(routines);
             setRefresh(false);
         }
             
-        //route.params?.refresh
     }, [refresh]);
 
 
@@ -210,7 +209,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
 
 
     return (
-        <ScrollView contentContainerStyle = {styles.container}>
+        <View style = {styles.container}>
             <View style = {styles.topButtonView}>
                 <TouchableOpacity style = {styles.topButtons} onPress = {() => {setIsSave(false); changeConfirmVisible( true, 'Are you sure you want to discard these routines?')}}>
                     <Text style = {styles.topButtonText}>DISCARD</Text>
@@ -219,27 +218,29 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                     <Text style = {styles.topButtonText}>SAVE</Text>
                 </TouchableOpacity>
             </View>
-
             
-            <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
-                <LoadingDialog />
-            </Modal>
-            <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
-                <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
-            </Modal>
-            <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeModalVisible(false)}>
-                <ActionDialog
-                    message = {confirmMessage}
-                    changeModalVisible = {changeConfirmVisible}
-                    action = {() => { isSave ? saveRoutines() : discardRoutines();}}
-                />
-            </Modal>
+            <ScrollView>
+                <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
+                    <LoadingDialog />
+                </Modal>
+                <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+                    <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+                </Modal>
+                <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeModalVisible(false)}>
+                    <ActionDialog
+                        message = {confirmMessage}
+                        changeModalVisible = {changeConfirmVisible}
+                        action = {() => { isSave ? saveRoutines() : discardRoutines();}}
+                    />
+                </Modal>
 
-            <View style = {styles.routinesView}>
-                {loadRoutines()}
-            </View>
+                <View style = {styles.routinesView}>
+                    {loadRoutines()}
+                </View>
 
 
+                
+            </ScrollView>
             <View style = {styles.addDayButtonView}>
                 <TouchableOpacity onPress = {addExerciseDay} style = {[styles.addDayButton, {backgroundColor: '#C42847'}]}>
                     <Text style = {styles.addDayButtonText}>ADD EXERCISE DAY</Text>
@@ -249,7 +250,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                     <Text style = {styles.addDayButtonText}>ADD REST DAY</Text>
                 </TouchableOpacity>
             </View>
-        </ScrollView>
+        </View>
     );
 
 };
@@ -257,14 +258,15 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FBF5F3',
-        
-        paddingTop: scale(75),
+        backgroundColor: '#FBF5F3',  
     },
     topButtonView:{
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginHorizontal: scale(20),
+        width: '100%',
+        paddingHorizontal: scale(20),
+        paddingTop: scale(75),
+
     },
     topButtons:{
         backgroundColor: 'black',
@@ -278,12 +280,19 @@ const styles = StyleSheet.create({
         fontFamily: 'League-Spartan',
         fontSize: scale(18),
     },
+    noAvailText:{
+        fontSize: scale(32),
+        fontFamily: 'Poppins-Medium',
+        paddingVertical: scale(10),
+        marginVertical: scale(100),
+        textAlign: 'center',
+    },
     routinesView:{
-        marginTop: scale(20),
+        marginTop: scale(10),
     },
     dayTitleView:{
         backgroundColor:'#E28413',
-        marginVertical: scale(10),
+        marginVertical: scale(15),
         paddingHorizontal: scale(25),
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -318,6 +327,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         marginTop: scale(50),
+        paddingVertical: scale(20),
     },
     addDayButton:{
         

@@ -7,6 +7,11 @@ class CreateFitnessPlanPresenter{
         this.model = null;
     }
 
+    deepCopy(arr){
+        const returnedArr = arr.map(item=>item.clone());
+        return returnedArr;
+    }
+
     addRoutine(){
         try{
             const routinesSize = this.view.routines.length;
@@ -126,13 +131,26 @@ class CreateFitnessPlanPresenter{
 
     addExerciseToList(exercise){
         try{
-            this.model = this.view.workoutRoutine;
-            // console.log(this.model);
-            this.model.addExerciseToList(exercise);
+            this.model = this.view.routines;
+            const routineIndex = this.view.routineIndex;
+
+            this.model[routineIndex].addExerciseToList(exercise);
         }catch(error){
             throw new Error(error);
         }
     }
+
+    async setVideo(){
+        try{
+            this.model = this.view.exercise;
+            await this.model.setVideoLink();
+        }catch(error){
+            throw new Error(error);
+        }
+
+    }
+
+    
 }
 
 export default CreateFitnessPlanPresenter;

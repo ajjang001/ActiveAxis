@@ -46,6 +46,19 @@ class Exercise{
         this._youtubeLink = "";
     }
 
+    clone(){
+        const clone = new Exercise();
+        clone.exerciseID = this.exerciseID;
+        clone.exerciseName = this.exerciseName;
+        clone.exerciseType = this.exerciseType;
+        clone.muscle = this.muscle;
+        clone.equipment = this.equipment;
+        clone.difficulty = this.difficulty;
+        clone.instructions = this.instructions;
+        clone.youtubeLink = this.youtubeLink;
+        return clone;
+    }
+
     async getExerciseList(name, type, muscle){
         try{
             const exerciseList = [];
@@ -80,12 +93,6 @@ class Exercise{
                 newExercise.equipment = exercise.equipment;
                 newExercise.difficulty = exercise.difficulty;
                 newExercise.instructions = exercise.instructions;
-                
-                // const query = `exercise how to do ${newExercise.exerciseName}`;
-                // const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&maxResults=1&order=relevance&videoDuration=short&videoEmbeddable=true&regionCode=US&key=${YOUTUBE_API_KEY}`;
-                // const yt_res = await axios.get(url);
-                // const yt_data = yt_res.data;
-                // newExercise.youtubeLink = `${yt_data.items[0].id.videoId}`;
                 newExercise.youtubeLink = "";
 
 
@@ -94,6 +101,20 @@ class Exercise{
             }
             
             return exerciseList;
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
+    async setVideoLink(){
+        try{
+            const query = `exercise how to do ${this.exerciseName}`;
+            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&maxResults=1&order=relevance&videoDuration=short&videoEmbeddable=true&regionCode=US&key=${YOUTUBE_API_KEY}`;
+            const yt_res = await axios.get(url);
+            const yt_data = yt_res.data;
+            this.youtubeLink = `${yt_data.items[0].id.videoId}`;
+            console.log('Fetched ID :' + this.youtubeLink);
+                
         }catch(error){
             throw new Error(error);
         }
