@@ -5,6 +5,7 @@ import {
     FIREBASE_API_KEY as YOUTUBE_API_KEY
 } from "@env";
 import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, deleteDoc, addDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import {auth, db, storage} from '../firebase/firebaseConfig';
 
 
@@ -107,6 +108,55 @@ class Exercise{
         }catch(error){
             throw new Error(error);
         }
+    }
+
+    async createExercise(routines){
+        try{
+            const exerciseIDList = [];
+            for (const routine of routines) {
+                // Only add exercises that are not rest day
+                if (!routine.isRestDay) {
+                    const exerciseIDEachRoutine = [];
+
+                    for (const exercise of routine.exercisesList) {
+                        // Check if the exercises exists in database
+                        
+                        const q = query(collection(db, "exercise"), where("exerciseName", "==", exercise.exercise.exerciseName));
+                        const querySnapshot = await getDocs(q);
+
+                        if (querySnapshot.empty) {
+                            // Add the exercise to the database
+                            const docRef = await addDoc(collection(db, 'exercise'), {
+                                exerciseName: exercise.exercise.exerciseName,
+                                exerciseType: exercise.exercise.exerciseType,
+                                muscle: exercise.exercise.muscle,
+                                equipment: exercise.exercise.equipment,
+                                difficulty: exercise.exercise.difficulty,
+                                instructions: exercise.exercise.instructions,
+                                youtubeLink: exercise.exercise.youtubeLink
+                            });
+
+                            exerciseIDEachRoutine.push(docRef.id);
+
+                        } else {
+                            // expected 1 document
+                            exerciseIDEachRoutine.push(querySnapshot.docs[0].id);
+                        }
+                    }
+
+                    // Add the exerciseIDEachRoutine to the main list
+                    exerciseIDList.push(exerciseIDEachRoutine);
+                } else {
+                    exerciseIDList.push([]);
+                }
+            }
+
+            return exerciseIDList;
+
+        }catch(error){
+            throw new Error(error);
+        }
+
     }
 
     async setVideoLink(){

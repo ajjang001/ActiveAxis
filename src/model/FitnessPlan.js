@@ -1,7 +1,8 @@
 import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, deleteDoc, addDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
-
 import {auth, db, storage} from '../firebase/firebaseConfig';
+import WorkoutRoutine from "./WorkoutRoutine";
+import Exercise from "./Exercise";
 
 class FitnessPlan{
     _fitnessPlanID;
@@ -59,6 +60,7 @@ class FitnessPlan{
                 fitnessPlanName: name,
                 fitnessPlanDescription: details,
                 planGoal: goalType,
+                isMedicalCheck: medicalCheck,
                 lastUpdated: Timestamp.now()
             });
 
@@ -114,64 +116,14 @@ class FitnessPlan{
 
 
 
-
+            
             // Add each day to the database (WorkoutRoutine)
-            const routineIDsList = [];
-            for (const routine of routines) {
-                const docRef = await addDoc(collection(db, 'workoutroutine'), {
-                    fitnessPlanID: fitnessPlanID,
-                    dayNumber: routine.dayNumber,
-                    estCaloriesBurned: routine.estCaloriesBurned,
-                    isRestDay: routine.isRestDay
-                });
-
-                routineIDsList.push(docRef.id);
-
-            }
-
+            const routineIDsList = await new WorkoutRoutine().createWorkoutRoutine(routines, fitnessPlanID);
             
             // Add to Exercise database (Exercise)
-            const exerciseIDList = [];
+            const exerciseIDList = await new Exercise().createExercise(routines);
 
-            for (const routine of routines) {
-                // Only add exercises that are not rest day
-                if (!routine.isRestDay) {
-                    const exerciseIDEachRoutine = [];
-
-                    for (const exercise of routine.exercisesList) {
-                        // Check if the exercises exists in database
-                        
-                        const q = query(collection(db, "exercise"), where("exerciseName", "==", exercise.exercise.exerciseName));
-                        const querySnapshot = await getDocs(q);
-
-                        if (querySnapshot.empty) {
-                            // Add the exercise to the database
-                            const docRef = await addDoc(collection(db, 'exercise'), {
-                                exerciseName: exercise.exercise.exerciseName,
-                                exerciseType: exercise.exercise.exerciseType,
-                                muscle: exercise.exercise.muscle,
-                                equipment: exercise.exercise.equipment,
-                                difficulty: exercise.exercise.difficulty,
-                                instructions: exercise.exercise.instructions,
-                                youtubeLink: exercise.exercise.youtubeLink
-                            });
-
-                            exerciseIDEachRoutine.push(docRef.id);
-
-                        } else {
-                            // expected 1 document
-                            exerciseIDEachRoutine.push(querySnapshot.docs[0].id);
-                        }
-                    }
-
-                    // Add the exerciseIDEachRoutine to the main list
-                    exerciseIDList.push(exerciseIDEachRoutine);
-                } else {
-                    exerciseIDList.push([]);
-                }
-            }
-
-
+            
             // Add join table for many-to-many relationship
             // between WorkoutRoutine and Exercise  (ExerciseInfoOnRoutine)
             for (let i = 0; i < routineIDsList.length; i++) {
@@ -179,6 +131,7 @@ class FitnessPlan{
                     await addDoc(collection(db, 'exerciseinfoonroutine'), {
                         exerciseID: exerciseIDList[i][j],
                         routineID: routineIDsList[i],
+                        orderNo: j + 1,
                         duration: routines[i].exercisesList[j].duration,
                         repetition: routines[i].exercisesList[j].repetition
                     });

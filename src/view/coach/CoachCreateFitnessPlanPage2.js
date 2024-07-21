@@ -55,9 +55,12 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
 
 
     // Save the routines to the array on the previous page
-    const saveRoutines = () => {
+    const saveRoutines = async () => {
         try{
             changeLoadingVisible(true);
+
+            new CreateFitnessPlanPresenter({routines: routines}).validateRoutines();
+            await new CreateFitnessPlanPresenter({routines: routines}).calculateCalories();
 
 
             // Save the routines to array on previous page
@@ -72,7 +75,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                 routines: routines   
             });
         }catch(e){
-            changeModalVisible(true, e.message);
+            changeModalVisible(true, e.message.replace('Error: ', ''));
         }finally{
             changeLoadingVisible(false);
         }
@@ -148,6 +151,18 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
     
     }
 
+    const onRemoveExercise = (index, routine) =>{
+        try{
+            changeLoadingVisible(true);
+            new CreateFitnessPlanPresenter({routine: routine}).removeExercise(index);
+            setRefresh(true);
+        }catch(e){
+            changeModalVisible(true, e.message);
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
 
 
     // Repeater Functions
@@ -180,7 +195,9 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                                         return (
                                             <ExerciseCard
                                                 key = {index}
+                                                routine = {routine}
                                                 exercise = {e}
+                                                onDelete = {onRemoveExercise}
                                             />
                                         );
                                     })

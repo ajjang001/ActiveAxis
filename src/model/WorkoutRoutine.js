@@ -1,3 +1,12 @@
+import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, deleteDoc, addDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import {auth, db, storage} from '../firebase/firebaseConfig';
+import axios from "axios";
+
+import {
+    NUTRITIONIX_API_KEY,
+    NUTRITIONIX_APP_ID
+} from "@env";
 
 class WorkoutRoutine{
     _routineID;
@@ -44,6 +53,61 @@ class WorkoutRoutine{
 
     addExerciseToList(alarmString, exercise, repetition){
         this._exercisesList.push({duration: alarmString, repetition, exercise});
+    }
+
+    async calculateCaloriesBurned(){
+        try{
+            let query = '';
+
+            for (const exercise of this._exercisesList) {
+                const duration = exercise.duration.split(':');
+                const minutes = parseInt(duration[0]);
+                const seconds = parseInt(duration[1]) + (minutes * 60);
+                query += `- ${exercise.exercise.exerciseName} (${exercise.repetition} repetitions x ${seconds} seconds)\n`;
+            }
+
+            console.log(query);
+
+            const response = await axios.post(
+                'https://trackapi.nutritionix.com/v2/natural/exercise',
+                {query: query},
+                {
+                    headers:{
+                        'Content-Type': 'application/json',
+                        'x-app-id': NUTRITIONIX_APP_ID,
+                        'x-app-key': NUTRITIONIX_API_KEY
+                    }
+                }
+            );
+
+            // console.log(response.data);
+            this._estCaloriesBurned = response.data.exercises.reduce((acc, exercise) => acc + exercise.nf_calories, 0);
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
+    async createWorkoutRoutine(routines, fitnessPlanID){
+        try{
+            console.log('AHOY');
+            const routineIDsList = [];
+            for (const routine of routines) {
+                const docRef = await addDoc(collection(db, 'workoutroutine'), {
+                    fitnessPlanID: fitnessPlanID,
+                    dayNumber: routine.dayNumber,
+                    estCaloriesBurned: routine.estCaloriesBurned,
+                    isRestDay: routine.isRestDay
+                });
+
+                routineIDsList.push(docRef.id);
+
+            }
+
+            return routineIDsList;
+
+        }catch(error){
+            throw new Error(error);
+        }
     }
 
     

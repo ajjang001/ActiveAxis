@@ -85,9 +85,9 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
     const createHandler = async () => {
         try{
             changeLoadingVisible(true);
-            await new CreateFitnessPlanPresenter().createFitnessPlan(coach, photo, goalType, details, name, medicalCheck, routines);
+            await new CreateFitnessPlanPresenter().createFitnessPlan(coach, photo, goalType, details.trim(), name.trim(), medicalCheck, routines);
             
-            navigation.navigate('CoachListOfFitnessPlansPage', {refresh: true});
+            navigation.navigate('CoachListOfFitnessPlansPage', {refresh: true, coach: coach});
             Alert.alert('Success', 'Fitness Plan created successfully');
         }catch(error){
             changeModalVisible(true, error.message.replace('Error: ', ''));
@@ -182,7 +182,7 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
                     </View>
                     <View style = {styles.stat}>
                         <Image source={require('../../../assets/fire_icon.png')} style={styles.icon} />
-                        <Text style = {styles.iconText}>00 Cal</Text>
+                        <Text style = {styles.iconText}>{`${routines.map (routine => routine.estCaloriesBurned).reduce((acc, cal) => acc + cal, 0) || 0}`} kcal</Text>
                     </View>
                 </View>
 

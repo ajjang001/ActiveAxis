@@ -31,7 +31,9 @@
         "FIREBASE_APP_ID": "{{secrets.FIREBASE_APP_ID}}",
         "FIREBASE_MEASUREMENT_ID": "{{secrets.FIREBASE_MEASUREMENT_ID}}",
         "EXERCISE_NINJA_API_KEY": "{{secrets.EXERCISE_NINJA_API_KEY}}",
-        "EXERCISE_NINJA_HOST": "{{secrets.EXERCISE_NINJA_HOST}}"
+        "EXERCISE_NINJA_HOST": "{{secrets.EXERCISE_NINJA_HOST}}",
+        "NUTRITIONIX_APP_ID": "{{secrets.NUTRITIONIX_APP_ID}}",
+        "NUTRITIONIX_API_KEY": "{{secrets.NUTRITIONIX_API_KEY}}"
       },
       "android": {
         "buildType": "apk"

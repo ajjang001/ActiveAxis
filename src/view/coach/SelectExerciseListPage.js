@@ -334,7 +334,6 @@ const styles = StyleSheet.create({
     exerciseItemButton:{
         borderWidth: 1,
         borderColor: '#D9D9D9',
-        height: scale(75),
         padding: scale(10),
     },
     exerciseItemTitle:{

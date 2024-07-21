@@ -126,6 +126,16 @@ class CreateFitnessPlanPresenter{
         }
     }
 
+    removeExercise(index){
+        try{
+            this.view.routine.exercisesList.splice(index, 1);
+
+
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
 
 
     async searchExercises (name, type, muscle){
@@ -179,6 +189,48 @@ class CreateFitnessPlanPresenter{
 
     }
 
+    async calculateCalories(){
+        try{
+            const routines = this.view.routines;
+
+            for (const routine of routines){
+
+                if(!routine.isRestDay){
+                    this.model = routine;
+                    await this.model.calculateCaloriesBurned();
+                }
+                
+                
+            }
+            // this.model = this.view.routines;
+            // this.model.calculateCaloriesBurned();
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
+    validateRoutines(){
+        try{
+            let isAllRestDay = true;
+            const routines = this.view.routines;
+
+            routines.forEach(routine =>{
+                if(routine.exercisesList.length === 0 && !routine.isRestDay){
+                    throw new Error('Please add at least one exercise on Day ' + routine.dayNumber);
+                }
+                if (!routine.isRestDay){
+                    isAllRestDay = false;
+                }
+            });
+
+            if(isAllRestDay){
+                throw new Error('Please add at least one Exercise Day');
+            }
+        }catch(e){
+            throw new Error(e);
+        }
+    }
+
     async createFitnessPlan (coach, photo, goalType, details, name, medicalCheck, routines){
         
         try{
@@ -193,19 +245,6 @@ class CreateFitnessPlanPresenter{
             }else if (routines.length === 0){
                 throw new Error('Please add at least one routine');
             }else{
-                let isAllRestDay = true;
-                routines.forEach(routine =>{
-                    if(routine.exercisesList.length === 0 && !routine.isRestDay){
-                        throw new Error('Please add at least one exercise on Day ' + routine.dayNumber);
-                    }
-                    if (!routine.isRestDay){
-                        isAllRestDay = false;
-                    }
-                });
-
-                if(isAllRestDay){
-                    throw new Error('Please add at least one Exercise Day');
-                }
 
                 this.model = new FitnessPlan();
                 await this.model.createFitnessPlan(coach, photo, goalType, details, name, medicalCheck, routines);
