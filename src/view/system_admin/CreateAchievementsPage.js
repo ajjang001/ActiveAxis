@@ -11,7 +11,7 @@ import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Mod
 
 const CreateAchievementsPage = ({ navigation }) => {
   const [photo, setPhoto] = useState(null);
-  const [competitionType, setCompetitionType] = useState(1);
+  const [achievementType, setAchievementType] = useState(1);
   const [details, setDetails] = useState('');
   const [name, setName] = useState('');
   const [target, setTarget] = useState(0);
@@ -67,12 +67,12 @@ const renderItem=(item)=>{
   return(
     <TouchableOpacity activeOpacity={.7} style={styles.item}
     onPress={()=>{
-        setCompetitionType(item.competitionTypeID);
+        setAchievementType(item.achievementTypeID);
 
         dropdownRef.current.close();
     }}
     >
-            <Text style={styles.itemText}>{item.competitionTypeName}</Text>
+            <Text style={styles.itemText}>{item.achievementTypeName}</Text>
     </TouchableOpacity> 
     );
   };
@@ -81,7 +81,7 @@ const renderItem=(item)=>{
     try{
       changeLoadingVisible(true);
       setDropdownOpt([]);
-      await new CreateAchievementPresenter({setOptions:setDropdownOpt}).getCompetitionTypes();
+      await new CreateAchievementPresenter({setOptions:setDropdownOpt}).getAchievementTypes();
     }catch(error){
       changeModalVisible(true, error.message);
     }finally{
@@ -92,9 +92,9 @@ const renderItem=(item)=>{
   const createHandler = async () => {
     try{
         changeLoadingVisible(true);
-        const typeName = dropdownOpt.find((item) => item.competitionTypeID === competitionType).competitionTypeName;
+        const typeName = dropdownOpt.find((item) => item.achievementTypeID === achievementType).achievementTypeName;
         
-        await new CreateAchievementPresenter({type:{typeID: competitionType,typeName: typeName}, name:name, description:details, target:target, photo: photo}).createAchievement();
+        await new CreateAchievementPresenter({type:{typeID: achievementType,typeName: typeName}, name:name, description:details, target:target, photo: photo}).createAchievement();
         navigation.navigate('AchievementsPage', {refresh: true});
     }catch(e){
         let errorMessage = e.message;
@@ -175,12 +175,12 @@ const renderItem=(item)=>{
           selectedTextStyle={styles.selectedTextStyle}
           data={dropdownOpt}
           maxHeight={300}
-          labelField="competitionTypeName"
-          valueField="competitionTypeID"
+          labelField="achievementTypeName"
+          valueField="achievementTypeID"
           placeholder="Select Type"
-          value={competitionType}
+          value={achievementType}
           onChange={type => {
-              setCompetitionType(type);
+              setAchievementType(type);
           }}
           renderItem={renderItem}
           ref={dropdownRef}
