@@ -2,6 +2,7 @@ import React, {useState, useEffect, useCallback, useRef} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Image, Button, Alert } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { scale } from '../../components/scale';
+import ExerciseCard from '../../components/ExerciseCard';
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
 
 import CreateFitnessPlanPresenter from '../../presenter/CreateFitnessPlanPresenter';
@@ -57,6 +58,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
     const saveRoutines = () => {
         try{
             changeLoadingVisible(true);
+
 
             // Save the routines to array on previous page
             navigation.navigate('CoachCreateFitnessPlanPage', {
@@ -174,10 +176,12 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                                 {
                                     
                                     routine.exercisesList.length == 0 ? null : routine.exercisesList.map((e, index) => {
+                                        
                                         return (
-                                            <View key = {index}>
-                                                <Text>{e.exerciseName}</Text>
-                                            </View>
+                                            <ExerciseCard
+                                                key = {index}
+                                                exercise = {e}
+                                            />
                                         );
                                     })
                                 }
@@ -266,6 +270,7 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingHorizontal: scale(20),
         paddingTop: scale(75),
+        paddingBottom: scale(10),
 
     },
     topButtons:{
@@ -321,6 +326,7 @@ const styles = StyleSheet.create({
         fontSize: scale(25),
     },
     addExerciseButton:{
+        paddingVertical: scale(10),
     },
     addDayButtonView:{
         alignItems: 'center',

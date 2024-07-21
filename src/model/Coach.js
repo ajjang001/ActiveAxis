@@ -60,6 +60,7 @@ class Coach extends Account {
                     // Account is active
                     // Get the data
                     const c = new Coach();
+                    c.accountID = coach.uid;
                     c.username = data.username;
                     c.email = email;
                     c.profilePicture = data.profilePicture;
@@ -96,6 +97,7 @@ class Coach extends Account {
             const data = queryResult.docs[0].data();
             const c = new Coach();
 
+            c.accountID = queryResult.docs[0].id;
             c.username = data.username;
             c.email = data.email;
             c.profilePicture = data.profilePicture;
@@ -230,6 +232,7 @@ class Coach extends Account {
                 const data = doc.data();
                 const c = new Coach();
 
+                c.accountID = doc.id;
                 c.username = data.username;
                 c.email = data.email;
                 c.profilePicture = data.profilePicture;
@@ -274,6 +277,7 @@ class Coach extends Account {
             for (const doc of queryResult.docs) {
                 const data = doc.data();
                 const c = new Coach();
+                c.accountID = doc.id;
                 c.username = data.username;
                 c.email = data.email;
                 c.profilePicture = data.profilePicture;
@@ -342,6 +346,7 @@ class Coach extends Account {
                 const data = doc.data();
                 const c = new Coach();
 
+                c.accountID = doc.id;
                 c.username = data.username;
                 c.email = data.email;
                 c.profilePicture = data.profilePicture;

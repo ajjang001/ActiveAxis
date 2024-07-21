@@ -1,3 +1,7 @@
+import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, deleteDoc, addDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+
+import {auth, db, storage} from '../firebase/firebaseConfig';
 
 class FitnessPlan{
     _fitnessPlanID;
@@ -30,6 +34,162 @@ class FitnessPlan{
     set fitnessPlanPicture(fitnessPlanPicture){ this._fitnessPlanPicture = fitnessPlanPicture; }
     set routinesList(routinesList){ this._routinesList = routinesList; }
     set lastUpdated(lastUpdated){ this._lastUpdated = lastUpdated; }
+
+
+    async getGoals (){
+        try{
+            const querySnapshot = await getDocs(collection(db, 'fitnessgoal'));
+            const goals = [];
+            querySnapshot.forEach(doc => {
+                goals.push({id: doc.data().goalID, name: doc.data().goalName});
+            });
+
+            return goals;
+        }catch(e){
+            throw new Error(e);
+        }
+    }
+
+    async createFitnessPlan(coach, photo, goalType, details, name, medicalCheck, routines){
+        try{
+
+            // Add the fitness plan to the database (FitnessPlan)
+            const docRef = await addDoc(collection(db, 'fitnessplan'), {
+                coachID: coach.accountID,
+                fitnessPlanName: name,
+                fitnessPlanDescription: details,
+                planGoal: goalType,
+                lastUpdated: Timestamp.now()
+            });
+
+            const fitnessPlanID = docRef.id;
+
+
+            // Convert URI to Blob
+            const uriToBlob = (uri) => {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest()
+                    xhr.onload = function () {
+                        // return the blob
+                        resolve(xhr.response)
+                    }
+                    xhr.onerror = function () {
+                        reject(new Error('uriToBlob failed'))
+                    }
+                    xhr.responseType = 'blob'
+                    xhr.open('GET', uri, true)
+
+                    xhr.send(null)
+                })
+            };
+
+            // Upload file to Firebase Storage
+            const uploadFile = async (file, folderPath) => {
+                if (!file || !file.uri) throw new Error('File URI is invalid');
+
+                const storageRef = ref(storage, folderPath + file.name);
+                const blobFile = await uriToBlob(file.uri);
+                try {
+                    await uploadBytes(storageRef, blobFile);
+                    return `${folderPath}${file.name}`;
+                } catch (e) {
+                    throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support.");
+
+                }
+
+            };
+
+            // Folder path
+            const folderPath = `coach/${coach.email.split('@')[0]}/fitnessplan/${fitnessPlanID}_`;
+
+            // Upload files to Firebase Storage
+            const photoPath = await uploadFile(photo, folderPath);
+
+            // Add the photo path to the database
+            await updateDoc(doc(db, 'fitnessplan', fitnessPlanID), {
+                fitnessPlanPicture: photoPath
+            });
+
+
+
+
+
+
+            // Add each day to the database (WorkoutRoutine)
+            const routineIDsList = [];
+            for (const routine of routines) {
+                const docRef = await addDoc(collection(db, 'workoutroutine'), {
+                    fitnessPlanID: fitnessPlanID,
+                    dayNumber: routine.dayNumber,
+                    estCaloriesBurned: routine.estCaloriesBurned,
+                    isRestDay: routine.isRestDay
+                });
+
+                routineIDsList.push(docRef.id);
+
+            }
+
+            
+            // Add to Exercise database (Exercise)
+            const exerciseIDList = [];
+
+            for (const routine of routines) {
+                // Only add exercises that are not rest day
+                if (!routine.isRestDay) {
+                    const exerciseIDEachRoutine = [];
+
+                    for (const exercise of routine.exercisesList) {
+                        // Check if the exercises exists in database
+                        
+                        const q = query(collection(db, "exercise"), where("exerciseName", "==", exercise.exercise.exerciseName));
+                        const querySnapshot = await getDocs(q);
+
+                        if (querySnapshot.empty) {
+                            // Add the exercise to the database
+                            const docRef = await addDoc(collection(db, 'exercise'), {
+                                exerciseName: exercise.exercise.exerciseName,
+                                exerciseType: exercise.exercise.exerciseType,
+                                muscle: exercise.exercise.muscle,
+                                equipment: exercise.exercise.equipment,
+                                difficulty: exercise.exercise.difficulty,
+                                instructions: exercise.exercise.instructions,
+                                youtubeLink: exercise.exercise.youtubeLink
+                            });
+
+                            exerciseIDEachRoutine.push(docRef.id);
+
+                        } else {
+                            // expected 1 document
+                            exerciseIDEachRoutine.push(querySnapshot.docs[0].id);
+                        }
+                    }
+
+                    // Add the exerciseIDEachRoutine to the main list
+                    exerciseIDList.push(exerciseIDEachRoutine);
+                } else {
+                    exerciseIDList.push([]);
+                }
+            }
+
+
+            // Add join table for many-to-many relationship
+            // between WorkoutRoutine and Exercise  (ExerciseInfoOnRoutine)
+            for (let i = 0; i < routineIDsList.length; i++) {
+                for (let j = 0; j < exerciseIDList[i].length; j++) {
+                    await addDoc(collection(db, 'exerciseinfoonroutine'), {
+                        exerciseID: exerciseIDList[i][j],
+                        routineID: routineIDsList[i],
+                        duration: routines[i].exercisesList[j].duration,
+                        repetition: routines[i].exercisesList[j].repetition
+                    });
+                }
+            }
+
+ 
+        }catch(e){
+            throw new Error(e);
+        }
+    }
 
 
     

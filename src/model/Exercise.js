@@ -4,6 +4,9 @@ import {
     EXERCISE_NINJA_HOST,
     FIREBASE_API_KEY as YOUTUBE_API_KEY
 } from "@env";
+import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, deleteDoc, addDoc } from "firebase/firestore";
+import {auth, db, storage} from '../firebase/firebaseConfig';
+
 
 
 
@@ -108,12 +111,24 @@ class Exercise{
 
     async setVideoLink(){
         try{
-            const query = `exercise how to do ${this.exerciseName}`;
-            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&maxResults=1&order=relevance&videoDuration=short&videoEmbeddable=true&regionCode=US&key=${YOUTUBE_API_KEY}`;
-            const yt_res = await axios.get(url);
-            const yt_data = yt_res.data;
-            this.youtubeLink = `${yt_data.items[0].id.videoId}`;
-            console.log('Fetched ID :' + this.youtubeLink);
+            // Check if the exercise exists in the database
+
+            const q = query(collection(db, "exercise"), where("exerciseName", "==", this.exerciseName));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty){
+                const yt_query = `exercise how to do ${this.exerciseName}`;
+                const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(yt_query)}&maxResults=1&order=relevance&videoDuration=short&videoEmbeddable=true&regionCode=US&key=${YOUTUBE_API_KEY}`;
+                const yt_res = await axios.get(url);
+                const yt_data = yt_res.data;
+                this.youtubeLink = `${yt_data.items[0].id.videoId}`;
+                console.log('Fetched ID :' + this.youtubeLink);
+            }else{
+                console.log('Data exists ' + querySnapshot.docs[0].data().youtubeLink);
+                this.youtubeLink = querySnapshot.docs[0].data().youtubeLink;
+            }
+
+            
                 
         }catch(error){
             throw new Error(error);

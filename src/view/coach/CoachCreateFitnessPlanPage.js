@@ -1,17 +1,18 @@
 import React, {useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Modal, Alert } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { Dropdown } from 'react-native-element-dropdown';
 import { CheckBox } from '@rneui/themed';
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
 
 import { scale } from '../../components/scale';
+import CreateFitnessPlanPresenter from '../../presenter/CreateFitnessPlanPresenter';
 
 const CoachCreateFitnessPlanPage = ({navigation, route}) => {
 
     const [coach, setCoach] = useState(route.params.coach);
     const [photo, setPhoto] = useState(null);
-    const [goalType, setGoalType] = useState(1);
+    const [goalType, setGoalType] = useState(0);
     const [details, setDetails] = useState('');
     const [name, setName] = useState('');
     const [medicalCheck, setmedicalCheck] = useState(false);
@@ -52,12 +53,12 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
         return(
             <TouchableOpacity activeOpacity={.7} style={styles.item}
             onPress={()=>{
-                setGoalType(item.goalTypeID);
+                setGoalType(item.id);
         
                 dropdownRef.current.close();
             }}
             >
-                    <Text style={styles.itemText}>{item.fitnessPlanName}</Text>
+                    <Text style={styles.itemText}>{item.name}</Text>
             </TouchableOpacity> 
             );
         };
@@ -81,6 +82,36 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
         });
     };
 
+    const createHandler = async () => {
+        try{
+            changeLoadingVisible(true);
+            await new CreateFitnessPlanPresenter().createFitnessPlan(coach, photo, goalType, details, name, medicalCheck, routines);
+            
+            navigation.navigate('CoachListOfFitnessPlansPage', {refresh: true});
+            Alert.alert('Success', 'Fitness Plan created successfully');
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
+    const loadGoalType = async () =>{
+        try{
+            changeLoadingVisible(true);
+            await new CreateFitnessPlanPresenter({updateGoals: setDropdownOpt}).getGoals();
+            
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
+    useEffect(() => {
+        loadGoalType();
+    },[]);
+
     useEffect(() => {
         // isSave can be true or false
         // redirectAction: {isSave, refresh: true},
@@ -92,9 +123,6 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
             setDetails(route.params.details);
             setmedicalCheck(route.params.medicalCheck);
             setRoutines(route.params.routines);
-
-            console.log(route.params.routines);
-
             route.params.refresh = false;
         }
 
@@ -107,7 +135,7 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
                     <TouchableOpacity style = {styles.topButtons} onPress = {() => changeConfirmVisible( true, 'Are you sure you want to discard this plan?')} >
                         <Text style = {styles.topButtonText}>Discard</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style = {styles.topButtons} onPress = {() => console.log(routines)}>
+                    <TouchableOpacity style = {styles.topButtons} onPress = {createHandler}>
                         <Text style = {styles.topButtonText}>Create</Text>
                     </TouchableOpacity>
                 </View>
@@ -175,8 +203,8 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
                         selectedTextStyle={styles.selectedTextStyle}
                         data={dropdownOpt}
                         maxHeight={300}
-                        labelField="fitnessPlanName"
-                        valueField="fitnessPlanID"
+                        labelField="name"
+                        valueField="id"
                         placeholder="Select Plan Goal"
                         value={goalType}
                         onChange={type => {

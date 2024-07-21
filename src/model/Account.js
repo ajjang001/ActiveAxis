@@ -4,6 +4,7 @@ import { auth, storage} from '../firebase/firebaseConfig';
 
 
 class Account{
+    _accountID;
     _username;
     _email;
     _profilePicture;
@@ -19,6 +20,7 @@ class Account{
         }
     }
 
+    get accountID(){return this._accountID;}
     get username(){return this._username;}
     get email(){return this._email;}
     get profilePicture(){return this._profilePicture;}
@@ -28,6 +30,7 @@ class Account{
     get phoneNumber(){return this._phoneNumber;}
     get isSuspended(){return this._isSuspended;}
 
+    set accountID(accountID){this._accountID = accountID;}
     set username(username){this._username = username;}
     set email(email){this._email = email;}
     set profilePicture(profilePicture){this._profilePicture = profilePicture;}
