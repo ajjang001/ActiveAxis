@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Modal, Image } from "react-native"
+import { View, Text, StyleSheet, Modal, Image, ScrollView } from "react-native"
 import { scale } from "../../components/scale";
 import React, { useEffect, useState } from "react";
 import { LoadingDialog, MessageDialog } from "../../components/Modal";
@@ -25,6 +25,10 @@ const ViewCoacheeDetails = ({ route }) => {
     const [height, setHeight] = useState('');
     const [goal, setGoal] = useState('');
     const [level, setLevel] = useState('');
+    const startDate = new Date(user.startDate.seconds * 1000 + user.startDate.nanoseconds / 1000000);
+    const startDateString = startDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const endDate = new Date(user.endDate.seconds * 1000 + user.endDate.nanoseconds / 1000000);
+    const endDateString = endDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     {/* May insert more Coachee details if needed */ }
 
     // change popup/modal visible
@@ -85,43 +89,49 @@ const ViewCoacheeDetails = ({ route }) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.headerBox}>
-                <Text style={styles.headerText}>Coachee Name Details</Text>
-            </View>
-            <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
-                <LoadingDialog />
-            </Modal>
-            <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
-                <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
-            </Modal>
-            <View style={styles.detailsBox}>
-                {profilePicture !== '' ? (
-                    <View style={styles.pictureContainer}>
-                        <Image source={{ uri: profilePicture }} resizeMode='stretch' style={styles.coacheeImage} />
-                    </View>
-                ) : (
+            <ScrollView style={styles.scrollContainer}>
+                <View style={styles.headerBox}>
+                    <Text style={styles.headerText}>Coachee Name Details</Text>
+                </View>
+                <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
                     <LoadingDialog />
-                )}
-                <Text style={styles.detailsTitle}>Name</Text>
-                <Text style={styles.detailsText}>{fullName}</Text>
-                <Text style={styles.detailsTitle}>Gender</Text>
-                <Text style={styles.detailsText}>{gender}</Text>
-                <Text style={styles.detailsTitle}>Email</Text>
-                <Text style={styles.detailsText}>{email}</Text>
-                <Text style={styles.detailsTitle}>Phone Number</Text>
-                <Text style={styles.detailsText}>{phoneNumber}</Text>
-                <Text style={styles.detailsTitle}>Weight</Text>
-                <Text style={styles.detailsText}>{weight}</Text>
-                <Text style={styles.detailsTitle}>Height</Text>
-                <Text style={styles.detailsText}>{height}</Text>
-                <Text style={styles.detailsTitle}>Fitness Goal</Text>
-                <Text style={styles.detailsText}>{goal}</Text>
-                <Text style={styles.detailsTitle}>Fitness Level</Text>
-                <Text style={styles.detailsText}>{level}</Text>
-                <Text style={styles.detailsTitle}>Medical Condition</Text>
-                <Text style={styles.detailsText}>{medical}</Text>
-                {/* May insert more Coachee details if needed */}
-            </View>
+                </Modal>
+                <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+                    <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
+                </Modal>
+                <View style={styles.detailsBox}>
+                    {profilePicture !== '' ? (
+                        <View style={styles.pictureContainer}>
+                            <Image source={{ uri: profilePicture }} resizeMode='stretch' style={styles.coacheeImage} />
+                        </View>
+                    ) : (
+                        <LoadingDialog />
+                    )}
+                    <Text style={styles.detailsTitle}>Name</Text>
+                    <Text style={styles.detailsText}>{fullName}</Text>
+                    <Text style={styles.detailsTitle}>Gender</Text>
+                    <Text style={styles.detailsText}>{gender}</Text>
+                    <Text style={styles.detailsTitle}>Email</Text>
+                    <Text style={styles.detailsText}>{email}</Text>
+                    <Text style={styles.detailsTitle}>Phone Number</Text>
+                    <Text style={styles.detailsText}>{phoneNumber}</Text>
+                    <Text style={styles.detailsTitle}>Weight</Text>
+                    <Text style={styles.detailsText}>{weight}</Text>
+                    <Text style={styles.detailsTitle}>Height</Text>
+                    <Text style={styles.detailsText}>{height}</Text>
+                    <Text style={styles.detailsTitle}>Fitness Goal</Text>
+                    <Text style={styles.detailsText}>{goal}</Text>
+                    <Text style={styles.detailsTitle}>Fitness Level</Text>
+                    <Text style={styles.detailsText}>{level}</Text>
+                    <Text style={styles.detailsTitle}>Medical Condition</Text>
+                    <Text style={styles.detailsText}>{medical}</Text>
+                    <Text style={styles.detailsTitle}>Start Date</Text>
+                    <Text style={styles.detailsText}>{startDateString}</Text>
+                    <Text style={styles.detailsTitle}>End Date</Text>
+                    <Text style={styles.detailsText}>{endDateString}</Text>
+                    {/* May insert more Coachee details if needed */}
+                </View>
+            </ScrollView>
         </View>
     )
 }
@@ -136,7 +146,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#D9D9D9',
         width: '90%',
         marginVertical: scale(15),
-        borderRadius: scale(20)
+        borderRadius: scale(20),
+        alignSelf: 'center'
     },
     headerText: {
         fontSize: scale(36),
@@ -151,6 +162,8 @@ const styles = StyleSheet.create({
         padding: scale(15),
         borderWidth: 2,
         borderRadius: scale(36),
+        alignSelf: 'center',
+        marginBottom: scale(30),
     },
     detailsTitle: {
         fontFamily: 'Inter-SemiBold',
@@ -175,6 +188,9 @@ const styles = StyleSheet.create({
         height: scale(100),
         backgroundColor: 'white',
         borderRadius: scale(75),
+    },
+    scrollContainer: {
+        width: '100%',
     },
 });
 
