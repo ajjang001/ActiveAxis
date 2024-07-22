@@ -1,4 +1,4 @@
-import CompetitionType from "./CompetitionType";
+import AchievementType from "./AchievementType";
 import { db, storage } from '../firebase/firebaseConfig';
 import { getDocs, getDoc, deleteDoc, collection, query, where, orderBy, addDoc, doc, updateDoc } from 'firebase/firestore';
 
@@ -10,7 +10,7 @@ class Achievements{
     _achievementID;
     _achievementName;
     _achievementPicture;
-    _competitionType;
+    _achievementType;
     _description;
     _maxProgress;
 
@@ -19,14 +19,14 @@ class Achievements{
     get achievementID() {return this._achievementID;}
     get achievementName() {return this._achievementName;}
     get achievementPicture() {return this._achievementPicture;}
-    get competitionType() {return this._competitionType;}
+    get achievementType() {return this._achievementType;}
     get description() {return this._description;}
     get maxProgress() {return this._maxProgress;}
 
     set achievementID(achievementID) {this._achievementID = achievementID;}
     set achievementName(achievementName) {this._achievementName = achievementName;}
     set achievementPicture(achievementPicture) {this._achievementPicture = achievementPicture;}
-    set competitionType(competitionType) {this._competitionType = competitionType;}
+    set achievementType(achievementType) {this._achievementType = achievementType;}
     set description(description) {this._description = description;}
     set maxProgress(maxProgress) {this._maxProgress = maxProgress;}
 
@@ -56,7 +56,7 @@ class Achievements{
                 a.achievementID = docSnap.id;
                 a.achievementName = d.achievementName;
                 a.achievementPicture = await this.getURL(d.achievementPicture);
-                a.competitionType = await new CompetitionType().getCompetitionType(d.competitionTypeID);
+                a.achievementType = await new AchievementType().getAchievementType(d.achievementTypeID);
                 a.description = d.description;
                 a.maxProgress = d.maxProgress;
 
@@ -74,12 +74,12 @@ class Achievements{
 
     async getListOfAchievements() {
         try {
-            const types = await new CompetitionType().getCompetitionTypes();
+            const types = await new AchievementType().getAchievementTypes();
             let achArray = [];
     
-            // Get the achievements for each competition type
+            // Get the achievements for each achievement type
             for (const type of types) {
-                const q = query(collection(db, "achievements"),  where("competitionTypeID", "==", type.competitionTypeID), orderBy("maxProgress", 'asc'));
+                const q = query(collection(db, "achievements"),  where("achievementTypeID", "==", type.achievementTypeID), orderBy("maxProgress", 'asc'));
                 const querySnapshot = await getDocs(q);
     
                 let dataArr = [];
@@ -91,7 +91,7 @@ class Achievements{
                     a.achievementID = doc.id;
                     a.achievementName = d.achievementName;
                     a.achievementPicture = await this.getURL(d.achievementPicture);
-                    a.competitionType = type.competitionTypeName;
+                    a.achievementType = type.achievementTypeName;
                     a.description = d.description;
                     a.maxProgress = d.maxProgress;
                     
@@ -104,7 +104,7 @@ class Achievements{
                 dataArr.sort((a, b) => a.maxProgress - b.maxProgress); 
 
                 // add to achArray
-                achArray.push({ id: type.competitionTypeID, type: type.competitionTypeName, data: dataArr });
+                achArray.push({ id: type.achievementTypeID, type: type.achievementTypeName, data: dataArr });
             }
     
             return achArray;
@@ -163,7 +163,7 @@ class Achievements{
                 achievementName: name,
                 achievementPicture: photoPath,
                 description: description,
-                competitionTypeID: typeID,
+                achievementTypeID: typeID,
                 maxProgress: target
             });
 
@@ -234,7 +234,7 @@ class Achievements{
             await updateDoc(docRef, {
                 achievementName: name,
                 description: description,
-                competitionTypeID: typeID,
+                achievementTypeID: typeID,
                 maxProgress: target
             });
 

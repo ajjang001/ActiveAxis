@@ -92,10 +92,10 @@ const AchievementDetailsPage = ({navigation, route}) => {
                 <Text style ={styles.detailsInput}>{achievement ? achievement.description : ''}</Text>
 
                 <Text style={styles.detailsTitle}>Type:</Text>
-                <Text style={styles.detailsInput}>{achievement ? achievement.competitionType : ''}</Text>
+                <Text style={styles.detailsInput}>{achievement ? achievement.achievementType : ''}</Text>
                 
                 <Text style={styles.detailsTitle}>Achievement Target:</Text>
-                <Text style={styles.detailsInput}>{achievement ? achievement.maxProgress+(achievement.competitionType === 'Running' ? ' meter' : '') : ''}</Text>
+                <Text style={styles.detailsInput}>{achievement ? achievement.maxProgress+(achievement.achievementType === 'Running' ? ' meter' : '') : ''}</Text>
             </View>
 
             <View style = {styles.buttonsView}>

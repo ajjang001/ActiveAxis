@@ -1,5 +1,5 @@
 import Achievements from '../model/Achievements.js';
-import CompetitionType from '../model/CompetitionType.js';
+import AchievementType from '../model/AchievementType.js';
 
 class CreateAchievementPresenter{
     constructor(view){
@@ -18,10 +18,10 @@ class CreateAchievementPresenter{
             const photo = this.view.photo;
             
 
-            if (name === "" || description === "" || target === "") {
-                throw new Error("Please fill out all fields.");
-            }else if (photo === null) {
+            if (photo === null) {
                 throw new Error("Please upload an image.");
+            }else if (name === "" || description === "" || target === "") {
+                throw new Error("Please fill out all fields.");
             }else if (isNaN(target)) {
                 throw new Error("Target must be a number.");
             } else if (parseFloat(target) < 0) {
@@ -38,9 +38,9 @@ class CreateAchievementPresenter{
         }
     }
 
-    async getCompetitionTypes(){
+    async getAchievementTypes(){
         try{
-            this.view.setOptions(await new CompetitionType().getCompetitionTypes());
+            this.view.setOptions(await new AchievementType().getAchievementTypes());
         }catch(error){
             throw new Error (error);
         }

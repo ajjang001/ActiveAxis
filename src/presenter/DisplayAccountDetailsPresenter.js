@@ -1,15 +1,14 @@
-
 import User from '../model/User.js';
 
-class DisplayUsersPresenter{
+class DisplayAccountDetailsPresenter{
     constructor (view){
         this.view = view;
         this.user = new User();
     }
 
-    async displayUsers(){
+    async viewAccountDetails(userEmail){
         try{
-            this.view.updateUserList(await this.user.getUserList());
+            this.view.viewAccountDetails(await this.user.getCoacheeDetails(userEmail));
         }catch(error){
             throw new Error(error);
         }
@@ -18,4 +17,4 @@ class DisplayUsersPresenter{
 
 }
 
-export default DisplayUsersPresenter;
+export default DisplayAccountDetailsPresenter;

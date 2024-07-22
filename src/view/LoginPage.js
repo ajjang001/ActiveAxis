@@ -7,7 +7,6 @@ import LoginPresenter from '../presenter/LoginPresenter';
 import DisplayAboutActiveAxisPresenter from '../presenter/DisplayAboutActiveAxisPresenter';
 
 import {MessageDialog, LoadingDialog } from '../components/Modal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -36,77 +35,12 @@ const LoginPage = ({navigation})=>{
         setIsLoading(b);
     }
 
-    const loadLogo = async ()=>{
-        try{
-            changeLoadingVisible(true);
-            await new DisplayAboutActiveAxisPresenter({changeLogoURL: setLogo}).displayLogoURL();
-        }catch(e){
-            changeModalVisible(true, e.message);
-        }finally{
-            changeLoadingVisible(false);
-        }
-    };
-     
-    // Check User Session function
-    const checkUserSession = async () =>{
-        // Remove remember me
-        //await AsyncStorage.removeItem('remember');
+    // change popup/modal visible
+    const changeModalVisible = (b, m)=>{
+        setModalMsg(m);
+        setIsModalVisible(b);
+    }
 
-        // Display loading screen
-        changeLoadingVisible(true);
-        try{
-            // Check if user is logged in
-            await new LoginPresenter({updateLoginAcc: setLoginAccount, updateLoginType: setLoginType}).checkSession();
-        }catch(e){
-            // Display error message
-            changeModalVisible(true, e.message);
-        }finally{
-            // Hide loading screen
-            changeLoadingVisible(false);
-        }
-    };
-
-
-    // Check if User logged in
-    useEffect(()=>{
-        loadLogo();
-        checkUserSession();
-    },[]);
-
-    // Process Login function
-    const processLogin = async (email, password, loginType) => {
-        // Display loading screen
-        changeLoadingVisible(true);
-        try{
-            // Call the presenter to process the login
-            await new LoginPresenter({updateLoginAcc: setLoginAccount}).processLogin(email, password, loginType);
-        }catch(e){
-            // Display error message
-            changeModalVisible(true, e.message);
-        }finally{
-            // Hide loading screen
-            changeLoadingVisible(false);
-        }
-
-        
-    };
-
-    // Redirection when account is set and ready to login
-    useEffect(()=>{
-        if(loginAccount !== null){
-            if(loginType === "u"){
-                navigation.navigate('UserHomePage', {user:loginAccount});
-            }
-            if(loginType === "c"){
-                navigation.navigate('CoachHomePage', {coach:loginAccount});
-            }
-            if(loginType === "a"){
-                navigation.navigate('SystemAdminHomePage', {admin:loginAccount});
-            }
-        }
-    },[loginAccount]);
-
-    
     // Dropdown - Login type
     const dropdownOpt = [
         {label: 'USER', value:'u'},
@@ -129,14 +63,105 @@ const LoginPage = ({navigation})=>{
         );
     };
 
-    // change popup/modal visible
-    const changeModalVisible = (b, m)=>{
-        setModalMsg(m);
-        setIsModalVisible(b);
-    }
+    const loadLogo = async ()=>{
+        try{
+            changeLoadingVisible(true);
+            await new DisplayAboutActiveAxisPresenter({changeLogoURL: setLogo}).displayLogoURL();
+        }catch(e){
+            changeModalVisible(true, e.message);
+        }finally{
+            setTimeout(()=>changeLoadingVisible(false), 1000);
+        }
+    };
+     
+    // Check User Session function
+    const checkUserSession = async () =>{
+        // Remove remember me
+        //await AsyncStorage.removeItem('remember');
+
+        try{
+            // Display loading screen
+            changeLoadingVisible(true);
+            // Check if user is logged in
+            await new LoginPresenter({updateLoginAcc: setLoginAccount, updateLoginType: setLoginType}).checkSession();
+            
+        }catch(e){
+            // Display error message
+            changeModalVisible(true, e.message);
+        }finally{
+            // Hide loading screen
+            setTimeout(()=>changeLoadingVisible(false), 1000);
+        }
+    };
+
+
+    
+
+    // Process Login function
+    const processLogin = async (email, password, loginType) => {
+        // Display loading screen
+        changeLoadingVisible(true);
+        try{
+            // Call the presenter to process the login
+            await new LoginPresenter({updateLoginAcc: setLoginAccount}).processLogin(email, password, loginType);
+        }catch(e){
+            // Display error message
+            changeModalVisible(true, e.message);
+        }finally{
+            // Hide loading screen
+            changeLoadingVisible(false);
+        }
+
+        
+    };
+
+    const redirect = () =>{
+        changeLoadingVisible(true);
+        if(loginAccount !== null){
+            if(loginType === "u"){
+                navigation.navigate('UserHomePage', {user:loginAccount});
+            }
+            if(loginType === "c"){
+                navigation.navigate('CoachHomePage', {coach:loginAccount});
+            }
+            if(loginType === "a"){
+                navigation.navigate('SystemAdminHomePage', {admin:loginAccount});
+            }
+        }
+        changeLoadingVisible(false);
+
+    };
+
+    
+
+    
+    
+
+    
+
+    // Check if User logged in
+    useEffect(()=>{
+        loadLogo();
+        checkUserSession();
+    },[]);
+
+    // Redirection when account is set and ready to login
+    useEffect(()=>{
+        redirect();
+    },[loginAccount]);
 
     return(
         <View style = {styles.container}>
+            <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={()=>changeModalVisible(false)}>
+                <MessageDialog
+                message = {modalMsg} 
+                changeModalVisible = {changeModalVisible} 
+                />
+            </Modal>
+
+            <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
+                <LoadingDialog />
+            </Modal>
             
             
             <View style = {styles.topContainer}>
@@ -184,16 +209,7 @@ const LoginPage = ({navigation})=>{
                     <Text style={styles.loginButtonText}>LOGIN</Text>
                 </TouchableOpacity>
 
-                <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={()=>changeModalVisible(false)}>
-                    <MessageDialog
-                    message = {modalMsg} 
-                    changeModalVisible = {changeModalVisible} 
-                    />
-                </Modal>
-
-                <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
-                    <LoadingDialog />
-                </Modal>
+                
 
                 <Text style={styles.privacyPolicyText}>
                     By clicking login, you agree to our 
@@ -225,6 +241,8 @@ const LoginPage = ({navigation})=>{
                     </TouchableOpacity>
                 </View>
             </View>
+
+            
 
 
             

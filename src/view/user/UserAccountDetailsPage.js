@@ -1,21 +1,24 @@
-import { View, Text, StyleSheet, Modal, Image } from "react-native"
+import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native"
 import { scale } from "../../components/scale";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { useIsFocused } from '@react-navigation/native';
 import { LoadingDialog, MessageDialog } from "../../components/Modal";
-import ViewCoacheePresenter from '../../presenter/ViewCoacheePresenter';
+import DisplayAccountDetailsPresenter from '../../presenter/DisplayAccountDetailsPresenter';
 
-const ViewCoacheeDetails = ({ route }) => {
+const UserAccountDetailsPage = ({ navigation, route }) => {
 
     const { user } = route.params;
-    const userEmail = user.user.email;
+    const userEmail = user.email;
 
-    const [coachee, setCoachee] = useState([]);
+    //check when this screen is focus
+    const isFocused = useIsFocused(); // Get the focused state of the screen
+
+    const [userDetails, setuserDetails] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
 
-    // Coachee Details
-    const [profilePicture, setprofilePicture] = useState('');
+    // User Details
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [phoneNumber, setphoneNumber] = useState('');
@@ -25,7 +28,7 @@ const ViewCoacheeDetails = ({ route }) => {
     const [height, setHeight] = useState('');
     const [goal, setGoal] = useState('');
     const [level, setLevel] = useState('');
-    {/* May insert more Coachee details if needed */ }
+
 
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
@@ -38,10 +41,10 @@ const ViewCoacheeDetails = ({ route }) => {
         setIsLoading(b);
     }
 
-    const loadCoacheeDetails = async () => {
+    const loadAccountDetails = useCallback(async () => {
         try {
             setIsLoading(true);
-            await new ViewCoacheePresenter({ loadCoacheeDetails: setCoachee }).viewCoacheeDetails(userEmail);
+            await new DisplayAccountDetailsPresenter({ viewAccountDetails: setuserDetails }).viewAccountDetails(userEmail);
             setTimeout(() => {
                 setIsLoading(false);
             }, 1500);
@@ -49,44 +52,49 @@ const ViewCoacheeDetails = ({ route }) => {
             setModalVisible(true);
             setModalMsg(error.message);
         }
-    };
+    }, []);
+
+    //refresh when redirected
+    useEffect(() => {
+        if (isFocused) {
+            loadAccountDetails();
+        }
+    }, [isFocused, loadAccountDetails]);
 
     useEffect(() => {
-        loadCoacheeDetails();
+        loadAccountDetails();
     }, []);
 
     useEffect(() => {
-        // Ensure coachee is populated before logging or using it
-        if (coachee.length > 0) {
-            setprofilePicture(coachee[0].user.profilePicture)
-            setFullName(coachee[0].user.fullName);
-            setEmail(coachee[0].user.email);
-            setphoneNumber(coachee[0].user.phoneNumber);
-            if (coachee[0].user.gender == 'm') {
+        // Ensure user is populated before logging or using it
+        if (userDetails.length > 0) {
+            setFullName(userDetails[0].user.fullName);
+            setEmail(userDetails[0].user.email);
+            setphoneNumber(userDetails[0].user.phoneNumber);
+            if (userDetails[0].user.gender == 'm') {
                 setGender("Male");
             }
             else {
                 setGender("Female")
             }
-            setWeight(coachee[0].user.weight + "kg");
-            setHeight(coachee[0].user.height + "cm");
-            setGoal(coachee[0].user.fitnessGoal);
-            setLevel(coachee[0].user.fitnessLevel);
-            if (coachee[0].user.hasMedical == false) {
+            setWeight(userDetails[0].user.weight + "kg");
+            setHeight(userDetails[0].user.height + "cm");
+            setGoal(userDetails[0].user.fitnessGoal);
+            setLevel(userDetails[0].user.fitnessLevel);
+            if (userDetails[0].user.hasMedical == false) {
                 setMedical("No");
             }
             else {
                 setMedical("Yes")
             }
-            {/* May insert more Coachee details if needed */ }
-            //console.log({ coachee });
+            {/* May insert more user details if needed */ }
         }
-    }, [coachee]);
+    }, [userDetails]);
 
     return (
         <View style={styles.container}>
-            <View style={styles.headerBox}>
-                <Text style={styles.headerText}>Coachee Name Details</Text>
+            <View style={styles.headerView}>
+                <Text style={styles.headerText}>Account Details</Text>
             </View>
             <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
                 <LoadingDialog />
@@ -95,19 +103,12 @@ const ViewCoacheeDetails = ({ route }) => {
                 <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
             </Modal>
             <View style={styles.detailsBox}>
-                {profilePicture !== '' ? (
-                    <View style={styles.pictureContainer}>
-                        <Image source={{ uri: profilePicture }} resizeMode='stretch' style={styles.coacheeImage} />
-                    </View>
-                ) : (
-                    <LoadingDialog />
-                )}
                 <Text style={styles.detailsTitle}>Name</Text>
                 <Text style={styles.detailsText}>{fullName}</Text>
-                <Text style={styles.detailsTitle}>Gender</Text>
-                <Text style={styles.detailsText}>{gender}</Text>
                 <Text style={styles.detailsTitle}>Email</Text>
                 <Text style={styles.detailsText}>{email}</Text>
+                <Text style={styles.detailsTitle}>Gender</Text>
+                <Text style={styles.detailsText}>{gender}</Text>
                 <Text style={styles.detailsTitle}>Phone Number</Text>
                 <Text style={styles.detailsText}>{phoneNumber}</Text>
                 <Text style={styles.detailsTitle}>Weight</Text>
@@ -120,30 +121,31 @@ const ViewCoacheeDetails = ({ route }) => {
                 <Text style={styles.detailsText}>{level}</Text>
                 <Text style={styles.detailsTitle}>Medical Condition</Text>
                 <Text style={styles.detailsText}>{medical}</Text>
-                {/* May insert more Coachee details if needed */}
             </View>
+            <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate("UserUpdateAccountDetailsPage", { user, userDetails })}>
+                <Text style={styles.editText}>Edit</Text>
+            </TouchableOpacity>
         </View>
     )
 }
+export default UserAccountDetailsPage;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#C42847',
         alignItems: 'center',
     },
-    headerBox: {
-        backgroundColor: '#D9D9D9',
-        width: '90%',
-        marginVertical: scale(15),
-        borderRadius: scale(20)
+    headerView: {
+        backgroundColor: '#E28413',
+        width: '100%',
+        height: '8%',
     },
     headerText: {
         fontSize: scale(36),
         fontFamily: 'League-Spartan',
         fontWeight: 'bold',
         textAlign: 'center',
-        marginVertical: scale(10),
+        marginVertical: scale(15),
     },
     detailsBox: {
         width: '90%',
@@ -151,10 +153,13 @@ const styles = StyleSheet.create({
         padding: scale(15),
         borderWidth: 2,
         borderRadius: scale(36),
+        marginTop: scale(20),
+        borderColor: '#C42847',
     },
     detailsTitle: {
         fontFamily: 'Inter-SemiBold',
         fontSize: scale(16),
+        marginVertical: scale(2),
     },
     detailsText: {
         fontFamily: 'Inter',
@@ -165,17 +170,19 @@ const styles = StyleSheet.create({
         borderRadius: scale(8),
         backgroundColor: 'white',
     },
-    pictureContainer: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    coacheeImage: {
-        width: scale(100),
-        height: scale(100),
-        backgroundColor: 'white',
-        borderRadius: scale(75),
-    },
-});
+    editButton: {
+        borderWidth: 1,
+        backgroundColor: '#E28413',
+        paddingHorizontal: scale(50),
+        paddingVertical: scale(5),
+        marginTop: scale(25),
 
-export default ViewCoacheeDetails;
+    },
+    editText: {
+        color: 'white',
+        textAlign: 'center',
+        fontFamily: 'Inter',
+        fontWeight: 'bold',
+        fontSize: scale(16)
+    },
+})

@@ -180,7 +180,7 @@ const RegisterPage = ({ navigation }) => {
               checked={medicalCheck}
               onPress={() => setmedicalCheck(!medicalCheck)}
               title={
-                <Text style={{ marginLeft: 10, maxWidth:'80%' }}>
+                <Text style={{ marginLeft: scale(10), maxWidth:'80%' }}>
                   I have a medical condition that might affect my ability to exercise.
                 </Text>}
               iconType="material-community"

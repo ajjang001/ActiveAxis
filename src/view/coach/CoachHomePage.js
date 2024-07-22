@@ -10,7 +10,7 @@ import { LoadingDialog } from '../../components/Modal';
 import { app, auth, db, storage } from '../../firebase/firebaseConfig';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-const CoachHomePage = ({ route }) => {
+const CoachHomePage = ({ navigation, route }) => {
     
     const { coach } = route.params;
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -83,17 +83,17 @@ const CoachHomePage = ({ route }) => {
                     enableSwipeMonths={true}
                     theme={{
                         calendarBackground: '#E2E2E2',
-                        textSectionTitleColor: '#E28413',
+                        textSectionTitleColor: 'white',
 
                         textSectionTitleDisabledColor: 'red',
-                        selectedDayBackgroundColor: 'orange',
-                        selectedDayTextColor: 'yellow',
+                        // selectedDayBackgroundColor: 'orange',
+                        // selectedDayTextColor: 'yellow',
                         todayTextColor: '#83242D',
-                        dayTextColor: 'black',
+                        // dayTextColor: 'black',
                         arrowColor: 'white',
                         disabledArrowColor: 'gray',
-                        monthTextColor: 'green',
-                        indicatorColor: 'blue',
+                        // monthTextColor: 'green',
+                        // indicatorColor: 'blue',
                         textDayFontWeight: 'bold',
                         textMonthFontWeight: 'bold',
                         textDayHeaderFontWeight: '300',
@@ -106,7 +106,7 @@ const CoachHomePage = ({ route }) => {
             </View>
             <View style = {styles.planDirectView}>
 
-                <TouchableOpacity style = {styles.planDirectButton}>
+                <TouchableOpacity onPress = {()=>navigation.navigate('CoachListOfFitnessPlansPage', {coach})} style = {styles.planDirectButton}>
                     
                     <ImageBackground imageStyle = {styles.imageStyle} resizeMode='stretch' source={require('../../../assets/plan_button_img.png')} >
                         <View style = {styles.buttonTextView}>
@@ -167,8 +167,7 @@ const styles = StyleSheet.create({
         marginHorizontal: scale(20)
     },
     imageStyle:{
-        borderRadius:scale(20), 
-        opacity:0.9,
+        borderRadius:scale(20)
     },
     buttonTextView:{
         height:scale(120),
@@ -180,9 +179,8 @@ const styles = StyleSheet.create({
         
         paddingHorizontal: scale(20),
 
-        fontFamily: 'Fuzzy-Bubbles',
-        fontWeight: 'bold',
-        fontSize: scale(23),
+        fontFamily: 'Poppins-SemiBold',
+        fontSize: scale(20),
         textAlign:'right',
 
 

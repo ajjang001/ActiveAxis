@@ -13,7 +13,7 @@ const EditAchievementPage = ({ navigation, route }) => {
   const {achievement} = route.params;
   
   const [photo, setPhoto] = useState(achievement.achievementPicture);
-  const [competitionType, setCompetitionType] = useState(1);
+  const [achievementType, setAchievementType] = useState(1);
   const [details, setDetails] = useState(achievement.description);
   const [name, setName] = useState(achievement.achievementName);
   const [target, setTarget] = useState(achievement.maxProgress);
@@ -70,12 +70,12 @@ const renderItem=(item)=>{
   return(
     <TouchableOpacity activeOpacity={.7} style={styles.item}
     onPress={()=>{
-        setCompetitionType(item.competitionTypeID);
+        setAchievementType(item.achievementTypeID);
 
         dropdownRef.current.close();
     }}
     >
-            <Text style={styles.itemText}>{item.competitionTypeName}</Text>
+            <Text style={styles.itemText}>{item.achievementTypeName}</Text>
     </TouchableOpacity> 
     );
   };
@@ -84,7 +84,7 @@ const renderItem=(item)=>{
     try{
       changeLoadingVisible(true);
       setDropdownOpt([]);
-      await new EditAchievementPresenter({setOptions:setDropdownOpt}).getCompetitionTypes();
+      await new EditAchievementPresenter({setOptions:setDropdownOpt}).getAchievementTypes();
     }catch(error){
       changeModalVisible(true, error.message);
     }finally{
@@ -95,8 +95,8 @@ const renderItem=(item)=>{
   const saveHandler = async () => {
     try{
         changeLoadingVisible(true);
-        const typeName = dropdownOpt.find((item) => item.competitionTypeID === competitionType).competitionTypeName;
-        await new EditAchievementPresenter({type:{typeID: competitionType,typeName: typeName}, name:name, description:details, target:target, photo: (photo === achievement.achievementPicture ? null : photo) , oldAchievement: achievement}).editAchievement();
+        const typeName = dropdownOpt.find((item) => item.achievementTypeID === achievementType).achievementTypeName;
+        await new EditAchievementPresenter({type:{typeID: achievementType,typeName: typeName}, name:name, description:details, target:target, photo: (photo === achievement.achievementPicture ? null : photo) , oldAchievement: achievement}).editAchievement();
         navigation.navigate('AchievementsPage', {refresh: true});
     }catch(e){
         let errorMessage = e.message;
@@ -115,8 +115,8 @@ const renderItem=(item)=>{
 
   useEffect(() => {
     if(dropdownOpt.length > 0){
-        const type = dropdownOpt.find((item) => item.competitionTypeName === achievement.competitionType);
-        setCompetitionType(type.competitionTypeID);
+        const type = dropdownOpt.find((item) => item.achievementTypeName === achievement.achievementType);
+        setAchievementType(type.achievementTypeID);
     }
   }, [dropdownOpt]);
 
@@ -191,12 +191,12 @@ const renderItem=(item)=>{
           selectedTextStyle={styles.selectedTextStyle}
           data={dropdownOpt}
           maxHeight={300}
-          labelField="competitionTypeName"
-          valueField="competitionTypeID"
+          labelField="achievementTypeName"
+          valueField="achievementTypeID"
           placeholder="Select Type"
-          value={competitionType}
+          value={achievementType}
           onChange={type => {
-              setCompetitionType(type);
+              setAchievementType(type);
           }}
           renderItem={renderItem}
           ref={dropdownRef}
