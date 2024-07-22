@@ -13,6 +13,7 @@ import {
   FIREBASE_MEASUREMENT_ID
 } from '@env';
 
+
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: FIREBASE_API_KEY,
