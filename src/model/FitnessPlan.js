@@ -51,6 +51,20 @@ class FitnessPlan{
         }
     }
 
+    async getFitnessLevel (){
+        try{
+            const querySnapshot = await getDocs(collection(db, 'fitnesslevel'));
+            const level = [];
+            querySnapshot.forEach(doc => {
+                level.push({id: doc.data().levelID, name: doc.data().levelName});
+            });
+
+            return level;
+        }catch(e){
+            throw new Error(e);
+        }
+    }
+
     async createFitnessPlan(coach, photo, goalType, details, name, medicalCheck, routines){
         try{
 

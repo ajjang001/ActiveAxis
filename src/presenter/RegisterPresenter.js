@@ -1,5 +1,6 @@
 import User from '../model/User';
 import Coach from '../model/Coach';
+import FitnessPlan from '../model/FitnessPlan';
 
 class RegisterPresenter {
   constructor(view) {
@@ -7,11 +8,29 @@ class RegisterPresenter {
     this.account = null;
   }
 
-  async processProfiling(gender, dob, weight, height, goal, level, medicalCheck) {
+  async getGoals() {
+    try {
+      this.account = new FitnessPlan();
+      this.view.fetchGoalsData(await this.account.getGoals());
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async getLevel() {
+    try {
+      this.account = new FitnessPlan();
+      this.view.fetchLevelData(await this.account.getFitnessLevel());
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async processProfiling(gender, dob, weight, height, goal, level, medicalCheck, intervalInSeconds) {
     // Pattern to check if weight and height are numbers or decimals
     const floatPattern = /^\d+(\.\d+)?$/;
 
-    if (gender.trim() === '' || dob === null || weight.trim() === '' || height.trim() === '' || goal.trim() === '' || level.trim() === '') {
+    if (gender.trim() === '' || dob === null || weight.trim() === '' || height.trim() === '' || goal.trim() === '' || level.trim() === '' || intervalInSeconds === null) {
       // Check if all fields are filled
       throw new Error('Please complete all fields!');
     } else if (!floatPattern.test(weight)) {
@@ -20,15 +39,18 @@ class RegisterPresenter {
     } else if (!floatPattern.test(height)) {
       // Check if height is a number or decimal
       throw new Error('Please only enter numbers or decimals for height');
-    } else {
+    } else if (intervalInSeconds === 0 || intervalInSeconds < 20){
+      throw new Error('Rest Interval must be more than 20 seconds! ');
+    }
+      else {
       // Log the values
       // All good here!
-      console.log({ gender, dob, weight, height, goal, level, medicalCheck });
+      console.log({ gender, dob, weight, height, goal, level, medicalCheck, intervalInSeconds });
     }
   }
 
 
-  async processRegister(name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck) {
+  async processRegister(name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck, intervalInSeconds) {
     // To if email is in valid format
     const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     // To if name is in valid format
@@ -46,8 +68,8 @@ class RegisterPresenter {
     else if (!pattern.test(email)) {
       // Check if email is in valid format
       throw new Error('Invalid email format');
-    } 
-    else if (!phonePattern.test(phone)){
+    }
+    else if (!phonePattern.test(phone)) {
       // Check if phone number is 8 digits
       throw new Error('Please enter a valid phone number');
     }
@@ -59,7 +81,7 @@ class RegisterPresenter {
       try {
         // Call the model to register the user
         this.account = new User();
-        await this.account.register(name.trim(), email.trim(), phone.trim(), password, gender, dob, parseFloat(weight), parseFloat(height), goal, level, medicalCheck);
+        await this.account.register(name.trim(), email.trim(), phone.trim(), password, gender, dob, parseFloat(weight), parseFloat(height), goal, level, medicalCheck, intervalInSeconds);
 
       } catch (e) {
         // Throw error message
@@ -109,8 +131,8 @@ class RegisterPresenter {
     else if (!pattern.test(email)) {
       // Check if email is in valid format
       throw new Error('Invalid email format');
-    } 
-    else if (!phonePattern.test(phone)){
+    }
+    else if (!phonePattern.test(phone)) {
       // Check if phone number is 8 digits
       throw new Error('Please enter a valid phone number');
     }

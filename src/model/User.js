@@ -122,7 +122,7 @@ class User extends Account{
 
     }
 
-    async register(name, email, phone, password, gender, dob, weight, height, goal, level, medicalCheck) {
+    async register(name, email, phone, password, gender, dob, weight, height, goal, level, medicalCheck, intervalInSeconds) {
         try {
             // Create the user account in Firebase Authentication
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -181,7 +181,7 @@ class User extends Account{
                 isSuspended: false,
                 phoneNumber: phone,
                 profilePicture: "user/default_pp.png",
-                restInterval: 30,
+                restInterval: intervalInSeconds,
                 username: uname,
                 weight: weight,
             });
