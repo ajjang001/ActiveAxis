@@ -84,7 +84,6 @@ const UserAccountSettingPage = ({ navigation, route }) => {
         { label: 'App Feedbacks', onPress: () => console.log("App Feedbacks") },
         { label: 'Achievements', onPress: () => console.log("Achievements") },
         { label: 'Connect Smart Wearables', onPress: () => console.log("Connect Smart Wearables") },
-        { label: 'Delete Account', onPress: () => console.log("Delete Account") },
         { label: 'Log Out', onPress: () => changeConfirmVisible(true, 'Are you sure you want to log out?') }
     ];
 
@@ -137,10 +136,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#C42847',
+        marginTop: scale(50),
     },
     profileContainer: {
         padding: scale(20),
-        marginTop: scale(35),
         flexDirection: 'row',
     }
     ,

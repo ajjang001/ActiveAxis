@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     container:{
         flex:1,
         backgroundColor: '#C42847',
-        marginVertical: scale(50),
+        marginTop: scale(50),
     },
     textContainer:{
         padding: scale(30),
