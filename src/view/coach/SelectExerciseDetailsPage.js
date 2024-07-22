@@ -19,7 +19,7 @@ const SelectExerciseDetailsPage = ({route, navigation}) =>{
 
     const [showPicker, setShowPicker] = useState(false);
     const [alarmString, setAlarmString] = useState('');
-    const [repetition, setRepetition] = useState(1);
+    const [sets, setSets] = useState(1);
 
 
     // change popup/modal visible
@@ -55,7 +55,7 @@ const SelectExerciseDetailsPage = ({route, navigation}) =>{
     const handleAdd = ()=>{
         try{
             changeLoadingVisible(true);
-            new CreateFitnessPlanPresenter({routineIndex: routineIndex, routines: routines}).addExerciseToList(alarmString, exercise, parseInt(repetition));
+            new CreateFitnessPlanPresenter({routineIndex: routineIndex, routines: routines}).addExerciseToList(alarmString, exercise, parseInt(sets));
         
             navigation.navigate('CoachCreateFitnessPlanPage2', {
                 refresh:true,
@@ -157,13 +157,13 @@ const SelectExerciseDetailsPage = ({route, navigation}) =>{
                 </TouchableOpacity>
                 <Text style = {styles.textSubTitle}>*Note: 1 rep is equivalent to 2 seconds</Text>
 
-                <Text style = {styles.textTitle}>REPETITION</Text>
+                <Text style = {styles.textTitle}>SETS</Text>
                 <TextInput
-                    style = {styles.setRepetitionTextField}
-                    placeholder = 'Enter Repetition'
+                    style = {styles.setSetsTextField}
+                    placeholder = 'Enter sets'
                     keyboardType = 'numeric'
-                    value = {repetition.toString()}
-                    onChangeText = {(text)=>setRepetition(text)}
+                    value = {sets.toString()}
+                    onChangeText = {(text)=>setSets(text)}
                 />
                 
 
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
         borderColor: "#C2C2C2",
         color: "gray"
     },
-    setRepetitionTextField:{
+    setSetsTextField:{
         width: '50%',
         padding: scale(10),
         borderWidth: 1,

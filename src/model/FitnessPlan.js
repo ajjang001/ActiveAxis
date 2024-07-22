@@ -133,7 +133,7 @@ class FitnessPlan{
                         routineID: routineIDsList[i],
                         orderNo: j + 1,
                         duration: routines[i].exercisesList[j].duration,
-                        repetition: routines[i].exercisesList[j].repetition
+                        sets: routines[i].exercisesList[j].sets
                     });
                 }
             }

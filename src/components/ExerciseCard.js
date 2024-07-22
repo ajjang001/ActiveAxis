@@ -24,8 +24,8 @@ const ExerciseCard = (props) => {
 
             <View style = {{flexDirection:'row', alignItems:'center', gap:scale(5)}}>
                 <View style={{marginRight:scale(10)}}>
-                    <Text style = {{fontSize:scale(16), color:'#7B4D4D', fontFamily:'Poppins-Medium', textAlign:'center'}}>Repetition</Text>
-                    <Text style = {{fontSize:scale(16), color:'#7B4D4D', fontFamily:'Poppins-Medium', textAlign:'center'}}>{e.repetition}x</Text>
+                    <Text style = {{fontSize:scale(16), color:'#7B4D4D', fontFamily:'Poppins-Medium', textAlign:'center'}}>Sets</Text>
+                    <Text style = {{fontSize:scale(16), color:'#7B4D4D', fontFamily:'Poppins-Medium', textAlign:'center'}}>{e.sets}x</Text>
                 </View>
                 <View>
                     <TouchableOpacity onPress = {() => props.onDelete( index, routine)}>
