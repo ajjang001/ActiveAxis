@@ -29,6 +29,9 @@ import UserHomePage from './src/view/user/UserHomePage';
 import UserAccountSettingPage from './src/view/user/UserAccountSettingPage';
 import UserAccountDetailsPage1 from './src/view/user/UserAccountDetailsPage';
 import UserUpdateAccountDetailsPage from './src/view/user/UserUpdateAccountDetailsPage';
+import UserExerciseSettingsPage from './src/view/user/UserExerciseSettingsPage';
+import UserCompetitionPage from './src/view/user/UserCompetitionPage';
+import UserCoachPage from './src/view/user/UserCoachPage';
 
 // Coach Pages
 import CoachHomePage from './src/view/coach/CoachHomePage';
@@ -107,8 +110,8 @@ const UserTabs = ({ route }) => {
       {/* Put the pages here */}
       <userTab.Screen name="Home" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
       <userTab.Screen name="Workout" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
-      <userTab.Screen name="Competition" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
-      <userTab.Screen name="Coach" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
+      <userTab.Screen name="Competition" component={UserCompetitionPage} initialParams={{ user }} options={{ headerShown: false }} />
+      <userTab.Screen name="Coach" component={UserCoachPage} initialParams={{ user }} options={{ headerShown: false }} />
       <userTab.Screen name="Account" component={UserAccountSettingPage} initialParams={{ user }} options={{ headerShown: false }} />
     </userTab.Navigator>
   );
@@ -190,6 +193,7 @@ export default function App() {
           <Stack.Screen name="UserHomePage" component={UserTabs} options={{ headerShown: false }} />
           <Stack.Screen name="UserAccountDetailsPage1" component={UserAccountDetailsPage1} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserUpdateAccountDetailsPage" component={UserUpdateAccountDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserExerciseSettingsPage" component={UserExerciseSettingsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           {/* Add user pages here */}
 
           <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{ headerShown: false }} />
