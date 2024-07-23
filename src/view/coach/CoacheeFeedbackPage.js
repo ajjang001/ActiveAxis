@@ -88,13 +88,14 @@ const styles = StyleSheet.create({
     headerContainer: {
         width: '90%',
         marginVertical: scale(10),
+        alignSelf:'center'
     },
     headerText: {
         fontSize: scale(36),
         fontFamily: 'League-Spartan',
         fontWeight: 'bold',
         textAlign: 'center',
-        marginVertical: scale(20),
+        marginVertical: scale(15),
     },
     feedbackContainer: {
         width: '100%',
