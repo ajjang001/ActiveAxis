@@ -49,7 +49,7 @@ const CoacheeFeedbackPage = ({ route }) => {
         <View style={styles.container}>
             <ScrollView style={styles.feedbackContainer}>
                 <View style={styles.headerContainer}>
-                    <Text style={styles.headerText}>Coach Feedbacks</Text>
+                    <Text style={styles.headerText}>Coachee Feedbacks</Text>
                 </View>
                 <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
                     <LoadingDialog />
