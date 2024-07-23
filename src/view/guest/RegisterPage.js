@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Alert, KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { Dropdown } from 'react-native-element-dropdown';
 import { CheckBox } from '@rneui/themed';
 import DatePicker from 'react-native-date-picker';
+import { TimerPickerModal } from "react-native-timer-picker";
 
-
-import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
+import { LoadingDialog, MessageDialog } from "../../components/Modal";
 
 import RegisterPresenter from '../../presenter/RegisterPresenter';
 import { scale } from '../../components/scale';
@@ -18,23 +18,40 @@ const RegisterPage = ({ navigation }) => {
     { label: 'Male', value: 'm' },
     { label: 'Female', value: 'f' },
   ];
-  const goalsData = [
-    { label: 'Goal 1', value: 'Goal 1' },
-    { label: 'Goal 2', value: 'Goal 2' },
-    { label: 'Goal 3', value: 'Goal 3' },
-  ];
-  const levelData = [
-    { label: 'Beginner', value: 'Beginner' },
-    { label: 'Intermediate', value: 'Intermediate' },
-    { label: 'Advanced', value: 'Advanced' },
-  ];
-  
+  const [goalsData, setGoalsData] = useState([]);
+  const [levelData, setLevelData] = useState([]);
+
   // Modal/Display Message
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
 
   // Date Picker
   const [open, setOpen] = useState(false)
+
+  // Rest Interval Setter
+  const [showPicker, setShowPicker] = useState(false);
+  const [alarmString, setAlarmString] = useState('');
+  const [intervalInSeconds, setIntervalInSeconds] = useState(null);
+
+  const formatTime = (pickedDuration) => {
+    const { hours, minutes, seconds } = pickedDuration;
+    const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+    const displayMinutes = Math.floor(totalSeconds / 60);
+    const displaySeconds = totalSeconds % 60;
+    return `${displayMinutes} min ${displaySeconds} sec`;
+  };
+
+  const handleRestConfirm = (pickedDuration) => {
+    const { hours, minutes, seconds } = pickedDuration;
+    let totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+    if (totalSeconds > 120) {
+      totalSeconds = 120;
+    }
+    setIntervalInSeconds(totalSeconds);
+    setAlarmString(formatTime({ hours: 0, minutes: Math.floor(totalSeconds / 60), seconds: totalSeconds % 60 }));
+    setShowPicker(false);
+  };
 
   // User Info
   const [gender, setGender] = useState('');
@@ -46,28 +63,62 @@ const RegisterPage = ({ navigation }) => {
   const [medicalCheck, setmedicalCheck] = useState(false);
 
   // change popup/modal visible
-  const changeModalVisible = (b, m)=>{
-      setModalMsg(m);
-      setIsModalVisible(b);
+  const changeModalVisible = (b, m) => {
+    setModalMsg(m);
+    setModalVisible(b);
+  }
+
+  // change popup/modal visible
+  const changeLoadingVisible = (b) => {
+    setIsLoading(b);
   }
 
   // Date formatter
   const formatDate = (date) => {
     if (!date) return "";
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    };
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
 
-  const processProfiling = async (gender, dob, weight, height, goal, level, medicalCheck) => {
+  useEffect(() => {
+    fetchGoalsData();
+    fetchLevelData();
+  }, []);
+
+  const fetchGoalsData = async () => {
     try {
-        // Call the presenter to process the profiling
-        await new RegisterPresenter().processProfiling(gender, dob ? dob.toISOString() : null, weight, height, goal, level, medicalCheck);
+      setIsLoading(true);
+      await new RegisterPresenter({ fetchGoalsData: setGoalsData }).getGoals();
+      setIsLoading(false);
+    } catch (error) {
+      setModalVisible(true);
+      setModalMsg(error.message);
+      console.error("Error fetching goals data: ", error);
+    }
+  };
 
-        // Navigate to the next screen
-        navigation.navigate('Register2', { gender, dob : dob ? dob.toISOString() : null, weight, height, goal, level, medicalCheck });
+  const fetchLevelData = async () => {
+    try {
+      setIsLoading(true);
+      await new RegisterPresenter({ fetchLevelData: setLevelData }).getLevel();
+      setIsLoading(false);
+    } catch (error) {
+      setModalVisible(true);
+      setModalMsg(error.message);
+      console.error("Error fetching level data: ", error);
+    }
+  };
+
+  const processProfiling = async (gender, dob, weight, height, goal, level, medicalCheck, intervalInSeconds) => {
+    try {
+      // Call the presenter to process the profiling
+      await new RegisterPresenter().processProfiling(gender, dob ? dob.toISOString() : null, weight, height, goal, level, medicalCheck, intervalInSeconds);
+
+      // Navigate to the next screen
+      navigation.navigate('Register2', { gender, dob: dob ? dob.toISOString() : null, weight, height, goal, level, medicalCheck, intervalInSeconds });
     } catch (e) {
       // Show error message
       changeModalVisible(true, e.message);
@@ -79,6 +130,12 @@ const RegisterPage = ({ navigation }) => {
       style={styles.container}
       behavior="padding"
     >
+      <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+        <LoadingDialog />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+        <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
+      </Modal>
       <View style={styles.orange}>
         <View style={styles.container2}>
           <View style={styles.dropdownContainer}>
@@ -88,7 +145,7 @@ const RegisterPage = ({ navigation }) => {
               data={genderData}
               labelField="label"
               valueField="value"
-              placeholder="Choose your gender"
+              placeholder="Select Gender"
               value={gender}
               onChange={item => {
                 setGender(item.value);
@@ -98,27 +155,25 @@ const RegisterPage = ({ navigation }) => {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Date of Birth</Text>
             <TouchableOpacity onPress={() => setOpen(true)}>
-                <View style = {styles.input}>
-                    <Text>{dob ? formatDate(dob) : "Enter your date of birth"}</Text>
-                </View>
+              <View>
+                <Text style={styles.dateContainer}>{dob ? formatDate(dob) : "Select date of birth"}</Text>
+              </View>
             </TouchableOpacity>
-
-            <DatePicker 
-                modal 
-                open = {open}
-                date = {dob || new Date()}
-                mode = 'date'
-                minimumDate={new Date(1900, 0, 1)}
-                maximumDate={new Date()}
-                onConfirm = {(date) =>{
-                    setOpen(false);
-                    setDob(date);
-                }}
-                onCancel ={() => {
-                    setOpen(false);
-                }}
+            <DatePicker
+              modal
+              open={open}
+              date={dob || new Date()}
+              mode='date'
+              minimumDate={new Date(1900, 0, 1)}
+              maximumDate={new Date()}
+              onConfirm={(date) => {
+                setOpen(false);
+                setDob(date);
+              }}
+              onCancel={() => {
+                setOpen(false);
+              }}
             />
-
             <Text style={styles.label}>Weight (KG)</Text>
             <TextInput
               placeholder="Enter your weight"
@@ -141,13 +196,13 @@ const RegisterPage = ({ navigation }) => {
             />
           </View>
           <View style={styles.dropdownContainer}>
-            <Text style={styles.label}>Goals</Text>
+            <Text style={styles.label}>Fitness Goal</Text>
             <Dropdown
               style={styles.dropdown}
-              data={goalsData}
+              data={goalsData.map(goal => ({ label: goal.name, value: goal.name }))}
               labelField="label"
               valueField="value"
-              placeholder="Choose your goals"
+              placeholder="Select Goal"
               value={goal}
               onChange={item => {
                 setGoal(item.value);
@@ -155,32 +210,50 @@ const RegisterPage = ({ navigation }) => {
             />
           </View>
           <View style={styles.dropdownContainer}>
-            <Text style={styles.label}>Level</Text>
+            <Text style={styles.label}>Fitness Level</Text>
             <Dropdown
               style={styles.dropdown}
-              data={levelData}
+              data={levelData.map(level => ({ label: level.name, value: level.name }))}
               labelField="label"
               valueField="value"
-              placeholder="Choose your level"
+              placeholder="Select Level"
               value={level}
               onChange={item => {
                 setLevel(item.value);
               }}
             />
           </View>
-          <Modal transparent={true} animationType='fade' visible={isModalVisible} nRequestClose={()=>changeModalVisible(false)}>
-              <MessageDialog
-              message = {modalMsg} 
-              changeModalVisible = {changeModalVisible} 
-              />
-          </Modal>
+          <Text style={styles.label}>Rest Interval (20s - 120s)</Text>
+          <TouchableOpacity onPress={() => setShowPicker(true)} >
+            {
+              alarmString == '' ?
+                <Text style={styles.dateContainer}>Set interval</Text>
+                :
+                <Text style={styles.dateContainer}>Selected Interval: {alarmString}</Text>
+            }
 
+          </TouchableOpacity>
+          <TimerPickerModal
+            hideHours
+            visible={showPicker}
+            setIsVisible={setShowPicker}
+            onConfirm={handleRestConfirm}
+            modalTitle="Set Duration"
+            onCancel={() => setShowPicker(false)}
+            closeOnOverlayPress
+            styles={{
+              theme: "dark",
+            }}
+            modalProps={{
+              overlayOpacity: 0.2,
+            }}
+          />
           <View style={styles.checkboxContainer}>
             <CheckBox
               checked={medicalCheck}
               onPress={() => setmedicalCheck(!medicalCheck)}
               title={
-                <Text style={{ marginLeft: scale(10), maxWidth:'80%' }}>
+                <Text style={{ marginLeft: scale(10), maxWidth: '100%' }}>
                   I have a medical condition that might affect my ability to exercise.
                 </Text>}
               iconType="material-community"
@@ -189,6 +262,7 @@ const RegisterPage = ({ navigation }) => {
               checkedColor="black"
               textStyle=''
               containerStyle={{ backgroundColor: 'transparent' }}
+              wrapperStyle={styles.checkboxWrapper}
             />
           </View>
         </View>
@@ -196,8 +270,7 @@ const RegisterPage = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={() =>
-            //processProfiling(gender, age, weight, height, goal, level, medicalCheck)
-            processProfiling(gender, dob, weight, height, goal, level, medicalCheck)
+            processProfiling(gender, dob, weight, height, goal, level, medicalCheck, intervalInSeconds)
           }
           style={styles.button}
         >
@@ -213,7 +286,6 @@ export default RegisterPage;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: 'white'
   },
@@ -221,50 +293,50 @@ const styles = StyleSheet.create({
     backgroundColor: '#E28413',
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingTop: scale(40),
-    paddingBottom: scale(70),
+    paddingBottom: scale(40),
   },
   container2: {
-    backgroundColor: '#E6E6E6',
     width: '90%',
-    alignItems: 'center',
+    backgroundColor: '#E6E6E6',
+    padding: scale(15),
+    borderWidth: 2,
     borderRadius: scale(25),
-    marginTop: scale(20),
-    paddingTop: scale(10),
-    paddingBottom: scale(25),
     borderColor: '#C42847',
-    borderWidth: 3,
   },
   label: {
-    paddingLeft: scale(5),
+    fontFamily: 'Inter-SemiBold',
+    fontSize: scale(16),
     marginTop: scale(10),
-    marginBottom: scale(5),
-    fontWeight: 'bold',
+    marginBottom: scale(4),
+    marginLeft: scale(2),
   },
   inputContainer: {
-    width: '95%',
+    width: '100%',
   },
   dropdownContainer: {
-    width: '95%',
+    width: '100%',
   },
   dropdown: {
     backgroundColor: 'white',
     borderBottomColor: 'gray',
     paddingHorizontal: scale(15),
-    paddingVertical: scale(0),
+    paddingVertical: scale(2),
     borderRadius: scale(10),
+
   },
   input: {
     backgroundColor: 'white',
     paddingHorizontal: scale(15),
-    paddingVertical: scale(10),
-    borderRadius: 10,
+    paddingVertical: scale(6),
+    borderRadius: scale(10),
+    fontFamily: 'Inter',
+    fontSize: scale(16),
   },
   buttonContainer: {
-    width: '70%',
+    width: '75%',
     alignItems: 'center',
-    marginTop: scale(40),
+    marginTop: scale(30),
   },
   button: {
     backgroundColor: 'black',
@@ -272,7 +344,6 @@ const styles = StyleSheet.create({
     padding: scale(10),
     borderRadius: 25,
     alignItems: 'center',
-
   },
   buttonText: {
     color: 'white',
@@ -280,8 +351,17 @@ const styles = StyleSheet.create({
     fontSize: scale(18),
   },
   checkboxContainer: {
-    width: '100%',
+    width: '95%',
     marginTop: scale(10),
-
+    marginLeft: scale(-15),
   },
+  dateContainer: {
+    fontFamily: 'Inter',
+    fontSize: scale(16),
+    marginBottom: scale(5),
+    paddingHorizontal: scale(15),
+    paddingVertical: scale(10),
+    borderRadius: scale(8),
+    backgroundColor: 'white',
+  }
 })

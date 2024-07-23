@@ -17,6 +17,11 @@ class Coach extends Account {
 
     constructor() {
         super();
+        this.#isPending = false;
+        this.#chargePerMonth = 0;
+        this.#certificate = '';
+        this.#id = '';
+        this.#resume = '';
     }
 
     get isPending() { return this.#isPending; }

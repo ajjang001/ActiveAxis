@@ -81,7 +81,6 @@ const CoachAccountSettingPage = ({ navigation, route }) => {
         { label: 'Account Details', onPress: () => console.log("Account Details") },
         { label: 'Coachees Feedback', onPress: () => navigation.navigate('CoacheeFeedbackPage', { coach }) },
         { label: 'App Feedbacks', onPress: () => console.log("App Feedbacks") },
-        { label: 'Delete Account', onPress: () => console.log("Delete Account") },
         { label: 'Log Out', onPress: () => changeConfirmVisible(true, 'Are you sure you want to log out?') }
     ];
 

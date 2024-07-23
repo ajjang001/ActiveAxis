@@ -47,16 +47,17 @@ const CoacheeFeedbackPage = ({ route }) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.headerContainer}>
-                <Text style={styles.headerText}>Coach Feedbacks</Text>
-            </View>
-            <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
-                <LoadingDialog />
-            </Modal>
-            <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
-                <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
-            </Modal>
             <ScrollView style={styles.feedbackContainer}>
+                <View style={styles.headerContainer}>
+                    <Text style={styles.headerText}>Coachee Feedbacks</Text>
+                </View>
+                <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+                    <LoadingDialog />
+                </Modal>
+                <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+                    <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
+                </Modal>
+
                 {feedback.length === 0 ? (
                     isLoading ? (
                         <ActivityIndicator size="large" color="white" />
@@ -96,10 +97,10 @@ const styles = StyleSheet.create({
         marginVertical: scale(20),
     },
     feedbackContainer: {
-        width: '95%',
+        width: '100%',
     },
-    noFeedbackText:{
-        fontFamily:'Inter',
+    noFeedbackText: {
+        fontFamily: 'Inter',
         fontSize: scale(20),
         fontWeight: 'bold',
         color: 'red',

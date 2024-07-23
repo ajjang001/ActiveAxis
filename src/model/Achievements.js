@@ -14,7 +14,14 @@ class Achievements{
     _description;
     _maxProgress;
 
-    constructor () {}
+    constructor () {
+        this._achievementID = "";
+        this._achievementName = "";
+        this._achievementPicture = "";
+        this._achievementType = "";
+        this._description = "";
+        this._maxProgress = 0;
+    }
 
     get achievementID() {return this._achievementID;}
     get achievementName() {return this._achievementName;}

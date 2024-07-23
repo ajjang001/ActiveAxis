@@ -6,7 +6,10 @@ class AchievementType{
     _achievementTypeID;
     _achievementTypeName;
 
-    constructor (){}
+    constructor (){
+        this._achievementTypeID = 0;
+        this._achievementTypeName = "";
+    }
 
     get achievementTypeID() {return this._achievementTypeID;}
     get achievementTypeName() {return this._achievementTypeName;}

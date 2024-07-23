@@ -38,12 +38,16 @@ const AccountListCard = (props)=>{
                                 </Text>
                             </TouchableOpacity>
 
-                            {props.numOfButtons <= 1 ? null :(
+
+                            {props.numOfButtons <= 1  ? null :(
                                 
                                 <TouchableOpacity onPress = { (account.isSuspended ? () => props.unsuspendHandler() : () => props.suspendHandler() ) } activeOpacity={0.7} style = {[{width:scale(100)}, (account.isSuspended ? {backgroundColor: "#E28413"} : {backgroundColor: "#00AD3B"})]} >
                                     <Text style={style.suspendText}>{account.isSuspended ? "UNSUSPEND" : "SUSPEND"}</Text>
                                 </TouchableOpacity>
                             )}
+                            
+
+
                             
                         </View>
                     </View>

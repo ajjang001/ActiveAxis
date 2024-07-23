@@ -45,14 +45,14 @@ class WorkoutRoutine{
         clone.routineID = this.routineID;
         clone.fitnessPlanID = this.fitnessPlanID;
         clone.dayNumber = this.dayNumber;
-        clone.exercisesList = this.exercisesList.map(exercise => ({duration: exercise.duration, repetition:exercise.repetition, exercise: exercise.exercise.clone()}));
+        clone.exercisesList = this.exercisesList.map(exercise => ({duration: exercise.duration, sets:exercise.sets, exercise: exercise.exercise.clone()}));
         clone.estCaloriesBurned = this.estCaloriesBurned;
         clone.isRestDay = this.isRestDay;
         return clone;
     }
 
-    addExerciseToList(alarmString, exercise, repetition){
-        this._exercisesList.push({duration: alarmString, repetition, exercise});
+    addExerciseToList(alarmString, exercise, sets){
+        this._exercisesList.push({duration: alarmString, sets, exercise});
     }
 
     async calculateCaloriesBurned(){
@@ -63,7 +63,7 @@ class WorkoutRoutine{
                 const duration = exercise.duration.split(':');
                 const minutes = parseInt(duration[0]);
                 const seconds = parseInt(duration[1]) + (minutes * 60);
-                query += `- ${exercise.exercise.exerciseName} (${exercise.repetition} repetitions x ${seconds} seconds)\n`;
+                query += `- ${exercise.exercise.exerciseName} (${exercise.sets} sets x ${seconds} seconds)\n`;
             }
 
             console.log(query);

@@ -142,11 +142,12 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
                             return(
                                 <AccountListCard 
                                 key = {index}
-                                numOfButtons = {2}
+                                numOfButtons = {3}
                                 account = {user.user}
                                 suspendHandler = {()=>{setSelectedUser(user); setWantSuspend(true) ;changeConfirmVisible(true, 'Are you sure you want to suspend this user?')}}
                                 unsuspendHandler = {()=>{setSelectedUser(user); setWantSuspend(false); changeConfirmVisible(true, 'Are you sure you want to unsuspend this user?')}}
                                 detailsHandler = { ()=>{navigation.navigate('UserAccountDetailsPage', {user} )} }
+                                
                                 />
                             );
                         })}

@@ -5,7 +5,7 @@ import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordRese
 import axios from 'axios';
 import Account from './Account';
 
-class User extends Account{
+class User extends Account {
     #hasMedical;
     #weight;
     #height;
@@ -16,21 +16,27 @@ class User extends Account{
 
     constructor() {
         super();
+        this.#hasMedical = false;
+        this.#weight = 0;
+        this.#height = 0;
+        this.#fitnessGoal = "";
+        this.#fitnessLevel = "";
+        this.#restInterval = 0;
     }
 
-    get hasMedical(){return this.#hasMedical;}
-    get weight(){return this.#weight;}
-    get height(){return this.#height;}
-    get fitnessGoal(){return this.#fitnessGoal;}
-    get fitnessLevel(){return this.#fitnessLevel;}
-    get restInterval(){return this.#restInterval;}
-    
-    set hasMedical(hasMedical){this.#hasMedical = hasMedical;}
-    set weight(weight){this.#weight = weight;}
-    set height(height){this.#height = height;}
-    set fitnessGoal(fitnessGoal){this.#fitnessGoal = fitnessGoal;}
-    set fitnessLevel(fitnessLevel){this.#fitnessLevel = fitnessLevel;}
-    set restInterval(restInterval){this.#restInterval = restInterval;}
+    get hasMedical() { return this.#hasMedical; }
+    get weight() { return this.#weight; }
+    get height() { return this.#height; }
+    get fitnessGoal() { return this.#fitnessGoal; }
+    get fitnessLevel() { return this.#fitnessLevel; }
+    get restInterval() { return this.#restInterval; }
+
+    set hasMedical(hasMedical) { this.#hasMedical = hasMedical; }
+    set weight(weight) { this.#weight = weight; }
+    set height(height) { this.#height = height; }
+    set fitnessGoal(fitnessGoal) { this.#fitnessGoal = fitnessGoal; }
+    set fitnessLevel(fitnessLevel) { this.#fitnessLevel = fitnessLevel; }
+    set restInterval(restInterval) { this.#restInterval = restInterval; }
 
     async login(email, password) {
         try {
@@ -51,11 +57,11 @@ class User extends Account{
                     //    handleCodeInApp: true,
                     //    url: "https://activeaxis-c49ed.firebaseapp.com",
                     //});
-                    
+
                     // Account is not verified
                     throw new Error('Please verify your email first\nCheck your email for the verification link.');
-                } 
-                else if (is){
+                }
+                else if (is) {
                     // Account is suspended
                     throw new Error('Your account is suspended\nPlease contact customer support.');
                 }
@@ -122,7 +128,7 @@ class User extends Account{
 
     }
 
-    async register(name, email, phone, password, gender, dob, weight, height, goal, level, medicalCheck) {
+    async register(name, email, phone, password, gender, dob, weight, height, goal, level, medicalCheck, intervalInSeconds) {
         try {
             // Create the user account in Firebase Authentication
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -136,7 +142,7 @@ class User extends Account{
             const nameArr = name.split(' ');
             const fname = nameArr[0].toLowerCase();
             let uname = "";
-            for(let i = 1; i < nameArr.length; i++){
+            for (let i = 1; i < nameArr.length; i++) {
                 uname += nameArr[i][0].toLowerCase();
             }
             uname += fname + "-";
@@ -151,26 +157,26 @@ class User extends Account{
             const querySnapshot = await getDocs(q);
             const result = [];
             querySnapshot.forEach((doc) => {
-                result.push( doc.data().username );
+                result.push(doc.data().username);
             });
-            if(result.length === 0){
+            if (result.length === 0) {
                 uname += "1";
-            }else{
-                for (let i = 1; i <= result.length; i++){
-                    if (parseInt(result[i-1].split('-')[1]) !== i){
+            } else {
+                for (let i = 1; i <= result.length; i++) {
+                    if (parseInt(result[i - 1].split('-')[1]) !== i) {
                         uname += i;
                         break;
                     }
-                    if (i === result.length){
-                        uname += result.length+1;
+                    if (i === result.length) {
+                        uname += result.length + 1;
                     }
                 }
 
             }
-            
+
             // Create the user account in the firestore firestore database
             await setDoc(doc(db, "user", userCredential.user.uid), {
-                dob : Timestamp.fromDate(new Date(dob)),
+                dob: Timestamp.fromDate(new Date(dob)),
                 email: email,
                 fitnessGoal: goal,
                 fitnessLevel: level,
@@ -181,11 +187,11 @@ class User extends Account{
                 isSuspended: false,
                 phoneNumber: phone,
                 profilePicture: "user/default_pp.png",
-                restInterval: 30,
+                restInterval: intervalInSeconds,
                 username: uname,
                 weight: weight,
             });
-            
+
         }
         catch (e) {
             // Throw error message
@@ -224,7 +230,7 @@ class User extends Account{
         try {
             // Get all users
             let q = query(collection(db, 'user'), orderBy('fullName'));
-            
+
             const queryResult = await getDocs(q);
             const users = [];
 
@@ -305,7 +311,7 @@ class User extends Account{
             throw new Error(e.message);
         }
     }
-    
+
     async suspend(userID) {
         try {
             // Suspend the user account
@@ -351,7 +357,14 @@ class User extends Account{
             const coachDoc = coachSnapshot.docs[0];
             const coachID = coachDoc.id;
 
-            const q = query(collection(db, 'coachinghistory'), where('coachID', '==', coachID));
+            // Get the current timestamp
+            const currentTimestamp = new Date();
+
+            const q = query(
+                collection(db, 'coachinghistory'),
+                where('coachID', '==', coachID),
+                where('endDate', '>', currentTimestamp) //Indexed & to display only date later than current date (also checks for time)
+            );
             const queryResult = await getDocs(q);
             const coachees = [];
 
@@ -373,7 +386,16 @@ class User extends Account{
                     u.gender = data.gender;
                     u.phoneNumber = data.phoneNumber;
 
-                    coachees.push({ id: coachingDoc.id, user: u });
+                    // Include startDate and endDate
+                    const startDate = coachingData.startDate;
+                    const endDate = coachingData.endDate;
+
+                    coachees.push({
+                        id: coachingDoc.id,
+                        user: u,
+                        startDate: startDate,
+                        endDate: endDate
+                    });
                 }
             }
 
@@ -422,22 +444,22 @@ class User extends Account{
 
     }
 
-    async updateAccountDetails(email, gender, phoneNumber, weight, height, fitnessGoal, fitnessLevel, hasMedical){
+    async updateAccountDetails(email, gender, phoneNumber, weight, height, fitnessGoal, fitnessLevel, hasMedical) {
 
-        console.log({email, gender, phoneNumber, weight, height, fitnessGoal, fitnessLevel, hasMedical});
+        console.log({ email, gender, phoneNumber, weight, height, fitnessGoal, fitnessLevel, hasMedical });
 
         try {
             // Check if the email exists
             const q = query(collection(db, 'user'), where('email', '==', email));
             const queryResult = await getDocs(q);
-    
+
             if (queryResult.empty) {
                 throw new Error('User not found');
             }
-    
+
             // Get the document ID of the first matching user (assuming email is unique)
             const userDocId = queryResult.docs[0].id;
-    
+
             // Update the document with new values
             const userDocRef = doc(db, 'user', userDocId);
             await updateDoc(userDocRef, {
@@ -449,7 +471,7 @@ class User extends Account{
                 fitnessLevel,
                 hasMedical
             });
-    
+
             console.log('User details updated successfully');
         } catch (e) {
             console.error('Error updating user details:', e.message);

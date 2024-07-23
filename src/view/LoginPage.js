@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, Modal, ActivityIndicator} from "react-native";
 import { Dropdown } from 'react-native-element-dropdown';
 import {scale} from '../components/scale';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import LoginPresenter from '../presenter/LoginPresenter';
 import DisplayAboutActiveAxisPresenter from '../presenter/DisplayAboutActiveAxisPresenter';
@@ -77,7 +78,7 @@ const LoginPage = ({navigation})=>{
     // Check User Session function
     const checkUserSession = async () =>{
         // Remove remember me
-        //await AsyncStorage.removeItem('remember');
+        // await AsyncStorage.removeItem('remember');
 
         try{
             // Display loading screen

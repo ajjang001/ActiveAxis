@@ -151,7 +151,7 @@ class CreateFitnessPlanPresenter{
         }
     }
 
-    addExerciseToList(alarmString, exercise, repetition){
+    addExerciseToList(alarmString, exercise, sets){
         try{
             this.model = this.view.routines;
             const routineIndex = this.view.routineIndex;
@@ -162,18 +162,18 @@ class CreateFitnessPlanPresenter{
             if (alarmString === '00:00'){
                 throw new Error('Duration cannot be 00:00');
             }
-            if (repetition === '' || repetition === undefined){
-                throw new Error('Please enter number of repetitions');
+            if (sets === '' || sets === undefined){
+                throw new Error('Please enter number of sets');
             }
 
-            if (repetition <= 0){
-                throw new Error('Number of repetitions must be greater than 0');
+            if (sets <= 0){
+                throw new Error('Number of sets must be greater than 0');
             }
-            if(repetition > 10){
-                throw new Error('Number of repetitions must be less than or equal 10');
+            if(sets > 10){
+                throw new Error('Number of sets must be less than or equal 10');
             }
 
-            this.model[routineIndex].addExerciseToList(alarmString, exercise, repetition);
+            this.model[routineIndex].addExerciseToList(alarmString, exercise, sets);
         }catch(error){
             throw new Error(error);
         }

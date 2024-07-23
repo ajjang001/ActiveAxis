@@ -78,13 +78,12 @@ const UserAccountSettingPage = ({ navigation, route }) => {
 
     // Options for the user
     const options = [
-        { label: 'Remove Advertisements', onPress: () => console.log("Remove Advertisements") },
-        { label: 'Account Details', onPress: () => navigation.navigate("UserAccountDetailsPage1", {user}) },
+        { label: 'Account Details', onPress: () => navigation.navigate("UserAccountDetailsPage1", { user }) },
+        { label: 'Exercise Settings', onPress: () => navigation.navigate("UserExerciseSettingsPage", { user }) },
         { label: 'Friends', onPress: () => console.log("Friends") },
         { label: 'App Feedbacks', onPress: () => console.log("App Feedbacks") },
         { label: 'Achievements', onPress: () => console.log("Achievements") },
         { label: 'Connect Smart Wearables', onPress: () => console.log("Connect Smart Wearables") },
-        { label: 'Delete Account', onPress: () => console.log("Delete Account") },
         { label: 'Log Out', onPress: () => changeConfirmVisible(true, 'Are you sure you want to log out?') }
     ];
 
@@ -103,10 +102,14 @@ const UserAccountSettingPage = ({ navigation, route }) => {
                         <Text style={styles.topText}>{user.fullName}</Text>
                         <Text style={styles.topText}>{user.email}</Text>
                         <Text style={styles.topText}>{user.phoneNumber}</Text>
+                        <View>
+                            <TouchableOpacity style={styles.upgradeButton} onPress={() => console.log("Remove Advertisements")}>
+                                <Text style={styles.upgradeText}>Remove Advertisements</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             )}
-
             {
                 options.map((option, index) => (
                     <TouchableOpacity key={index} style={styles.optionButton} activeOpacity={0.8} onPress={option.onPress}>
@@ -137,10 +140,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#C42847',
+        marginTop: scale(50),
     },
     profileContainer: {
         padding: scale(20),
-        marginTop: scale(35),
         flexDirection: 'row',
     }
     ,
@@ -169,10 +172,25 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     imageContainer: {
+        marginTop: scale(10),
         marginRight: scale(20),
     },
     textContainer: {
         flex: 1, // Take remaining space
+    },
+    upgradeButton: {
+        backgroundColor: '#4CAF50', // Green color
+        paddingVertical: scale(10),
+        marginTop: scale(5),
+        width: '60%',
+        borderRadius: scale(5),
+        alignItems: 'center',
+        //alignSelf: 'flex-end'
+    },
+    upgradeText: {
+        color: 'white',
+        fontSize: scale(12),
+        fontWeight: 'bold',
     },
 });
 

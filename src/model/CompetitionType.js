@@ -6,7 +6,10 @@ class CompetitionType{
     _competitionTypeID;
     _competitionTypeName;
 
-    constructor (){}
+    constructor (){
+        this._competitionTypeID = 0;
+        this._competitionTypeName = "";
+    }
 
     get competitionTypeID() {return this._competitionTypeID;}
     get competitionTypeName() {return this._competitionTypeName;}

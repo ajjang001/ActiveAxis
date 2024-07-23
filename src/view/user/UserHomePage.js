@@ -1,35 +1,177 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity} from 'react-native';
-import {ref, getDownloadURL} from 'firebase/storage';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
+import { Calendar } from 'react-native-calendars';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { scale } from '../../components/scale';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { storage } from '../../firebase/firebaseConfig';
-import { LoadingDialog } from '../../components/Modal';
-
-const UserHomePage = ({navigation, route}) => {
+const UserHomePage = ({ navigation, route }) => {
     // Get the user from the route params
-    const {user} = route.params;
-    // State to store the image URL
-    const [imageURL, setImageURL] = useState('');
+    const { user } = route.params;
 
-    // Get the image URL from the storage
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [isLeftArrowDisabled, setIsLeftArrowDisabled] = useState(currentDate <= new Date(minDate));
+    const [isRightArrowDisabled, setIsRightArrowDisabled] = useState(currentDate >= new Date(maxDate));
+
+    const getCurrentDate = () => {
+        const date = new Date();
+        return date.toISOString().split('T')[0];
+    };
+
+    const minDate = '1900-01-01';
+    const maxDate = '2024-12-31';
+
+    const onMonthChange = (month) => {
+        setCurrentDate(new Date(month.dateString));
+        console.log('month changed', month);
+    };
+
+
+    const renderHeader = (date) => {
+        const headerDate = new Date(date);
+        const month = headerDate.toLocaleString('default', { month: 'long' });
+        const year = headerDate.getFullYear();
+        return (
+            <View style={styles.calendarHeaderView}>
+                <Text style={styles.calendarHeaderText}>{`${month} ${year}`}</Text>
+            </View>
+        );
+    };
+
     useEffect(() => {
-        const getImageURL = async (u) => {
-            const storageRef = ref(storage, u.profilePicture);
-            const url = await getDownloadURL(storageRef);
-            setImageURL(url);
-        }
-        getImageURL(user);
-    }, []);
+        setIsLeftArrowDisabled(currentDate <= new Date(minDate).setMonth(new Date(minDate).getMonth() + 1));
+        setIsRightArrowDisabled(currentDate >= new Date(maxDate).setMonth(new Date(maxDate).getMonth() - 1));
+    }, [currentDate]);
 
-    
 
 
     return (
-        <View>
-            {imageURL !== '' ? <Image source={{uri: imageURL}} style={{width: 200, height: 200, borderRadius:100}}/> : <LoadingDialog />}
-            <Text>Welcome {user.fullName}</Text>
+        <View style={styles.pageContainer}>
+            <View style={styles.titleView}>
+                <Text style={styles.homeTitle}>Welcome Back,</Text>
+                <Text style={styles.homeTitle}>{user.fullName ? user.fullName : 'User Name'}</Text>
+            </View>
+            <View style={styles.calendarView}>
+                <Calendar
+                    style={styles.calendar}
+                    current={getCurrentDate()}
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    onDayPress={(day) => {
+                        console.log('selected day', day);
+                    }}
+                    monthFormat={'MMMM yyyy'}
+                    onMonthChange={onMonthChange}
+                    hideExtraDays={true}
+                    disableMonthChange={false}
+                    renderArrow={(direction) => (
+                        <Icon
+                            name={direction === 'left' ? 'chevron-left' : 'chevron-right'}
+                            size={24}
+                            color="white"
+                        />
+                    )}
+                    disableArrowLeft={isLeftArrowDisabled}
+                    disableArrowRight={isRightArrowDisabled}
+                    disableAllTouchEventsForDisabledDays={true}
+                    renderHeader={renderHeader}
+                    enableSwipeMonths={true}
+                    theme={{
+                        calendarBackground: '#E2E2E2',
+                        textSectionTitleColor: 'white',
+                        textSectionTitleDisabledColor: 'red',
+                        // selectedDayBackgroundColor: 'orange',
+                        // selectedDayTextColor: 'yellow',
+                        todayTextColor: '#83242D',
+                        // dayTextColor: 'black',
+                        arrowColor: 'white',
+                        disabledArrowColor: 'gray',
+                        // monthTextColor: 'green',
+                        // indicatorColor: 'blue',
+                        textDayFontWeight: 'bold',
+                        textMonthFontWeight: 'bold',
+                        textDayHeaderFontWeight: '300',
+                        textDayFontSize: scale(16),
+                        textMonthFontSize: scale(16),
+                        textDayHeaderFontSize: scale(16),
+                    }}
+                />
+            </View>
+            <View style={styles.planDirectView}>
+                <TouchableOpacity onPress={() =>
+                    //navigation.navigate('', {coach})
+                    console.log("What to put here!")
+                }
+                    style={styles.planDirectButton}>
+                    <View style={styles.buttonTextView}>
+                        <Text style={styles.planDirectButtonText}>Insert stuff here</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    pageContainer: {
+        flex: 1,
+        paddingTop: scale(70),
+        backgroundColor: '#FBF5F3',
+    },
+    titleView: {
+        marginHorizontal: scale(20)
+    },
+    homeTitle: {
+        fontSize: scale(20),
+        fontFamily: 'Poppins-SemiBold',
+    },
+    calendarView: {
+        width: '100%',
+        backgroundColor: '#C42847',
+        marginTop: scale(20),
+        alignItems: 'center',
+        maxHeight: scale(415),
+        paddingVertical: scale(10)
+
+    },
+    calendarHeaderView: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: scale(10)
+    },
+    calendarHeaderText: {
+        fontSize: scale(18),
+        fontWeight: 'bold',
+        color: 'white'
+    },
+    calendar: {
+        width: scale(450),
+        backgroundColor: '#C42847',
+    },
+    planDirectView: {
+        width: '100%',
+        height: scale(150),
+        justifyContent: 'center'
+    },
+    planDirectButton: {
+        marginHorizontal: scale(20)
+    },
+    imageStyle: {
+        borderRadius: scale(20)
+    },
+    buttonTextView: {
+        height: scale(120),
+        justifyContent: 'center',
+        borderWidth: scale(1),
+        borderRadius: scale(20),
+    },
+    planDirectButtonText: {
+        paddingHorizontal: scale(20),
+        fontFamily: 'Poppins-SemiBold',
+        fontSize: scale(20),
+        textAlign: 'center',
+    }
+});
 
 export default UserHomePage;

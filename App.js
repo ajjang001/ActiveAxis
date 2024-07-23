@@ -29,6 +29,9 @@ import UserHomePage from './src/view/user/UserHomePage';
 import UserAccountSettingPage from './src/view/user/UserAccountSettingPage';
 import UserAccountDetailsPage1 from './src/view/user/UserAccountDetailsPage';
 import UserUpdateAccountDetailsPage from './src/view/user/UserUpdateAccountDetailsPage';
+import UserExerciseSettingsPage from './src/view/user/UserExerciseSettingsPage';
+import UserCompetitionPage from './src/view/user/UserCompetitionPage';
+import UserCoachPage from './src/view/user/UserCoachPage';
 
 // Coach Pages
 import CoachHomePage from './src/view/coach/CoachHomePage';
@@ -41,7 +44,10 @@ import CoachCreateFitnessPlanPage from './src/view/coach/CoachCreateFitnessPlanP
 import CoachCreateFitnessPlanPage2 from './src/view/coach/CoachCreateFitnessPlanPage2';
 import SelectExerciseListPage from './src/view/coach/SelectExerciseListPage';
 import SelectExerciseDetailsPage from './src/view/coach/SelectExerciseDetailsPage';
-
+import CoachViewAccountDetailsPage from './src/view/coach/CoachViewAccountDetailsPage';
+import CoachEditAccountDetailsPage from './src/view/coach/CoachEditAccountDetailsPage';
+import CoachSendAppFeedbackPage from './src/view/coach/CoachSendAppFeedbackPage';
+import CoachUpdateAppFeedbackPage from './src/view/coach/CoachUpdateAppFeedbackPage';
 
 // System Admin Pages
 import SystemAdminHomePage from './src/view/system_admin/SystemAdminHomePage';
@@ -104,8 +110,8 @@ const UserTabs = ({ route }) => {
       {/* Put the pages here */}
       <userTab.Screen name="Home" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
       <userTab.Screen name="Workout" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
-      <userTab.Screen name="Competition" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
-      <userTab.Screen name="Coach" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
+      <userTab.Screen name="Competition" component={UserCompetitionPage} initialParams={{ user }} options={{ headerShown: false }} />
+      <userTab.Screen name="Coach" component={UserCoachPage} initialParams={{ user }} options={{ headerShown: false }} />
       <userTab.Screen name="Account" component={UserAccountSettingPage} initialParams={{ user }} options={{ headerShown: false }} />
     </userTab.Navigator>
   );
@@ -187,6 +193,7 @@ export default function App() {
           <Stack.Screen name="UserHomePage" component={UserTabs} options={{ headerShown: false }} />
           <Stack.Screen name="UserAccountDetailsPage1" component={UserAccountDetailsPage1} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserUpdateAccountDetailsPage" component={UserUpdateAccountDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserExerciseSettingsPage" component={UserExerciseSettingsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           {/* Add user pages here */}
 
           <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{ headerShown: false }} />
@@ -246,7 +253,11 @@ export default function App() {
           <Stack.Screen name = "SelectExerciseDetailsPage" component={SelectExerciseDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
           <Stack.Screen name="ViewCoacheeDetails" component={ViewCoacheeDetails} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
           <Stack.Screen name="CoacheeFeedbackPage" component={CoacheeFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
-        
+          <Stack.Screen name="CoachViewAccountDetailsPage" component={CoachViewAccountDetailsPage} initialParams={{ userEmail: 'adama@gmail.com' }} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+          <Stack.Screen name="CoachEditAccountDetailsPage" component={CoachEditAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+          <Stack.Screen name="CoachSendAppFeedbackPage" component={CoachSendAppFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+          <Stack.Screen name="CoachUpdateAppFeedbackPage" component={CoachUpdateAppFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+
         </Stack.Navigator>
       </NavigationContainer>
   );

@@ -25,7 +25,13 @@ class CoachingFeedback {
     set userID(userID) { this.#userID = userID; }
 
 
-    constructor() { }
+    constructor() {
+        this.#coachID = "";
+        this.#dateSubmitted = "";
+        this.#feedbackText = "";
+        this.#rating = 0;
+        this.#userID = "";
+    }
 
 
     async getCoachFeedbacks(coachID) {
