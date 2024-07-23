@@ -8,7 +8,6 @@ import { LoadingDialog } from './Modal';
 
 const AccountListCard = (props)=>{
     const account = props.account !== undefined ? props.account : null;
-    const isAdminView = props.isAdminView !== undefined ? props.isAdminView : false;
     
     return (
         <View style = {style.coachContainer}>
@@ -40,7 +39,7 @@ const AccountListCard = (props)=>{
                             </TouchableOpacity>
 
 
-                            {props.numOfButtons <= 1 && isAdminView ? null :(
+                            {props.numOfButtons <= 1  ? null :(
                                 
                                 <TouchableOpacity onPress = { (account.isSuspended ? () => props.unsuspendHandler() : () => props.suspendHandler() ) } activeOpacity={0.7} style = {[{width:scale(100)}, (account.isSuspended ? {backgroundColor: "#E28413"} : {backgroundColor: "#00AD3B"})]} >
                                     <Text style={style.suspendText}>{account.isSuspended ? "UNSUSPEND" : "SUSPEND"}</Text>

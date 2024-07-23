@@ -86,7 +86,7 @@ const CoachRegistrationListPage = ({route, navigation}) =>{
                                     numOfButtons = {1}
                                     account = {coach.coach}
                                     detailsHandler = {()=>{navigation.navigate('CoachRegistrationDetailsPage',{coach})}}
-                                    isAdminView = {true}
+                                    
                                     />
                                 );
                             })}
