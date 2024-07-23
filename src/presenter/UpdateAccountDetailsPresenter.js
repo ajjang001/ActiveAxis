@@ -1,5 +1,6 @@
 import SystemAdmin from "../model/SystemAdmin";
 import User from "../model/User";
+import FitnessPlan from '../model/FitnessPlan';
 
 class UpdateAccountDetailsPresenter {
     constructor(view) {
@@ -17,6 +18,24 @@ class UpdateAccountDetailsPresenter {
         }
     }
 
+    async getGoals() {
+        try {
+          this.account = new FitnessPlan();
+          this.view.fetchGoalsData(await this.account.getGoals());
+        } catch (error) {
+          throw new Error(error);
+        }
+      }
+    
+      async getLevel() {
+        try {
+          this.account = new FitnessPlan();
+          this.view.fetchLevelData(await this.account.getFitnessLevel());
+        } catch (error) {
+          throw new Error(error);
+        }
+      }
+
     async updateAccountDetails(email, gender, phoneNumber, weight, height, fitnessGoal, fitnessLevel, hasMedical) {
         
         const phonePattern = /^\+65\d{8}$/;
@@ -26,7 +45,7 @@ class UpdateAccountDetailsPresenter {
             // Check if phone number is 8 digits
             throw new Error('Please enter a valid phone number (8 Digits)!');
         }
-        else if (weight.trim() === '' || height.trim() === '') {
+        else if (weight.trim() === '' || height.trim() === '' || fitnessGoal.trim() === '' || fitnessLevel.trim() === '') {
             throw new Error('Please complete all fields!');
         }
         else if (!floatPattern.test(weight)) {

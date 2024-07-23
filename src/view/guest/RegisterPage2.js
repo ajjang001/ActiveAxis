@@ -11,7 +11,7 @@ import { scale } from '../../components/scale';
 
 const RegisterPage2 = ({ navigation, route }) => {
     // Get data from previous screen
-    const { gender, dob, weight, height, goal, level, medicalCheck } = route.params;
+    const { gender, dob, weight, height, goal, level, medicalCheck, intervalInSeconds } = route.params;
 
     // State to store the user input
     const [name, setName] = useState('');
@@ -40,13 +40,13 @@ const RegisterPage2 = ({ navigation, route }) => {
     }
 
     // Process the registration
-    const processRegister = async (name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck) => {
+    const processRegister = async (name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck, intervalInSeconds) => {
         try {
             // Show loading screen
             changeLoadingVisible(true);
             
             // Call the presenter to process the registration
-            await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck);
+            await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck, intervalInSeconds);
             // Navigate to the next screen
             navigation.navigate('Register3')
         } catch (e) {
@@ -62,7 +62,7 @@ const RegisterPage2 = ({ navigation, route }) => {
             style={styles.container}
             behavior="padding"
         >
-            <Text style={styles.header} >Register</Text>
+            <Text style={styles.header}>Register</Text>
             <View style={styles.container2}>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Name</Text>
@@ -128,8 +128,7 @@ const RegisterPage2 = ({ navigation, route }) => {
                     <LoadingDialog />
                 </Modal>
                 <TouchableOpacity
-                    //onPress={() => processRegister(name, email, '+65'+phone, password, checkTC, gender, age, weight, height, goal, level, medicalCheck)}
-                    onPress={() => processRegister(name, email, '+65'+phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck)}
+                    onPress={() => processRegister(name, email, '+65'+phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck, intervalInSeconds)}
                     
                     style={styles.button}
                 >

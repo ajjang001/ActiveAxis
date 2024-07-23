@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, Alert } from "react-native"
 import { scale } from "../../components/scale";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dropdown } from 'react-native-element-dropdown';
 import { LoadingDialog, ActionDialog, MessageDialog } from "../../components/Modal";
 import UpdateAccountDetailsPresenter from '../../presenter/UpdateAccountDetailsPresenter';
@@ -11,16 +11,10 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
         { label: 'Male', value: 'm' },
         { label: 'Female', value: 'f' },
     ];
-    const goalsData = [
-        { label: 'Goal 1', value: 'Goal 1' },
-        { label: 'Goal 2', value: 'Goal 2' },
-        { label: 'Goal 3', value: 'Goal 3' },
-    ];
-    const levelData = [
-        { label: 'Beginner', value: 'Beginner' },
-        { label: 'Intermediate', value: 'Intermediate' },
-        { label: 'Advanced', value: 'Advanced' },
-    ];
+
+    const [goalsData, setGoalsData] = useState([]);
+    const [levelData, setLevelData] = useState([]);
+  
     const medicalData = [
         { label: "Yes", value: true },
         { label: "No", value: false },
@@ -61,6 +55,36 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
     const changeLoadingVisible = (b) => {
         setIsLoading(b);
     }
+
+    useEffect(() => {
+        fetchGoalsData();
+        fetchLevelData();
+      }, []);
+
+    const fetchGoalsData = async () => {
+        try {
+          setIsLoading(true);
+          await new UpdateAccountDetailsPresenter({ fetchGoalsData: setGoalsData }).getGoals();
+          setIsLoading(false);
+        } catch (error) {
+          setModalVisible(true);
+          setModalMsg(error.message);
+          console.error("Error fetching goals data: ", error);
+        }
+      };
+    
+      const fetchLevelData = async () => {
+        try {
+          setIsLoading(true);
+          await new UpdateAccountDetailsPresenter({ fetchLevelData: setLevelData }).getLevel();
+          setIsLoading(false);
+        } catch (error) {
+          setModalVisible(true);
+          setModalMsg(error.message);
+          console.error("Error fetching level data: ", error);
+        }
+      };
+    
 
     // Process Update Account Details
     const processUpdate = async () => {
@@ -133,7 +157,7 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
                 <Text style={styles.detailsTitle}>Fitness Goal</Text>
                 <Dropdown
                     style={styles.dropdown}
-                    data={goalsData}
+                    data={goalsData.map(goal => ({ label: goal.name, value: goal.name }))}
                     labelField="label"
                     valueField="value"
                     value={fitnessGoal}
@@ -144,7 +168,7 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
                 <Text style={styles.detailsTitle}>Fitness Level</Text>
                 <Dropdown
                     style={styles.dropdown}
-                    data={levelData}
+                    data={levelData.map(level => ({ label: level.name, value: level.name }))}
                     labelField="label"
                     valueField="value"
                     value={fitnessLevel}
