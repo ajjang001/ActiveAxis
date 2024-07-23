@@ -147,6 +147,7 @@ const ListOfUserAccountsPage = ({route, navigation}) =>{
                                 suspendHandler = {()=>{setSelectedUser(user); setWantSuspend(true) ;changeConfirmVisible(true, 'Are you sure you want to suspend this user?')}}
                                 unsuspendHandler = {()=>{setSelectedUser(user); setWantSuspend(false); changeConfirmVisible(true, 'Are you sure you want to unsuspend this user?')}}
                                 detailsHandler = { ()=>{navigation.navigate('UserAccountDetailsPage', {user} )} }
+                                isAdminView = {true}
                                 />
                             );
                         })}

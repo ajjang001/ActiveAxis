@@ -16,6 +16,12 @@ class User extends Account{
 
     constructor() {
         super();
+        this.#hasMedical = false;
+        this.#weight = 0;
+        this.#height = 0;
+        this.#fitnessGoal = "";
+        this.#fitnessLevel = "";
+        this.#restInterval = 0;
     }
 
     get hasMedical(){return this.#hasMedical;}

@@ -18,6 +18,15 @@ class Account{
         if(this.constructor === Account){
             throw new Error("Cannot instantiate abstract class");
         }
+        this._accountID = "";
+        this._username = "";
+        this._email = "";
+        this._profilePicture = "";
+        this._fullName = "";
+        this._dob = "";
+        this._gender="";
+        this._phoneNumber = "";
+        this._isSuspended = false;   
     }
 
     get accountID(){return this._accountID;}
