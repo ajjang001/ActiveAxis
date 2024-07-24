@@ -1,13 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet, Alert, Text, TouchableOpacity } from 'react-native';
+import { View, ScrollView, StyleSheet, Alert, Text, TouchableOpacity, Modal } from 'react-native';
 import { getAuth } from 'firebase/auth';
 import FeedbackCard from '../../components/FeedbackCard';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
+
 import SendAppFeedbackPresenter from '../../presenter/SendAppFeedbackPresenter';
 
 const CoachAppFeedbackPage = ({ navigation }) => {
   const [feedbacks, setFeedbacks] = useState([]);
   const auth = getAuth();
   const user = auth.currentUser;
+
+  
+  // State to control the visibility of the modal
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState('');
+
+  // change popup/modal visible
+  const changeModalVisible = (b, m) => {
+      setModalMsg(m);
+      setModalVisible(b);
+  }
+
+  // change popup/modal visible
+  const changeLoadingVisible = (b) => {
+      setIsLoading(b);
+  }
+
+  // change popup/modal visible
+  const changeConfirmVisible = (b, m) => {
+      setConfirmMessage(m);
+      setConfirmationVisible(b);
+  }
 
   const presenter = new SendAppFeedbackPresenter({
     displayFeedbacks: (feedbackList) => {
@@ -18,8 +45,22 @@ const CoachAppFeedbackPage = ({ navigation }) => {
     }
   });
 
+  const handlePresenter = async ()=>{
+    try{
+      changeLoadingVisible(true);
+      await presenter.fetchFeedbacks();
+    }catch(e){
+      changeModalVisible(true, e.message);
+    }finally{
+      changeLoadingVisible(false);
+    }
+  }
+
+
+  
+
   useEffect(() => {
-    presenter.fetchFeedbacks();
+    handlePresenter();
   }, []);
 
   const handleEdit = (feedback) => {
@@ -28,6 +69,12 @@ const CoachAppFeedbackPage = ({ navigation }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+          <LoadingDialog />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+          <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
+      </Modal>
       {feedbacks.map((feedback, index) => (
         <FeedbackCard
           key={index}
