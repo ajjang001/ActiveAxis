@@ -7,15 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C38095FE64FC799A78257B3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DC445B02A88519952BB75647 /* PrivacyInfo.xcprivacy */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1B8EBE4BE5FD43F09DCC7851 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 960F18D7E68744348F581878 /* Poppins-SemiBold.ttf */; };
+		1637A8406B0749A18260D540 /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F151240B9F70433797B9C08B /* Inter-Medium.ttf */; };
+		24E62AE651C44A6CBAADE0DC /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14A08C409EF4BC7A925694F /* noop-file.swift */; };
+		2E0780F28E8E41579D51ECBC /* Fuzzy-Bubbles.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B0C320B8833A403B90C4B80D /* Fuzzy-Bubbles.ttf */; };
+		33040F865FB1463A832C65A3 /* League-Spartan-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B0E82555D3FF4030A8ABC644 /* League-Spartan-Light.ttf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		6F6AD77A888B43A991DB017A /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B8A6E03EC743268EFD20A0 /* noop-file.swift */; };
+		47540BCE593E4A25872A3D16 /* League-Spartan.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 36BE5CFB17E045708430ADEA /* League-Spartan.ttf */; };
+		6C36B86932AA462ABDB5B7A0 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E0563FDE4C564446A3D09D76 /* Poppins-Medium.ttf */; };
+		842127245CA548E0A359ACA8 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9E06647721F74BD6A7C862BE /* Poppins-SemiBold.ttf */; };
 		96905EF65AED1B983A6B3ABC /* libPods-ActiveAxis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-ActiveAxis.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		D3546CA643474C51917DC92C /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9BAFEC17895D496D9CA57F95 /* Inter-SemiBold.ttf */; };
+		E5D88E9827ED4B7F9392E4E8 /* League-Spartan-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DAD6760E56634290BFC01460 /* League-Spartan-SemiBold.ttf */; };
+		FC17053F29404A409DB74310 /* Inter.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E86A7D0F86D84889A59768C0 /* Inter.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,15 +34,24 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ActiveAxis/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ActiveAxis/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ActiveAxis/main.m; sourceTree = "<group>"; };
-		25B8A6E03EC743268EFD20A0 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "ActiveAxis/noop-file.swift"; sourceTree = "<group>"; };
+		36BE5CFB17E045708430ADEA /* League-Spartan.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "League-Spartan.ttf"; path = "../assets/fonts/League-Spartan.ttf"; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-ActiveAxis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ActiveAxis.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-ActiveAxis.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ActiveAxis.debug.xcconfig"; path = "Target Support Files/Pods-ActiveAxis/Pods-ActiveAxis.debug.xcconfig"; sourceTree = "<group>"; };
-		72AAE415DDA5498B9EAB3153 /* ActiveAxis-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "ActiveAxis-Bridging-Header.h"; path = "ActiveAxis/ActiveAxis-Bridging-Header.h"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-ActiveAxis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ActiveAxis.release.xcconfig"; path = "Target Support Files/Pods-ActiveAxis/Pods-ActiveAxis.release.xcconfig"; sourceTree = "<group>"; };
-		960F18D7E68744348F581878 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-SemiBold.ttf"; path = "../assets/fonts/Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
+		9BAFEC17895D496D9CA57F95 /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBold.ttf"; path = "../assets/fonts/Inter-SemiBold.ttf"; sourceTree = "<group>"; };
+		9E06647721F74BD6A7C862BE /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-SemiBold.ttf"; path = "../assets/fonts/Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = ActiveAxis/SplashScreen.storyboard; sourceTree = "<group>"; };
+		B0C320B8833A403B90C4B80D /* Fuzzy-Bubbles.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Fuzzy-Bubbles.ttf"; path = "../assets/fonts/Fuzzy-Bubbles.ttf"; sourceTree = "<group>"; };
+		B0E82555D3FF4030A8ABC644 /* League-Spartan-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "League-Spartan-Light.ttf"; path = "../assets/fonts/League-Spartan-Light.ttf"; sourceTree = "<group>"; };
+		B50F99A71CA74B78A400FD93 /* ActiveAxis-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "ActiveAxis-Bridging-Header.h"; path = "ActiveAxis/ActiveAxis-Bridging-Header.h"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		D14A08C409EF4BC7A925694F /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "ActiveAxis/noop-file.swift"; sourceTree = "<group>"; };
+		DAD6760E56634290BFC01460 /* League-Spartan-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "League-Spartan-SemiBold.ttf"; path = "../assets/fonts/League-Spartan-SemiBold.ttf"; sourceTree = "<group>"; };
+		DC445B02A88519952BB75647 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = ActiveAxis/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E0563FDE4C564446A3D09D76 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Medium.ttf"; path = "../assets/fonts/Poppins-Medium.ttf"; sourceTree = "<group>"; };
+		E86A7D0F86D84889A59768C0 /* Inter.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Inter.ttf; path = ../assets/fonts/Inter.ttf; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F151240B9F70433797B9C08B /* Inter-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Medium.ttf"; path = "../assets/fonts/Inter-Medium.ttf"; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-ActiveAxis/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -59,8 +77,9 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				25B8A6E03EC743268EFD20A0 /* noop-file.swift */,
-				72AAE415DDA5498B9EAB3153 /* ActiveAxis-Bridging-Header.h */,
+				D14A08C409EF4BC7A925694F /* noop-file.swift */,
+				B50F99A71CA74B78A400FD93 /* ActiveAxis-Bridging-Header.h */,
+				DC445B02A88519952BB75647 /* PrivacyInfo.xcprivacy */,
 			);
 			name = ActiveAxis;
 			sourceTree = "<group>";
@@ -72,15 +91,6 @@
 				58EEBF8E8E6FB1BC6CAF49B5 /* libPods-ActiveAxis.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		4FB22610619B4DBB814D9071 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				960F18D7E68744348F581878 /* Poppins-SemiBold.ttf */,
-			);
-			name = Resources;
-			path = "";
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -99,7 +109,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
 				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
-				4FB22610619B4DBB814D9071 /* Resources */,
+				F0FDF5E69A9A4B6685295E49 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -148,6 +158,23 @@
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
+		F0FDF5E69A9A4B6685295E49 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F151240B9F70433797B9C08B /* Inter-Medium.ttf */,
+				E86A7D0F86D84889A59768C0 /* Inter.ttf */,
+				9BAFEC17895D496D9CA57F95 /* Inter-SemiBold.ttf */,
+				E0563FDE4C564446A3D09D76 /* Poppins-Medium.ttf */,
+				9E06647721F74BD6A7C862BE /* Poppins-SemiBold.ttf */,
+				B0C320B8833A403B90C4B80D /* Fuzzy-Bubbles.ttf */,
+				B0E82555D3FF4030A8ABC644 /* League-Spartan-Light.ttf */,
+				36BE5CFB17E045708430ADEA /* League-Spartan.ttf */,
+				DAD6760E56634290BFC01460 /* League-Spartan-SemiBold.ttf */,
+			);
+			name = Resources;
+			path = "";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -156,13 +183,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ActiveAxis" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				5402CC6CDB01BFDD159DC9FB /* [Expo] Configure project */,
+				5BF45CBC16235C3EF2B5469F /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				E2A0F7AA0F37BA58CE68F263 /* [CP] Embed Pods Frameworks */,
+				2C2E92C6DB09872F5995B124 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -212,7 +239,16 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				1B8EBE4BE5FD43F09DCC7851 /* Poppins-SemiBold.ttf in Resources */,
+				1637A8406B0749A18260D540 /* Inter-Medium.ttf in Resources */,
+				FC17053F29404A409DB74310 /* Inter.ttf in Resources */,
+				D3546CA643474C51917DC92C /* Inter-SemiBold.ttf in Resources */,
+				6C36B86932AA462ABDB5B7A0 /* Poppins-Medium.ttf in Resources */,
+				842127245CA548E0A359ACA8 /* Poppins-SemiBold.ttf in Resources */,
+				2E0780F28E8E41579D51ECBC /* Fuzzy-Bubbles.ttf in Resources */,
+				33040F865FB1463A832C65A3 /* League-Spartan-Light.ttf in Resources */,
+				47540BCE593E4A25872A3D16 /* League-Spartan.ttf in Resources */,
+				E5D88E9827ED4B7F9392E4E8 /* League-Spartan-SemiBold.ttf in Resources */,
+				0C38095FE64FC799A78257B3 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,7 +292,25 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5402CC6CDB01BFDD159DC9FB /* [Expo] Configure project */ = {
+		2C2E92C6DB09872F5995B124 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ActiveAxis/Pods-ActiveAxis-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ActiveAxis/Pods-ActiveAxis-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5BF45CBC16235C3EF2B5469F /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -345,24 +399,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ActiveAxis/Pods-ActiveAxis-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E2A0F7AA0F37BA58CE68F263 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ActiveAxis/Pods-ActiveAxis-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ActiveAxis/Pods-ActiveAxis-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -373,7 +409,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				6F6AD77A888B43A991DB017A /* noop-file.swift in Sources */,
+				24E62AE651C44A6CBAADE0DC /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
