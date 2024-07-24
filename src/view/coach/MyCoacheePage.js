@@ -73,7 +73,6 @@ const MyCoacheePage = ({ navigation, route }) => {
                     <Text style={{ color: 'white', fontSize: scale(20), alignSelf: 'center' }}>No Coachee Found</Text>
                     :
                     coachee.map((user, index) => {
-                        //console.log({ user });
                         return (
                             <AccountListCard
                                 key={index}

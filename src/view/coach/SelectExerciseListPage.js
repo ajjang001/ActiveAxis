@@ -130,21 +130,8 @@ const SelectExerciseListPage = ({route, navigation}) => {
     };
 
 
-    const loadExercises = async()=>{
-        try{
-            changeLoadingVisible(true);
-            console.log('loading exercises');
-        }catch(e){
-            changeModalVisible(true, e.message);
-        }finally{
-            changeLoadingVisible(false);
-        }
-    };
-
     useEffect(()=>{
-        loadExercises();
         searchHandler();
-        console.log('loadedOnce');
 
     },[]);
 
@@ -210,7 +197,7 @@ const SelectExerciseListPage = ({route, navigation}) => {
                 </TouchableOpacity>
             </View>
 
-            <ScrollView style = {styles.listContainer} contentContainerStyle= {styles.listContentContainer}>
+            <ScrollView style = {styles.listContainer}>
                 {exercises.length == 0 ? 
                     <Text style = {styles.noAvailText}>{`No Exercise\nAvailable`}</Text>
                  :
@@ -225,6 +212,9 @@ const SelectExerciseListPage = ({route, navigation}) => {
                 }
                 
             </ScrollView>
+
+            <View style = {{height: scale(50)}}></View>
+
 
         </View>
     );
@@ -319,10 +309,6 @@ const styles = StyleSheet.create({
     },
     listContainer:{
         backgroundColor: '#FBF5F3',
-    },
-    listContentContainer:{
-        flex: 1,
-        display: 'flex',
     },
     noAvailText:{
         fontSize: scale(32),

@@ -82,7 +82,7 @@ const SelectExerciseDetailsPage = ({route, navigation}) =>{
             await new CreateFitnessPlanPresenter({exercise: exercise}).setVideo();
             
         }catch(error){
-            console.log(error);
+            changeModalVisible(true, error.message.replace(/^Error:\s*/, ''));
         }finally{
             changeLoadingVisible(false);
         }
@@ -109,8 +109,6 @@ const SelectExerciseDetailsPage = ({route, navigation}) =>{
             // Load Video if not set
             // to avoid multiple request
             getVideo();
-        }else{
-            console.log('Video already');
         }
     },[]);
 

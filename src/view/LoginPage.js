@@ -104,7 +104,7 @@ const LoginPage = ({navigation})=>{
         changeLoadingVisible(true);
         try{
             // Call the presenter to process the login
-            await new LoginPresenter({updateLoginAcc: setLoginAccount}).processLogin(email, password, loginType);
+            await new LoginPresenter({updateLoginAcc: setLoginAccount}).processLogin(email.toLowerCase(), password, loginType);
         }catch(e){
             // Display error message
             changeModalVisible(true, e.message);

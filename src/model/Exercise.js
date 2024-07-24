@@ -185,6 +185,35 @@ class Exercise{
         }
     }
 
+
+    async getExercise(exerciseID){
+        try{
+            const docRef = doc(db, "exercise", exerciseID);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()){
+                const data = docSnap.data();
+                const exercise = new Exercise();
+
+                exercise.exerciseID = exerciseID;
+                exercise.exerciseName = data.exerciseName;
+                exercise.exerciseType = data.exerciseType;
+                exercise.muscle = data.muscle;
+                exercise.equipment = data.equipment;
+                exercise.difficulty = data.difficulty;
+                exercise.instructions = data.instructions;
+                exercise.youtubeLink = data.youtubeLink;
+                
+                
+                return exercise;
+            }else{
+                throw new Error("No such document");
+            }
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
     
 
 

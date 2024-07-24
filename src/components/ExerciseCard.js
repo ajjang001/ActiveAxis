@@ -7,6 +7,8 @@ const ExerciseCard = (props) => {
     const routine = props.routine !== undefined ? props.routine : null;
     const e = props.exercise !== undefined ? props.exercise : null;
     const index = props.index !== undefined ? props.index : 0;
+    const isEdit = props.isEdit !== undefined ? props.isEdit : false;
+    
 
     return(
         <View style = {styles.exerciseCard} key = {index}>
@@ -27,11 +29,15 @@ const ExerciseCard = (props) => {
                     <Text style = {{fontSize:scale(16), color:'#7B4D4D', fontFamily:'Poppins-Medium', textAlign:'center'}}>Sets</Text>
                     <Text style = {{fontSize:scale(16), color:'#7B4D4D', fontFamily:'Poppins-Medium', textAlign:'center'}}>{e.sets}x</Text>
                 </View>
-                <View>
-                    <TouchableOpacity onPress = {() => props.onDelete( index, routine)}>
-                        <Image source={require('../../assets/trash_icon.png')} style={{width:scale(25), height:scale(25)}} />
-                    </TouchableOpacity>
-                </View>
+
+                {isEdit ? 
+                    <View>
+                        <TouchableOpacity onPress = {() => props.onDelete( index, routine)}>
+                            <Image source={require('../../assets/trash_icon.png')} style={{width:scale(25), height:scale(25)}} />
+                        </TouchableOpacity>
+                    </View>
+                : null}
+                
             </View>
 
             

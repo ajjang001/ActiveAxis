@@ -36,6 +36,17 @@ class FitnessPlan{
     set routinesList(routinesList){ this._routinesList = routinesList; }
     set lastUpdated(lastUpdated){ this._lastUpdated = lastUpdated; }
 
+    async getFitnessPlanPicture(){
+        try{
+            // Get the profile picture URL
+            const ppRef = ref(storage, this._fitnessPlanPicture);
+            const ppURL = await getDownloadURL(ppRef);
+            return ppURL;
+        }catch(e){
+            throw new Error(e.message);
+        }
+    }
+
 
     async getGoals (){
         try{
@@ -158,6 +169,78 @@ class FitnessPlan{
         }
     }
 
+    async getFitnessPlans(coachID){
+        try{
+            let q = query(collection(db, 'fitnessplan'), where("coachID", "==", coachID));
+            const querySnapshot = await getDocs(q);
+
+            const fitnessPlans = [];
+
+            for(const doc of querySnapshot.docs){
+                const data = doc.data();
+
+                const fitnessPlan = new FitnessPlan();
+                fitnessPlan.fitnessPlanID = doc.id;
+                fitnessPlan.coachID = data.coachID;
+                fitnessPlan.fitnessPlanName = data.fitnessPlanName;
+                fitnessPlan.fitnessPlanDescription = data.fitnessPlanDescription;
+                
+                q = query(collection(db, 'fitnessgoal'), where("goalID", "==", data.planGoal));
+                const querySnapshot = await getDocs(q);
+                fitnessPlan.planGoal = querySnapshot.docs[0].data().goalName;
+
+                fitnessPlan.fitnessPlanPicture = data.fitnessPlanPicture;
+                fitnessPlan.fitnessPlanPicture = await fitnessPlan.getFitnessPlanPicture();
+
+                fitnessPlan.routinesList = [];
+
+                fitnessPlan.lastUpdated = data.lastUpdated.toDate().toString();
+
+
+
+                const routines = await new WorkoutRoutine().getWorkoutRoutines(fitnessPlan.fitnessPlanID);
+                fitnessPlan.routinesList = routines;
+
+
+                fitnessPlans.push(fitnessPlan);
+            }
+
+            return fitnessPlans;
+        }catch( e){
+            throw new Error(e);
+        }
+    }
+
+    async loadRoutines(){
+        try{
+            for(const routine of this._routinesList){
+                routine.exercisesList = [];
+                await routine.getExercisesOnRoutine(routine.routineID);
+            }
+        }catch(e){
+            throw new Error(e);
+        }
+    }
+
+    async deleteFitnessPlan(){
+        try{
+            // Delete the fitness plan from the database
+            await deleteDoc(doc(db, 'fitnessplan', this._fitnessPlanID));
+
+            // Delete the photo from Firebase Storage
+            const ppRef = ref(storage, this._fitnessPlanPicture);
+            await deleteObject(ppRef);
+
+            // Delete the routines from the database
+            for(const routine of this._routinesList){
+                // console.log(routine.constructor.name);
+                await routine.deleteWorkoutRoutine();
+            }
+
+        }catch(e){
+            throw new Error(e);
+        }
+    }
 
     
 }

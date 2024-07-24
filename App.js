@@ -40,6 +40,8 @@ import CoachAccountSettingPage from './src/view/coach/CoachAccountSettingPage';
 import ViewCoacheeDetails from './src/view/coach/ViewCoacheeDetails';
 import CoacheeFeedbackPage from './src/view/coach/CoacheeFeedbackPage';
 import CoachListOfFitnessPlansPage from './src/view/coach/CoachListOfFitnessPlansPage';
+import CoachFitnessPlanPage from './src/view/coach/CoachFitnessPlanPage';
+import CoachFitnessPlanPage2 from './src/view/coach/CoachFitnessPlanPage2';
 import CoachCreateFitnessPlanPage from './src/view/coach/CoachCreateFitnessPlanPage';
 import CoachCreateFitnessPlanPage2 from './src/view/coach/CoachCreateFitnessPlanPage2';
 import SelectExerciseListPage from './src/view/coach/SelectExerciseListPage';
@@ -247,6 +249,8 @@ export default function App() {
 
           <Stack.Screen name="CoachHomePage" component={CoachTabs} options={{headerShown:false}} />
           <Stack.Screen name = "CoachListOfFitnessPlansPage" component={CoachListOfFitnessPlansPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+          <Stack.Screen name = "CoachFitnessPlanPage" component={CoachFitnessPlanPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+          <Stack.Screen name = "CoachFitnessPlanPage2" component={CoachFitnessPlanPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
           <Stack.Screen name = "CoachCreateFitnessPlanPage" component={CoachCreateFitnessPlanPage} options={{headerShown:false, ...TransitionPresets.SlideFromRightIOS}} />
           <Stack.Screen name = "CoachCreateFitnessPlanPage2" component={CoachCreateFitnessPlanPage2} options={{headerShown:false, ...TransitionPresets.SlideFromRightIOS}} />
           <Stack.Screen name = "SelectExerciseListPage" component={SelectExerciseListPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />

@@ -43,7 +43,6 @@ const CoacheeFeedbackPage = ({ route }) => {
         loadCoachFeedback();
     }, []);
 
-    //console.log({ coach });
 
     return (
         <View style={styles.container}>

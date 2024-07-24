@@ -85,6 +85,8 @@ const styles = StyleSheet.create({
         display:'flex',
         justifyContent:'center',
         alignItems:'center',
+
+        borderRadius:scale(10),
         
     },
     textView:{
@@ -106,6 +108,7 @@ const styles = StyleSheet.create({
         alignItems:'center',
         backgroundColor:'#D9D9D9',
         justifyContent:'center',
+        borderRadius:scale(5),
     }
     
 

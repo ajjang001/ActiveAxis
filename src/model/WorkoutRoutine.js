@@ -3,6 +3,8 @@ import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "fire
 import {auth, db, storage} from '../firebase/firebaseConfig';
 import axios from "axios";
 
+import Exercise from "./Exercise";
+
 import {
     NUTRITIONIX_API_KEY,
     NUTRITIONIX_APP_ID
@@ -66,7 +68,6 @@ class WorkoutRoutine{
                 query += `- ${exercise.exercise.exerciseName} (${exercise.sets} sets x ${seconds} seconds)\n`;
             }
 
-            console.log(query);
 
             const response = await axios.post(
                 'https://trackapi.nutritionix.com/v2/natural/exercise',
@@ -80,7 +81,6 @@ class WorkoutRoutine{
                 }
             );
 
-            // console.log(response.data);
             this._estCaloriesBurned = response.data.exercises.reduce((acc, exercise) => acc + exercise.nf_calories, 0);
         }catch(error){
             throw new Error(error);
@@ -89,7 +89,6 @@ class WorkoutRoutine{
 
     async createWorkoutRoutine(routines, fitnessPlanID){
         try{
-            console.log('AHOY');
             const routineIDsList = [];
             for (const routine of routines) {
                 const docRef = await addDoc(collection(db, 'workoutroutine'), {
@@ -110,6 +109,70 @@ class WorkoutRoutine{
         }
     }
 
+    async getWorkoutRoutines(fitnessPlanID){
+        try{
+            const q = query(collection(db, 'workoutroutine'), where("fitnessPlanID", "==", fitnessPlanID), orderBy("dayNumber"));
+            const querySnapshot = await getDocs(q);
+
+            const routines = [];
+            for (const doc of querySnapshot.docs) {
+                const data = doc.data();
+
+                const routine = new WorkoutRoutine();
+                routine.routineID = doc.id;
+                routine.fitnessPlanID = data.fitnessPlanID;
+                routine.dayNumber = data.dayNumber;
+                routine.estCaloriesBurned = data.estCaloriesBurned;
+                routine.isRestDay = data.isRestDay;
+
+                routines.push(routine);
+            }
+
+            return routines;
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
+    async getExercisesOnRoutine(routineID){
+        try{
+            
+            const q = query(collection(db, 'exerciseinfoonroutine'), where("routineID", "==", routineID), orderBy("orderNo"));
+            const querySnapshot = await getDocs(q);
+
+
+            for (const doc2 of querySnapshot.docs) {
+                const data = doc2.data();
+                
+
+                const exercise = await new Exercise().getExercise(data.exerciseID);
+
+                this.addExerciseToList(data.duration, exercise, data.sets);
+            }
+            
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
+    async deleteWorkoutRoutine(){
+        try{
+
+            // Remove all exercises on the routine
+            const q = query(collection(db, 'exerciseinfoonroutine'), where("routineID", "==", this.routineID));
+            const querySnapshot = await getDocs(q);
+
+            for (const doc of querySnapshot.docs) {
+                await deleteDoc(doc.ref);
+            }
+
+            // Remove the routine
+            await deleteDoc(doc(db, 'workoutroutine', this.routineID));
+            
+        }catch(error){
+            throw new Error(error);
+        }
+    }
     
 }
 

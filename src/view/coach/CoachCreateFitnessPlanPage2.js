@@ -197,6 +197,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                                                 key = {index}
                                                 routine = {routine}
                                                 exercise = {e}
+                                                isEdit = {true}
                                                 onDelete = {onRemoveExercise}
                                             />
                                         );
