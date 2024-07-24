@@ -78,8 +78,8 @@ const UserAccountSettingPage = ({ navigation, route }) => {
 
     // Options for the user
     const options = [
-        { label: 'Account Details', onPress: () => navigation.navigate("UserAccountDetailsPage1", { user }) },
-        { label: 'Exercise Settings', onPress: () => navigation.navigate("UserExerciseSettingsPage", { user }) },
+        { label: 'Account Details', onPress: () => navigation.navigate("UserAccountDetailsPage1", { user , userType: 'user'}) },
+        { label: 'Exercise Settings', onPress: () => navigation.navigate("UserExerciseSettingsPage", { user , userType: 'user'}) },
         { label: 'Friends', onPress: () => console.log("Friends") },
         { label: 'App Feedbacks', onPress: () => console.log("App Feedbacks") },
         { label: 'Achievements', onPress: () => console.log("Achievements") },

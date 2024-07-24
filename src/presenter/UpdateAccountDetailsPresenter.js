@@ -70,7 +70,7 @@ class UpdateAccountDetailsPresenter {
             }
         }
       }
-    async updateAccountDetails(email, phoneNumber, gender, weight, height, fitnessGoal, fitnessLevel, hasMedical) {
+    async updateAccountDetails(email, gender, phoneNumber, weight, height, fitnessGoal, fitnessLevel, hasMedical) {
         
         const phonePattern = /^\+65\d{8}$/;
         const floatPattern = /^\d+(\.\d+)?$/;
@@ -92,7 +92,7 @@ class UpdateAccountDetailsPresenter {
         else {
           try {
             this.account = new User();
-            await this.account.updateAccountDetails(email, gender, phoneNumber, parseFloat(weight), parseFloat(height), fitnessGoal, fitnessLevel, hasMedical);
+            await this.account.updateAccountDetails(email, gender, phoneNumber1, parseFloat(weight), parseFloat(height), fitnessGoal, fitnessLevel, hasMedical);
           } catch (error) {
               throw new Error(error);
         }

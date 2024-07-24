@@ -7,7 +7,7 @@ import DisplayAccountDetailsPresenter from '../../presenter/DisplayAccountDetail
 
 const UserAccountDetailsPage = ({ navigation, route }) => {
 
-    const { user } = route.params;
+    const { user, userType } = route.params;
     const userEmail = user.email;
 
     //check when this screen is focus
@@ -41,14 +41,22 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
         setIsLoading(b);
     }
 
+    const view = {
+        displayAccountDetails: (accountDetails) => {
+            setuserDetails(accountDetails);
+        },
+    };
+
     const loadAccountDetails = useCallback(async () => {
         try {
             setIsLoading(true);
-            await new DisplayAccountDetailsPresenter({ viewAccountDetails: setuserDetails }).viewAccountDetails(userEmail);
+            const presenter = new DisplayAccountDetailsPresenter(view);
+            await presenter.viewAccountDetails(userEmail, userType);
             setTimeout(() => {
                 setIsLoading(false);
-            }, 1500);
+            }, 1500); 
         } catch (error) {
+            setIsLoading(false);
             setModalVisible(true);
             setModalMsg(error.message);
         }
