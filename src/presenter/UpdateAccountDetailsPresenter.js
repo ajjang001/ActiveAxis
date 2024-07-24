@@ -1,12 +1,24 @@
 import SystemAdmin from "../model/SystemAdmin";
 import User from "../model/User";
 import FitnessPlan from '../model/FitnessPlan';
+import Coach from '../model/Coach';
 
 class UpdateAccountDetailsPresenter {
     constructor(view) {
         this.view = view;
         this.account = null;
     }
+
+    async getCoachDetails(email) {
+      try {
+          this.account = new Coach();
+          const details = await this.account.getInfo(email);
+          this.view.displayAccountDetails(details);
+      } catch (error) {
+          console.log('Coach not found.');
+          throw new Error(error);
+      }
+  }
 
     async updateAccount(email) {
         try {
@@ -35,8 +47,30 @@ class UpdateAccountDetailsPresenter {
           throw new Error(error);
         }
       }
+    
 
-    async updateAccountDetails(email, gender, phoneNumber, weight, height, fitnessGoal, fitnessLevel, hasMedical) {
+      async updateCoachAccountDetails(email, name, phoneNumber, tempEmail) {
+        console.log("updateAccountDetails parameters:", { email, name, phoneNumber, tempEmail });
+        
+        const phonePattern = /^\+65\d{8}$/;
+
+        if (!phonePattern.test(phoneNumber)) {
+            // Check if phone number is 8 digits
+            throw new Error('Please enter a valid phone number (8 Digits)!');
+        }
+        else if (!email || !name || !phoneNumber || !tempEmail) {
+            throw new Error('Please complete all fields!');
+        }
+        else {
+            try {
+                this.account = new Coach();
+                await this.account.updateCoachAccountDetails(email, name, phoneNumber, tempEmail);
+            } catch (error) {
+                throw new Error(error);
+            }
+        }
+      }
+    async updateAccountDetails(email, phoneNumber, gender, weight, height, fitnessGoal, fitnessLevel, hasMedical) {
         
         const phonePattern = /^\+65\d{8}$/;
         const floatPattern = /^\d+(\.\d+)?$/;
@@ -56,12 +90,12 @@ class UpdateAccountDetailsPresenter {
             throw new Error('Please only enter numbers or decimals for height!');
           }
         else {
-            try {
-                this.account = new User();
-                await this.account.updateAccountDetails(email, gender, phoneNumber, parseFloat(weight), parseFloat(height), fitnessGoal, fitnessLevel, hasMedical);
-            } catch (error) {
-                throw new Error(error);
-            }
+          try {
+            this.account = new User();
+            await this.account.updateAccountDetails(email, gender, phoneNumber, parseFloat(weight), parseFloat(height), fitnessGoal, fitnessLevel, hasMedical);
+          } catch (error) {
+              throw new Error(error);
+        }
         }
 
     }

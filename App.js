@@ -48,6 +48,7 @@ import SelectExerciseListPage from './src/view/coach/SelectExerciseListPage';
 import SelectExerciseDetailsPage from './src/view/coach/SelectExerciseDetailsPage';
 import CoachViewAccountDetailsPage from './src/view/coach/CoachViewAccountDetailsPage';
 import CoachEditAccountDetailsPage from './src/view/coach/CoachEditAccountDetailsPage';
+import CoachAppFeedbackPage from './src/view/coach/CoachAppFeedbackPage';
 import CoachSendAppFeedbackPage from './src/view/coach/CoachSendAppFeedbackPage';
 import CoachUpdateAppFeedbackPage from './src/view/coach/CoachUpdateAppFeedbackPage';
 
@@ -257,8 +258,9 @@ export default function App() {
           <Stack.Screen name = "SelectExerciseDetailsPage" component={SelectExerciseDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
           <Stack.Screen name="ViewCoacheeDetails" component={ViewCoacheeDetails} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
           <Stack.Screen name="CoacheeFeedbackPage" component={CoacheeFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
-          <Stack.Screen name="CoachViewAccountDetailsPage" component={CoachViewAccountDetailsPage} initialParams={{ userEmail: 'adama@gmail.com' }} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+          <Stack.Screen name="CoachViewAccountDetailsPage" component={CoachViewAccountDetailsPage}  options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
           <Stack.Screen name="CoachEditAccountDetailsPage" component={CoachEditAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+          <Stack.Screen name="CoachAppFeedbackPage" component={CoachAppFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />          
           <Stack.Screen name="CoachSendAppFeedbackPage" component={CoachSendAppFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
           <Stack.Screen name="CoachUpdateAppFeedbackPage" component={CoachUpdateAppFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
 

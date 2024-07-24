@@ -1,31 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import DisplayAccountDetailsCoachPresenter from '../../presenter/DisplayAccountDetailsCoachPresenter';
+import DisplayAccountDetailsPresenter from '../../presenter/DisplayAccountDetailsPresenter';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
-const CoachViewAccountDetailsPage = ({ route }) => {
-  const { userEmail } = route.params;
+const CoachViewAccountDetailsPage = () => {
+  const route = useRoute();
+  const navigation = useNavigation(); // Initialize navigation
+  const { userEmail, userType } = route.params;
+
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // const [password, setPassword] = useState(''); // Typically, password shouldn't be fetched or displayed
 
-  const presenter = new DisplayAccountDetailsCoachPresenter({
-    displayAccountDetails: (coachDetails) => {
-      setName(coachDetails.fullName);
-      setPhoneNumber(coachDetails.phoneNumber);
-      setEmail(coachDetails.email);
-      // Assuming password retrieval isn't handled this way for security reasons
-      // setPassword(coachDetails.password); 
+  const presenter = new DisplayAccountDetailsPresenter({
+    displayAccountDetails: (accountDetails) => {
+      console.log("Displaying account details:", accountDetails);
+      setName(accountDetails.fullName);
+      setPhoneNumber(accountDetails.phoneNumber);
+      setEmail(accountDetails.email);
+      // Password should not be handled this way due to security reasons
+      // setPassword(accountDetails.password);
     }
   });
 
   useEffect(() => {
-    presenter.viewAccountDetails(userEmail);
-  }, [userEmail]);
+    if (userEmail && userType) {
+      presenter.viewAccountDetails(userEmail, userType).catch((error) => {
+        console.error("Error in presenter:", error.message);
+      });
+    }
+  }, [userEmail, userType]);
 
   const handleEdit = () => {
-    // Handle edit action here
-    alert('Edit button pressed');
+    navigation.navigate('CoachEditAccountDetailsPage', { userEmail, userType });
   };
 
   return (
@@ -38,6 +46,7 @@ const CoachViewAccountDetailsPage = ({ route }) => {
             style={styles.input}
             value={name}
             onChangeText={setName}
+            editable={false}
           />
         </View>
         <View style={styles.inputGroup}>
@@ -46,6 +55,7 @@ const CoachViewAccountDetailsPage = ({ route }) => {
             style={styles.input}
             value={phoneNumber}
             onChangeText={setPhoneNumber}
+            editable={false}
           />
         </View>
         <View style={styles.inputGroup}>
@@ -54,15 +64,7 @@ const CoachViewAccountDetailsPage = ({ route }) => {
             style={styles.input}
             value={email}
             onChangeText={setEmail}
-          />
-        </View>
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
+            editable={false}
           />
         </View>
       </View>
