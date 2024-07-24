@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import UpdateAccountDetailsPresenter from '../../presenter/UpdateAccountDetailsPresenter';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
+import { scale } from '../../components/scale';
+
 
 const CoachEditAccountDetailsPage = () => {
   const route = useRoute();
@@ -12,11 +15,36 @@ const CoachEditAccountDetailsPage = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   // const [password, setPassword] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
+  // const [modalVisible, setModalVisible] = useState(false);
   const [tempName, setTempName] = useState(name);
   const [tempPhoneNumber, setTempPhoneNumber] = useState(phoneNumber);
   const [tempEmail, setTempEmail] = useState(email);
   // const [tempPassword, setTempPassword] = useState(password);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState('');
+
+  // change popup/modal visible
+  const changeLoadingVisible = (b)=>{
+      setIsLoading(b);
+  }
+
+  // change popup/modal visible
+  const changeModalVisible = (b, m)=>{
+      setModalMsg(m);
+      setModalVisible(b);
+  }
+
+  // change popup/modal visible
+  const changeConfirmVisible = (b, m)=>{
+      setConfirmMessage(m);
+      setConfirmationVisible(b);
+  }
+
+
 
   const presenter = new UpdateAccountDetailsPresenter({
     displayAccountDetails: (accountDetails) => {
@@ -96,8 +124,22 @@ const CoachEditAccountDetailsPage = () => {
         <Text style={styles.buttonText}>SAVE</Text>
       </TouchableOpacity>
 
-      <Modal
-        animationType="slide"
+      <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
+          <LoadingDialog />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+          <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeModalVisible(false)}>
+          <ActionDialog
+              message = {confirmMessage}
+              changeModalVisible = {changeConfirmVisible}
+              action = {handleConfirmSave}
+          />
+      </Modal>
+
+      {/* <Modal
+        animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
@@ -109,7 +151,7 @@ const CoachEditAccountDetailsPage = () => {
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.modalButton}
-                onPress={handleConfirmSave}>
+                onPress={}>
                 <Text style={styles.modalButtonText}>Yes</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -120,7 +162,7 @@ const CoachEditAccountDetailsPage = () => {
             </View>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
     </View>
   );
 };

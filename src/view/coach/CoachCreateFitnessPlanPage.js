@@ -32,7 +32,7 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
 
 
     // change popup/modal visible
-  const changeLoadingVisible = (b)=>{
+    const changeLoadingVisible = (b)=>{
         setIsLoading(b);
     }
 
@@ -113,8 +113,6 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
     },[]);
 
     useEffect(() => {
-        // isSave can be true or false
-        // redirectAction: {isSave, refresh: true},
         if(route.params?.refresh){
             setCoach(route.params.coach);
             setName(route.params.name);
@@ -182,7 +180,7 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
                     </View>
                     <View style = {styles.stat}>
                         <Image source={require('../../../assets/fire_icon.png')} style={styles.icon} />
-                        <Text style = {styles.iconText}>{`${routines.map (routine => routine.estCaloriesBurned).reduce((acc, cal) => acc + cal, 0) || 0}`} kcal</Text>
+                        <Text style = {styles.iconText}>{`${Math.ceil(routines.map (routine => routine.estCaloriesBurned).reduce((acc, cal) => acc + cal, 0)) || 0}`} kcal</Text>
                     </View>
                 </View>
 

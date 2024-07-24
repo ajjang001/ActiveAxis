@@ -96,7 +96,7 @@ const CoachFitnessPlanPage = ({route, navigation}) => {
                             </View>
                             <View style = {styles.stats}>
                                 <Image source = {require('../../../assets/fire_icon.png')} style = {styles.icon}/>
-                                <Text style = {styles.statsText}>{fitnessPlan.routinesList.map(routine => routine.estCaloriesBurned).reduce((a, b) => a + b, 0)} kcal</Text>
+                                <Text style = {styles.statsText}>{Math.ceil(fitnessPlan.routinesList.map(routine => routine.estCaloriesBurned).reduce((a, b) => a + b, 0))} kcal</Text>
                             </View>
                         </View>
                     </View>

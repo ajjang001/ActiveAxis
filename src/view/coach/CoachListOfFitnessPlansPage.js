@@ -55,6 +55,7 @@ const CoachListOfFitnessPlansPage = ({navigation, route}) => {
 
     useEffect(() => {
         loadFitnessPlans();
+        route.params.refresh = false;
     }, [route.params?.refresh]);
 
     return (
@@ -93,7 +94,7 @@ const CoachListOfFitnessPlansPage = ({navigation, route}) => {
                                             </View>
                                             <View style = {styles.stats}>
                                                 <Image source = {require('../../../assets/fire_icon.png')} style = {styles.icon}/>
-                                                <Text>{fitnessPlan.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0)} kcal</Text>
+                                                <Text>{Math.ceil(fitnessPlan.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0))} kcal</Text>
                                             </View>
                                         </View>
                                     </View>

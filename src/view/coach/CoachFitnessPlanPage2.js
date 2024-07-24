@@ -148,6 +148,8 @@ const styles = StyleSheet.create({
     restDayText:{
         fontFamily: 'Inter-Medium',
         fontSize: scale(25),
+        marginBottom: scale(75),
+        marginTop: scale(10),
     },
 });
 
