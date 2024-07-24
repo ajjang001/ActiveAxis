@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import SendAppFeedbackPresenter from '../../presenter/SendAppFeedbackPresenter';
+import { getAuth } from 'firebase/auth';
 
 const CoachSendAppFeedbackPage = () => {
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState('');
+  const presenter = new SendAppFeedbackPresenter({
+    onFeedbackSubmitted: () => {
+      alert('Feedback submitted successfully');
+      setRating(0);
+      setFeedback('');
+    },
+    displayFeedbacks: (feedbackList) => {
+      // Handle displaying the feedbacks
+      console.log(feedbackList);
+    }
+  });
 
   const renderStars = () => {
     const stars = [];
@@ -23,10 +36,34 @@ const CoachSendAppFeedbackPage = () => {
     return stars;
   };
 
-  const handleSubmit = () => {
-    // Handle the submit action (e.g., send feedback to the server)
-    console.log('Rating:', rating);
-    console.log('Feedback:', feedback);
+  const handleSubmit = async () => {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        const dateSubmitted = new Date().toLocaleString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric', 
+          hour: 'numeric', 
+          minute: 'numeric', 
+          second: 'numeric', 
+          timeZoneName: 'short'
+        });
+        const feedbackData = {
+          dateSubmitted: dateSubmitted,
+          feedbackText: feedback,
+          rating: rating,
+          accountID: user.uid, // Use the authenticated user's UID
+        };
+        presenter.submitFeedback(feedbackData);
+      } else {
+        alert('User is not authenticated');
+      }
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+    }
   };
 
   return (

@@ -482,7 +482,39 @@ class Coach extends Account {
         }
     }
 
+    async updateCoachAccountDetails(email, name, phoneNumber, tempEmail) {
+        try {
+            // Fetch the coach document from Firestore
+            const q = query(collection(db, 'coach'), where('email', '==', email));
+            const queryResult = await getDocs(q);
 
+            if (queryResult.empty) {
+                throw new Error('Coach not found.');
+            }
+
+            const coachDoc = queryResult.docs[0];
+            const coachID = coachDoc.id;
+
+            // Update the email in Firebase Authentication if it has changed
+            if (email !== tempEmail) {
+                const user = auth.currentUser;
+                await updateEmail(user, tempEmail);
+            }
+
+            // Update the coach document in Firestore
+            const coachRef = doc(db, 'coach', coachID);
+            await updateDoc(coachRef, {
+                email: tempEmail,
+                fullName: name,
+                phoneNumber: phoneNumber,
+            });
+
+            console.log('Coach account details updated successfully.');
+        } catch (error) {
+            console.error('Error updating coach account details:', error.message);
+            throw new Error('Failed to update coach account details. Please try again.');
+        }
+    }
 
 }
 

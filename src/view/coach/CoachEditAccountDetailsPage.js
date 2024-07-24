@@ -1,28 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import UpdateAccountDetailsPresenter from '../../presenter/UpdateAccountDetailsPresenter';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
 const CoachEditAccountDetailsPage = () => {
-  const [name, setName] = useState('Coach Name');
-  const [phoneNumber, setPhoneNumber] = useState('+65 9999 9999');
-  const [email, setEmail] = useState('coachname@gmail.com');
-  const [password, setPassword] = useState('12345');
+  const route = useRoute();
+  const navigation = useNavigation(); // Initialize navigation
+  const { userEmail, userType } = route.params;
+
+  const [name, setName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [tempName, setTempName] = useState(name);
   const [tempPhoneNumber, setTempPhoneNumber] = useState(phoneNumber);
   const [tempEmail, setTempEmail] = useState(email);
-  const [tempPassword, setTempPassword] = useState(password);
+  // const [tempPassword, setTempPassword] = useState(password);
+
+  const presenter = new UpdateAccountDetailsPresenter({
+    displayAccountDetails: (accountDetails) => {
+      console.log("Displaying account details:", accountDetails);
+      setName(accountDetails.fullName);
+      setPhoneNumber(accountDetails.phoneNumber);
+      setEmail(accountDetails.email);
+      // setPassword(accountDetails.password); // If you want to handle passwords
+      setTempName(accountDetails.fullName);
+      setTempPhoneNumber(accountDetails.phoneNumber);
+      setTempEmail(accountDetails.email);
+      // setTempPassword(accountDetails.password); // If you want to handle passwords
+    }
+  });
+
+  useEffect(() => {
+    if (userEmail && userType) {
+      presenter.getCoachDetails(userEmail).catch((error) => {
+        console.error("Error in presenter:", error.message);
+      });
+    }
+  }, [userEmail, userType]);
 
   const handleSave = () => {
     setModalVisible(true);
   };
 
   const handleConfirmSave = () => {
-    setName(tempName);
-    setPhoneNumber(tempPhoneNumber);
-    setEmail(tempEmail);
-    setPassword(tempPassword);
+    presenter.updateCoachAccountDetails(
+      userEmail,
+      tempName,
+      tempPhoneNumber,
+      tempEmail
+    ).then(() => {
+      navigation.goBack();
+    }).catch((error) => {
+      console.error("Error updating account details:", error.message);
+    });
     setModalVisible(false);
   };
+
 
   const handleCancelSave = () => {
     setModalVisible(false);
@@ -54,15 +89,6 @@ const CoachEditAccountDetailsPage = () => {
             style={styles.input}
             value={tempEmail}
             onChangeText={setTempEmail}
-          />
-        </View>
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            value={tempPassword}
-            onChangeText={setTempPassword}
-            secureTextEntry
           />
         </View>
       </View>

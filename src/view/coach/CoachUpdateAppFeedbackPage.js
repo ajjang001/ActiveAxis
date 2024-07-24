@@ -1,11 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase/firebaseConfig';
+import UpdateAppFeedbackPresenter from '../../presenter/UpdateAppFeedbackPresenter';
 
-const CoachUpdateAppFeedbackPage = () => {
+const CoachUpdateAppFeedbackPage = ({ route, navigation }) => {
+  const { feedbackId } = route.params;
   const [rating, setRating] = useState(0);
-  const [feedback, setFeedback] = useState('');
+  const [feedbackText, setFeedbackText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+
+  const presenter = new UpdateAppFeedbackPresenter({
+    onFeedbackUpdated: () => {
+      alert('Feedback updated successfully');
+      navigation.goBack();
+    }
+  });
+
+  useEffect(() => {
+    const fetchFeedbackDetails = async () => {
+      try {
+        const feedbackDoc = await getDoc(doc(db, 'appfeedback', feedbackId));
+        if (feedbackDoc.exists()) {
+          const feedbackData = feedbackDoc.data();
+          setRating(feedbackData.rating);
+          setFeedbackText(feedbackData.feedbackText);
+        }
+      } catch (error) {
+        console.error('Error fetching feedback:', error);
+      }
+    };
+
+    fetchFeedbackDetails();
+  }, [feedbackId]);
 
   const renderStars = () => {
     const stars = [];
@@ -30,9 +58,7 @@ const CoachUpdateAppFeedbackPage = () => {
 
   const handleSave = () => {
     setModalVisible(false);
-    console.log('Rating:', rating);
-    console.log('Feedback:', feedback);
-    // Handle the submit action (e.g., send feedback to the server)
+    presenter.updateFeedback(feedbackId, { feedbackText, rating });
   };
 
   const handleCancel = () => {
@@ -41,15 +67,15 @@ const CoachUpdateAppFeedbackPage = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>App Feedback</Text>
+      <Text style={styles.title}>Update Feedback</Text>
       <View style={styles.starsContainer}>{renderStars()}</View>
       <TextInput
         style={styles.textInput}
         placeholder="Enter reviews here"
         placeholderTextColor="#666"
         multiline
-        value={feedback}
-        onChangeText={setFeedback}
+        value={feedbackText}
+        onChangeText={setFeedbackText}
       />
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>SAVE</Text>
