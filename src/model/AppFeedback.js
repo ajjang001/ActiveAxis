@@ -97,10 +97,10 @@ class AppFeedback{
     }
     
 
-      async fetchFeedbacks() {
+      async fetchFeedbacks(accountID) {
         try {
           // Fetch feedbacks
-          const feedbacksCollection = collection(db, 'appfeedback');
+          const feedbacksCollection = query(collection(db, "appfeedback"), where("accountID", "==", accountID));
           const feedbackSnapshot = await getDocs(feedbacksCollection);
 
           // Fetch user details

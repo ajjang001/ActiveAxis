@@ -35,11 +35,17 @@ const CoachAppFeedbackPage = ({ navigation }) => {
       setConfirmMessage(m);
       setConfirmationVisible(b);
   }
+  const loadFeedback = async() => {
+    try{
+      await new SendAppFeedbackPresenter({displayFeedbacks: setFeedbacks}).fetchFeedbacks(user.uid);
+    }catch (e){console.log(e)}
+  }
 
   const presenter = new SendAppFeedbackPresenter({
     displayFeedbacks: (feedbackList) => {
         if (user) {
             const userFeedbacks = feedbackList.filter(feedback => feedback.accountID === user.uid);
+            console.log(userFeedbacks);
             setFeedbacks(userFeedbacks);
         }
     },
@@ -71,7 +77,8 @@ const CoachAppFeedbackPage = ({ navigation }) => {
 }, []);
 
 const handleEdit = (feedback) => {
-    navigation.navigate('CoachUpdateAppFeedbackPage', { feedbackId: feedback.id });
+    //navigation.navigate('CoachUpdateAppFeedbackPage', { feedbackId: feedback.id });
+    console.log(feedback);
 };
 
   return (

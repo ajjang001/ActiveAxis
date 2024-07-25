@@ -8,9 +8,9 @@ class SendAppFeedbackPresenter {
     this.appFeedback = new AppFeedback();
   }
 
-  async fetchFeedbacks() {
+  async fetchFeedbacks(accountID) {
     try {
-      const feedbackList = await this.appFeedback.fetchFeedbacks();
+      const feedbackList = await this.appFeedback.fetchFeedbacks(accountID);
       this.view.displayFeedbacks(feedbackList);
     } catch (error) {
       console.error("Error fetching feedbacks:", error);
