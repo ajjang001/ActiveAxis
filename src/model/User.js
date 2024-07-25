@@ -12,7 +12,8 @@ class User extends Account {
     #fitnessGoal;
     #fitnessLevel;
     #restInterval;
-
+    #stepTarget;
+    #calorieTarget;
 
     constructor() {
         super();
@@ -22,6 +23,8 @@ class User extends Account {
         this.#fitnessGoal = "";
         this.#fitnessLevel = "";
         this.#restInterval = 0;
+        this.#stepTarget = 0;
+        this.#calorieTarget = 0;
     }
 
     get hasMedical() { return this.#hasMedical; }
@@ -30,6 +33,8 @@ class User extends Account {
     get fitnessGoal() { return this.#fitnessGoal; }
     get fitnessLevel() { return this.#fitnessLevel; }
     get restInterval() { return this.#restInterval; }
+    get stepTarget() { return this.#stepTarget}
+    get calorieTarget() { return this.#calorieTarget}
 
     set hasMedical(hasMedical) { this.#hasMedical = hasMedical; }
     set weight(weight) { this.#weight = weight; }
@@ -37,6 +42,8 @@ class User extends Account {
     set fitnessGoal(fitnessGoal) { this.#fitnessGoal = fitnessGoal; }
     set fitnessLevel(fitnessLevel) { this.#fitnessLevel = fitnessLevel; }
     set restInterval(restInterval) { this.#restInterval = restInterval; }
+    set stepTarget(stepTarget) { return this.#stepTarget = stepTarget; }
+    set calorieTarget(calorieTarget) { return this.#calorieTarget = calorieTarget; } 
 
     async login(email, password) {
         try {
@@ -190,6 +197,10 @@ class User extends Account {
                 restInterval: intervalInSeconds,
                 username: uname,
                 weight: weight,
+
+                //default value first
+                stepTarget: 1500,
+                calorieTarget: 150
             });
 
         }
@@ -430,8 +441,8 @@ class User extends Account {
                 u.fitnessGoal = data.fitnessGoal;
                 u.fitnessLevel = data.fitnessLevel;
                 u.restInterval = data.restInterval;
-
-
+                u.stepTarget = data.stepTarget;
+                u.calorieTarget = data.calorieTarget;
 
                 users.push({ id: doc.id, user: u });
 
@@ -475,6 +486,34 @@ class User extends Account {
             console.log('User details updated successfully');
         } catch (e) {
             console.error('Error updating user details:', e.message);
+            throw new Error(e.message);
+        }
+    }
+
+    async updateExerciseSettings(email, restInterval, stepTarget, calorieTarget) {
+        try {
+            // Check if the email exists
+            const q = query(collection(db, 'user'), where('email', '==', email));
+            const queryResult = await getDocs(q);
+
+            if (queryResult.empty) {
+                throw new Error('User not found');
+            } 
+
+            // Get the document ID of the first matching user (assuming email is unique)
+            const userDocId = queryResult.docs[0].id;
+
+            // Update the document with new values
+            const userDocRef = doc(db, 'user', userDocId);
+            await updateDoc(userDocRef, {
+                restInterval,
+                stepTarget,
+                calorieTarget,
+            });
+
+            console.log('Exercise settings updated successfully');
+        } catch (e) {
+            console.error('Error updating exercise settings:', e.message);
             throw new Error(e.message);
         }
     }

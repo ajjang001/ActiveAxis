@@ -97,8 +97,25 @@ class UpdateAccountDetailsPresenter {
               throw new Error(error);
         }
         }
-
+        
     }
+    async updateCoachPassword(coachID, newPassword, confirmNewPassword) {
+      if (newPassword.trim() === '') {
+          throw new Error('Password has not been entered!');
+      } else if (newPassword.trim().length < 6) {
+          throw new Error('Password must be at least 6 characters long!');
+      } else if (newPassword !== confirmNewPassword) {
+          throw new Error('Passwords do not match.');
+      } else {
+          try {
+              this.account = new Coach();
+              await this.account.updatePassword(coachID, newPassword);
+          } catch (error) {
+              console.error('Error updating password:', error.message);
+              throw new Error(error.message || 'An unknown error occurred while updating the password.');
+          }
+      }
+  }
 }
 
 export default UpdateAccountDetailsPresenter;

@@ -34,14 +34,6 @@ const RegisterPage = ({ navigation }) => {
   const [alarmString, setAlarmString] = useState('');
   const [intervalInSeconds, setIntervalInSeconds] = useState(null);
 
-  const formatTime = (pickedDuration) => {
-    const { hours, minutes, seconds } = pickedDuration;
-    const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
-    const displayMinutes = Math.floor(totalSeconds / 60);
-    const displaySeconds = totalSeconds % 60;
-    return `${displayMinutes} min ${displaySeconds} sec`;
-  };
-
   const handleRestConfirm = (pickedDuration) => {
     const { hours, minutes, seconds } = pickedDuration;
     let totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
@@ -49,7 +41,7 @@ const RegisterPage = ({ navigation }) => {
       totalSeconds = 120;
     }
     setIntervalInSeconds(totalSeconds);
-    setAlarmString(formatTime({ hours: 0, minutes: Math.floor(totalSeconds / 60), seconds: totalSeconds % 60 }));
+    setAlarmString(totalSeconds);
     setShowPicker(false);
   };
 
@@ -223,13 +215,13 @@ const RegisterPage = ({ navigation }) => {
               }}
             />
           </View>
-          <Text style={styles.label}>Rest Interval (20s - 120s)</Text>
-          <TouchableOpacity onPress={() => setShowPicker(true)} >
+          <Text style={styles.label}>Rest Interval (seconds)</Text>
+          <TouchableOpacity style={styles.restIntervalButton} onPress={() => setShowPicker(true)} >
             {
               alarmString == '' ?
-                <Text style={styles.dateContainer}>Set interval</Text>
+                <Text style={styles.restIntervalText}>Set interval</Text>
                 :
-                <Text style={styles.dateContainer}>Selected Interval: {alarmString}</Text>
+                <Text style={styles.restIntervalText}>Selected Interval: {alarmString} seconds</Text>
             }
 
           </TouchableOpacity>
@@ -238,7 +230,7 @@ const RegisterPage = ({ navigation }) => {
             visible={showPicker}
             setIsVisible={setShowPicker}
             onConfirm={handleRestConfirm}
-            modalTitle="Set Duration"
+            modalTitle="Set Interval (20s - 120s)"
             onCancel={() => setShowPicker(false)}
             closeOnOverlayPress
             styles={{
@@ -363,5 +355,22 @@ const styles = StyleSheet.create({
     paddingVertical: scale(10),
     borderRadius: scale(8),
     backgroundColor: 'white',
-  }
+  },
+  restIntervalButton: {
+    backgroundColor: 'white',
+    marginBottom: scale(5),
+    paddingHorizontal: scale(15),
+    paddingVertical: scale(10),
+    borderRadius: scale(8),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: scale(5),
+    elevation: scale(5),
+    borderWidth: 2
+  },
+  restIntervalText: {
+    fontSize: scale(16),
+    fontFamily: 'Inter',
+  },
 })
