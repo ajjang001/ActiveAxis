@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { scale } from '../../components/scale';
 
-const UserCompetitionPage = ({ route }) => {
+const UserCompetitionPage = ({ navigation, route }) => {
 
     const { user } = route.params;
-
-    console.log(user);
 
     return (
         <View style={styles.container}>
@@ -15,14 +13,12 @@ const UserCompetitionPage = ({ route }) => {
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={() =>
-                    //navigation.navigate("UserUpdateAccountDetailsPage", { user, userDetails })
-                    console.log("Navigate to Create Competition Page")
+                    navigation.navigate("UserCreateCompetitionPage", { user })
                 }>
                     <Text style={styles.buttonText}>Create Competitions</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() =>
-                    //navigation.navigate("UserUpdateAccountDetailsPage", { user, userDetails })
-                    console.log("Navigate to Competition History Page")
+                    navigation.navigate("UserCompetitionHistoryPage", { user })
                 }>
                     <Text style={styles.buttonText}>History</Text>
                 </TouchableOpacity>
