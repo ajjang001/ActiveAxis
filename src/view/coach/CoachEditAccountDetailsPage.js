@@ -14,12 +14,11 @@ const CoachEditAccountDetailsPage = () => {
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
-  // const [modalVisible, setModalVisible] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [tempName, setTempName] = useState(name);
   const [tempPhoneNumber, setTempPhoneNumber] = useState(phoneNumber);
   const [tempEmail, setTempEmail] = useState(email);
-  // const [tempPassword, setTempPassword] = useState(password);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState('');
@@ -52,11 +51,9 @@ const CoachEditAccountDetailsPage = () => {
       setName(accountDetails.fullName);
       setPhoneNumber(accountDetails.phoneNumber);
       setEmail(accountDetails.email);
-      // setPassword(accountDetails.password); // If you want to handle passwords
       setTempName(accountDetails.fullName);
       setTempPhoneNumber(accountDetails.phoneNumber);
       setTempEmail(accountDetails.email);
-      // setTempPassword(accountDetails.password); // If you want to handle passwords
     }
   });
 
@@ -68,22 +65,35 @@ const CoachEditAccountDetailsPage = () => {
     }
   }, [userEmail, userType]);
 
-  const handleSave = () => {
-    setModalVisible(true);
-  };
 
   const handleConfirmSave = () => {
+    setIsLoading(true);
     presenter.updateCoachAccountDetails(
       userEmail,
       tempName,
       tempPhoneNumber,
       tempEmail
     ).then(() => {
-      navigation.goBack();
+      presenter.updateCoachPassword(
+        userEmail,
+        newPassword,
+        confirmNewPassword
+    ).then(() => {
+        setIsLoading(false);
+        Alert.alert('Success', 'Account details and password updated successfully!');
+        navigation.goBack();
     }).catch((error) => {
-      console.error("Error updating account details:", error.message);
+        setIsLoading(false);
+        console.error("Error updating password:", error.message);
+        Alert.alert('Error', error.message || 'An unknown error occurred while updating the password.');
     });
-    setModalVisible(false);
+  }).catch((error) => {
+     setIsLoading(false);
+     console.error("Error updating account details:", error.message);
+     Alert.alert('Error', error.message || 'An unknown error occurred while updating the account details.');
+  });
+
+  setModalVisible(false);
   };
 
 
@@ -119,8 +129,26 @@ const CoachEditAccountDetailsPage = () => {
             onChangeText={setTempEmail}
           />
         </View>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>New Password</Text>
+          <TextInput
+            style={styles.input}
+            value={newPassword}
+            onChangeText={setNewPassword}
+            secureTextEntry={true}
+          />
+        </View>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Confirm New Password</Text>
+          <TextInput
+            style={styles.input}
+            value={confirmNewPassword}
+            onChangeText={setConfirmNewPassword}
+            secureTextEntry={true}
+          />
+        </View>
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleSave}>
+      <TouchableOpacity style={styles.button} onPress={handleConfirmSave}>
         <Text style={styles.buttonText}>SAVE</Text>
       </TouchableOpacity>
 
@@ -170,76 +198,76 @@ const CoachEditAccountDetailsPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: scale(20),
     backgroundColor: '#FDF4F1',
   },
   title: {
-    fontSize: 24,
+    fontSize: scale(24),
     fontWeight: 'bold',
     color: '#000',
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
   formContainer: {
-    padding: 20,
-    borderWidth: 2,
+    padding: scale(20),
+    borderWidth: scale(2),
     borderColor: '#C53A45',
-    borderRadius: 10,
+    borderRadius: scale(10),
     backgroundColor: '#F1F1F1',
   },
   inputGroup: {
-    marginBottom: 15,
+    marginBottom: scale(15),
   },
   label: {
-    fontSize: 16,
+    fontSize: scale(16),
     fontWeight: 'bold',
     color: '#000',
-    marginBottom: 5,
+    marginBottom: scale(5),
   },
   input: {
-    height: 40,
+    height: scale(40),
     borderColor: '#CCCCCC',
-    borderWidth: 1,
-    paddingHorizontal: 10,
+    borderWidth: scale(1),
+    paddingHorizontal: scale(10),
     backgroundColor: '#FFFFFF',
   },
   button: {
-    marginTop: 20,
+    marginTop: scale(20),
     alignSelf: 'center',
     backgroundColor: '#000',
-    paddingVertical: 10,
-    paddingHorizontal: 40,
-    borderRadius: 5,
+    paddingVertical: scale(10),
+    paddingHorizontal: scale(40),
+    borderRadius: scale(5),
   },
   buttonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: scale(16),
   },
   modalContainer: {
-    flex: 1,
+    flex: scale(1),
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
-    width: 300,
+    width: scale(300),
     backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
+    borderRadius: scale(10),
+    padding: scale(20),
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
-      width: 0,
-      height: 2,
+      width: scale(0),
+      height: scale(2),
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowOpacity: scale(0.25),
+    shadowRadius: scale(4),
+    elevation: scale(5),
   },
   modalText: {
-    fontSize: 18,
+    fontSize: scale(18),
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
   modalButtons: {
     flexDirection: 'row',
@@ -248,14 +276,14 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     backgroundColor: '#E0E0E0',
-    borderRadius: 5,
-    padding: 10,
-    marginHorizontal: 10,
+    borderRadius: scale(5),
+    padding: scale(10),
+    marginHorizontal: scale(10),
     alignItems: 'center',
-    flex: 1,
+    flex: scale(1),
   },
   modalButtonText: {
-    fontSize: 16,
+    fontSize: scale(16),
     fontWeight: 'bold',
   },
 });

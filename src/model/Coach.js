@@ -1,6 +1,6 @@
 
 import { auth, db, storage } from '../firebase/firebaseConfig';
-import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail} from 'firebase/auth';
 import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, deleteDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import axios from 'axios';
@@ -515,7 +515,15 @@ class Coach extends Account {
             throw new Error('Failed to update coach account details. Please try again.');
         }
     }
-
+    async updatePassword(coachID, newPassword) {
+        try {
+            // Send a request to the server to update the user's password in Firebase Auth
+            const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/update-password', { uid: coachID, newPassword });
+            console.log(res.data.message);
+        } catch (e) {
+            throw new Error(e.message || 'Failed to update password');
+        }
+    }
 }
 
 export default Coach;
