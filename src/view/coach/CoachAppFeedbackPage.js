@@ -7,7 +7,7 @@ import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Mod
 import SendAppFeedbackPresenter from '../../presenter/SendAppFeedbackPresenter';
 
 const CoachAppFeedbackPage = ({ navigation, route }) => {
-  const [feedback, setFeedback] = useState([]);
+  const [feedback, setFeedback] = useState(null);
   const {coach} = route.params;
 
   
@@ -37,7 +37,7 @@ const CoachAppFeedbackPage = ({ navigation, route }) => {
   const loadFeedback = async() => {
     try{
       changeLoadingVisible(true);
-      setFeedback([]);
+      setFeedback(null);
       await new SendAppFeedbackPresenter({displayFeedback: setFeedback}).fetchFeedback(coach.accountID);
     }catch (e){
       changeModalVisible(true, e.message);
@@ -46,7 +46,13 @@ const CoachAppFeedbackPage = ({ navigation, route }) => {
     }
   }
   const handleEdit = (feedback) => {
-      navigation.navigate('CoachUpdateAppFeedbackPage', { feedback, coach });
+    
+      if (feedback === null) {
+        navigation.navigate('CoachSendAppFeedbackPage', {coach});
+      }else{
+        navigation.navigate('CoachUpdateAppFeedbackPage', { feedback, coach });
+      }
+      
   };
 
 
@@ -73,15 +79,20 @@ const CoachAppFeedbackPage = ({ navigation, route }) => {
           <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
       </Modal>
 
-        <FeedbackCard
+      { feedback === null ? 
+      <Text style = {{fontSize:scale(24), paddingVertical:scale(20)}}>No feedback available</Text> :
+          <FeedbackCard
           avatar={feedback.profilePicture}
           name={feedback.fullName}
           rating={feedback.rating}
           feedback={feedback.feedbackText}
         />
+      }
+
+        
 
       <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(feedback)}>
-            <Text style={styles.editButtonText}>EDIT</Text>
+            <Text style={styles.editButtonText}>{feedback === null ? "CREATE" : "EDIT"}</Text>
           </TouchableOpacity>
     </ScrollView>
   );
@@ -92,6 +103,7 @@ const styles = StyleSheet.create({
     paddingVertical: scale(20),
     paddingHorizontal: scale(10),
     alignItems: 'center',
+    backgroundColor: '#FBF5F3',
   },
   editButton: {
     backgroundColor: '#DA872A',

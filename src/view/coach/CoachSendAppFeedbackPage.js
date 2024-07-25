@@ -1,15 +1,45 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SendAppFeedbackPresenter from '../../presenter/SendAppFeedbackPresenter';
 import { getAuth } from 'firebase/auth';
+import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
-const CoachSendAppFeedbackPage = () => {
+import { scale } from '../../components/scale';
+
+const CoachSendAppFeedbackPage = ({navigation, route}) => {
+  const {coach} = route.params;
+
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState('');
+
+  // State to control the visibility of the modal
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState('');
+
+  // change popup/modal visible
+  const changeModalVisible = (b, m) => {
+      setModalMsg(m);
+      setModalVisible(b);
+  }
+
+  // change popup/modal visible
+  const changeLoadingVisible = (b) => {
+      setIsLoading(b);
+  }
+
+  // change popup/modal visible
+  const changeConfirmVisible = (b, m) => {
+      setConfirmMessage(m);
+      setConfirmationVisible(b);
+  }
+
   const presenter = new SendAppFeedbackPresenter({
     onFeedbackSubmitted: () => {
-      alert('Feedback submitted successfully');
+      Alert.alert('Success', 'Feedback submitted successfully');
       setRating(0);
       setFeedback('');
     },
@@ -38,6 +68,7 @@ const CoachSendAppFeedbackPage = () => {
 
   const handleSubmit = async () => {
     try {
+      changeLoadingVisible(true);
       const auth = getAuth();
       const user = auth.currentUser;
 
@@ -57,30 +88,43 @@ const CoachSendAppFeedbackPage = () => {
           rating: rating,
           accountID: user.uid, // Use the authenticated user's UID
         };
-        presenter.submitFeedback(feedbackData);
+        await presenter.submitFeedback(feedbackData);
+
+        navigation.navigate('CoachAppFeedbackPage', {refresh: true, coach});
       } else {
-        alert('User is not authenticated');
+        changeModalVisible(true, 'You must be logged in to submit feedback');
       }
     } catch (error) {
-      console.error('Error submitting feedback:', error);
+      changeModalVisible(true, error.message.replace('Error: ', ''));
+    }finally{
+      changeLoadingVisible(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>App Feedback</Text>
-      <View style={styles.starsContainer}>{renderStars()}</View>
-      <TextInput
-        style={styles.textInput}
-        placeholder="Enter reviews here"
-        placeholderTextColor="#666"
-        multiline
-        value={feedback}
-        onChangeText={setFeedback}
-      />
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>SUBMIT</Text>
-      </TouchableOpacity>
+    <View style = {{backgroundColor: '#FBF5F3'}}>
+      <View style={styles.container}>
+        <Text style={styles.title}>App Feedback</Text>
+        <View style={styles.starsContainer}>{renderStars()}</View>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Enter reviews here"
+          placeholderTextColor="#666"
+          multiline
+          value={feedback}
+          onChangeText={setFeedback}
+        />
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>SUBMIT</Text>
+        </TouchableOpacity>
+      </View>
+      
+      <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+          <LoadingDialog />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+          <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
+      </Modal>
     </View>
   );
 };

@@ -9,8 +9,8 @@ import UpdateAppFeedbackPresenter from '../../presenter/UpdateAppFeedbackPresent
 
 const CoachUpdateAppFeedbackPage = ({ route, navigation }) => {
   const { feedback, coach } = route.params;
-  const [rating, setRating] = useState(feedback.rating || 0);
-  const [feedbackText, setFeedbackText] = useState(feedback.feedbackText || '');
+  const [rating, setRating] = useState(feedback !== null ? feedback.rating : 0);
+  const [feedbackText, setFeedbackText] = useState(feedback !== null ? feedback.feedbackText : '');
 
   
   const [isLoading, setIsLoading] = useState(false);
@@ -42,9 +42,11 @@ const CoachUpdateAppFeedbackPage = ({ route, navigation }) => {
     try{
       changeLoadingVisible(true);
       await new UpdateAppFeedbackPresenter({feedback: feedback}).updateFeedback(feedbackText, rating);
-
-      navigation.navigate('CoachAppFeedbackPage', {refresh: true, coach});
-      Alert.alert('Success', 'Feedback updated successfully');
+      
+      setTimeout(() => {
+        navigation.navigate('CoachAppFeedbackPage', {refresh: true, coach});
+        Alert.alert('Success', 'Feedback updated successfully');
+      }, 500);
     }catch (e){
       changeModalVisible(true, e.message);
     }finally{
