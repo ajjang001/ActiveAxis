@@ -1,9 +1,12 @@
 
 import { db, storage } from '../firebase/firebaseConfig';
-import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, updateDoc, query, where, Timestamp } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
 
+import Coach from './Coach';
+
 class AppFeedback{
+    #feedbackID;
     #dateSubmitted;
     #feedbackText;
     #rating
@@ -12,6 +15,7 @@ class AppFeedback{
     #fullName
     #profilePicture
 
+    get feedbackID(){return this.#feedbackID;}
     get dateSubmitted(){return this.#dateSubmitted;}
     get feedbackText(){return this.#feedbackText;}
     get rating(){return this.#rating;}
@@ -20,6 +24,7 @@ class AppFeedback{
     get fullName(){return this.#fullName;}
     get profilePicture(){return this.#profilePicture;}
 
+    set feedbackID(feedbackID){this.#feedbackID = feedbackID;}
     set dateSubmitted(dateSubmitted){this.#dateSubmitted = dateSubmitted;}
     set feedbackText(feedbackText){this.#feedbackText = feedbackText;}
     set rating(rating){this.#rating = rating;}
@@ -28,156 +33,72 @@ class AppFeedback{
     set fullName(fullName){this.#fullName = fullName;}
     set profilePicture(profilePicture){this.#profilePicture = profilePicture;}
 
-    constructor(dateSubmitted, feedbackText, rating, accountID, avatar, fullName, profilePicture) {
-        this.dateSubmitted = dateSubmitted;
-        this.feedbackText = feedbackText;
-        this.rating = rating;
-        this.accountID = accountID;
-        this.avatar = avatar;
-        this.fullName = fullName;
-        this.profilePicture = profilePicture;
+    constructor() {
+        this.dateSubmitted = '';
+        this.feedbackText = '';
+        this.rating = 0;
+        this.accountID = '';
+        this.avatar = '';
+        this.fullName = '';
+        this.profilePicture = '';
       }
       
-      static async fetchFeedbackById(feedbackId) {
-        try {
-            const feedbackDocRef = doc(db, 'appfeedback', feedbackId);
-            const feedbackDoc = await getDoc(feedbackDocRef);
-    
-            if (!feedbackDoc.exists()) {
-                throw new Error('Feedback not found');
-            }
-    
-            const data = feedbackDoc.data();
-            const id = feedbackDoc.id;
-            let userFullName = '';
-            let userProfilePicture = '';
-    
-            if (data.accountID) {
-                let userDocRef = doc(db, 'user', data.accountID);
-                let userDoc = await getDoc(userDocRef);
-    
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    userFullName = userData.fullName || '';
-                    userProfilePicture = userData.profilePicture || '';
-    
-                    if (userProfilePicture) {
-                        try {
-                            const profilePicRef = ref(storage, userProfilePicture);
-                            userProfilePicture = await getDownloadURL(profilePicRef);
-                        } catch (error) {
-                            throw new Error("Error fetching profile picture: " + error.message);
-                        }
-                    }
-                } else {
-                    userDocRef = doc(db, 'coach', data.accountID);
-                    userDoc = await getDoc(userDocRef);
-    
-                    if (userDoc.exists()) {
-                        const coachData = userDoc.data();
-                        userFullName = coachData.fullName || '';
-                        userProfilePicture = coachData.profilePicture || '';
-    
-                        if (userProfilePicture) {
-                            try {
-                                const profilePicRef = ref(storage, userProfilePicture);
-                                userProfilePicture = await getDownloadURL(profilePicRef);
-                            } catch (error) {
-                                throw new Error("Error fetching profile picture: " + error.message);
-                            }
-                        }
-                    }
-                }
-            }
-    
-            return new AppFeedback(data.dateSubmitted, data.feedbackText, data.rating, data.accountID, data.avatar, userFullName, userProfilePicture, id);
-        } catch (error) {
-            throw new Error("Error fetching feedback: " + error.message);
-        }
-    }
     
 
-      async fetchFeedbacks(accountID) {
+      async fetchFeedback(accountID) {
         try {
           // Fetch feedbacks
-          const feedbacksCollection = query(collection(db, "appfeedback"), where("accountID", "==", accountID));
-          const feedbackSnapshot = await getDocs(feedbacksCollection);
+          let q = query(collection(db, "appfeedback"), where("accountID", "==", accountID));
+          const querySnapshot = await getDocs(q);
 
-          // Fetch user details
-          const feedbackList = await Promise.all(feedbackSnapshot.docs.map(async (feedbackDoc) => {
-            const data = feedbackDoc.data();
-            let userFullName = '';
-            let userProfilePicture = '';
-    
-            // Fetch user details
-            if (data.accountID) {
-              let userDocRef = doc(db, 'user', data.accountID);
-              let userDoc = await getDoc(userDocRef);
+          // expected 1 result
+          if (!querySnapshot.empty) {
+            const feedback = new AppFeedback();
+            
+            const data = querySnapshot.docs[0].data();
+            
+            feedback.feedbackID = querySnapshot.docs[0].id;
+            feedback.dateSubmitted = data.dateSubmitted;
+            feedback.feedbackText = data.feedbackText;
+            feedback.rating = data.rating;
+            feedback.accountID = data.accountID;
 
-              // Check if user exists
-              if (userDoc.exists()) {
-                const userData = userDoc.data();
-                userFullName = userData.fullName;
-                userProfilePicture = userData.profilePicture;
+            const docRef = await getDoc(doc(db, 'user', data.accountID));
+            if (docRef.exists()) {
+                const userData = docRef.data();
+                feedback.fullName = userData.fullName;
+                feedback.profilePicture = userData.profilePicture;
+            }else{
+                const coachDocRef = await getDoc(doc(db, 'coach', data.accountID));
+                if (coachDocRef.exists()) {
+                    const coachData = coachDocRef.data();
+                    feedback.fullName = coachData.fullName;
+                    feedback.profilePicture = coachData.profilePicture;
 
-                // Fetch profile picture
-                if (userProfilePicture) {
-                  try {
-                    const profilePicRef = ref(storage, userProfilePicture);
-                    userProfilePicture = await getDownloadURL(profilePicRef);
-                  } catch (error) {
-                    throw new Error("Error fetching profile picture: " + error.message);
-                  }
+                    const c = new Coach();
+                    c.profilePicture = coachData.profilePicture;
+                    feedback.profilePicture = await c.getProfilePictureURL();
                 }
-              }else{
-                // Check if user is a coach
-                userDocRef = doc(db, 'coach', data.accountID);
-                userDoc = await getDoc(userDocRef);
-
-                if(userDoc.exists()){
-                  // Fetch coach details
-                  const coachData = userDoc.data();
-                  userFullName = coachData.fullName;
-                  userProfilePicture = coachData.profilePicture;
-
-                  // Fetch profile picture
-                  if (userProfilePicture) {
-                    try {
-                      const profilePicRef = ref(storage, userProfilePicture);
-                      userProfilePicture = await getDownloadURL(profilePicRef);
-                    } catch (error) {
-                      throw new Error("Error fetching profile picture: " + error.message);
-                    }
-                  }
-
-                }
-
-              }
-
-
             }
-    
-            return new AppFeedback(data.dateSubmitted, data.feedbackText, data.rating, data.accountID, data.avatar, userFullName, userProfilePicture);
-          }));
-          return feedbackList;
+
+            return feedback;
+          }else{
+            return null;
+          }
         } catch (error) {
-          throw new Error("Error fetching feedbacks: " + error.message);
+          throw new Error(error.message);
         }
       }
-      async updateFeedback(feedbackId, updatedFeedback) {
+      async updateFeedback(feedbackText, rating) {
         try {
-            const feedbackDocRef = doc(db, 'appfeedback', feedbackId);
+            const feedbackDocRef = doc(db, 'appfeedback', this.feedbackID);
             await updateDoc(feedbackDocRef, {
-                feedbackText: updatedFeedback.feedbackText,
-                rating: updatedFeedback.rating,
-                dateSubmitted: updatedFeedback.dateSubmitted,
-                accountID: updatedFeedback.accountID,
-                avatar: updatedFeedback.avatar,
-                fullName: updatedFeedback.fullName,
-                profilePicture: updatedFeedback.profilePicture,
+                feedbackText: feedbackText,
+                rating: rating,
+                dateSubmitted: Timestamp.now()
             });
         } catch (error) {
-            throw new Error("Error updating feedback: " + error.message);
+            throw new Error(error.message);
         }
     }
     }

@@ -80,7 +80,7 @@ const CoachAccountSettingPage = ({ navigation, route }) => {
     const options = [
         { label: 'Account Details', onPress: () => navigation.navigate('CoachViewAccountDetailsPage', { userEmail: coach.email, userType: 'coach' }) },
         { label: 'Coachees Feedback', onPress: () => navigation.navigate('CoacheeFeedbackPage', { coach }) },
-        { label: 'App Feedbacks', onPress: () => navigation.navigate('CoachAppFeedbackPage', { userEmail: coach.email, userType: 'coach' }) },
+        { label: 'App Feedbacks', onPress: () => navigation.navigate('CoachAppFeedbackPage', { coach }) },
         { label: 'Log Out', onPress: () => changeConfirmVisible(true, 'Are you sure you want to log out?') }
     ];
 

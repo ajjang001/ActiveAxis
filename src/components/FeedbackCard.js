@@ -21,7 +21,11 @@ const FeedbackCard = ({ avatar, name, rating, feedback }) => {
   return (
     <View style={styles.card}>
       <View style={styles.header}>
+        {avatar ?
         <Image source={{ uri: avatar }} style={styles.avatar} />
+        :
+        <View style={styles.avatar} />
+        }
         <View style={styles.headerText}>
           <Text style={styles.name}>{name}</Text>
           <View style={styles.stars}>{renderStars()}</View>

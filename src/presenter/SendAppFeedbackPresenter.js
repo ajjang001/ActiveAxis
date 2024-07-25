@@ -8,12 +8,13 @@ class SendAppFeedbackPresenter {
     this.appFeedback = new AppFeedback();
   }
 
-  async fetchFeedbacks(accountID) {
+  async fetchFeedback(accountID) {
     try {
-      const feedbackList = await this.appFeedback.fetchFeedbacks(accountID);
-      this.view.displayFeedbacks(feedbackList);
+      const feedback = await this.appFeedback.fetchFeedback(accountID);
+      // console.log(feedback);
+      this.view.displayFeedback(feedback);
     } catch (error) {
-      console.error("Error fetching feedbacks:", error);
+      console.error("Error fetching feedback:", error);
     }
   }
 

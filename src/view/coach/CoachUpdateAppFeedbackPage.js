@@ -1,40 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { scale } from '../../components/scale';
+
+import { LoadingDialog, ActionDialog, MessageDialog } from '../../components/Modal';
+
 import UpdateAppFeedbackPresenter from '../../presenter/UpdateAppFeedbackPresenter';
 
 const CoachUpdateAppFeedbackPage = ({ route, navigation }) => {
-  const { feedbackId } = route.params;
-  const [rating, setRating] = useState(0);
-  const [feedbackText, setFeedbackText] = useState('');
+  const { feedback, coach } = route.params;
+  const [rating, setRating] = useState(feedback.rating || 0);
+  const [feedbackText, setFeedbackText] = useState(feedback.feedbackText || '');
+
+  
+  const [isLoading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState('');
 
-  const displayFeedback = (feedback) => {
-    console.log("Fetched Feedback:", feedback);
-    if (feedback) {
-      setFeedbackText(feedback.feedbackText || '');
-      setRating(feedback.rating || 0);
+  
+
+  // change popup/modal visible
+  const changeModalVisible = (b, m) => {
+      setModalMsg(m);
+      setModalVisible(b);
+  }
+
+  // change popup/modal visible
+  const changeLoadingVisible = (b) => {
+      setIsLoading(b);
+  }
+
+  // change popup/modal visible
+  const changeConfirmVisible = (b, m) => {
+      setConfirmMessage(m);
+      setConfirmationVisible(b);
+  }
+
+  const handleSave = async() => {
+    try{
+      changeLoadingVisible(true);
+      await new UpdateAppFeedbackPresenter({feedback: feedback}).updateFeedback(feedbackText, rating);
+
+      navigation.navigate('CoachAppFeedbackPage', {refresh: true, coach});
+      Alert.alert('Success', 'Feedback updated successfully');
+    }catch (e){
+      changeModalVisible(true, e.message);
+    }finally{
+      changeLoadingVisible(false);
     }
-  };
+  }
 
-  const showError = (message) => {
-    Alert.alert('Error', message);
-  };
 
-  const showSuccess = (message) => {
-    Alert.alert('Success', message);
-    navigation.goBack();
-  };
 
-  const presenter = new UpdateAppFeedbackPresenter({
-    displayFeedback: displayFeedback,
-    showError: showError,
-    showSuccess: showSuccess,
-  });
-
-  useEffect(() => {
-    presenter.fetchFeedbackById(feedbackId).catch(error => showError(error.message));
-  }, [feedbackId]);
 
   const renderStars = () => {
     const stars = [];
@@ -43,7 +62,7 @@ const CoachUpdateAppFeedbackPage = ({ route, navigation }) => {
         <TouchableOpacity key={i} onPress={() => setRating(i + 1)}>
           <Icon
             name="star"
-            size={30}
+            size={scale(30)}
             color={i < rating ? '#FFD700' : '#D3D3D3'}
             style={styles.star}
           />
@@ -53,18 +72,6 @@ const CoachUpdateAppFeedbackPage = ({ route, navigation }) => {
     return stars;
   };
 
-  const handleSubmit = () => {
-    setModalVisible(true);
-  };
-
-  const handleSave = () => {
-    setModalVisible(false);
-    presenter.updateFeedback(feedbackId, { feedbackText, rating });
-  };
-
-  const handleCancel = () => {
-    setModalVisible(false);
-  };
 
   return (
     <View style={styles.container}>
@@ -78,31 +85,25 @@ const CoachUpdateAppFeedbackPage = ({ route, navigation }) => {
         value={feedbackText}
         onChangeText={setFeedbackText}
       />
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+      <TouchableOpacity style={styles.submitButton} onPress={()=>changeConfirmVisible(true, 'Do you want to save changes?')}>
         <Text style={styles.submitButtonText}>SAVE</Text>
       </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Do you want to save changes?</Text>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.modalButton} onPress={handleSave}>
-                <Text style={styles.modalButtonText}>Yes</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.modalButton} onPress={handleCancel}>
-                <Text style={styles.modalButtonText}>No</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+
+        <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+            <LoadingDialog />
+        </Modal>
+        <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+            <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
+        </Modal>
+        <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeModalVisible(false)}>
+            <ActionDialog
+                message = {confirmMessage}
+                changeModalVisible = {changeConfirmVisible}
+                action = {handleSave}
+            />
+        </Modal>
+
+        
     </View>
   );
 };
@@ -111,79 +112,46 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#B63232',
     borderRadius: 10,
-    padding: 20,
+    padding: scale(20),
     alignItems: 'center',
     width: '90%',
     alignSelf: 'center',
-    marginTop: 50,
+    marginTop: scale(50),
   },
   title: {
-    fontSize: 20,
+    fontSize: scale(20),
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
   starsContainer: {
     flexDirection: 'row',
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
   star: {
-    marginHorizontal: 5,
+    marginHorizontal: scale(5),
   },
   textInput: {
     backgroundColor: '#E0E0E0',
     borderRadius: 10,
-    padding: 10,
+    padding: scale(10),
     width: '100%',
-    height: 100,
+    height: scale(100),
     textAlignVertical: 'top',
     color: '#000',
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
   submitButton: {
     backgroundColor: '#DA872A',
     borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 30,
+    paddingVertical: scale(10),
+    paddingHorizontal: scale(30),
   },
   submitButtonText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 16,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    width: '80%',
-    alignItems: 'center',
-  },
-  modalText: {
-    fontSize: 18,
-    marginBottom: 20,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  modalButton: {
-    backgroundColor: '#E0E0E0',
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginHorizontal: 10,
-  },
-  modalButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+    fontSize: scale(16),
+  }
 });
 
 export default CoachUpdateAppFeedbackPage;

@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet, Alert, Text, TouchableOpacity, Modal } from 'react-native';
-import { getAuth } from 'firebase/auth';
+import { scale} from '../../components/scale';
 import FeedbackCard from '../../components/FeedbackCard';
 import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
 
 import SendAppFeedbackPresenter from '../../presenter/SendAppFeedbackPresenter';
 
-const CoachAppFeedbackPage = ({ navigation }) => {
-  const [feedbacks, setFeedbacks] = useState([]);
-  const auth = getAuth();
-  const user = auth.currentUser;
+const CoachAppFeedbackPage = ({ navigation, route }) => {
+  const [feedback, setFeedback] = useState([]);
+  const {coach} = route.params;
 
   
   // State to control the visibility of the modal
@@ -37,49 +36,33 @@ const CoachAppFeedbackPage = ({ navigation }) => {
   }
   const loadFeedback = async() => {
     try{
-      await new SendAppFeedbackPresenter({displayFeedbacks: setFeedbacks}).fetchFeedbacks(user.uid);
-    }catch (e){console.log(e)}
-  }
-
-  const presenter = new SendAppFeedbackPresenter({
-    displayFeedbacks: (feedbackList) => {
-        if (user) {
-            const userFeedbacks = feedbackList.filter(feedback => feedback.accountID === user.uid);
-            console.log(userFeedbacks);
-            setFeedbacks(userFeedbacks);
-        }
-    },
-    showError: (message) => {
-        Alert.alert('Error', message);
-    }
-});
-
-  const handlePresenter = async ()=>{
-    try{
       changeLoadingVisible(true);
-      await presenter.fetchFeedbacks();
-    }catch(e){
+      setFeedback([]);
+      await new SendAppFeedbackPresenter({displayFeedback: setFeedback}).fetchFeedback(coach.accountID);
+    }catch (e){
       changeModalVisible(true, e.message);
     }finally{
       changeLoadingVisible(false);
     }
   }
+  const handleEdit = (feedback) => {
+      navigation.navigate('CoachUpdateAppFeedbackPage', { feedback, coach });
+  };
+
 
   useEffect(() => {
-    const fetchData = async () => {
-        try {
-            await presenter.fetchFeedbacks();
-        } catch (error) {
-            presenter.showError(error.message);
-        }
-    };
-    fetchData();
-}, []);
+      loadFeedback();
+  }, []);
 
-const handleEdit = (feedback) => {
-    //navigation.navigate('CoachUpdateAppFeedbackPage', { feedbackId: feedback.id });
-    console.log(feedback);
-};
+  useEffect(() => {
+      if(route.params?.refresh){
+          
+          loadFeedback();
+          route.params.refresh = false;
+      }
+  }, [route.params?.refresh]);
+
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -89,16 +72,15 @@ const handleEdit = (feedback) => {
       <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
           <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
       </Modal>
-      {feedbacks.map((feedback, index) => (
+
         <FeedbackCard
-          key={index}
           avatar={feedback.profilePicture}
           name={feedback.fullName}
           rating={feedback.rating}
           feedback={feedback.feedbackText}
         />
-      ))}
-      <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(feedbacks)}>
+
+      <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(feedback)}>
             <Text style={styles.editButtonText}>EDIT</Text>
           </TouchableOpacity>
     </ScrollView>
@@ -107,22 +89,22 @@ const handleEdit = (feedback) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 20,
-    paddingHorizontal: 10,
+    paddingVertical: scale(20),
+    paddingHorizontal: scale(10),
     alignItems: 'center',
   },
   editButton: {
     backgroundColor: '#DA872A',
     borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    marginTop: 10,
+    paddingVertical: scale(10),
+    paddingHorizontal: scale(30),
+    marginTop: scale(10),
     alignSelf: 'center',
   },
   editButtonText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: scale(16),
   },
 });
 

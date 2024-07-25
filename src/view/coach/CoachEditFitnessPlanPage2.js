@@ -5,11 +5,11 @@ import { scale } from '../../components/scale';
 import ExerciseCard from '../../components/ExerciseCard';
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
 
-import CreateFitnessPlanPresenter from '../../presenter/CreateFitnessPlanPresenter';
-
+import EditFitnessPlanPresenter from '../../presenter/EditFitnessPlanPresenter';
 
 const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
-    
+
+    const {isEditing} = route.params;
 
     const [planInfo, setPlanInfo] = useState({
         coach: route.params.coach,
@@ -19,15 +19,15 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
         name: route.params.name,
         medicalCheck: route.params.medicalCheck
     });
-    
+
     // Copy the routines from the previous page
     const [tempOriginalRoutines, setTempOriginalRoutines] = useState([...route.params.routines]);
     const [routines, setRoutines] = useState(()=>{    
-        return new CreateFitnessPlanPresenter().deepCopy(tempOriginalRoutines);
+        return new EditFitnessPlanPresenter().deepCopy(tempOriginalRoutines);
     });
-
+    
     const [refresh, setRefresh] = useState(false);
-    const [isSave, setIsSave] = useState(false);    
+    const [isSave, setIsSave] = useState(false);
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
@@ -52,27 +52,26 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
         setConfirmationVisible(b);
     }
 
-
     // Save the routines to the array on the previous page
     const saveRoutines = async () => {
         try{
             changeLoadingVisible(true);
 
-            new CreateFitnessPlanPresenter({routines: routines}).validateRoutines();
-            await new CreateFitnessPlanPresenter({routines: routines}).calculateCalories();
+            // new CreateFitnessPlanPresenter({routines: routines}).validateRoutines();
+            // await new CreateFitnessPlanPresenter({routines: routines}).calculateCalories();
 
 
             // Save the routines to array on previous page
-            navigation.navigate('CoachCreateFitnessPlanPage', {
-                refresh:true,
-                coach: planInfo.coach,
-                photo: planInfo.photo,
-                goalType: planInfo.goalType,
-                details: planInfo.details,
-                name: planInfo.name,
-                medicalCheck: planInfo.medicalCheck,
-                routines: routines   
-            });
+            // navigation.navigate('CoachCreateFitnessPlanPage', {
+            //     refresh:true,
+            //     coach: planInfo.coach,
+            //     photo: planInfo.photo,
+            //     goalType: planInfo.goalType,
+            //     details: planInfo.details,
+            //     name: planInfo.name,
+            //     medicalCheck: planInfo.medicalCheck,
+            //     routines: routines   
+            // });
         }catch(e){
             changeModalVisible(true, e.message.replace('Error: ', ''));
         }finally{
@@ -84,16 +83,16 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
         try{
             // Go back to the previous page
             // Without saving the current change
-            navigation.navigate('CoachCreateFitnessPlanPage', {
-                refresh:true,
-                coach: planInfo.coach,
-                photo: planInfo.photo,
-                goalType: planInfo.goalType,
-                details: planInfo.details,
-                name: planInfo.name,
-                medicalCheck: planInfo.medicalCheck,
-                routines: tempOriginalRoutines
-            });
+            // navigation.navigate('CoachCreateFitnessPlanPage', {
+            //     refresh:true,
+            //     coach: planInfo.coach,
+            //     photo: planInfo.photo,
+            //     goalType: planInfo.goalType,
+            //     details: planInfo.details,
+            //     name: planInfo.name,
+            //     medicalCheck: planInfo.medicalCheck,
+            //     routines: tempOriginalRoutines
+            // });
         }catch(e){
             changeModalVisible(true, e.message);
         }
@@ -102,7 +101,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
     const addExerciseDay = () => {
         try{
             changeLoadingVisible(true);
-            new CreateFitnessPlanPresenter({routines: routines}).addRoutine();
+            // new CreateFitnessPlanPresenter({routines: routines}).addRoutine();
             setRefresh(true);
         }catch(e){
             changeModalVisible(true, e.message);
@@ -115,7 +114,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
     const addRestDay = () => {
         try{
             changeLoadingVisible(true);
-            new CreateFitnessPlanPresenter({routines: routines}).addRestDay();
+            // new CreateFitnessPlanPresenter({routines: routines}).addRestDay();
             setRefresh(true);
         }catch(e){
             changeModalVisible(true, e.message);
@@ -127,7 +126,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
     const swapDay = (index) => {
         try{
             changeLoadingVisible(true);
-            new CreateFitnessPlanPresenter({routines: routines, updateRoutines: setRoutines}).swapRoutine(index);
+            // new CreateFitnessPlanPresenter({routines: routines, updateRoutines: setRoutines}).swapRoutine(index);
             setRefresh(true);
         }catch(e){
             changeModalVisible(true, e.message);
@@ -140,7 +139,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
     const removeDay = (index) =>{
         try{
             changeLoadingVisible(true);
-            new CreateFitnessPlanPresenter({routines: routines, updateRoutines: setRoutines}).removeRoutine(index);
+            // new CreateFitnessPlanPresenter({routines: routines, updateRoutines: setRoutines}).removeRoutine(index);
             setRefresh(true);
         }catch(e){
             changeModalVisible(true, e.message);
@@ -153,7 +152,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
     const onRemoveExercise = (index, routine) =>{
         try{
             changeLoadingVisible(true);
-            new CreateFitnessPlanPresenter({routine: routine}).removeExercise(index);
+            // new CreateFitnessPlanPresenter({routine: routine}).removeExercise(index);
             setRefresh(true);
         }catch(e){
             changeModalVisible(true, e.message);
@@ -162,6 +161,8 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
         }
     }
 
+
+    
 
 
     // Repeater Functions
@@ -174,10 +175,16 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                     <View style = {styles.dayTitleView}>
                         <Text style = {styles.dayTitleText}>{`Day ${routine.dayNumber}`}</Text>
                         <View style = {{flexDirection:'row', gap:scale(15)}}>
-                            <TouchableOpacity onPress = {swapDay.bind(this, routineIndex)}>
+                            <TouchableOpacity onPress = {
+                                //swapDay.bind(this, routineIndex)
+                                ()=>console.log('swap')
+                                }>
                                 <Image style = {styles.icon}  source = {require('../../../assets/swap_horizontal_icon.png')} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress = {removeDay.bind(this, routineIndex)}>
+                            <TouchableOpacity onPress = {
+                                //removeDay.bind(this, routineIndex)
+                                ()=>console.log('remove')
+                                }>
                                 <Image style = {styles.icon}  source = {require('../../../assets/trash_icon.png')} />
                             </TouchableOpacity>
                         </View>
@@ -197,12 +204,18 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                                                 routine = {routine}
                                                 exercise = {e}
                                                 isEdit = {true}
-                                                onDelete = {onRemoveExercise}
+                                                onDelete = {
+                                                    //onRemoveExercise
+                                                    ()  => console.log('remove')
+                                                }
                                             />
                                         );
                                     })
                                 }
-                                <TouchableOpacity onPress={()=>navigation.navigate('SelectExerciseListPage', {routineIndex, routines, planInfo})}  style = {styles.addExerciseButton}>
+                                <TouchableOpacity onPress={
+                                    //()=>navigation.navigate('SelectExerciseListPage', {routineIndex, routines, planInfo})
+                                    ()=>console.log('select')
+                                    }  style = {styles.addExerciseButton}>
                                     <Image style = {styles.icon} source = {require('../../../assets/add_box_icon.png')} />
                                 </TouchableOpacity>
                             </>
@@ -214,8 +227,6 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
         })
     );
 
-    
-
     useEffect(() => {
           
         
@@ -225,11 +236,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
             
     }, [refresh]);
 
-
-
-
-
-    return (
+    return(
         <View style = {styles.container}>
             <View style = {styles.topButtonView}>
                 <TouchableOpacity style = {styles.topButtons} onPress = {() => {setIsSave(false); changeConfirmVisible( true, 'Are you sure you want to discard these routines?')}}>
@@ -239,7 +246,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                     <Text style = {styles.topButtonText}>SAVE</Text>
                 </TouchableOpacity>
             </View>
-            
+
             <ScrollView>
                 <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
                     <LoadingDialog />
@@ -251,29 +258,42 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                     <ActionDialog
                         message = {confirmMessage}
                         changeModalVisible = {changeConfirmVisible}
-                        action = {() => { isSave ? saveRoutines() : discardRoutines();}}
+                        action = {() => { isSave ? 
+                            //saveRoutines() 
+                            console.log('save')
+                            : 
+                            //discardRoutines();
+                            console.log('discard')    
+                        }}
                     />
                 </Modal>
 
                 <View style = {styles.routinesView}>
                     {loadRoutines()}
                 </View>
-
-
-                
             </ScrollView>
+
+
             <View style = {styles.addDayButtonView}>
-                <TouchableOpacity onPress = {addExerciseDay} style = {[styles.addDayButton, {backgroundColor: '#C42847'}]}>
+                <TouchableOpacity onPress = {
+                    //addExerciseDay
+                    ()=>console.log('add')
+                    } style = {[styles.addDayButton, {backgroundColor: '#C42847'}]}>
                     <Text style = {styles.addDayButtonText}>ADD EXERCISE DAY</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress = {addRestDay} style = {[styles.addDayButton, {backgroundColor:'#E28413'}]}>
+                <TouchableOpacity onPress = {
+                    //addRestDay
+                    ()=>console.log('add')
+                    } style = {[styles.addDayButton, {backgroundColor:'#E28413'}]}>
                     <Text style = {styles.addDayButtonText}>ADD REST DAY</Text>
                 </TouchableOpacity>
             </View>
+
+            
+
         </View>
     );
-
 };
 
 const styles = StyleSheet.create({
@@ -288,7 +308,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: scale(20),
         paddingTop: scale(75),
         paddingBottom: scale(10),
-
     },
     topButtons:{
         backgroundColor: 'black',
@@ -369,6 +388,5 @@ const styles = StyleSheet.create({
         
     }
 });
-
 
 export default CoachCreateFitnessPlanPage2;

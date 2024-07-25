@@ -12,6 +12,7 @@ class FitnessPlan{
     _planGoal;
     _fitnessPlanPicture;
     _routinesList;
+    _isMedicalCheck;
     _lastUpdated;
     
 
@@ -24,6 +25,7 @@ class FitnessPlan{
     get planGoal(){ return this._planGoal; }
     get fitnessPlanPicture(){ return this._fitnessPlanPicture; }
     get routinesList(){ return this._routinesList; }
+    get isMedicalCheck(){ return this._isMedicalCheck; }
     get lastUpdated(){ return this._lastUpdated; }
     
     
@@ -34,6 +36,7 @@ class FitnessPlan{
     set planGoal(planGoal){ this._planGoal = planGoal; }
     set fitnessPlanPicture(fitnessPlanPicture){ this._fitnessPlanPicture = fitnessPlanPicture; }
     set routinesList(routinesList){ this._routinesList = routinesList; }
+    set isMedicalCheck(isMedicalCheck){ this._isMedicalCheck = isMedicalCheck; }
     set lastUpdated(lastUpdated){ this._lastUpdated = lastUpdated; }
 
     async getFitnessPlanPicture(){
@@ -57,6 +60,17 @@ class FitnessPlan{
             });
 
             return goals;
+        }catch(e){
+            throw new Error(e);
+        }
+    }
+
+    async getGoalID(goalName){
+        try{
+            const q = query(collection(db, 'fitnessgoal'), where("goalName", "==", goalName));
+            const querySnapshot = await getDocs(q);
+            return querySnapshot.docs[0].data().goalID;
+            
         }catch(e){
             throw new Error(e);
         }
@@ -194,6 +208,7 @@ class FitnessPlan{
 
                 fitnessPlan.routinesList = [];
 
+                fitnessPlan.isMedicalCheck = data.isMedicalCheck;
                 fitnessPlan.lastUpdated = data.lastUpdated.toDate().toString();
 
 

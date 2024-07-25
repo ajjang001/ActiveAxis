@@ -6,30 +6,13 @@ class UpdateAppFeedbackPresenter {
         this.model = new AppFeedback();
     }
 
-    async fetchFeedbackById(feedbackId) {
-      try {
-          const feedback = await AppFeedback.fetchFeedbackById(feedbackId);
-          this.view.displayFeedback(feedback);
-      } catch (error) {
-          this.view.showError(error.message);
-      }
-  }
-
-    async fetchFeedbacks() {
+    async updateFeedback(feedbackText, rating) {
         try {
-            const feedbackList = await this.model.fetchFeedbacks();
-            this.view.displayFeedbacks(feedbackList);
-        } catch (error) {
-            this.view.showError(error.message);
-        }
-    }
+            this.model = this.view.feedback;
+            this.model.updateFeedback(feedbackText, rating);
 
-    async updateFeedback(feedbackId, newFeedback) {
-        try {
-            await this.model.updateFeedback(feedbackId, newFeedback);
-            this.view.showSuccess("Feedback updated successfully");
         } catch (error) {
-            this.view.showError(error.message);
+            throw new Error(error.message);
         }
     }
 }

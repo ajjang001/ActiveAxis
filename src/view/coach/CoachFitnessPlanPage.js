@@ -101,7 +101,7 @@ const CoachFitnessPlanPage = ({route, navigation}) => {
                         </View>
                     </View>
                     <View style = {styles.iconButtonView}>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress ={()=>{navigation.navigate('CoachEditFitnessPlanPage', {coach, fitnessPlan})}}>
                             <Image source={require('../../../assets/edit_icon.png')} style = {styles.iconButton}/>
                         </TouchableOpacity>
                         <TouchableOpacity onPress ={()=>{setIsDeleting(true);changeConfirmVisible(true, 'Are you sure you want to delete this fitness plan?')}}>
