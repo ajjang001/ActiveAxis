@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebase/firebaseConfig';
 import UpdateAppFeedbackPresenter from '../../presenter/UpdateAppFeedbackPresenter';
 
 const CoachUpdateAppFeedbackPage = ({ route, navigation }) => {
@@ -11,28 +9,31 @@ const CoachUpdateAppFeedbackPage = ({ route, navigation }) => {
   const [feedbackText, setFeedbackText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
-  const presenter = new UpdateAppFeedbackPresenter({
-    onFeedbackUpdated: () => {
-      alert('Feedback updated successfully');
-      navigation.goBack();
+  const displayFeedback = (feedback) => {
+    console.log("Fetched Feedback:", feedback);
+    if (feedback) {
+      setFeedbackText(feedback.feedbackText || '');
+      setRating(feedback.rating || 0);
     }
+  };
+
+  const showError = (message) => {
+    Alert.alert('Error', message);
+  };
+
+  const showSuccess = (message) => {
+    Alert.alert('Success', message);
+    navigation.goBack();
+  };
+
+  const presenter = new UpdateAppFeedbackPresenter({
+    displayFeedback: displayFeedback,
+    showError: showError,
+    showSuccess: showSuccess,
   });
 
   useEffect(() => {
-    const fetchFeedbackDetails = async () => {
-      try {
-        const feedbackDoc = await getDoc(doc(db, 'appfeedback', feedbackId));
-        if (feedbackDoc.exists()) {
-          const feedbackData = feedbackDoc.data();
-          setRating(feedbackData.rating);
-          setFeedbackText(feedbackData.feedbackText);
-        }
-      } catch (error) {
-        console.error('Error fetching feedback:', error);
-      }
-    };
-
-    fetchFeedbackDetails();
+    presenter.fetchFeedbackById(feedbackId).catch(error => showError(error.message));
   }, [feedbackId]);
 
   const renderStars = () => {

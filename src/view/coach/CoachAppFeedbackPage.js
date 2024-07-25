@@ -38,12 +38,15 @@ const CoachAppFeedbackPage = ({ navigation }) => {
 
   const presenter = new SendAppFeedbackPresenter({
     displayFeedbacks: (feedbackList) => {
-      if (user) {
-        const userFeedbacks = feedbackList.filter(feedback => feedback.accountID === user.uid);
-        setFeedbacks(userFeedbacks);
-      }
+        if (user) {
+            const userFeedbacks = feedbackList.filter(feedback => feedback.accountID === user.uid);
+            setFeedbacks(userFeedbacks);
+        }
+    },
+    showError: (message) => {
+        Alert.alert('Error', message);
     }
-  });
+});
 
   const handlePresenter = async ()=>{
     try{
@@ -56,16 +59,20 @@ const CoachAppFeedbackPage = ({ navigation }) => {
     }
   }
 
-
-  
-
   useEffect(() => {
-    handlePresenter();
-  }, []);
+    const fetchData = async () => {
+        try {
+            await presenter.fetchFeedbacks();
+        } catch (error) {
+            presenter.showError(error.message);
+        }
+    };
+    fetchData();
+}, []);
 
-  const handleEdit = (feedback) => {
+const handleEdit = (feedback) => {
     navigation.navigate('CoachUpdateAppFeedbackPage', { feedbackId: feedback.id });
-  };
+};
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
