@@ -38,6 +38,11 @@ const styles = StyleSheet.create({
         fontFamily: 'Inter',
         color: '#333',
         textAlign: 'center',
+        borderWidth: 1, 
+        borderColor: '#E28413',
+        borderRadius: scale(8),
+        paddingHorizontal: scale(20),
+        paddingVertical: scale(10),
     },
 });
 

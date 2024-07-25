@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, Alert } from 'react-native';
 import { LoadingDialog, ActionDialog, MessageDialog } from "../../components/Modal";
 import { scale } from '../../components/scale';
+import { TimerPickerModal } from "react-native-timer-picker";
+
+import UpdateExerciseSettingsPresenter from '../../presenter/UpdateExerciseSettingsPresenter';
 
 const UserUpdateExerciseSettingsPage = ({ navigation, route }) => {
 
@@ -17,6 +20,21 @@ const UserUpdateExerciseSettingsPage = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [modal1Visible, setModal1Visible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
+
+    // Rest Interval Setter
+    const [showPicker, setShowPicker] = useState(false);
+    const [alarmString, setAlarmString] = useState('');
+
+    const handleRestConfirm = (pickedDuration) => {
+        const { hours, minutes, seconds } = pickedDuration;
+        let totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+        if (totalSeconds > 120) {
+            totalSeconds = 120;
+        }
+        setrestInterval(totalSeconds);
+        setAlarmString(totalSeconds);
+        setShowPicker(false);
+    };
 
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
@@ -40,7 +58,7 @@ const UserUpdateExerciseSettingsPage = ({ navigation, route }) => {
     const processUpdate = async () => {
         changeLoadingVisible(true);
         try {
-            //await new UpdateAccountDetailsPresenter().updateAccountDetails(email, gender, phoneNumber1, weight, height, fitnessGoal, fitnessLevel, hasMedical);
+            await new UpdateExerciseSettingsPresenter().updateExerciseSettings(email, restInterval, stepTarget, calorieTarget);
             navigation.navigate('UserExerciseSettingsPage', { user })
             Alert.alert('Successfully updated exercise settings!')
         } catch (e) {
@@ -59,17 +77,36 @@ const UserUpdateExerciseSettingsPage = ({ navigation, route }) => {
             <View style={styles.settingsContainer}>
                 <View style={styles.inputContainer}>
                     <Text style={styles.inputText}>Rest Interval (seconds)</Text>
-                    <TextInput
-                        style={styles.input}
-                        keyboardType="numeric"
-                        value={restInterval}
-                        onChangeText={setrestInterval}
+                    <TouchableOpacity style={styles.restIntervalButton} onPress={() => setShowPicker(true)} >
+                        {
+                            alarmString == '' ?
+                                <Text style={styles.restIntervalText}>Current: {restInterval} seconds</Text>
+                                :
+                                <Text style={styles.restIntervalText}>New: {alarmString} seconds</Text>
+                        }
+
+                    </TouchableOpacity>
+                    <TimerPickerModal
+                        hideHours
+                        visible={showPicker}
+                        setIsVisible={setShowPicker}
+                        onConfirm={handleRestConfirm}
+                        modalTitle="Set Interval (20s - 120s)"
+                        onCancel={() => setShowPicker(false)}
+                        closeOnOverlayPress
+                        styles={{
+                            theme: "dark",
+                        }}
+                        modalProps={{
+                            overlayOpacity: 0.2,
+                        }}
                     />
-                    <Text style={styles.inputText}>Daily Step Target</Text>
+                    <Text style={styles.inputText}>Daily Step Target (steps)</Text>
                     <TextInput
                         style={styles.input}
                         keyboardType="numeric"
                         value={stepTarget}
+                        maxLength={5}
                         onChangeText={setstepTarget}
                     />
                     <Text style={styles.inputText}>Daily Calorie Burn Target (calories)</Text>
@@ -77,6 +114,7 @@ const UserUpdateExerciseSettingsPage = ({ navigation, route }) => {
                         style={styles.input}
                         keyboardType="numeric"
                         value={calorieTarget}
+                        maxLength={4}
                         onChangeText={setcalorieTarget}
                     />
                 </View>
@@ -172,6 +210,23 @@ const styles = StyleSheet.create({
         fontFamily: 'Inter',
         fontWeight: 'bold',
         fontSize: scale(16)
+    },
+    restIntervalButton: {
+        backgroundColor: 'white',
+        paddingVertical: scale(15),
+        marginHorizontal: scale(20),
+        borderRadius: scale(8),
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: scale(5),
+        elevation: scale(5),
+        borderWidth: 2
+    },
+    restIntervalText: {
+        fontSize: scale(18),
+        fontFamily: 'Inter',
+        textAlign: 'center'
     },
 });
 

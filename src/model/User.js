@@ -489,6 +489,34 @@ class User extends Account {
             throw new Error(e.message);
         }
     }
+
+    async updateExerciseSettings(email, restInterval, stepTarget, calorieTarget) {
+        try {
+            // Check if the email exists
+            const q = query(collection(db, 'user'), where('email', '==', email));
+            const queryResult = await getDocs(q);
+
+            if (queryResult.empty) {
+                throw new Error('User not found');
+            } 
+
+            // Get the document ID of the first matching user (assuming email is unique)
+            const userDocId = queryResult.docs[0].id;
+
+            // Update the document with new values
+            const userDocRef = doc(db, 'user', userDocId);
+            await updateDoc(userDocRef, {
+                restInterval,
+                stepTarget,
+                calorieTarget,
+            });
+
+            console.log('Exercise settings updated successfully');
+        } catch (e) {
+            console.error('Error updating exercise settings:', e.message);
+            throw new Error(e.message);
+        }
+    }
 }
 
 export default User;
