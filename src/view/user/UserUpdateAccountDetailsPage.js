@@ -94,7 +94,7 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
             phoneNumber1 = "+65" + phoneNumber;
             await new UpdateAccountDetailsPresenter().updateAccountDetails(email, gender, phoneNumber1, weight, height, fitnessGoal, fitnessLevel, hasMedical);
             navigation.navigate('UserAccountDetailsPage1', { user })
-            Alert.alert('Successfully updated account information for user!')
+            Alert.alert('Successfully updated account information!')
         } catch (e) {
             changeModal1Visible(true, e.message);
             //Alert.alert(e.message);

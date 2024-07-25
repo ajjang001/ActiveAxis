@@ -30,6 +30,7 @@ import UserAccountSettingPage from './src/view/user/UserAccountSettingPage';
 import UserAccountDetailsPage1 from './src/view/user/UserAccountDetailsPage';
 import UserUpdateAccountDetailsPage from './src/view/user/UserUpdateAccountDetailsPage';
 import UserExerciseSettingsPage from './src/view/user/UserExerciseSettingsPage';
+import UserUpdateExerciseSettingsPage from './src/view/user/UserUpdateExerciseSettingsPage';
 import UserCompetitionPage from './src/view/user/UserCompetitionPage';
 import UserCoachPage from './src/view/user/UserCoachPage';
 
@@ -197,6 +198,7 @@ export default function App() {
           <Stack.Screen name="UserAccountDetailsPage1" component={UserAccountDetailsPage1} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserUpdateAccountDetailsPage" component={UserUpdateAccountDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserExerciseSettingsPage" component={UserExerciseSettingsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserUpdateExerciseSettingsPage" component={UserUpdateExerciseSettingsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           {/* Add user pages here */}
 
           <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{ headerShown: false }} />
