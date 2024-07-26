@@ -9,13 +9,14 @@ import { scale } from '../../components/scale';
 const CoachEditAccountDetailsPage = () => {
   const route = useRoute();
   const navigation = useNavigation(); // Initialize navigation
-  const { userEmail, userType } = route.params;
+  const { userEmail, userType} = route.params;
+  const coachID = coachID;
 
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [confirmnewPassword, setConfirmNewPassword] = useState('');
   const [tempName, setTempName] = useState(name);
   const [tempPhoneNumber, setTempPhoneNumber] = useState(phoneNumber);
   const [tempEmail, setTempEmail] = useState(email);
@@ -73,24 +74,20 @@ const CoachEditAccountDetailsPage = () => {
       tempName,
       tempPhoneNumber,
       tempEmail
-    ).then(() => {
-      presenter.updateCoachPassword(
-        userEmail,
-        newPassword,
-        confirmNewPassword
-    ).then(() => {
-        setIsLoading(false);
-        Alert.alert('Success', 'Account details and password updated successfully!');
-        navigation.goBack();
-    }).catch((error) => {
-        setIsLoading(false);
-        console.error("Error updating password:", error.message);
-        Alert.alert('Error', error.message || 'An unknown error occurred while updating the password.');
-    });
-  }).catch((error) => {
-     setIsLoading(false);
-     console.error("Error updating account details:", error.message);
-     Alert.alert('Error', error.message || 'An unknown error occurred while updating the account details.');
+    ).then( async() => {
+      changeLoadingVisible(true);
+        try {
+            console.log(coachID);
+            await new UpdateAccountDetailsPresenter().updatePassword(coachID, newPassword, confirmnewPassword)
+            Alert.alert('Successfully updated password for user!')
+            navigation.navigate('UserAccountListPage')
+        } catch (e) {
+            console.log(e);
+            changeModalVisible(true, e.message);
+            //Alert.alert(e.message);
+        } finally {
+            changeLoadingVisible(false);
+        }
   });
 
   setModalVisible(false);
@@ -142,7 +139,7 @@ const CoachEditAccountDetailsPage = () => {
           <Text style={styles.label}>Confirm New Password</Text>
           <TextInput
             style={styles.input}
-            value={confirmNewPassword}
+            value={confirmnewPassword}
             onChangeText={setConfirmNewPassword}
             secureTextEntry={true}
           />
@@ -197,7 +194,7 @@ const CoachEditAccountDetailsPage = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: scale(1),
     padding: scale(20),
     backgroundColor: '#FDF4F1',
   },
