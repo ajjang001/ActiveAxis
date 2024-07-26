@@ -82,7 +82,7 @@ const UserAccountSettingPage = ({ navigation, route }) => {
         { label: 'Exercise Settings', onPress: () => navigation.navigate("UserExerciseSettingsPage", { user , userType: 'user'}) },
         { label: 'Friends', onPress: () => console.log("Friends") },
         { label: 'App Feedbacks', onPress: () => console.log("App Feedbacks") },
-        { label: 'Achievements', onPress: () => console.log("Achievements") },
+        { label: 'Achievements', onPress: () => navigation.navigate("UserAchievementPage", { user }) },
         { label: 'Connect Smart Wearables', onPress: () => console.log("Connect Smart Wearables") },
         { label: 'Log Out', onPress: () => changeConfirmVisible(true, 'Are you sure you want to log out?') }
     ];
