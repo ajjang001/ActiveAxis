@@ -14,7 +14,13 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
 
     const [goalsData, setGoalsData] = useState([]);
     const [levelData, setLevelData] = useState([]);
-  
+    console.log(levelData);
+
+    const capitalizeFirstLetter = (string) => {
+        if (!string) return '';
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
     const medicalData = [
         { label: "Yes", value: true },
         { label: "No", value: false },
@@ -34,7 +40,7 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
     const [weight, setWeight] = useState(String(userDetails[0].user.weight));
     const [height, setHeight] = useState(String(userDetails[0].user.height));
     const [fitnessGoal, setGoal] = useState(userDetails[0].user.fitnessGoal);
-    const [fitnessLevel, setLevel] = useState(userDetails[0].user.fitnessLevel);
+    const [fitnessLevel, setLevel] = useState(capitalizeFirstLetter(userDetails[0].user.fitnessLevel));
 
     const [hasMedical, setMedical] = useState(userDetails[0].user.hasMedical);
 
@@ -59,32 +65,45 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
     useEffect(() => {
         fetchGoalsData();
         fetchLevelData();
-      }, []);
+    }, []); 
+
+    useEffect(() => {
+        if (levelData.length > 0) {
+            const capitalizedLevelData = levelData.map(level => ({
+                ...level,
+                name: capitalizeFirstLetter(level.name),
+            }));
+            // Only update state if there is a change
+            if (JSON.stringify(capitalizedLevelData) !== JSON.stringify(levelData)) {
+                setLevelData(capitalizedLevelData);
+            }
+        }
+    }, [levelData]); // This effect will run whenever levelData changes
 
     const fetchGoalsData = async () => {
         try {
-          setIsLoading(true);
-          await new UpdateAccountDetailsPresenter({ fetchGoalsData: setGoalsData }).getGoals();
-          setIsLoading(false);
+            setIsLoading(true);
+            await new UpdateAccountDetailsPresenter({ fetchGoalsData: setGoalsData }).getGoals();
+            setIsLoading(false);
         } catch (error) {
-          setModalVisible(true);
-          setModalMsg(error.message);
-          console.error("Error fetching goals data: ", error);
+            setModalVisible(true);
+            setModalMsg(error.message);
+            console.error("Error fetching goals data: ", error);
         }
-      };
-    
-      const fetchLevelData = async () => {
+    };
+
+    const fetchLevelData = async () => {
         try {
-          setIsLoading(true);
-          await new UpdateAccountDetailsPresenter({ fetchLevelData: setLevelData }).getLevel();
-          setIsLoading(false);
+            setIsLoading(true);
+            await new UpdateAccountDetailsPresenter({ fetchLevelData: setLevelData }).getLevel();
+            setIsLoading(false);
         } catch (error) {
-          setModalVisible(true);
-          setModalMsg(error.message);
-          console.error("Error fetching level data: ", error);
+            setModalVisible(true);
+            setModalMsg(error.message);
+            console.error("Error fetching level data: ", error);
         }
-      };
-    
+    };
+
 
     // Process Update Account Details
     const processUpdate = async () => {
@@ -92,7 +111,7 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
         try {
             // include back +65
             phoneNumber1 = "+65" + phoneNumber;
-            await new UpdateAccountDetailsPresenter().updateAccountDetails(email, gender, phoneNumber1, weight, height, fitnessGoal, fitnessLevel, hasMedical);
+            await new UpdateAccountDetailsPresenter().updateAccountDetails(email, gender, phoneNumber1, weight, height, fitnessGoal, fitnessLevel.toLowerCase(), hasMedical);
             navigation.navigate('UserAccountDetailsPage1', { user })
             Alert.alert('Successfully updated account information!')
         } catch (e) {

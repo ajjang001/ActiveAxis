@@ -29,6 +29,10 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
     const [goal, setGoal] = useState('');
     const [level, setLevel] = useState('');
 
+    const capitalizeFirstLetter = (string) => {
+        if (!string) return '';
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
 
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
@@ -88,7 +92,7 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
             setWeight(userDetails[0].user.weight + "kg");
             setHeight(userDetails[0].user.height + "cm");
             setGoal(userDetails[0].user.fitnessGoal);
-            setLevel(userDetails[0].user.fitnessLevel);
+            setLevel(capitalizeFirstLetter(userDetails[0].user.fitnessLevel));
             if (userDetails[0].user.hasMedical == false) {
                 setMedical("No");
             }
