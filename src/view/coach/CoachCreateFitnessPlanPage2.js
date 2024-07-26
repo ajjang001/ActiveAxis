@@ -15,7 +15,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
         coach: route.params.coach,
         photo: route.params.photo,
         goalType: route.params.goalType,
-        details: route.params.details,
+        description: route.params.description,
         name: route.params.name,
         medicalCheck: route.params.medicalCheck
     });
@@ -68,7 +68,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                 coach: planInfo.coach,
                 photo: planInfo.photo,
                 goalType: planInfo.goalType,
-                details: planInfo.details,
+                description: planInfo.description,
                 name: planInfo.name,
                 medicalCheck: planInfo.medicalCheck,
                 routines: routines   
@@ -89,7 +89,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                 coach: planInfo.coach,
                 photo: planInfo.photo,
                 goalType: planInfo.goalType,
-                details: planInfo.details,
+                description: planInfo.description,
                 name: planInfo.name,
                 medicalCheck: planInfo.medicalCheck,
                 routines: tempOriginalRoutines
@@ -197,12 +197,12 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                                                 routine = {routine}
                                                 exercise = {e}
                                                 isEdit = {true}
-                                                onDelete = {onRemoveExercise}
+                                                onDelete = {()=>onRemoveExercise(index, routine)}
                                             />
                                         );
                                     })
                                 }
-                                <TouchableOpacity onPress={()=>navigation.navigate('SelectExerciseListPage', {routineIndex, routines, planInfo})}  style = {styles.addExerciseButton}>
+                                <TouchableOpacity onPress={()=>navigation.navigate('SelectExerciseListPage', {routineIndex, routines, planInfo, isEdit})}  style = {styles.addExerciseButton}>
                                     <Image style = {styles.icon} source = {require('../../../assets/add_box_icon.png')} />
                                 </TouchableOpacity>
                             </>

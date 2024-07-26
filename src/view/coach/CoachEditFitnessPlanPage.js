@@ -13,16 +13,16 @@ import EditFitnessPlanPresenter from '../../presenter/EditFitnessPlanPresenter';
 const CoachEditFitnessPlanPage = ({navigation, route}) => {
 
     const {fitnessPlan} = route.params;
-    // console.log(fitnessPlan);
 
     const [coach, setCoach] = useState(route.params.coach);
-    const [photo, setPhoto] = useState(fitnessPlan.fitnessPlanPicture || null);
+    const [photo, setPhoto] = useState(fitnessPlan !== null && fitnessPlan !== undefined ? fitnessPlan.fitnessPlanPicture : null);
     const [goalType, setGoalType] = useState(0);
-    const [details, setDetails] = useState(fitnessPlan.fitnessPlanDescription || '');
-    const [name, setName] = useState(fitnessPlan.fitnessPlanName || '');
-    const [medicalCheck, setmedicalCheck] = useState(fitnessPlan.isMedicalCheck || false);
+    const [description, setDescription] = useState(fitnessPlan !== null && fitnessPlan !== undefined ? fitnessPlan.fitnessPlanDescription : '');
+    
+    const [name, setName] = useState(fitnessPlan !== null && fitnessPlan !== undefined ? fitnessPlan.fitnessPlanName : '' );
+    const [medicalCheck, setmedicalCheck] = useState(fitnessPlan !== null && fitnessPlan !== undefined ? fitnessPlan.isMedicalCheck : false);
 
-    const [tempOriginalRoutines, setTempOriginalRoutines] = useState([...fitnessPlan.routinesList] || []);
+    const [tempOriginalRoutines, setTempOriginalRoutines] = useState(fitnessPlan !== null && fitnessPlan !== undefined ? [...fitnessPlan.routinesList] : []);
     const [routines, setRoutines] = useState(()=>{
         return new EditFitnessPlanPresenter().deepCopy(tempOriginalRoutines);
     });
@@ -70,6 +70,20 @@ const CoachEditFitnessPlanPage = ({navigation, route}) => {
         );
     };
 
+    const saveHandler = async () => {
+        try{
+            changeLoadingVisible(true);
+            await new EditFitnessPlanPresenter({fitnessPlan: fitnessPlan}).saveFitnessPlan(coach, (photo === fitnessPlan.fitnessPlanPicture? null : photo), goalType, description.trim(), name.trim(), medicalCheck, routines);
+            
+            navigation.navigate('CoachListOfFitnessPlansPage', {refresh: true, coach: coach});
+            Alert.alert('Success', 'Fitness Plan saved successfully');
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
     const loadGoalType = async () =>{
         try{
             changeLoadingVisible(true);
@@ -93,7 +107,6 @@ const CoachEditFitnessPlanPage = ({navigation, route}) => {
         }
     }
 
-    // console.log(coach);
     
 
     // handle select photo
@@ -124,7 +137,7 @@ const CoachEditFitnessPlanPage = ({navigation, route}) => {
             setName(route.params.name);
             setPhoto(route.params.photo);
             setGoalType(route.params.goalType);
-            setDetails(route.params.details);
+            setDescription(route.params.description);
             setmedicalCheck(route.params.medicalCheck);
             setRoutines(route.params.routines);
             route.params.refresh = false;
@@ -138,7 +151,7 @@ const CoachEditFitnessPlanPage = ({navigation, route}) => {
                 <TouchableOpacity style = {styles.topButtons} onPress = {() => changeConfirmVisible( true, 'Are you sure you want to discard the changes?')} >
                     <Text style = {styles.topButtonText}>Discard</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style = {styles.topButtons} onPress = {() => console.log('save')}>
+                <TouchableOpacity style = {styles.topButtons} onPress = {saveHandler}>
                     <Text style = {styles.topButtonText}>Save</Text>
                 </TouchableOpacity>
             </View>
@@ -188,17 +201,17 @@ const CoachEditFitnessPlanPage = ({navigation, route}) => {
                     </View>
                 </View>
 
-                <View style = {styles.detailsView}>
-                    <Text style={styles.detailsTitle}>Fitness Plan Name:</Text>
+                <View style = {styles.descriptionView}>
+                    <Text style={styles.descriptionTitle}>Fitness Plan Name:</Text>
                     <TextInput
-                        style={styles.detailsInput}
+                        style={styles.descriptionInput}
                         placeholder="Enter fitness plan name here..."
                         value={name}
                         onChangeText={(text) => setName(text)}
                         maxLength={32}
                     />
 
-                    <Text style={styles.detailsTitle}>Goal Type:</Text>
+                    <Text style={styles.descriptionTitle}>Goal Type:</Text>
                     <Dropdown
                         style={styles.dropdown}
                         placeholderStyle={styles.placeholderStyle}
@@ -216,12 +229,12 @@ const CoachEditFitnessPlanPage = ({navigation, route}) => {
                         ref={dropdownRef}
                     />
 
-                    <Text style={styles.detailsTitle}>Details:</Text>
+                    <Text style={styles.descriptionTitle}>Description:</Text>
                     <TextInput
-                        style={styles.detailsInput}
-                        placeholder='Enter details here...'
-                        value={details}
-                        onChangeText={text => setDetails(text)}
+                        style={styles.descriptionInput}
+                        placeholder='Enter description here...'
+                        value={description}
+                        onChangeText={text => setDescription(text)}
                     />
 
                     <CheckBox
@@ -245,10 +258,11 @@ const CoachEditFitnessPlanPage = ({navigation, route}) => {
                         coach: coach,
                         photo: photo,
                         goalType: goalType,
-                        details: details,
+                        description: description,
                         name: name,
                         medicalCheck: medicalCheck,
                         routines: routines,
+                        fitnessPlan: fitnessPlan,
                         isEditing: true
                     })}>
                 
@@ -320,7 +334,7 @@ const styles = StyleSheet.create({
         fontSize: scale(15),
         fontFamily: 'League-Spartan',
     },
-    detailsTitle: {
+    descriptionTitle: {
         alignSelf: 'flex-start',
         fontSize: scale(15),
         fontFamily: 'Poppins-SemiBold',
@@ -355,7 +369,7 @@ const styles = StyleSheet.create({
         fontFamily:'Poppins-Medium'
     },
 
-    detailsInput: {
+    descriptionInput: {
         width: '100%',
         backgroundColor: '#FFF',
         padding: scale(10),
@@ -365,7 +379,7 @@ const styles = StyleSheet.create({
         marginBottom: scale(20),
     },
 
-    detailsView: {
+    descriptionView: {
         paddingHorizontal: scale(20),
         marginTop: scale(20),
     },

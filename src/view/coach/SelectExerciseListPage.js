@@ -8,7 +8,7 @@ import CreateFitnessPlanPresenter from '../../presenter/CreateFitnessPlanPresent
 
 
 const SelectExerciseListPage = ({route, navigation}) => {
-    const {routineIndex, routines, planInfo} = route.params; 
+    const {routineIndex, routines, planInfo, isEditing, fitnessPlan} = route.params; 
 
     const [exercises, setExercises] = useState([]);
 
@@ -203,7 +203,7 @@ const SelectExerciseListPage = ({route, navigation}) => {
                  :
                     exercises.map((exercise, index)=>{
                         return(
-                            <TouchableOpacity key={index} onPress = {()=>{navigation.navigate('SelectExerciseDetailsPage', {exercise, routineIndex, routines, planInfo})}} style = {styles.exerciseItemButton}>
+                            <TouchableOpacity key={index} onPress = {()=>{navigation.navigate('SelectExerciseDetailsPage', {exercise, routineIndex, routines, planInfo, isEditing, fitnessPlan})}} style = {styles.exerciseItemButton}>
                                 <Text style = {styles.exerciseItemTitle}>{exercise.exerciseName.toUpperCase()}</Text>
                                 <Text style = {styles.exerciseItemSubTitle}>{`${modifyText(exercise.equipment)} - ${modifyText(exercise.difficulty)}`}</Text>
                             </TouchableOpacity>

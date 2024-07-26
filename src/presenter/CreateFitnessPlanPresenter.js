@@ -128,9 +128,14 @@ class CreateFitnessPlanPresenter{
 
     removeExercise(index){
         try{
-            this.view.routine.exercisesList.splice(index, 1);
-
-
+            // check if exercise index is last index
+            if(index === this.view.routine.exercisesList.length - 1){
+                
+                this.view.routine.exercisesList.pop();
+                return;
+            }else{
+                this.view.routine.exercisesList.splice(index, 1);
+            }
         }catch(error){
             throw new Error(error);
         }
@@ -202,8 +207,6 @@ class CreateFitnessPlanPresenter{
                 
                 
             }
-            // this.model = this.view.routines;
-            // this.model.calculateCaloriesBurned();
         }catch(error){
             throw new Error(error);
         }
@@ -231,7 +234,7 @@ class CreateFitnessPlanPresenter{
         }
     }
 
-    async createFitnessPlan (coach, photo, goalType, details, name, medicalCheck, routines){
+    async createFitnessPlan (coach, photo, goalType, description, name, medicalCheck, routines){
         
         try{
             if(photo === '' || photo === null){
@@ -240,14 +243,14 @@ class CreateFitnessPlanPresenter{
                 throw new Error('Please select a goal type');
             }else if (name === '' || name === undefined){
                 throw new Error('Please enter a fitness plan name');
-            }else if (details === '' || details === undefined){
-                throw new Error('Please enter details');
+            }else if (description === '' || description === undefined){
+                throw new Error('Please enter description');
             }else if (routines.length === 0){
                 throw new Error('Please add at least one routine');
             }else{
 
                 this.model = new FitnessPlan();
-                await this.model.createFitnessPlan(coach, photo, goalType, details, name, medicalCheck, routines);
+                await this.model.createFitnessPlan(coach, photo, goalType, description, name, medicalCheck, routines);
             }
         }catch(error){
             throw new Error(error);

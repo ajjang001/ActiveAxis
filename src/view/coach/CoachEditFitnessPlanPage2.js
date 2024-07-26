@@ -7,15 +7,15 @@ import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Mod
 
 import EditFitnessPlanPresenter from '../../presenter/EditFitnessPlanPresenter';
 
-const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
+const CoachEditFitnessPlanPage2 = ({navigation, route}) => {
 
-    const {isEditing} = route.params;
+    const {isEditing, fitnessPlan} = route.params;
 
     const [planInfo, setPlanInfo] = useState({
         coach: route.params.coach,
         photo: route.params.photo,
         goalType: route.params.goalType,
-        details: route.params.details,
+        description: route.params.description,
         name: route.params.name,
         medicalCheck: route.params.medicalCheck
     });
@@ -57,21 +57,22 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
         try{
             changeLoadingVisible(true);
 
-            // new CreateFitnessPlanPresenter({routines: routines}).validateRoutines();
-            // await new CreateFitnessPlanPresenter({routines: routines}).calculateCalories();
+            new EditFitnessPlanPresenter({routines: routines}).validateRoutines();
+            await new EditFitnessPlanPresenter({routines: routines}).calculateCalories();
 
 
             // Save the routines to array on previous page
-            // navigation.navigate('CoachCreateFitnessPlanPage', {
-            //     refresh:true,
-            //     coach: planInfo.coach,
-            //     photo: planInfo.photo,
-            //     goalType: planInfo.goalType,
-            //     details: planInfo.details,
-            //     name: planInfo.name,
-            //     medicalCheck: planInfo.medicalCheck,
-            //     routines: routines   
-            // });
+            navigation.navigate('CoachEditFitnessPlanPage', {
+                refresh:true,
+                coach: planInfo.coach,
+                photo: planInfo.photo,
+                goalType: planInfo.goalType,
+                description: planInfo.description,
+                name: planInfo.name,
+                medicalCheck: planInfo.medicalCheck,
+                routines: routines,
+                fitnessPlan: fitnessPlan
+            });
         }catch(e){
             changeModalVisible(true, e.message.replace('Error: ', ''));
         }finally{
@@ -83,16 +84,17 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
         try{
             // Go back to the previous page
             // Without saving the current change
-            // navigation.navigate('CoachCreateFitnessPlanPage', {
-            //     refresh:true,
-            //     coach: planInfo.coach,
-            //     photo: planInfo.photo,
-            //     goalType: planInfo.goalType,
-            //     details: planInfo.details,
-            //     name: planInfo.name,
-            //     medicalCheck: planInfo.medicalCheck,
-            //     routines: tempOriginalRoutines
-            // });
+            navigation.navigate('CoachEditFitnessPlanPage', {
+                refresh:true,
+                coach: planInfo.coach,
+                photo: planInfo.photo,
+                goalType: planInfo.goalType,
+                description: planInfo.description,
+                name: planInfo.name,
+                medicalCheck: planInfo.medicalCheck,
+                routines: tempOriginalRoutines,
+                fitnessPlan: fitnessPlan
+            });
         }catch(e){
             changeModalVisible(true, e.message);
         }
@@ -101,7 +103,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
     const addExerciseDay = () => {
         try{
             changeLoadingVisible(true);
-            // new CreateFitnessPlanPresenter({routines: routines}).addRoutine();
+            new EditFitnessPlanPresenter({routines: routines}).addRoutine();
             setRefresh(true);
         }catch(e){
             changeModalVisible(true, e.message);
@@ -114,7 +116,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
     const addRestDay = () => {
         try{
             changeLoadingVisible(true);
-            // new CreateFitnessPlanPresenter({routines: routines}).addRestDay();
+            new EditFitnessPlanPresenter({routines: routines}).addRestDay();
             setRefresh(true);
         }catch(e){
             changeModalVisible(true, e.message);
@@ -126,7 +128,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
     const swapDay = (index) => {
         try{
             changeLoadingVisible(true);
-            // new CreateFitnessPlanPresenter({routines: routines, updateRoutines: setRoutines}).swapRoutine(index);
+            new EditFitnessPlanPresenter({routines: routines, updateRoutines: setRoutines}).swapRoutine(index);
             setRefresh(true);
         }catch(e){
             changeModalVisible(true, e.message);
@@ -139,7 +141,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
     const removeDay = (index) =>{
         try{
             changeLoadingVisible(true);
-            // new CreateFitnessPlanPresenter({routines: routines, updateRoutines: setRoutines}).removeRoutine(index);
+            new EditFitnessPlanPresenter({routines: routines, updateRoutines: setRoutines}).removeRoutine(index);
             setRefresh(true);
         }catch(e){
             changeModalVisible(true, e.message);
@@ -152,7 +154,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
     const onRemoveExercise = (index, routine) =>{
         try{
             changeLoadingVisible(true);
-            // new CreateFitnessPlanPresenter({routine: routine}).removeExercise(index);
+            new EditFitnessPlanPresenter({routine: routine}).removeExercise(index);
             setRefresh(true);
         }catch(e){
             changeModalVisible(true, e.message);
@@ -176,14 +178,12 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                         <Text style = {styles.dayTitleText}>{`Day ${routine.dayNumber}`}</Text>
                         <View style = {{flexDirection:'row', gap:scale(15)}}>
                             <TouchableOpacity onPress = {
-                                //swapDay.bind(this, routineIndex)
-                                ()=>console.log('swap')
+                                swapDay.bind(this, routineIndex)
                                 }>
                                 <Image style = {styles.icon}  source = {require('../../../assets/swap_horizontal_icon.png')} />
                             </TouchableOpacity>
                             <TouchableOpacity onPress = {
-                                //removeDay.bind(this, routineIndex)
-                                ()=>console.log('remove')
+                                removeDay.bind(this, routineIndex)
                                 }>
                                 <Image style = {styles.icon}  source = {require('../../../assets/trash_icon.png')} />
                             </TouchableOpacity>
@@ -205,17 +205,13 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                                                 exercise = {e}
                                                 isEdit = {true}
                                                 onDelete = {
-                                                    //onRemoveExercise
-                                                    ()  => console.log('remove')
+                                                    ()=>onRemoveExercise(index, routine)
                                                 }
                                             />
                                         );
                                     })
                                 }
-                                <TouchableOpacity onPress={
-                                    //()=>navigation.navigate('SelectExerciseListPage', {routineIndex, routines, planInfo})
-                                    ()=>console.log('select')
-                                    }  style = {styles.addExerciseButton}>
+                                <TouchableOpacity onPress={()=>navigation.navigate('SelectExerciseListPage', {routineIndex, routines, planInfo, isEditing, fitnessPlan})}  style = {styles.addExerciseButton}>
                                     <Image style = {styles.icon} source = {require('../../../assets/add_box_icon.png')} />
                                 </TouchableOpacity>
                             </>
@@ -258,13 +254,7 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                     <ActionDialog
                         message = {confirmMessage}
                         changeModalVisible = {changeConfirmVisible}
-                        action = {() => { isSave ? 
-                            //saveRoutines() 
-                            console.log('save')
-                            : 
-                            //discardRoutines();
-                            console.log('discard')    
-                        }}
+                        action = {() => { isSave ? saveRoutines() : discardRoutines();}}
                     />
                 </Modal>
 
@@ -276,15 +266,13 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
 
             <View style = {styles.addDayButtonView}>
                 <TouchableOpacity onPress = {
-                    //addExerciseDay
-                    ()=>console.log('add')
+                    addExerciseDay
                     } style = {[styles.addDayButton, {backgroundColor: '#C42847'}]}>
                     <Text style = {styles.addDayButtonText}>ADD EXERCISE DAY</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress = {
-                    //addRestDay
-                    ()=>console.log('add')
+                    addRestDay
                     } style = {[styles.addDayButton, {backgroundColor:'#E28413'}]}>
                     <Text style = {styles.addDayButtonText}>ADD REST DAY</Text>
                 </TouchableOpacity>
@@ -389,4 +377,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default CoachCreateFitnessPlanPage2;
+export default CoachEditFitnessPlanPage2;

@@ -13,7 +13,7 @@ class DisplayListOfFitnessPlanPresenter{
             const fitnessPlans = await this.fitnessPlan.getFitnessPlans(coachID);
             
             fitnessPlans.forEach((fitnessPlan)=>{
-                console.log(fitnessPlan.fitnessPlanName);
+                console.log(fitnessPlan.fitnessPlanID);
             }); 
             
             this.view.updateList(fitnessPlans);

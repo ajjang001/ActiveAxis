@@ -82,8 +82,6 @@ const ViewCoacheeDetails = ({ route }) => {
             else {
                 setMedical("Yes")
             }
-            {/* May insert more Coachee details if needed */ }
-            //console.log({ coachee });
         }
     }, [coachee]);
 

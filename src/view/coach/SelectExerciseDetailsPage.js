@@ -9,7 +9,8 @@ import CreateFitnessPlanPresenter from '../../presenter/CreateFitnessPlanPresent
 
 
 const SelectExerciseDetailsPage = ({route, navigation}) =>{
-    const {exercise, routineIndex, routines, planInfo } = route.params;
+    const {exercise, routineIndex, routines, planInfo, isEditing, fitnessPlan } = route.params;
+
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
@@ -56,17 +57,35 @@ const SelectExerciseDetailsPage = ({route, navigation}) =>{
         try{
             changeLoadingVisible(true);
             new CreateFitnessPlanPresenter({routineIndex: routineIndex, routines: routines}).addExerciseToList(alarmString, exercise, parseInt(sets));
-        
-            navigation.navigate('CoachCreateFitnessPlanPage2', {
-                refresh:true,
-                coach: planInfo.coach,
-                photo: planInfo.photo,
-                goalType: planInfo.goalType,
-                details: planInfo.details,
-                name: planInfo.name,
-                medicalCheck: planInfo.medicalCheck,
-                routines: routines
-            });
+    
+
+            if(isEditing){
+                navigation.navigate('CoachEditFitnessPlanPage2', {
+                    refresh:true,
+                    coach: planInfo.coach,
+                    photo: planInfo.photo,
+                    goalType: planInfo.goalType,
+                    description: planInfo.description,
+                    name: planInfo.name,
+                    medicalCheck: planInfo.medicalCheck,
+                    routines: routines,
+                    fitnessPlan: fitnessPlan,
+                    isEditing: isEditing
+                });
+            }else{
+                navigation.navigate('CoachCreateFitnessPlanPage2', {
+                    refresh:true,
+                    coach: planInfo.coach,
+                    photo: planInfo.photo,
+                    goalType: planInfo.goalType,
+                    description: planInfo.description,
+                    name: planInfo.name,
+                    medicalCheck: planInfo.medicalCheck,
+                    routines: routines,
+                    isEditing: isEditing
+                });
+            }
+            
             
         }catch(error){
             changeModalVisible(true, error.message.replace(/^Error:\s*/, ''));

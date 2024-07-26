@@ -90,14 +90,14 @@ class FitnessPlan{
         }
     }
 
-    async createFitnessPlan(coach, photo, goalType, details, name, medicalCheck, routines){
+    async createFitnessPlan(coach, photo, goalType, description, name, medicalCheck, routines){
         try{
 
             // Add the fitness plan to the database (FitnessPlan)
             const docRef = await addDoc(collection(db, 'fitnessplan'), {
                 coachID: coach.accountID,
                 fitnessPlanName: name,
-                fitnessPlanDescription: details,
+                fitnessPlanDescription: description,
                 planGoal: goalType,
                 isMedicalCheck: medicalCheck,
                 lastUpdated: Timestamp.now()
@@ -183,6 +183,98 @@ class FitnessPlan{
         }
     }
 
+    async updateFitnessPlan(coach, photo, goalType, description, name, medicalCheck, routines){
+        try{
+            const dofRef = doc(db, 'fitnessplan', this._fitnessPlanID);
+            
+            await updateDoc(dofRef, {
+                fitnessPlanName: name,
+                fitnessPlanDescription: description,
+                planGoal: goalType,
+                isMedicalCheck: medicalCheck,
+                lastUpdated: Timestamp.now()
+            });
+
+
+            // Convert URI to Blob
+            const uriToBlob = (uri) => {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest()
+                    xhr.onload = function () {
+                        // return the blob
+                        resolve(xhr.response)
+                    }
+                    xhr.onerror = function () {
+                        reject(new Error('uriToBlob failed'))
+                    }
+                    xhr.responseType = 'blob'
+                    xhr.open('GET', uri, true)
+
+                    xhr.send(null)
+                })
+            };
+
+            // Upload file to Firebase Storage
+            const uploadFile = async (file, folderPath) => {
+                if (!file || !file.uri) throw new Error('File URI is invalid');
+
+                const storageRef = ref(storage, folderPath + file.name);
+                const blobFile = await uriToBlob(file.uri);
+                try {
+                    await uploadBytes(storageRef, blobFile);
+                    return `${folderPath}${file.name}`;
+                } catch (e) {
+                    throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support.");
+
+                }
+
+            };
+
+            let photoPath = null;
+
+            if (photo !== null) {
+                // Remove old picture in storage
+                const ppRef = ref(storage, this._fitnessPlanPicture);
+                await deleteObject(ppRef);
+
+                const folderPath = `coach/${coach.email.split('@')[0]}/fitnessplan/${this._fitnessPlanID}_`;
+
+                photoPath = await uploadFile(photo, folderPath);
+
+                // Update the photo path in the database
+                await updateDoc(dofRef, {
+                    fitnessPlanPicture: photoPath
+                });
+            }
+
+            
+            // Update the routines
+            const routineIDsList = await new WorkoutRoutine().updateWorkoutRoutine(routines, this._fitnessPlanID);
+
+            // Add not existing exercises
+            const exerciseIDList = await new Exercise().createExercise(routines);
+
+
+            // Add join table for many-to-many relationship
+            // between WorkoutRoutine and Exercise  (ExerciseInfoOnRoutine)
+            for (let i = 0; i < routineIDsList.length; i++) {
+                for (let j = 0; j < exerciseIDList[i].length; j++) {
+                    await addDoc(collection(db, 'exerciseinfoonroutine'), {
+                        exerciseID: exerciseIDList[i][j],
+                        routineID: routineIDsList[i],
+                        orderNo: j + 1,
+                        duration: routines[i].exercisesList[j].duration,
+                        sets: routines[i].exercisesList[j].sets
+                    });
+                }
+            }
+
+
+        }catch(e){
+            throw new Error('fitness plan ' + e);
+        }
+    }
+
     async getFitnessPlans(coachID){
         try{
             let q = query(collection(db, 'fitnessplan'), where("coachID", "==", coachID));
@@ -248,7 +340,6 @@ class FitnessPlan{
 
             // Delete the routines from the database
             for(const routine of this._routinesList){
-                // console.log(routine.constructor.name);
                 await routine.deleteWorkoutRoutine();
             }
 

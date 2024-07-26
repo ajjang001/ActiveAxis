@@ -13,7 +13,7 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
     const [coach, setCoach] = useState(route.params.coach);
     const [photo, setPhoto] = useState(null);
     const [goalType, setGoalType] = useState(0);
-    const [details, setDetails] = useState('');
+    const [description, setDescription] = useState('');
     const [name, setName] = useState('');
     const [medicalCheck, setmedicalCheck] = useState(false);
     const [routines, setRoutines] = useState([]);
@@ -85,7 +85,7 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
     const createHandler = async () => {
         try{
             changeLoadingVisible(true);
-            await new CreateFitnessPlanPresenter().createFitnessPlan(coach, photo, goalType, details.trim(), name.trim(), medicalCheck, routines);
+            await new CreateFitnessPlanPresenter().createFitnessPlan(coach, photo, goalType, description.trim(), name.trim(), medicalCheck, routines);
             
             navigation.navigate('CoachListOfFitnessPlansPage', {refresh: true, coach: coach});
             Alert.alert('Success', 'Fitness Plan created successfully');
@@ -118,7 +118,7 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
             setName(route.params.name);
             setPhoto(route.params.photo);
             setGoalType(route.params.goalType);
-            setDetails(route.params.details);
+            setDescription(route.params.description);
             setmedicalCheck(route.params.medicalCheck);
             setRoutines(route.params.routines);
             route.params.refresh = false;
@@ -184,17 +184,17 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
                     </View>
                 </View>
 
-                <View style = {styles.detailsView}>
-                    <Text style={styles.detailsTitle}>Fitness Plan Name:</Text>
+                <View style = {styles.descriptionView}>
+                    <Text style={styles.descriptionTitle}>Fitness Plan Name:</Text>
                     <TextInput
-                        style={styles.detailsInput}
+                        style={styles.descriptionInput}
                         placeholder="Enter fitness plan name here..."
                         value={name}
                         onChangeText={(text) => setName(text)}
                         maxLength={32}
                     />
 
-                    <Text style={styles.detailsTitle}>Goal Type:</Text>
+                    <Text style={styles.descriptionTitle}>Goal Type:</Text>
                     <Dropdown
                         style={styles.dropdown}
                         placeholderStyle={styles.placeholderStyle}
@@ -212,12 +212,12 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
                         ref={dropdownRef}
                     />
 
-                    <Text style={styles.detailsTitle}>Details:</Text>
+                    <Text style={styles.descriptionTitle}>Description:</Text>
                     <TextInput
-                        style={styles.detailsInput}
-                        placeholder='Enter details here...'
-                        value={details}
-                        onChangeText={text => setDetails(text)}
+                        style={styles.descriptionInput}
+                        placeholder='Enter description here...'
+                        value={description}
+                        onChangeText={text => setDescription(text)}
                     />
 
                     <CheckBox
@@ -241,10 +241,11 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
                         coach: coach,
                         photo: photo,
                         goalType: goalType,
-                        details: details,
+                        description: description,
                         name: name,
                         medicalCheck: medicalCheck,
-                        routines: routines
+                        routines: routines,
+                        isEditing:false
                     })}>
                 
                         <Text style = {styles.bottomButtonText}>Manage Routines</Text>
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
         fontSize: scale(15),
         fontFamily: 'League-Spartan',
     },
-    detailsTitle: {
+    descriptionTitle: {
         alignSelf: 'flex-start',
         fontSize: scale(15),
         fontFamily: 'Poppins-SemiBold',
@@ -350,7 +351,7 @@ const styles = StyleSheet.create({
         fontFamily:'Poppins-Medium'
     },
 
-    detailsInput: {
+    descriptionInput: {
         width: '100%',
         backgroundColor: '#FFF',
         padding: scale(10),
@@ -360,7 +361,7 @@ const styles = StyleSheet.create({
         marginBottom: scale(20),
     },
 
-    detailsView: {
+    descriptionView: {
         paddingHorizontal: scale(20),
         marginTop: scale(20),
     },

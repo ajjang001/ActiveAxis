@@ -229,7 +229,7 @@ class Achievements{
                 const folderPath = `achievements/${
                     (typeName === 'Competitions Won' ? 'Competitions' : typeName)
                 }/`;
-    
+
                 photoPath = await uploadFile(photo, folderPath);
 
 

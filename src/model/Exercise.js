@@ -154,7 +154,7 @@ class Exercise{
             return exerciseIDList;
 
         }catch(error){
-            throw new Error(error);
+            throw new Error('ce '+error);
         }
 
     }

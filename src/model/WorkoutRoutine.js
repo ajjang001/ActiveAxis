@@ -105,7 +105,39 @@ class WorkoutRoutine{
             return routineIDsList;
 
         }catch(error){
-            throw new Error(error);
+            throw new Error( 'create wr ' + error);
+        }
+    }
+
+    async updateWorkoutRoutine(routines, fitnessPlanID){
+        try{
+            let routineIDsList = [];
+
+            // Remove old workoutroutines
+            const q = query(collection(db, 'workoutroutine'), where("fitnessPlanID", "==", fitnessPlanID));
+            const querySnapshot = await getDocs(q);
+
+            for (const doc of querySnapshot.docs) {
+                routineIDsList.push(doc.id);
+                await deleteDoc(doc.ref);
+            }
+
+            // Remove old ExerciseInfoOnRoutine
+            for (const routineID of routineIDsList) {
+                const q = query(collection(db, 'exerciseinfoonroutine'), where("routineID", "==", routineID));
+                const querySnapshot = await getDocs(q);
+
+                for (const doc of querySnapshot.docs) {
+                    await deleteDoc(doc.ref);
+                }
+            }
+
+            // Add new workoutroutines
+            return await this.createWorkoutRoutine(routines, fitnessPlanID);
+
+            
+        }catch(error){
+            throw new Error('update wr ' + error);
         }
     }
 
