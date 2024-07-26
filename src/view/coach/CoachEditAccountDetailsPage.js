@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, Alert } from 'react-native';
 import UpdateAccountDetailsPresenter from '../../presenter/UpdateAccountDetailsPresenter';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
@@ -10,8 +10,8 @@ const CoachEditAccountDetailsPage = () => {
   const route = useRoute();
   const navigation = useNavigation(); // Initialize navigation
   const { userEmail, userType} = route.params;
-  const coachID = coachID;
 
+  const [coachID, setcoachID] = useState('');
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
@@ -55,6 +55,7 @@ const CoachEditAccountDetailsPage = () => {
       setTempName(accountDetails.fullName);
       setTempPhoneNumber(accountDetails.phoneNumber);
       setTempEmail(accountDetails.email);
+      setcoachID(accountDetails.accountID);
     }
   });
 
@@ -80,7 +81,7 @@ const CoachEditAccountDetailsPage = () => {
             console.log(coachID);
             await new UpdateAccountDetailsPresenter().updatePassword(coachID, newPassword, confirmnewPassword)
             Alert.alert('Successfully updated password for user!')
-            navigation.navigate('UserAccountListPage')
+            navigation.navigate('CoachViewAccountDetailsPage', { userEmail, userType })
         } catch (e) {
             console.log(e);
             changeModalVisible(true, e.message);

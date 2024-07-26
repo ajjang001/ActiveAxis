@@ -515,21 +515,13 @@ class Coach extends Account {
             throw new Error('Failed to update coach account details. Please try again.');
         }
     }
-    async updatePassword(email) {
+    async updatePassword(coachID, newPassword) {
         try {
-            // Check if the email exists
-            const q = query(collection(db, 'coach'), where('email', '==', email));
-            const queryResult = await getDocs(q);
-            
-            if (queryResult.empty == true) {
-                throw new Error("There is no account associated with that email.");
-            }
-            else {
-                await sendPasswordResetEmail(auth, email)
-            }
-        }
-        catch (e) {
-            throw new Error("Failed to reset password. Please try again or contact support.");
+            // Send a request to the server to update the user's password in Firebase Auth
+            const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/update-password', { uid: coachID, newPassword });
+            console.log(res.data.message);
+        } catch (e) {
+            throw new Error(e.message);
         }
     }
 }
