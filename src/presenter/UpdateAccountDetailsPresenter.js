@@ -20,16 +20,6 @@ class UpdateAccountDetailsPresenter {
       }
   }
 
-    async updateAccount(email) {
-        try {
-            this.account = new SystemAdmin();
-            await this.account.resetPassword(email)
-        } catch (error) {
-            console.log('Account not found.');
-            throw new Error(error);
-        }
-    }
-
     async getGoals() {
         try {
           this.account = new FitnessPlan();
