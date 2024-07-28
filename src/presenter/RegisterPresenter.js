@@ -30,7 +30,7 @@ class RegisterPresenter {
     // Pattern to check if weight and height are numbers or decimals
     const floatPattern = /^\d+(\.\d+)?$/;
 
-    if (gender.trim() === '' || dob === null || weight.trim() === '' || height.trim() === '' || goal.trim() === '' || level.trim() === '' || intervalInSeconds === null) {
+    if (gender.trim() === '' || dob === null || weight.trim() === '' || height.trim() === '' || goal === null || level === null || intervalInSeconds === null) {
       // Check if all fields are filled
       throw new Error('Please complete all fields!');
     } else if (!floatPattern.test(weight)) {
@@ -39,10 +39,10 @@ class RegisterPresenter {
     } else if (!floatPattern.test(height)) {
       // Check if height is a number or decimal
       throw new Error('Please only enter numbers or decimals for height');
-    } else if (intervalInSeconds === 0 || intervalInSeconds < 20){
+    } else if (intervalInSeconds === 0 || intervalInSeconds < 20) {
       throw new Error('Rest Interval must be more than 20 seconds! ');
     }
-      else {
+    else {
       // Log the values
       // All good here!
       console.log({ gender, dob, weight, height, goal, level, medicalCheck, intervalInSeconds });

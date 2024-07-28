@@ -91,8 +91,8 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
             }
             setWeight(userDetails[0].user.weight + "kg");
             setHeight(userDetails[0].user.height + "cm");
-            setGoal(userDetails[0].user.fitnessGoal);
-            setLevel(capitalizeFirstLetter(userDetails[0].user.fitnessLevel));
+            setGoal(userDetails[0].user.fitnessGoalName);
+            setLevel(capitalizeFirstLetter(userDetails[0].user.fitnessLevelName));
             if (userDetails[0].user.hasMedical == false) {
                 setMedical("No");
             }
