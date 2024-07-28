@@ -1,10 +1,10 @@
-import { View, Text, StyleSheet, Modal, Image, ScrollView } from "react-native"
+import { View, Text, StyleSheet, Modal, Image, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native"
 import { scale } from "../../components/scale";
 import React, { useEffect, useState } from "react";
 import { LoadingDialog, MessageDialog } from "../../components/Modal";
 import ViewCoacheePresenter from '../../presenter/ViewCoacheePresenter';
 
-const ViewCoacheeDetails = ({ route }) => {
+const ViewCoacheeDetails = ({ navigation, route }) => {
 
     const { user } = route.params;
     const userEmail = user.user.email;
@@ -103,7 +103,7 @@ const ViewCoacheeDetails = ({ route }) => {
                             <Image source={{ uri: profilePicture }} resizeMode='stretch' style={styles.coacheeImage} />
                         </View>
                     ) : (
-                        <LoadingDialog />
+                        <ActivityIndicator style={styles.pictureContainer} size="large" />
                     )}
                     <Text style={styles.detailsTitle}>Name</Text>
                     <Text style={styles.detailsText}>{fullName}</Text>
@@ -128,6 +128,11 @@ const ViewCoacheeDetails = ({ route }) => {
                     <Text style={styles.detailsTitle}>End Date</Text>
                     <Text style={styles.detailsText}>{endDateString}</Text>
                     {/* May insert more Coachee details if needed */}
+                </View>
+                <View style = {styles.viewPlanContainer}>
+                    <TouchableOpacity style = {styles.viewPlanButton} onPress={() => navigation.navigate("CoachAllocatePlanPage", {user})}>
+                        <Text style = {styles.planButtonText}>Manage Plans</Text>
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
         </View>
@@ -185,11 +190,28 @@ const styles = StyleSheet.create({
         width: scale(100),
         height: scale(100),
         backgroundColor: 'white',
-        borderRadius: scale(75),
+        borderRadius: scale(75)
     },
     scrollContainer: {
         width: '100%',
     },
+    viewPlanContainer:{
+        padding: scale(15),
+        marginBottom: scale(50),
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    viewPlanButton:{
+        backgroundColor: '#E28413',
+        paddingVertical: scale(10),
+        paddingHorizontal: scale(25),
+        borderRadius: scale(10),
+    },
+    planButtonText:{
+        fontFamily: 'Inter-SemiBold',
+        fontSize: scale(16),
+        color: 'white',
+    }
 });
 
 export default ViewCoacheeDetails;

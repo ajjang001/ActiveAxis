@@ -75,6 +75,7 @@ class User extends Account {
                 else {
                     // Account is valid
                     const u = new User();
+                    u.accountID = user.uid;
                     u.username = data.username;
                     u.email = email;
                     u.profilePicture = data.profilePicture;
@@ -114,6 +115,7 @@ class User extends Account {
             const data = queryResult.docs[0].data();
 
             const u = new User();
+            u.accountID = queryResult.docs[0].id;
             u.username = data.username;
             u.email = data.email;
             u.profilePicture = data.profilePicture;
@@ -249,6 +251,7 @@ class User extends Account {
                 const data = doc.data();
                 const u = new User();
 
+                u.accountID = doc.id;
                 u.username = data.username;
                 u.email = data.email;
                 u.profilePicture = data.profilePicture;
@@ -295,6 +298,7 @@ class User extends Account {
                 const data = doc.data();
                 const u = new User();
 
+                u.accountID = doc.id;
                 u.username = data.username;
                 u.email = data.email;
                 u.profilePicture = data.profilePicture;
@@ -388,6 +392,7 @@ class User extends Account {
                     const data = userDoc.data();
                     const u = new User();
 
+                    u.accountID = userDoc.id;
                     u.username = data.username;
                     u.email = data.email;
                     u.profilePicture = data.profilePicture;
@@ -426,6 +431,7 @@ class User extends Account {
                 const data = doc.data();
                 const u = new User();
 
+                u.accountID = doc.id;
                 u.username = data.username;
                 u.email = data.email;
                 u.profilePicture = data.profilePicture;

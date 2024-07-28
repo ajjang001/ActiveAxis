@@ -275,6 +275,38 @@ class FitnessPlan{
         }
     }
 
+    async getFitnessPlanAllocationDetail(fitnessPlanID){
+        try{
+            const docRef = doc(db, 'fitnessplan', fitnessPlanID);
+            const docSnap = await getDoc(docRef);
+
+            if(docSnap.exists()){
+                const data = docSnap.data();
+
+                this._fitnessPlanID = fitnessPlanID;
+                this._coachID = data.coachID;
+                this._fitnessPlanName = data.fitnessPlanName;
+                this._fitnessPlanDescription = data.fitnessPlanDescription;
+                this._planGoal = data.planGoal;
+                this._fitnessPlanPicture = data.fitnessPlanPicture;
+                this._isMedicalCheck = data.isMedicalCheck;
+                this._lastUpdated = data.lastUpdated.toDate().toString();
+
+                this._fitnessPlanPicture = await this.getFitnessPlanPicture();
+
+                this._routinesList = [];
+                this._routinesList = await new WorkoutRoutine().getWorkoutRoutines(fitnessPlanID);
+
+
+                return this;
+            }else{
+                return null;
+            }
+        }catch(e){
+            throw new Error(e);
+        }
+    }
+
     async getFitnessPlans(coachID){
         try{
             let q = query(collection(db, 'fitnessplan'), where("coachID", "==", coachID));
