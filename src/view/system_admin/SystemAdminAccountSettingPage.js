@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TouchableOpacity, View, Modal, Alert } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
 import { scale } from '../../components/scale';
-import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Modal';
-import UpdateAccountDetailsPresenter from '../../presenter/UpdateAccountDetailsPresenter';
+import { LoadingDialog } from '../../components/Modal';
 
 const SystemAdminAccountSettingPage = ({ navigation, route }) => {
 
     const { admin } = route.params;
 
-    const email = admin.email;
     // State to control the visibility of the modal
     const [isLoading, setIsLoading] = useState(false);
 
@@ -16,21 +14,6 @@ const SystemAdminAccountSettingPage = ({ navigation, route }) => {
     const changeLoadingVisible = (b) => {
         setIsLoading(b);
     }
-
-    // Function to update the account details
-    const updateAccount = async (email) => {
-        try {
-            changeLoadingVisible(true);
-            await new UpdateAccountDetailsPresenter().updateAccount(email);
-            Alert.alert("Kindly check your email to reset your password!");
-            navigation.navigate('SystemAdminHomePage', {admin})
-        } catch (e) {
-            Alert.alert(e.message);
-        } finally {
-            changeLoadingVisible(false);
-        }
-    };
-
 
     return (
         <View style={styles.container}>
@@ -42,14 +25,12 @@ const SystemAdminAccountSettingPage = ({ navigation, route }) => {
                 <Text style={styles.detailsText}>{admin.username}</Text>
                 <Text style={styles.detailsTitle}>Email</Text>
                 <Text style={styles.detailsText}>{admin.email}</Text>
-                <Text style={styles.detailsTitle}>Password</Text>
-                <Text style={styles.detailsText}>*********</Text>
             </View>
             <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
                 <LoadingDialog />
             </Modal>
-            <TouchableOpacity style={styles.resetButton} onPress={() => updateAccount(email)}>
-                <Text style={styles.resetText}>Click here to reset password!</Text>
+            <TouchableOpacity style={styles.resetButton} onPress={() => navigation.navigate("SystemAdminUpdatePasswordPage", { admin })}>
+                <Text style={styles.resetText}>Change Password</Text>
             </TouchableOpacity>
         </View>
     )
@@ -101,7 +82,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: scale(50),
         paddingVertical: scale(10),
         marginTop: scale(25),
-
     },
     resetText: {
         color: 'white',

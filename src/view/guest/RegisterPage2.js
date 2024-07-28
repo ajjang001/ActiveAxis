@@ -46,7 +46,7 @@ const RegisterPage2 = ({ navigation, route }) => {
             changeLoadingVisible(true);
             
             // Call the presenter to process the registration
-            await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, dob, weight, height, goal, level, medicalCheck, intervalInSeconds);
+            await new RegisterPresenter().processRegister(name, email, phone, password, checkTC, gender, dob, weight, height, goal, level.toLowerCase(), medicalCheck, intervalInSeconds);
             // Navigate to the next screen
             navigation.navigate('Register3')
         } catch (e) {

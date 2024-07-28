@@ -29,6 +29,10 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
     const [goal, setGoal] = useState('');
     const [level, setLevel] = useState('');
 
+    const capitalizeFirstLetter = (string) => {
+        if (!string) return '';
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
 
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
@@ -54,7 +58,7 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
             await presenter.viewAccountDetails(userEmail, userType);
             setTimeout(() => {
                 setIsLoading(false);
-            }, 1500); 
+            }, 1500);
         } catch (error) {
             setIsLoading(false);
             setModalVisible(true);
@@ -88,7 +92,7 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
             setWeight(userDetails[0].user.weight + "kg");
             setHeight(userDetails[0].user.height + "cm");
             setGoal(userDetails[0].user.fitnessGoal);
-            setLevel(userDetails[0].user.fitnessLevel);
+            setLevel(capitalizeFirstLetter(userDetails[0].user.fitnessLevel));
             if (userDetails[0].user.hasMedical == false) {
                 setMedical("No");
             }
@@ -130,9 +134,14 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
                 <Text style={styles.detailsTitle}>Medical Condition</Text>
                 <Text style={styles.detailsText}>{medical}</Text>
             </View>
-            <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate("UserUpdateAccountDetailsPage", { user, userDetails })}>
-                <Text style={styles.editText}>Edit</Text>
-            </TouchableOpacity>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate("UserUpdateAccountDetailsPage", { user, userDetails })}>
+                    <Text style={styles.editText}>Edit Information</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.passwordButton} onPress={() => navigation.navigate("UserUpdatePasswordPage", { user, userDetails })}>
+                    <Text style={styles.editText}>Change Password</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -181,10 +190,10 @@ const styles = StyleSheet.create({
     editButton: {
         borderWidth: 1,
         backgroundColor: '#E28413',
-        paddingHorizontal: scale(50),
         paddingVertical: scale(5),
         marginTop: scale(25),
-
+        marginHorizontal: scale(15),
+        flex: 1,
     },
     editText: {
         color: 'white',
@@ -192,5 +201,17 @@ const styles = StyleSheet.create({
         fontFamily: 'Inter',
         fontWeight: 'bold',
         fontSize: scale(16)
+    },
+    buttonContainer: {
+        width: '90%',
+        flexDirection: 'row',
+    },
+    passwordButton: {
+        borderWidth: 1,
+        backgroundColor: '#C42847',
+        paddingVertical: scale(5),
+        marginTop: scale(25),
+        marginHorizontal: scale(15),
+        flex: 1,
     },
 })

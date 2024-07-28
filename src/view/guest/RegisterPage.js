@@ -45,6 +45,11 @@ const RegisterPage = ({ navigation }) => {
     setShowPicker(false);
   };
 
+  const capitalizeFirstLetter = (string) => {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
   // User Info
   const [gender, setGender] = useState('');
   const [dob, setDob] = useState(null);
@@ -80,6 +85,19 @@ const RegisterPage = ({ navigation }) => {
     fetchLevelData();
   }, []);
 
+  useEffect(() => {
+    if (levelData.length > 0) {
+        const capitalizedLevelData = levelData.map(level => ({
+            ...level,
+            name: capitalizeFirstLetter(level.name),
+        }));
+        // Only update state if there is a change
+        if (JSON.stringify(capitalizedLevelData) !== JSON.stringify(levelData)) {
+            setLevelData(capitalizedLevelData);
+        }
+    }
+}, [levelData]); // This effect will run whenever levelData changes
+
   const fetchGoalsData = async () => {
     try {
       setIsLoading(true);
@@ -108,7 +126,6 @@ const RegisterPage = ({ navigation }) => {
     try {
       // Call the presenter to process the profiling
       await new RegisterPresenter().processProfiling(gender, dob ? dob.toISOString() : null, weight, height, goal, level, medicalCheck, intervalInSeconds);
-
       // Navigate to the next screen
       navigation.navigate('Register2', { gender, dob: dob ? dob.toISOString() : null, weight, height, goal, level, medicalCheck, intervalInSeconds });
     } catch (e) {
