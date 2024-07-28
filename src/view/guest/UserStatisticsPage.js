@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { LineChart } from 'react-native-chart-kit';
 import { Card } from 'react-native-elements';
 import { Dimensions } from 'react-native';
+import { scale } from '../../components/scale';
 import DisplayUserStatisticsPresenter from '../../presenter/DisplayUserStatisticsPresenter';
 
 const screenWidth = Dimensions.get('window').width;
 
 const UserStatisticsPage = () => {
   const [totalFeedback, setTotalFeedback] = useState(0);
+  const [avgRating, setAvgRating] = useState(0);
+  const [previousDays, setPreviousDays] = useState([]);
+  const [userCount, setUserCount] = useState([]);
   
   // function buat panggil controller
   const loadData = async () => {
     try{
       await new DisplayUserStatisticsPresenter({changeTotalFeedback: setTotalFeedback}).displayTotalAppFeedback();
+      await new DisplayUserStatisticsPresenter({changeAvgRating: setAvgRating}).displayAvgRatings();
+      await new DisplayUserStatisticsPresenter({changePreviousDays: setPreviousDays, changeDataStats: setUserCount}).displayDaysAndUsers();
+      
     } catch (e){
       console.log(e.message);
     }
@@ -22,7 +30,6 @@ const UserStatisticsPage = () => {
   useEffect(()=>{
     loadData();
   },[]);
-  // tmpt simpen total reviews
 
   return (
     <ScrollView style={styles.container}>
@@ -31,10 +38,10 @@ const UserStatisticsPage = () => {
         <Text style={styles.cardTitle}>Total Active Users</Text>
         <LineChart
           data={{
-            labels: ['June 10', '11', '12', '13', '14', '15', '16', '17', '18', '19'],
+            labels: previousDays || ['June 10', '11', '12', '13', '14', '15', '16'],
             datasets: [
               {
-                data: [30000, 32000, 34000, 36000, 38000, 40000, 42000, 44000, 46000, 50000],
+                data: userCount.length === 0 ? [30000, 32000, 34000, 36000, 38000, 40000, 42000]: userCount,
               },
             ],  
           }}
@@ -63,9 +70,17 @@ const UserStatisticsPage = () => {
         />
       </Card>
       <Card containerStyle={styles.card}>
-        <Text style={styles.cardTitle}>Total Downloads</Text>
-        <Text style={styles.cardValue}>0</Text>
-        <Text style={styles.cardSubtitle}>Number of Downloads</Text>
+        <Text style={styles.cardTitle}>Average Rating</Text>
+        
+        <View style={{alignItems: "center", flexDirection: "row", gap:scale(5)}}>
+          <Text style={styles.cardValue}>{avgRating.toFixed(2)}</Text>
+          <Icon
+          name="star"
+          size={scale(33)}
+          color={'#FFD700'}
+        />
+        </View>
+
       </Card>
       <Card containerStyle={styles.card}>
         <Text style={styles.cardTitle}>Total Reviews</Text>
