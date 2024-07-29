@@ -1,20 +1,26 @@
 import { View, Text, StyleSheet, Modal, Image, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native"
 import { scale } from "../../components/scale";
-import React, { useEffect, useState } from "react";
-import { LoadingDialog, MessageDialog } from "../../components/Modal";
+import React, { useEffect, useState, useCallback } from "react";
+import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Modal";
 
 import DisplayPlanAllocationPresenter from '../../presenter/DisplayPlanAllocationPresenter';
+import { useFocusEffect } from "@react-navigation/native";
 
 const CoachAllocatePlanPage = ({navigation, route}) => {
 
-    const { user } = route.params;
+    const { coach, history } = route.params;
 
+    const [allocatedPlans, setAllocatedPlans] = useState([]);
     const [onProgress, setOnProgress] = useState([]);
 
-    // console.log(user);
+    const [allocationID, setAllocationID] = useState('');
+
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
+    const [confirmationVisible, setConfirmationVisible] = useState(false);
+    const [confirmMessage, setConfirmMessage] = useState('');
+
 
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
@@ -27,10 +33,19 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
         setIsLoading(b);
     }
 
+    // change popup/modal visible
+    const changeConfirmVisible = (b, m)=>{
+        setConfirmMessage(m);
+        setConfirmationVisible(b);
+    }
+
     const loadPlanAllocation = async () => {
         try{
             changeLoadingVisible(true);
-            await new DisplayPlanAllocationPresenter({updateOnProgress: setOnProgress}).displayPlanAllocation(user.id);
+            setAllocationID('');
+            setOnProgress([]);
+            setAllocatedPlans([]);
+            await new DisplayPlanAllocationPresenter({updateAllocatedPlans: setAllocatedPlans, updateOnProgress: setOnProgress}).displayPlanAllocation(history.id);
         }catch(error){
             changeModalVisible(true, error.message.replace('Error: ', ''));
         }finally{
@@ -38,9 +53,26 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
         }
     }
 
-    useEffect(() => {
-        loadPlanAllocation();
-    }, []);
+    const onDeleteAllocatedPlan = async () => {
+        try{
+            changeLoadingVisible(true);
+            await new DisplayPlanAllocationPresenter().deletePlanAllocation(allocationID);
+            
+            await loadPlanAllocation();
+            changeModalVisible(true, 'Plan deleted successfully');
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
+
+    useFocusEffect(
+        useCallback(() => {
+            loadPlanAllocation();
+        }
+    , []));
 
 
     return (
@@ -52,11 +84,63 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
             <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
                 <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
             </Modal>
+            <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeConfirmVisible(false)}>
+                <ActionDialog
+                message = {confirmMessage}
+                changeModalVisible = {changeConfirmVisible}
+                action = {onDeleteAllocatedPlan}
+                />
+            </Modal>
 
             <ScrollView contentContainerStyle = {styles.planView}>
                 <View style = {styles.allocateContainer}>
                     <Text style = {styles.titleText}>Allocate Plan</Text>
-                    <TouchableOpacity onPress={()=>console.log('go')}  style = {styles.addPlanButton}>
+                    {
+                            allocatedPlans.length === 0 ?
+                            null :
+                            allocatedPlans.map((plan, index) => {
+                                return (
+                                    <View style = {[styles.planItem, {justifyContent:'space-between', }]} key = {index}>
+                                        <View style = {{flexDirection:'row', gap: scale(25),}}>
+                                        {plan.details !== null ?
+                                            <Image source = {{uri: plan.details.fitnessPlanPicture}} style = {styles.planImage} />
+                                            :
+                                            <View style = {styles.planImage}/>
+                                        }
+
+                                        {plan.details === null ? 
+                                        
+                                            <Text style = {styles.deletedText}>Plan unavailable or deleted</Text>
+                                        :
+
+                                            <View >
+                                                <Text>{`${plan.plan.startDate.toDateString()} - ${plan.plan.endDate.toDateString()}`}</Text>
+                                                <Text style = {styles.planNameText}>{plan.details.fitnessPlanName}</Text>
+
+                                                <View style = {styles.statsView}>
+                                                    <View style = {styles.stats}>
+                                                        <Image source = {require('../../../assets/clock_icon.png')} style = {styles.statsIcon}/>
+                                                        <Text>{plan.details.routinesList.length} Days</Text>
+                                                    </View>
+                                                    <View style = {styles.stats}>
+                                                        <Image source = {require('../../../assets/fire_icon.png')} style = {styles.statsIcon}/>
+                                                        <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0))} kcal</Text>
+                                                    </View>
+                                                </View>
+
+                                            </View>
+                                        }
+                                        </View>
+                                        <TouchableOpacity onPress = {()=>{setAllocationID(plan.plan.allocationID);changeConfirmVisible (true, 'Are you sure you want to delete this plan?')}} style = {{padding: scale(10)}}>
+                                            <Image style = {styles.icon} source = {require('../../../assets/trash_icon.png')} />
+                                        </TouchableOpacity>
+                                    </View>
+                                    );
+                                }
+                                )
+                            
+                        }
+                    <TouchableOpacity onPress={()=>navigation.navigate("CoachAllocatePlanPage2", {coach, history})}  style = {styles.addPlanButton}>
                         <Image style = {styles.icon} source = {require('../../../assets/add_box_icon.png')} />
                     </TouchableOpacity>
                 </View>
@@ -66,9 +150,8 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
                     <Text style = {styles.titleText}>On Progress</Text>
                     {
                         onProgress.map((plan, index) => {
-                            console.log(plan);
                             return(
-                                <View style = {styles.planItem} key = {index}>
+                                <View style = {[styles.planItem,{gap: scale(25),}]} key = {index}>
                                 {plan.details !== null ?
                                     <Image source = {{uri: plan.details.fitnessPlanPicture}} style = {styles.planImage} />
                                     :
@@ -107,7 +190,7 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
             </ScrollView>
 
             <View style = {styles.viewHistoryContainer}>
-                <TouchableOpacity style = {styles.viewHistoryButton} onPress={() => navigation.navigate('CoachAllocateHistoryPage', {user})}>
+                <TouchableOpacity style = {styles.viewHistoryButton} onPress={() => navigation.navigate('CoachAllocateHistoryPage', {history})}>
                     <Text style = {styles.historyButtonText}>View History</Text>
                 </TouchableOpacity>
             </View>
@@ -124,13 +207,6 @@ const styles = StyleSheet.create({
         gap: scale(20),
     },
     allocateContainer:{
-        backgroundColor: 'red',
-        paddingHorizontal: scale(15),
-    },
-    onProgressContainer:{
-    },
-    historyContainer:{
-        backgroundColor: 'green',
     },
     titleText: {
         fontSize: scale(24),
@@ -166,11 +242,12 @@ const styles = StyleSheet.create({
     },
     planItem:{
         borderColor: 'lightgray',
-        borderWidth: 1,
+        borderWidth: 2,
         flexDirection: 'row',
         padding: scale(10),
-        gap: scale(25),
+        
         alignItems: 'center',
+        
     },
     deletedText:{
         fontSize: scale(16),

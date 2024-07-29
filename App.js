@@ -59,6 +59,8 @@ import CoachAppFeedbackPage from './src/view/coach/CoachAppFeedbackPage';
 import CoachSendAppFeedbackPage from './src/view/coach/CoachSendAppFeedbackPage';
 import CoachUpdateAppFeedbackPage from './src/view/coach/CoachUpdateAppFeedbackPage';
 import CoachAllocatePlanPage from './src/view/coach/CoachAllocatePlanPage';
+import CoachAllocatePlanPage2 from './src/view/coach/CoachAllocatePlanPage2';
+import CoachAllocatePlanPage3 from './src/view/coach/CoachAllocatePlanPage3';
 import CoachAllocateHistoryPage from './src/view/coach/CoachAllocateHistoryPage';
 
 // System Admin Pages
@@ -273,9 +275,7 @@ export default function App() {
           <Stack.Screen name="EditUserAccountDetailsPage" component={EditUserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>     
           <Stack.Screen name="SystemAdminAccountSettingPage" component={SystemAdminAccountSettingPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
           <Stack.Screen name="SystemAdminUpdatePasswordPage" component={SystemAdminUpdatePasswordPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-          <Stack.Screen name="CoachAllocatePlanPage" component={CoachAllocatePlanPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-          <Stack.Screen name="CoachAllocateHistoryPage" component={CoachAllocateHistoryPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
-
+          
           <Stack.Screen name="CoachHomePage" component={CoachTabs} options={{headerShown:false}} />
           <Stack.Screen name = "CoachListOfFitnessPlansPage" component={CoachListOfFitnessPlansPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
           <Stack.Screen name = "CoachFitnessPlanPage" component={CoachFitnessPlanPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
@@ -293,6 +293,10 @@ export default function App() {
           <Stack.Screen name="CoachAppFeedbackPage" component={CoachAppFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />          
           <Stack.Screen name="CoachSendAppFeedbackPage" component={CoachSendAppFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
           <Stack.Screen name="CoachUpdateAppFeedbackPage" component={CoachUpdateAppFeedbackPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
+          <Stack.Screen name="CoachAllocatePlanPage" component={CoachAllocatePlanPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+          <Stack.Screen name="CoachAllocatePlanPage2" component={CoachAllocatePlanPage2} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+          <Stack.Screen name="CoachAllocatePlanPage3" component={CoachAllocatePlanPage3} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+          <Stack.Screen name="CoachAllocateHistoryPage" component={CoachAllocateHistoryPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
 
         </Stack.Navigator>
       </NavigationContainer>

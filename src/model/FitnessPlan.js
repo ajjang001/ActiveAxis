@@ -380,6 +380,113 @@ class FitnessPlan{
         }
     }
 
+    async getRecommendedPlan(coachID, userInfo){
+        try{
+            let q = null;
+            
+
+            if (userInfo.isMedicalCheck === true) {
+                q = query(collection(db, 'fitnessplan'), where("coachID", "==", coachID), where("planGoal", "==", userInfo.fitnessGoal), where ("isMedicalCheck", "==", userInfo.hasMedical));
+            }else{
+                q = query(collection(db, 'fitnessplan'), where("coachID", "==", coachID), where("planGoal", "==", userInfo.fitnessGoal));
+            }
+
+            const querySnapshot = await getDocs(q);
+
+            const recommended = [];
+
+            for(const doc of querySnapshot.docs){
+                const data = doc.data();
+
+                const fitnessPlan = new FitnessPlan();
+                fitnessPlan.fitnessPlanID = doc.id;
+                fitnessPlan.coachID = data.coachID;
+                fitnessPlan.fitnessPlanName = data.fitnessPlanName;
+                fitnessPlan.fitnessPlanDescription = data.fitnessPlanDescription;
+
+                q = query(collection(db, 'fitnessgoal'), where("goalID", "==", data.planGoal));
+                const querySnapshot = await getDocs(q);
+                fitnessPlan.planGoal = querySnapshot.docs[0].data().goalName;
+
+                fitnessPlan.fitnessPlanPicture = data.fitnessPlanPicture;
+                fitnessPlan.fitnessPlanPicture = await fitnessPlan.getFitnessPlanPicture();
+
+                fitnessPlan.routinesList = [];
+
+                fitnessPlan.isMedicalCheck = data.isMedicalCheck;
+                fitnessPlan.lastUpdated = data.lastUpdated.toDate().toString();
+
+                const routines = await new WorkoutRoutine().getWorkoutRoutines(fitnessPlan.fitnessPlanID);
+                fitnessPlan.routinesList = routines;
+
+                recommended.push(fitnessPlan);
+            }
+
+            // console.log('recommended: ')
+            // recommended.forEach(async (plan) => {
+            //     console.log(plan.fitnessPlanName);
+            // });
+
+            return recommended;
+            
+
+        }catch(e){
+            throw new Error(e);
+        }
+    }
+
+    async getOtherPlan(coachID, userInfo){
+        try{
+
+            let q = null;
+            if (userInfo.isMedicalCheck === true) {
+                q = query(collection(db, 'fitnessplan'), where("coachID", "==", coachID), where("planGoal", "!=", userInfo.fitnessGoal), where ("isMedicalCheck", "==", userInfo.hasMedical));
+            }else{
+                q = query(collection(db, 'fitnessplan'), where("coachID", "==", coachID), where("planGoal", "!=", userInfo.fitnessGoal));
+            }
+
+            const querySnapshot = await getDocs(q);
+
+            const other = [];
+
+            for(const doc of querySnapshot.docs){
+                const data = doc.data();
+
+                const fitnessPlan = new FitnessPlan();
+                fitnessPlan.fitnessPlanID = doc.id;
+                fitnessPlan.coachID = data.coachID;
+                fitnessPlan.fitnessPlanName = data.fitnessPlanName;
+                fitnessPlan.fitnessPlanDescription = data.fitnessPlanDescription;
+
+                q = query(collection(db, 'fitnessgoal'), where("goalID", "==", data.planGoal));
+                const querySnapshot = await getDocs(q);
+                fitnessPlan.planGoal = querySnapshot.docs[0].data().goalName;
+
+                fitnessPlan.fitnessPlanPicture = data.fitnessPlanPicture;
+                fitnessPlan.fitnessPlanPicture = await fitnessPlan.getFitnessPlanPicture();
+
+                fitnessPlan.routinesList = [];
+
+                fitnessPlan.isMedicalCheck = data.isMedicalCheck;
+                fitnessPlan.lastUpdated = data.lastUpdated.toDate().toString();
+
+                const routines = await new WorkoutRoutine().getWorkoutRoutines(fitnessPlan.fitnessPlanID);
+                fitnessPlan.routinesList = routines;
+
+                other.push(fitnessPlan);
+            }
+
+            // console.log('other: ')
+            // other.forEach(async (plan) => {
+            //     console.log(plan.fitnessPlanName);
+            // });
+
+            return other;
+        }catch(e){
+            throw new Error(e);
+        }
+    }
+
     
 }
 

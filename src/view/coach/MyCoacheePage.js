@@ -35,6 +35,7 @@ const MyCoacheePage = ({ navigation, route }) => {
     const loadCoacheeList = useCallback(async () => {
         try {
             setIsLoading(true);
+            setCoachee([]);
             await new DisplayCoacheesPresenter({ updateCoacheeList: setCoachee }).displayCoachees(coachEmail);
             setIsLoading(false);
         } catch (error) {
@@ -78,7 +79,7 @@ const MyCoacheePage = ({ navigation, route }) => {
                                 key={index}
                                 numOfButtons={1}
                                 account={user.user}
-                                detailsHandler={() => { navigation.navigate('ViewCoacheeDetails', { user }) }}
+                                detailsHandler={() => { navigation.navigate('ViewCoacheeDetails', { coach, history: user }) }}
                             />
                         );
                     })}
