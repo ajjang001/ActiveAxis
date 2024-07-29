@@ -43,11 +43,6 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
         setIsLoading(b);
     }
 
-    const capitalizeFirstLetter = (string) => {
-        if (!string) return '';
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    };
-
     const loadCoacheeDetails = async () => {
         try {
             setIsLoading(true);
@@ -58,6 +53,18 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
         } catch (error) {
             setModalVisible(true);
             setModalMsg(error.message);
+        }
+    };
+
+    const loadGoalAndLevel = async (goalID, levelID) => {
+        try{
+            changeLoadingVisible(true);
+            await new ViewCoacheePresenter({updateGoal:setGoal}).getFitnessGoalName(goalID);
+            await new ViewCoacheePresenter({updateLevel:setLevel}).getFitnessLevelName(levelID);
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }finally{
+            changeLoadingVisible(false);
         }
     };
 
@@ -80,8 +87,7 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
             }
             setWeight(coachee[0].user.weight + "kg");
             setHeight(coachee[0].user.height + "cm");
-            setGoal(coachee[0].user.fitnessGoalName);
-            setLevel(capitalizeFirstLetter(coachee[0].user.fitnessLevelName));
+            loadGoalAndLevel(coachee[0].user.fitnessGoal, coachee[0].user.fitnessLevel);
             if (coachee[0].user.hasMedical == false) {
                 setMedical("No");
             }

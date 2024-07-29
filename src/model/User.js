@@ -248,9 +248,10 @@ class User extends Account {
     async getFitnessGoalName(fitnessGoalID) {
         try {
             // Get the fitness goal name
-            const q = doc(db, 'fitnessgoal', fitnessGoalID);
-            const queryResult = await getDoc(q);
-            return queryResult.data().name;
+            const q = query(collection(db, 'fitnessgoal'), where('goalID', '==', fitnessGoalID));
+            const queryResult = await getDocs(q);
+
+            return queryResult.docs[0].data().goalName;
         } catch (e) {
             throw new Error(e.message);
         }
@@ -259,9 +260,11 @@ class User extends Account {
     async getFitnessLevelName(fitnessLevelID) {
         try {
             // Get the fitness level name
-            const q = doc(db, 'fitnesslevel', fitnessLevelID);
-            const queryResult = await getDoc(q);
-            return queryResult.data().name;
+            const q = query(collection(db, 'fitnesslevel'), where('levelID', '==', fitnessLevelID));
+            const queryResult = await getDocs(q);
+
+            return queryResult.docs[0].data().levelName;
+
         } catch (e) {
             throw new Error(e.message);
         }
