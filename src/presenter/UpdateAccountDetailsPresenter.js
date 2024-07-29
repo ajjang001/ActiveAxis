@@ -69,7 +69,7 @@ class UpdateAccountDetailsPresenter {
             // Check if phone number is 8 digits
             throw new Error('Please enter a valid phone number (8 Digits)!');
         }
-        else if (weight.trim() === '' || height.trim() === '' || fitnessGoal.trim() === '' || fitnessLevel.trim() === '') {
+        else if (weight.trim() === '' || height.trim() === '' || fitnessGoal === null || fitnessLevel === null) {
             throw new Error('Please complete all fields!');
         }
         else if (!floatPattern.test(weight)) {

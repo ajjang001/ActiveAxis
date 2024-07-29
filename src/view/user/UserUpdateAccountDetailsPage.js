@@ -40,7 +40,7 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
     const [weight, setWeight] = useState(String(userDetails[0].user.weight));
     const [height, setHeight] = useState(String(userDetails[0].user.height));
     const [fitnessGoal, setGoal] = useState(userDetails[0].user.fitnessGoal);
-    const [fitnessLevel, setLevel] = useState(capitalizeFirstLetter(userDetails[0].user.fitnessLevel));
+    const [fitnessLevel, setLevel] = useState(userDetails[0].user.fitnessLevel);
 
     const [hasMedical, setMedical] = useState(userDetails[0].user.hasMedical);
 
@@ -111,7 +111,7 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
         try {
             // include back +65
             phoneNumber1 = "+65" + phoneNumber;
-            await new UpdateAccountDetailsPresenter().updateAccountDetails(email, gender, phoneNumber1, weight, height, fitnessGoal, fitnessLevel.toLowerCase(), hasMedical);
+            await new UpdateAccountDetailsPresenter().updateAccountDetails(email, gender, phoneNumber1, weight, height, fitnessGoal, fitnessLevel, hasMedical);
             navigation.navigate('UserAccountDetailsPage1', { user })
             Alert.alert('Successfully updated account information!')
         } catch (e) {
@@ -176,7 +176,7 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
                 <Text style={styles.detailsTitle}>Fitness Goal</Text>
                 <Dropdown
                     style={styles.dropdown}
-                    data={goalsData.map(goal => ({ label: goal.name, value: goal.name }))}
+                    data={goalsData.map(goal => ({ label: goal.name, value: goal.id }))}
                     labelField="label"
                     valueField="value"
                     value={fitnessGoal}
@@ -187,7 +187,7 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
                 <Text style={styles.detailsTitle}>Fitness Level</Text>
                 <Dropdown
                     style={styles.dropdown}
-                    data={levelData.map(level => ({ label: level.name, value: level.name }))}
+                    data={levelData.map(level => ({ label: level.name, value: level.id }))}
                     labelField="label"
                     valueField="value"
                     value={fitnessLevel}

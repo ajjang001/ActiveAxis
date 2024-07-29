@@ -55,8 +55,8 @@ const RegisterPage = ({ navigation }) => {
   const [dob, setDob] = useState(null);
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
-  const [goal, setGoal] = useState('');
-  const [level, setLevel] = useState('');
+  const [goal, setGoal] = useState(null);
+  const [level, setLevel] = useState(null);
   const [medicalCheck, setmedicalCheck] = useState(false);
 
   // change popup/modal visible
@@ -208,7 +208,7 @@ const RegisterPage = ({ navigation }) => {
             <Text style={styles.label}>Fitness Goal</Text>
             <Dropdown
               style={styles.dropdown}
-              data={goalsData.map(goal => ({ label: goal.name, value: goal.name }))}
+              data={goalsData.map(goal => ({ label: goal.name, value: goal.id }))}
               labelField="label"
               valueField="value"
               placeholder="Select Goal"
@@ -222,7 +222,7 @@ const RegisterPage = ({ navigation }) => {
             <Text style={styles.label}>Fitness Level</Text>
             <Dropdown
               style={styles.dropdown}
-              data={levelData.map(level => ({ label: level.name, value: level.name }))}
+              data={levelData.map(level => ({ label: level.name, value: level.id }))}
               labelField="label"
               valueField="value"
               placeholder="Select Level"

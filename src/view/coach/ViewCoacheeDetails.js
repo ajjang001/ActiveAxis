@@ -43,6 +43,11 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
         setIsLoading(b);
     }
 
+    const capitalizeFirstLetter = (string) => {
+        if (!string) return '';
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
     const loadCoacheeDetails = async () => {
         try {
             setIsLoading(true);
@@ -75,8 +80,8 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
             }
             setWeight(coachee[0].user.weight + "kg");
             setHeight(coachee[0].user.height + "cm");
-            setGoal(coachee[0].user.fitnessGoal);
-            setLevel(coachee[0].user.fitnessLevel);
+            setGoal(coachee[0].user.fitnessGoalName);
+            setLevel(capitalizeFirstLetter(coachee[0].user.fitnessLevelName));
             if (coachee[0].user.hasMedical == false) {
                 setMedical("No");
             }

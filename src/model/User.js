@@ -497,6 +497,16 @@ class User extends Account {
                 u.calorieTarget = data.calorieTarget;
                 
 
+                const fitnessGoalQuery = query(collection(db, 'fitnessgoal'), where('goalID', '==', data.fitnessGoal));
+                const fitnessGoalQueryResult = await getDocs(fitnessGoalQuery);
+                const fitnessGoalDoc = fitnessGoalQueryResult.docs[0];
+                u.fitnessGoalName = fitnessGoalDoc.data().goalName;
+
+                const fitnessLevelQuery = query(collection(db, 'fitnesslevel'), where('levelID', '==', data.fitnessLevel));
+                const fitnessLevelQueryResult = await getDocs(fitnessLevelQuery);
+                const fitnessLevelDoc = fitnessLevelQueryResult.docs[0];
+                u.fitnessLevelName = fitnessLevelDoc.data().levelName;
+                
                 users.push({ id: doc.id, user: u });
 
             }
