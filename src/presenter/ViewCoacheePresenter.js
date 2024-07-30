@@ -15,6 +15,28 @@ class ViewCoacheePresenter{
         }
     }
 
+    async getFitnessGoalName(fitnessGoalID){
+        try{
+            console.log(fitnessGoalID);
+            const name = await this.user.getFitnessGoalName(fitnessGoalID);
+            console.log(name);
+            this.view.updateGoal (name);
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
+    async getFitnessLevelName(fitnessLevelID){
+        try{
+            console.log(fitnessLevelID);
+            const name = await this.user.getFitnessLevelName(fitnessLevelID);
+            console.log(name);
+            this.view.updateLevel(name);
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
 
 }
 

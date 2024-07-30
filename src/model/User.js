@@ -90,6 +90,9 @@ class User extends Account {
                     u.fitnessGoal = data.fitnessGoal;
                     u.fitnessLevel = data.fitnessLevel;
                     u.restInterval = data.restInterval;
+                    u.stepTarget = data.stepTarget;
+                    u.calorieTarget = data.calorieTarget;
+
 
                     return u;
                 }
@@ -131,6 +134,9 @@ class User extends Account {
             u.fitnessGoal = data.fitnessGoal;
             u.fitnessLevel = data.fitnessLevel;
             u.restInterval = data.restInterval;
+            u.stepTarget = data.stepTarget;
+            u.calorieTarget = data.calorieTarget;
+
 
             return u;
         }
@@ -239,6 +245,31 @@ class User extends Account {
         }
     }
 
+    async getFitnessGoalName(fitnessGoalID) {
+        try {
+            // Get the fitness goal name
+            const q = query(collection(db, 'fitnessgoal'), where('goalID', '==', fitnessGoalID));
+            const queryResult = await getDocs(q);
+
+            return queryResult.docs[0].data().goalName;
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async getFitnessLevelName(fitnessLevelID) {
+        try {
+            // Get the fitness level name
+            const q = query(collection(db, 'fitnesslevel'), where('levelID', '==', fitnessLevelID));
+            const queryResult = await getDocs(q);
+
+            return queryResult.docs[0].data().levelName;
+
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
     async getUserList() {
         try {
             // Get all users
@@ -267,6 +298,9 @@ class User extends Account {
                 u.fitnessGoal = data.fitnessGoal;
                 u.fitnessLevel = data.fitnessLevel;
                 u.restInterval = data.restInterval;
+                u.stepTarget = data.stepTarget;
+                u.calorieTarget = data.calorieTarget;
+
 
 
 
@@ -283,7 +317,7 @@ class User extends Account {
     async search(search) {
         try {
             // Search for users by name 
-            console.log(search);
+            
             let q = null;
             if (search.trim() === '') {
                 q = query(collection(db, 'user'), orderBy('fullName'));
@@ -314,6 +348,9 @@ class User extends Account {
                 u.fitnessGoal = data.fitnessGoal;
                 u.fitnessLevel = data.fitnessLevel;
                 u.restInterval = data.restInterval;
+                u.stepTarget = data.stepTarget;
+                u.calorieTarget = data.calorieTarget;
+
 
                 // Add user to the list
                 users.push({ id: doc.id, user: u });
@@ -401,10 +438,22 @@ class User extends Account {
                     u.dob = data.dob;
                     u.gender = data.gender;
                     u.phoneNumber = data.phoneNumber;
+                    u.hasMedical = data.hasMedical;
+                    u.isSuspended = data.isSuspended;
+                    u.weight = data.weight;
+                    u.height = data.height;
+                    u.fitnessGoal = data.fitnessGoal;
+                    u.fitnessLevel = data.fitnessLevel;
+                    u.restInterval = data.restInterval;
+                    u.stepTarget = data.stepTarget;
+                    u.calorieTarget = data.calorieTarget;
+
+
 
                     // Include startDate and endDate
                     const startDate = coachingData.startDate;
                     const endDate = coachingData.endDate;
+
 
                     coachees.push({
                         id: coachingDoc.id,
@@ -449,7 +498,18 @@ class User extends Account {
                 u.restInterval = data.restInterval;
                 u.stepTarget = data.stepTarget;
                 u.calorieTarget = data.calorieTarget;
+                
 
+                const fitnessGoalQuery = query(collection(db, 'fitnessgoal'), where('goalID', '==', data.fitnessGoal));
+                const fitnessGoalQueryResult = await getDocs(fitnessGoalQuery);
+                const fitnessGoalDoc = fitnessGoalQueryResult.docs[0];
+                u.fitnessGoalName = fitnessGoalDoc.data().goalName;
+
+                const fitnessLevelQuery = query(collection(db, 'fitnesslevel'), where('levelID', '==', data.fitnessLevel));
+                const fitnessLevelQueryResult = await getDocs(fitnessLevelQuery);
+                const fitnessLevelDoc = fitnessLevelQueryResult.docs[0];
+                u.fitnessLevelName = fitnessLevelDoc.data().levelName;
+                
                 users.push({ id: doc.id, user: u });
 
             }
@@ -489,9 +549,7 @@ class User extends Account {
                 hasMedical
             });
 
-            console.log('User details updated successfully');
         } catch (e) {
-            console.error('Error updating user details:', e.message);
             throw new Error(e.message);
         }
     }
@@ -517,9 +575,7 @@ class User extends Account {
                 calorieTarget,
             });
 
-            console.log('Exercise settings updated successfully');
         } catch (e) {
-            console.error('Error updating exercise settings:', e.message);
             throw new Error(e.message);
         }
     }

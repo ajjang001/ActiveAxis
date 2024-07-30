@@ -6,8 +6,9 @@ import ViewCoacheePresenter from '../../presenter/ViewCoacheePresenter';
 
 const ViewCoacheeDetails = ({ navigation, route }) => {
 
-    const { user } = route.params;
-    const userEmail = user.user.email;
+    const { coach, history } = route.params;
+    
+    const userEmail = history.user.email;
 
     const [coachee, setCoachee] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -25,9 +26,9 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
     const [height, setHeight] = useState('');
     const [goal, setGoal] = useState('');
     const [level, setLevel] = useState('');
-    const startDate = new Date(user.startDate.seconds * 1000 + user.startDate.nanoseconds / 1000000);
+    const startDate = new Date(history.startDate.seconds * 1000 + history.startDate.nanoseconds / 1000000);
     const startDateString = startDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    const endDate = new Date(user.endDate.seconds * 1000 + user.endDate.nanoseconds / 1000000);
+    const endDate = new Date(history.endDate.seconds * 1000 + history.endDate.nanoseconds / 1000000);
     const endDateString = endDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     {/* May insert more Coachee details if needed */ }
 
@@ -55,6 +56,18 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
         }
     };
 
+    const loadGoalAndLevel = async (goalID, levelID) => {
+        try{
+            changeLoadingVisible(true);
+            await new ViewCoacheePresenter({updateGoal:setGoal}).getFitnessGoalName(goalID);
+            await new ViewCoacheePresenter({updateLevel:setLevel}).getFitnessLevelName(levelID);
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    };
+
     useEffect(() => {
         loadCoacheeDetails();
     }, []);
@@ -74,8 +87,7 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
             }
             setWeight(coachee[0].user.weight + "kg");
             setHeight(coachee[0].user.height + "cm");
-            setGoal(coachee[0].user.fitnessGoal);
-            setLevel(coachee[0].user.fitnessLevel);
+            loadGoalAndLevel(coachee[0].user.fitnessGoal, coachee[0].user.fitnessLevel);
             if (coachee[0].user.hasMedical == false) {
                 setMedical("No");
             }
@@ -130,7 +142,7 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
                     {/* May insert more Coachee details if needed */}
                 </View>
                 <View style = {styles.viewPlanContainer}>
-                    <TouchableOpacity style = {styles.viewPlanButton} onPress={() => navigation.navigate("CoachAllocatePlanPage", {user})}>
+                    <TouchableOpacity style = {styles.viewPlanButton} onPress={() => navigation.navigate("CoachAllocatePlanPage", {coach, history})}>
                         <Text style = {styles.planButtonText}>Manage Plans</Text>
                     </TouchableOpacity>
                 </View>

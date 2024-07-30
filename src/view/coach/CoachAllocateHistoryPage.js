@@ -8,9 +8,9 @@ import DisplayAllocateHistoryPresenter from '../../presenter/DisplayAllocateHist
 
 const CoachAllocateHistoryPage = ({navigation, route})=>{
 
-    const { user } = route.params;
+    const { history } = route.params;
 
-    const [history, setHistory] = useState([]);
+    const [historyArr, setHistoryArr] = useState([]);
 
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -30,7 +30,7 @@ const CoachAllocateHistoryPage = ({navigation, route})=>{
     const loadHistory = async () => {
         try{
             changeLoadingVisible(true);
-            await new DisplayAllocateHistoryPresenter({updateHistory: setHistory}).displayAllocationHistory(user.id);
+            await new DisplayAllocateHistoryPresenter({updateHistory: setHistoryArr}).displayAllocationHistory(history.id);
         }catch(error){
             changeModalVisible(true, error.message.replace('Error: ', ''));
         }finally{
@@ -54,10 +54,10 @@ const CoachAllocateHistoryPage = ({navigation, route})=>{
             </Modal>
 
             <ScrollView contentContainerStyle = {styles.scrollView}>
-                { history.length === 0 ? 
+                { historyArr.length === 0 ? 
                 <Text style = {styles.noTitle}>No Fitness Plan Allocated</Text> 
                 : 
-                history.map((plan, index) => {
+                historyArr.map((plan, index) => {
                     return(
                         <View style = {styles.planItem} key = {index}>
                             {plan.details !== null ?
