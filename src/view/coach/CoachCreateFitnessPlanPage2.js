@@ -9,6 +9,8 @@ import CreateFitnessPlanPresenter from '../../presenter/CreateFitnessPlanPresent
 
 
 const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
+
+    const {isEditing} = route.params;
     
 
     const [planInfo, setPlanInfo] = useState({
@@ -196,13 +198,13 @@ const CoachCreateFitnessPlanPage2 = ({navigation, route}) => {
                                                 key = {index}
                                                 routine = {routine}
                                                 exercise = {e}
-                                                isEdit = {true}
+                                                isEdit = {false}
                                                 onDelete = {()=>onRemoveExercise(index, routine)}
                                             />
                                         );
                                     })
                                 }
-                                <TouchableOpacity onPress={()=>navigation.navigate('SelectExerciseListPage', {routineIndex, routines, planInfo, isEdit})}  style = {styles.addExerciseButton}>
+                                <TouchableOpacity onPress={()=>navigation.navigate('SelectExerciseListPage', {routineIndex, routines, planInfo, isEditing})}  style = {styles.addExerciseButton}>
                                     <Image style = {styles.icon} source = {require('../../../assets/add_box_icon.png')} />
                                 </TouchableOpacity>
                             </>

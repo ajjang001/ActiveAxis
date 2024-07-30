@@ -37,6 +37,7 @@ import UserCreateCompetitionPage from './src/view/user/UserCreateCompetitionPage
 import UserCompetitionHistoryPage from './src/view/user/UserCompetitionHistoryPage';
 import UserCoachPage from './src/view/user/UserCoachPage';
 import UserAchievementPage from './src/view/user/UserAchievementPage';
+import SmartWearablePage from './src/view/user/SmartWearablePage';
 
 // Coach Pages
 import CoachHomePage from './src/view/coach/CoachHomePage';
@@ -225,6 +226,8 @@ export default function App() {
           <Stack.Screen name="UserExerciseSettingsPage" component={UserExerciseSettingsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserUpdateExerciseSettingsPage" component={UserUpdateExerciseSettingsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserAchievementPage" component={UserAchievementPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          {/*Remove SmartWearablePage and component/requestpermission.js*/}
+          <Stack.Screen name="SmartWearablePage" component={SmartWearablePage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           {/* Add user pages here */}
 
           <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{ headerShown: false }} />

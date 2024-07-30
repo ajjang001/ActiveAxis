@@ -62,11 +62,11 @@ const ActionDialog = (props) =>{
             <View style={styles.modalView}>
                 <Text style={styles.modalText}>{props.message}</Text>
                 <View style={styles.modalButtons}>
-                    <TouchableOpacity style={styles.modalButton} onPress={() => performAction(false)}>
-                        <Text style={styles.modalButtonText}>Yes</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity style={styles.modalButton} onPress={() => closeModal(false)}>
                         <Text style={styles.modalButtonText}>No</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.modalButton} onPress={() => performAction(false)}>
+                        <Text style={styles.modalButtonText}>Yes</Text>
                     </TouchableOpacity>
                 </View>
             </View>

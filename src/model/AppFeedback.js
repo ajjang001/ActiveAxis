@@ -4,6 +4,7 @@ import { collection, getDocs, doc, getDoc, updateDoc, query, where, Timestamp } 
 import { ref, getDownloadURL } from 'firebase/storage';
 
 import Coach from './Coach';
+import User from './User';
 
 class AppFeedback{
     #feedbackID;
@@ -89,6 +90,53 @@ class AppFeedback{
           throw new Error(error.message);
         }
       }
+
+      async fetchFeedbacks() {
+        try{
+            const feedbacks = [];
+            const q = query(collection(db, 'appfeedback'));
+            const querySnapshot = await getDocs(q);
+
+            for(const d of querySnapshot.docs){
+                const feedback = new AppFeedback();
+                const data = d.data();
+
+                feedback.feedbackID = d.id;
+                feedback.dateSubmitted = data.dateSubmitted;
+                feedback.feedbackText = data.feedbackText;
+                feedback.rating = data.rating;
+                feedback.accountID = data.accountID;
+
+                const docRef = await getDoc(doc(db, 'user', data.accountID));
+                if (docRef.exists()) {
+                    const userData = docRef.data();
+                    feedback.fullName = userData.fullName;
+                    feedback.profilePicture = userData.profilePicture;
+
+                    const u = new User();
+                    u.profilePicture = userData.profilePicture;
+                    feedback.profilePicture = await u.getProfilePictureURL();
+                }else{
+                    const coachDocRef = await getDoc(doc(db, 'coach', data.accountID));
+                    if (coachDocRef.exists()) {
+                        const coachData = coachDocRef.data();
+                        feedback.fullName = coachData.fullName;
+                        feedback.profilePicture = coachData.profilePicture;
+
+                        const c = new Coach();
+                        c.profilePicture = coachData.profilePicture;
+                        feedback.profilePicture = await c.getProfilePictureURL();
+                    }
+                }
+
+                feedbacks.push(feedback);
+            }
+            return feedbacks;
+        }catch(error){
+            throw new Error(error.message);
+        }
+      }
+
       async updateFeedback(feedbackText, rating) {
         try {
             const feedbackDocRef = doc(db, 'appfeedback', this.feedbackID);
