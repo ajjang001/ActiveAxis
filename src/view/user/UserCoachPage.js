@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { scale } from '../../components/scale';
+import HireCoachPresenter from '../../presenter/HireCoachPresenter';
 
 const UserCoachPage = ({ navigation, route }) => {
 
