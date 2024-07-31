@@ -235,7 +235,7 @@ const CoachEditFitnessPlanPage2 = ({navigation, route}) => {
     return(
         <View style = {styles.container}>
             <View style = {styles.topButtonView}>
-                <TouchableOpacity style = {styles.topButtons} onPress = {() => {setIsSave(false); changeConfirmVisible( true, 'Are you sure you want to discard these routines?')}}>
+                <TouchableOpacity style = {styles.topButtons} onPress = {() => {setIsSave(false); changeConfirmVisible( true, 'Are you sure you want to discard these changes?')}}>
                     <Text style = {styles.topButtonText}>DISCARD</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style = {styles.topButtons} onPress = {()=>{setIsSave(true); changeConfirmVisible(true, 'Are you sure you want to save these routines?')}}>

@@ -130,11 +130,11 @@ const CoachCreateFitnessPlanPage = ({navigation, route}) => {
     return (
         <View style = {styles.container}>
                 <View style = {styles.topButtonView}>
-                    <TouchableOpacity style = {styles.topButtons} onPress = {() => changeConfirmVisible( true, 'Are you sure you want to discard this plan?')} >
-                        <Text style = {styles.topButtonText}>Discard</Text>
+                    <TouchableOpacity style = {styles.topButtons} onPress = {() => changeConfirmVisible( true, 'Are you sure you want to discard these changes?')} >
+                        <Text style = {styles.topButtonText}>BACK</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style = {styles.topButtons} onPress = {createHandler}>
-                        <Text style = {styles.topButtonText}>Create</Text>
+                        <Text style = {styles.topButtonText}>CREATE</Text>
                     </TouchableOpacity>
                 </View>
 

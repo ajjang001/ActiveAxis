@@ -1,170 +1,160 @@
 // src/view/coach/CoachHomePage.js
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, Image, StyleSheet, ImageBackground, ScrollView, Modal } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { scale } from '../../components/scale';
 
-
-import { LoadingDialog } from '../../components/Modal';
+import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
 import { app, auth, db, storage } from '../../firebase/firebaseConfig';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+
+import DisplayListOfFitnessPlanPresenter from "../../presenter/DisplayListOfFitnessPlanPresenter";
+import { useFocusEffect } from '@react-navigation/native';
+
+
 
 const CoachHomePage = ({ navigation, route }) => {
     
     const { coach } = route.params;
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [isLeftArrowDisabled, setIsLeftArrowDisabled] = useState(currentDate <= new Date(minDate));
-    const [isRightArrowDisabled, setIsRightArrowDisabled] = useState(currentDate >= new Date(maxDate));
     
-    const getCurrentDate = () => {
-        const date = new Date();
-        return date.toISOString().split('T')[0];
-    };
-      
-    const minDate = '1900-01-01';
-    const maxDate = '2024-12-31';
+    const [fitnessPlans, setFitnessPlans] = useState([]);
 
-    const onMonthChange = (month) => {
-        setCurrentDate(new Date(month.dateString));
-        console.log('month changed', month);
-    };
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMsg, setModalMsg] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [confirmationVisible, setConfirmationVisible] = useState(false);
+    const [confirmMessage, setConfirmMessage] = useState('');
 
 
-    const renderHeader = (date) => {
-        const headerDate = new Date(date);
-        const month = headerDate.toLocaleString('default', { month: 'long' });
-        const year = headerDate.getFullYear();
-        return (
-            <View style={styles.calendarHeaderView}>
-            <Text style={styles.calendarHeaderText}>{`${month} ${year}`}</Text>
-            </View>
-        );
-    };
+    // change popup/modal visible
+    const changeLoadingVisible = (b)=>{
+        setIsLoading(b);
+    }
 
-    useEffect(() => {
-        setIsLeftArrowDisabled(currentDate <= new Date(minDate).setMonth(new Date(minDate).getMonth() + 1));
-        setIsRightArrowDisabled(currentDate >= new Date(maxDate).setMonth(new Date(maxDate).getMonth() - 1));
-    },[currentDate]);
+    // change popup/modal visible
+    const changeModalVisible = (b, m)=>{
+        setModalMsg(m);
+        setModalVisible(b);
+    }
 
+    // change popup/modal visible
+    const changeConfirmVisible = (b, m)=>{
+        setConfirmMessage(m);
+        setConfirmationVisible(b);
+    }
+
+    const loadFitnessPlans = async() =>{
+        try{
+            changeLoadingVisible(true);
+            setFitnessPlans([]);
+            await new DisplayListOfFitnessPlanPresenter({updateList: setFitnessPlans}).getFitnessPlans(coach.accountID);
+    
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            loadFitnessPlans();
+            route.params.refresh = false;
+        }, [route.params?.refresh])
+    );
     
 
     return (
-        <View style={styles.pageContainer}>
+        <ScrollView contentContainerStyle={styles.pageContainer}>
             <View style = {styles.titleView}>
                 <Text style = {styles.homeTitle}>Welcome Back,</Text>
-                <Text style = {styles.homeTitle}>{coach.fullName ? coach.fullName : 'Coach Name'}</Text>
+                <Text style = {styles.homeSubTitle}>{coach.fullName ? coach.fullName : 'Coach Name'}</Text>
             </View>
 
-            <View style = {styles.calendarView}>
-                <Calendar
-                    style = {styles.calendar}
-                    current={getCurrentDate()}
-                    minDate={minDate}
-                    maxDate={maxDate}
-                    onDayPress={(day) => {
-                        console.log('selected day', day);
-                    }}
-                    monthFormat={'MMMM yyyy'}
-                    onMonthChange={onMonthChange}
-                    hideExtraDays={true}
-                    disableMonthChange={false}
-                    renderArrow={(direction) => (
-                        <Icon
-                            name={direction === 'left' ? 'chevron-left' : 'chevron-right'}
-                            size={24}
-                            color="white"
-                        />
-                    )}
-                    disableArrowLeft={isLeftArrowDisabled}
-                    disableArrowRight={isRightArrowDisabled}
-                    disableAllTouchEventsForDisabledDays={true}
-                    renderHeader={renderHeader}
-                    enableSwipeMonths={true}
-                    theme={{
-                        calendarBackground: '#E2E2E2',
-                        textSectionTitleColor: 'white',
+            <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
+                <LoadingDialog />
+            </Modal>
+            <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+                <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+            </Modal>
 
-                        textSectionTitleDisabledColor: 'red',
-                        // selectedDayBackgroundColor: 'orange',
-                        // selectedDayTextColor: 'yellow',
-                        todayTextColor: '#83242D',
-                        // dayTextColor: 'black',
-                        arrowColor: 'white',
-                        disabledArrowColor: 'gray',
-                        // monthTextColor: 'green',
-                        // indicatorColor: 'blue',
-                        textDayFontWeight: 'bold',
-                        textMonthFontWeight: 'bold',
-                        textDayHeaderFontWeight: '300',
-                        textDayFontSize: scale(16),
-                        textMonthFontSize: scale(16),
-                        textDayHeaderFontSize: scale(16),
-
-                      }}
-                />
-            </View>
+            
             <View style = {styles.planDirectView}>
-
                 <TouchableOpacity onPress = {()=>navigation.navigate('CoachListOfFitnessPlansPage', {coach})} style = {styles.planDirectButton}>
-                    
                     <ImageBackground imageStyle = {styles.imageStyle} resizeMode='stretch' source={require('../../../assets/plan_button_img.png')} >
                         <View style = {styles.buttonTextView}>
                             <Text style={styles.planDirectButtonText}>My Fitness Plans</Text>      
                         </View>
                     </ImageBackground>
                 </TouchableOpacity>
-                
-
             </View>
-        </View>
+
+            <View style = {styles.recentlyChangedContainer}>
+                <Text style = {styles.recentlyChangedTitle}>RECENTLY CHANGED</Text>
+                    <View style = {styles.listOfPlansContentContainer}>
+                        {
+                            fitnessPlans.sort((a,b)=>new Date(b.lastUpdated) - new Date(a.lastUpdated)).slice(0, 4).map((fitnessPlan, index) => {
+
+                                return (
+                                    
+                                        <TouchableOpacity style = {styles.planContainer} key = {index} 
+                                        onPress = {()=>{navigation.navigate("CoachFitnessPlanPage", {coach, fitnessPlan})}}
+                                        // onPress = {()=>navigation.navigate('CoachListOfFitnessPlansPage', {coach})}
+                                        >
+                                            <Image source = {{uri: fitnessPlan.fitnessPlanPicture}} resizeMode="cover" style = {styles.image}/>
+                                            <View style = {styles.detailsContainer}>
+                                                <Text style = {{paddingHorizontal:scale(10)}}>{fitnessPlan.fitnessPlanName}</Text>
+                                                <View style = {styles.statsView}>
+                                                    <View style = {styles.stats}>
+                                                        <Image source = {require('../../../assets/clock_icon.png')} style = {styles.icon}/>
+                                                        <Text>{fitnessPlan.routinesList.length} Days</Text>
+                                                    </View>
+                                                    <View style = {styles.stats}>
+                                                        <Image source = {require('../../../assets/fire_icon.png')} style = {styles.icon}/>
+                                                        <Text>{Math.ceil(fitnessPlan.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0))} kcal</Text>
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        </TouchableOpacity>
+                                );
+                            })
+                        }
+                    </View>
+            </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     pageContainer: {
         flex: 1,
-        paddingTop: scale(70),
         backgroundColor: '#FBF5F3',
     },
     titleView:{
-        marginHorizontal: scale(20)
+        backgroundColor: '#C42847',
+        paddingHorizontal: scale(20),
+        paddingTop: scale(72),
+        paddingBottom: scale(16),
     },
     homeTitle:{
-        fontSize: scale(20),
+        fontSize: scale(24),
+        fontFamily: 'Poppins',
+        color: 'white'
+    },
+    homeSubTitle:{
+        fontSize: scale(32),
         fontFamily: 'Poppins-SemiBold',
-    },
-    calendarView:{
-        width: '100%',
-        backgroundColor: '#C42847',
-        marginTop: scale(20),
-        alignItems: 'center',
-        maxHeight: scale(415),
-        paddingVertical: scale(10)
-        
-    },
-    calendarHeaderView:{
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        paddingHorizontal: scale(10)
-    },
-    calendarHeaderText:{
-        fontSize: scale(18), 
-        fontWeight: 'bold', 
-        color:'white'
-    },
-    calendar:{
-        width: scale(450),
-        backgroundColor: '#C42847',
+        color: 'white'
     },
     planDirectView:{
         width: '100%',
         height: scale(150),
-        justifyContent: 'center'
+        justifyContent: 'center',
+        paddingTop: scale(16)
     },
     planDirectButton:{
-        marginHorizontal: scale(20)
+        marginHorizontal: scale(20),
     },
     imageStyle:{
         borderRadius:scale(20)
@@ -173,18 +163,62 @@ const styles = StyleSheet.create({
         height:scale(120),
         justifyContent: 'center',
         borderWidth: scale(1),
+        borderColor: '#808080',
         borderRadius: scale(20),
     },
     planDirectButtonText:{
-        
         paddingHorizontal: scale(20),
-
         fontFamily: 'Poppins-SemiBold',
         fontSize: scale(20),
         textAlign:'right',
-
-
+    },
+    recentlyChangedContainer:{
+        paddingVertical: scale(32),
+    },
+    listOfPlansContentContainer:{
+        paddingHorizontal: scale(10),
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        gap: scale(16),
+    },
+    recentlyChangedTitle:{
+        fontSize: scale(24),
+        fontFamily: 'Poppins-SemiBold',
+        marginBottom: scale(8),
+        paddingHorizontal: scale(16),
+    },
+    planContainer:{
+        width:scale(215), 
+        backgroundColor:'white', 
+        borderRadius:10
+    },
+    image:{
+        width: scale(215), 
+        height: scale(125), 
+        borderRadius:10
+    },
+    detailsContainer:{
+        padding: scale(5),
+    },
+    icon:{
+        width: scale(15),
+        height: scale(15),
+    
+    },
+    statsView:{
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        padding: scale(5),
+    },
+    stats:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: scale(5),
     }
+
 });
 
 export default CoachHomePage;

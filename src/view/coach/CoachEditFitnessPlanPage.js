@@ -75,7 +75,11 @@ const CoachEditFitnessPlanPage = ({navigation, route}) => {
             changeLoadingVisible(true);
             await new EditFitnessPlanPresenter({fitnessPlan: fitnessPlan}).saveFitnessPlan(coach, (photo === fitnessPlan.fitnessPlanPicture? null : photo), goalType, description.trim(), name.trim(), medicalCheck, routines);
             
-            navigation.navigate('CoachListOfFitnessPlansPage', {refresh: true, coach: coach});
+            // navigation.navigate('CoachListOfFitnessPlansPage', {refresh: true, coach: coach});
+
+            // remove goback 2 pages
+            navigation.pop(2);
+
             Alert.alert('Success', 'Fitness Plan saved successfully');
         }catch(error){
             changeModalVisible(true, error.message.replace('Error: ', ''));
@@ -148,11 +152,11 @@ const CoachEditFitnessPlanPage = ({navigation, route}) => {
     return(
         <View style = {styles.container}>
             <View style = {styles.topButtonView}>
-                <TouchableOpacity style = {styles.topButtons} onPress = {() => changeConfirmVisible( true, 'Are you sure you want to discard the changes?')} >
-                    <Text style = {styles.topButtonText}>Discard</Text>
+                <TouchableOpacity style = {styles.topButtons} onPress = {() => changeConfirmVisible( true, 'Are you sure you want to discard these changes?')} >
+                    <Text style = {styles.topButtonText}>BACK</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style = {styles.topButtons} onPress = {saveHandler}>
-                    <Text style = {styles.topButtonText}>Save</Text>
+                    <Text style = {styles.topButtonText}>SAVE</Text>
                 </TouchableOpacity>
             </View>
 

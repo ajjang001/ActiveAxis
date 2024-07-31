@@ -1,9 +1,10 @@
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Modal } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { scale } from "../../components/scale";
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
 
 import DisplayListOfFitnessPlanPresenter from "../../presenter/DisplayListOfFitnessPlanPresenter";
+import { useFocusEffect } from "@react-navigation/native";
 
 const CoachListOfFitnessPlansPage = ({navigation, route}) => {
 
@@ -11,7 +12,6 @@ const CoachListOfFitnessPlansPage = ({navigation, route}) => {
     
 
     const [fitnessPlans, setFitnessPlans] = useState([]);
-
     
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
@@ -49,14 +49,12 @@ const CoachListOfFitnessPlansPage = ({navigation, route}) => {
         }
     }
 
-    // useEffect(() => {
-    //     loadFitnessPlans();
-    // }, []);
-
-    useEffect(() => {
-        loadFitnessPlans();
-        route.params.refresh = false;
-    }, [route.params?.refresh]);
+    useFocusEffect(
+        useCallback(() => {
+            loadFitnessPlans();
+            route.params.refresh = false;
+        }, [route.params?.refresh])
+    );
 
     return (
         <View style = {styles.container}>
@@ -149,7 +147,8 @@ const styles = StyleSheet.create({
         
     },
     listOfPlansContentContainer:{
-        padding: scale(15),
+        paddingVertical: scale(15),
+        paddingHorizontal: scale(10),
         display: 'flex',
         flexDirection: 'row',
         flexWrap: 'wrap',
