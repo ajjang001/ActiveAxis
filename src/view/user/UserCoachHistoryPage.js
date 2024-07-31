@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { scale } from '../../components/scale';
 
-const UserCompetitionHistoryPage = ({ route }) => {
+const UserCoachHistoryPage = ({ route }) => {
 
     const { user } = route.params;
+
+    console.log(user);
 
     return (
         <View style={styles.container}>
             <View style={styles.headerBox}>
-                <Text style={styles.headerText}>History</Text>
+                <Text style={styles.headerText}>Coach History</Text>
             </View>
         </View>
 
@@ -23,8 +25,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FBF5F3',
     },
     headerBox: {
-        width: '100%',
-        height: '8%',
+        width: '90%',
     },
     headerText: {
         fontSize: scale(36),
@@ -36,4 +37,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default UserCompetitionHistoryPage;
+export default UserCoachHistoryPage;

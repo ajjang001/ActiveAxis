@@ -36,7 +36,9 @@ import UserCompetitionPage from './src/view/user/UserCompetitionPage';
 import UserCreateCompetitionPage from './src/view/user/UserCreateCompetitionPage';
 import UserCompetitionHistoryPage from './src/view/user/UserCompetitionHistoryPage';
 import UserCoachPage from './src/view/user/UserCoachPage';
+import UserCoachHistoryPage from './src/view/user/UserCoachHistoryPage';
 import UserAchievementPage from './src/view/user/UserAchievementPage';
+import UserShareAchievementPage from './src/view/user/UserShareAchievementPage';
 import SmartWearablePage from './src/view/user/SmartWearablePage';
 
 // Coach Pages
@@ -103,6 +105,19 @@ const CompetitionStack = ({ route }) => {
   );
 };
 
+const CoachStack = ({ route }) => {
+  //this function is to keep the bottom tab for user coach pages
+    const { user } = route.params;
+  
+    return (
+    <Stack.Navigator>
+        <Stack.Screen name="UserCoachPage" component={UserCoachPage} initialParams={{ user }} options={{ headerShown: false }} />
+        <Stack.Screen name="UserCoachHistoryPage" component={UserCoachHistoryPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+    </Stack.Navigator>
+    );
+  };
+  
+
 const UserTabs = ({ route }) => {
   const { user } = route.params;
   return (
@@ -140,7 +155,7 @@ const UserTabs = ({ route }) => {
       <userTab.Screen name="Home" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
       <userTab.Screen name="Workout" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
       <userTab.Screen name="Competition" component={CompetitionStack} initialParams={{ user }}options={{ headerShown: false }} />
-      <userTab.Screen name="Coach" component={UserCoachPage} initialParams={{ user }} options={{ headerShown: false }} />
+      <userTab.Screen name="Coach" component={CoachStack} initialParams={{ user }} options={{ headerShown: false }} />
       <userTab.Screen name="Account" component={UserAccountSettingPage} initialParams={{ user }} options={{ headerShown: false }} />
     </userTab.Navigator>
   );
@@ -226,6 +241,7 @@ export default function App() {
           <Stack.Screen name="UserExerciseSettingsPage" component={UserExerciseSettingsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserUpdateExerciseSettingsPage" component={UserUpdateExerciseSettingsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserAchievementPage" component={UserAchievementPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserShareAchievementPage" component={UserShareAchievementPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           {/*Remove SmartWearablePage and component/requestpermission.js*/}
           <Stack.Screen name="SmartWearablePage" component={SmartWearablePage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           {/* Add user pages here */}

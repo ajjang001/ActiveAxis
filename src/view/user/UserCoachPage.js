@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { scale } from '../../components/scale';
 
-const UserCoachPage = ({ route }) => {
+const UserCoachPage = ({ navigation, route }) => {
 
     const { user } = route.params;
-
-    console.log(user);
 
     return (
         <View style={styles.container}>
@@ -15,8 +13,7 @@ const UserCoachPage = ({ route }) => {
             </View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={() =>
-                    //navigation.navigate("UserUpdateAccountDetailsPage", { user, userDetails })
-                    console.log("Navigate to Coach History Page")
+                    navigation.navigate("UserCoachHistoryPage", { user })
                 }>
                     <Text style={styles.buttonText}>Coach History</Text>
                 </TouchableOpacity>
@@ -34,6 +31,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         paddingTop: scale(70),
+        backgroundColor: '#FBF5F3',
     },
     headerContainer: {
         width: '90%',

@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
+        backgroundColor: '#FBF5F3',
     },
     headerBox: {
         backgroundColor: '#E28413',

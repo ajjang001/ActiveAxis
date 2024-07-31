@@ -1,20 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, Modal } from 'react-native';
+import React, { useEffect, useState, useMemo } from 'react';
+import { View, Text, StyleSheet, FlatList, Image, Modal, TouchableOpacity } from 'react-native';
 import { scale } from '../../components/scale';
+import { LoadingDialog, MessageDialog } from "../../components/Modal";
 import DisplayAchievementPresenter from '../../presenter/DisplayAchievementPresenter';
 
-const AchievementItem = ({ achievement, obtained }) => {
+const AchievementItem = ({ achievement, obtained, onPress }) => {
   return (
-    <View style={[styles.achievementItem, obtained ? styles.completedAchievement : styles.lockedAchievement]}>
+    <TouchableOpacity
+      onPress={() => obtained && onPress(achievement)}
+      style={[styles.achievementItem, obtained ? styles.completedAchievement : styles.lockedAchievement]}
+    >
       <View style={styles.achievementText}>
-        <Text style={styles.achievementName}>{achievement.achievementName}</Text>
+        <Text style={styles.achievementName}>{achievement._achievementName}</Text>
         <Image
-          source={{ uri: achievement.achievementPicture }}
+          source={{ uri: achievement._achievementPicture }}
           style={styles.achievementIcon}
         />
-        <Text style={styles.achievementDescription}>{achievement.description}</Text>
+        <Text style={styles.achievementDescription}>{achievement._description}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -26,14 +30,32 @@ const UserAchievementPage = ({ navigation, route }) => {
   const [achievements, setAchievements] = useState([]);
   const [obtainedAchievements, setObtainedAchievements] = useState([]);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
+
+  // change popup/modal visible
+  const changeModalVisible = (b, m) => {
+    setModalMsg(m);
+    setModalVisible(b);
+  }
+
+  // change popup/modal visible
+  const changeLoadingVisible = (b) => {
+    setIsLoading(b);
+  }
+
   const fetchAchievements = async () => {
     try {
+      setIsLoading(true);
       const presenter = new DisplayAchievementPresenter();
       await presenter.fetchUserAchievements(userID, setAchievements, setObtainedAchievements);
     } catch (error) {
+      setModalVisible(true);
+      setModalMsg(error.message);
       console.error('Error fetching achievements:', error);
     } finally {
-
+      setIsLoading(false);
     }
   };
 
@@ -41,30 +63,61 @@ const UserAchievementPage = ({ navigation, route }) => {
     fetchAchievements();
   }, [userID]);
 
-  const completedAchievements = achievements.filter(ach => obtainedAchievements.some(obt => obt._achievementID === ach._achievementID));
-  const lockedAchievements = achievements.filter(ach => !obtainedAchievements.some(obt => obt._achievementID === ach._achievementID));
+  const completedAchievements = useMemo(
+    () => obtainedAchievements.map(obt => {
+      const achievement = achievements.find(ach => ach._achievementID === obt._achievementID);
+      return { ...achievement, dateAchieved: obt.dateAchieved };
+    }),
+    [achievements, obtainedAchievements]
+  );
+
+  const lockedAchievements = useMemo(
+    () => achievements.filter(ach => !obtainedAchievements.some(obt => obt._achievementID === ach._achievementID)),
+    [achievements, obtainedAchievements]
+  ); 
+
+  const handlePressAchievement = (achievement) => {
+    navigation.navigate('UserShareAchievementPage', { achievement });
+  };
+
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Achievements</Text>
       </View>
-      <Text style={styles.subHeaderText}>Unlocked Achievements</Text>
-      <FlatList
-        data={completedAchievements}
-        keyExtractor={(item) => item.achievementID}
-        renderItem={({ item }) => <AchievementItem achievement={item} obtained={true} />}
-        contentContainerStyle={styles.listContainer}
-        numColumns={2}
-        style={styles.flatList}
-      />
-      <Text style={styles.subHeaderText}>Locked Achievements</Text>
+      <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+        <LoadingDialog />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+        <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
+      </Modal>
+      <Text style={styles.subHeaderText}>Unlocked</Text>
+      {completedAchievements.length === 0 && !isLoading ? (
+        <Text style={styles.noachievementText}>No Achievements Unlocked</Text>
+      ) : (
+        <FlatList
+          data={completedAchievements}
+          keyExtractor={(item) => item._achievementID}
+          renderItem={({ item }) => <AchievementItem achievement={item} obtained={true} onPress={handlePressAchievement} />}
+          contentContainerStyle={styles.listContainer}
+          numColumns={2}
+          style={[
+            styles.flatList,
+            completedAchievements.length <= 2 ? { minHeight: '20%' } : { maxHeight: '60%' },
+          ]}
+        />)}
+      <Text style={styles.subHeaderText}>Locked</Text>
       <FlatList
         data={lockedAchievements}
-        keyExtractor={(item) => item.achievementID}
+        keyExtractor={(item) => item._achievementID}
         renderItem={({ item }) => <AchievementItem achievement={item} obtained={false} />}
         contentContainerStyle={styles.listContainer}
         numColumns={2}
-        style={styles.flatList}
+        style={[
+          styles.flatList,
+          completedAchievements.length <= 2 ? { minHeight: '20%' } : { maxHeight: '60%' },
+        ]}
       />
     </View>
 
@@ -84,7 +137,6 @@ const styles = StyleSheet.create({
     fontFamily: 'League-Spartan',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginVertical: scale(5),
   },
   subHeaderText: {
     fontSize: scale(20),
@@ -94,10 +146,11 @@ const styles = StyleSheet.create({
     marginVertical: scale(5),
   },
   listContainer: {
-    paddingBottom: scale(20),
+    paddingBottom: scale(10),
+    justifyContent: 'center',
   },
   flatList: {
-    flex: 1,
+    flexGrow: 1,
     width: '90%',
   },
   achievementItem: {
@@ -106,6 +159,7 @@ const styles = StyleSheet.create({
     padding: scale(10),
     borderRadius: scale(15),
     alignItems: 'center',
+    justifyContent: 'center'
   },
   completedAchievement: {
     backgroundColor: '#d4edda',
@@ -125,14 +179,23 @@ const styles = StyleSheet.create({
   },
   achievementName: {
     fontSize: scale(18),
-    fontWeight: 'bold',
+    fontFamily: 'Inter-SemiBold',
     textAlign: 'center'
   },
   achievementDescription: {
     fontSize: scale(14),
     color: '#555',
     textAlign: 'center',
+    fontFamily: 'Inter',
   },
+  noachievementText: {
+    fontFamily: 'Inter',
+    fontSize: scale(18),
+    fontWeight: 'bold',
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: scale(20)
+  }
 });
 
 
