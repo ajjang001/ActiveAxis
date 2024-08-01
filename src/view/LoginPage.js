@@ -27,6 +27,8 @@ const LoginPage = ({navigation})=>{
     const [modalMsg, setModalMsg] = useState('');
     const [logo, setLogo] = useState(null);
 
+    const [checkingSession, setCheckingSession] = useState(true);
+
     
     // to close dropdown
     const dropdownRef = useRef(null);
@@ -83,6 +85,7 @@ const LoginPage = ({navigation})=>{
         try{
             // Display loading screen
             changeLoadingVisible(true);
+            setCheckingSession(true);
             // Check if user is logged in
             await new LoginPresenter({updateLoginAcc: setLoginAccount, updateLoginType: setLoginType}).checkSession();
             
@@ -91,7 +94,8 @@ const LoginPage = ({navigation})=>{
             changeModalVisible(true, e.message);
         }finally{
             // Hide loading screen
-            setTimeout(()=>changeLoadingVisible(false), 1000);
+            changeLoadingVisible(false);
+            setCheckingSession(false);
         }
     };
 
@@ -103,6 +107,7 @@ const LoginPage = ({navigation})=>{
         // Display loading screen
         changeLoadingVisible(true);
         try{
+            
             // Call the presenter to process the login
             await new LoginPresenter({updateLoginAcc: setLoginAccount}).processLogin(email.toLowerCase(), password, loginType);
         }catch(e){
@@ -111,6 +116,7 @@ const LoginPage = ({navigation})=>{
         }finally{
             // Hide loading screen
             changeLoadingVisible(false);
+            
         }
 
         

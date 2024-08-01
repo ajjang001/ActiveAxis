@@ -3,12 +3,59 @@ import Coach from '../model/Coach';
 import SystemAdmin from '../model/SystemAdmin';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+    initialize,
+    requestPermission,
+    readRecords,
+  } from 'react-native-health-connect';
 
 
 class LoginPresenter{
     constructor(view){
         this.view = view;
         this.loginAccount = null;
+    }
+
+    async checkHealthConnectExist(){
+        try{
+            const isInitialized = await initialize();
+
+            if(!isInitialized){
+                console.log('Please Install HealthConnect App to continue');
+                throw new Error('Please Install HealthConnect App to continue');
+            }else{
+                console.log('HealthConnect App is installed');
+
+                const permissions = [
+                    {accessType: 'read', recordType: 'ActiveCaloriesBurned'},
+                    {accessType: 'write', recordType: 'ActiveCaloriesBurned'},
+                    {accessType: 'read', recordType: 'Distance'},
+                    {accessType: 'read', recordType: 'Steps'},
+                    {accessType: 'read', recordType: 'HeartRate'},
+                    {accessType: 'read', recordType: 'TotalCaloriesBurned'},
+                    {accessType: 'write', recordType: 'TotalCaloriesBurned'},
+                    {accessType: 'read', recordType: 'Speed'},
+                ];
+
+                const permissionRequest = await requestPermission(permissions);
+
+                for(let i = 0; i < permissions.length; i++){
+                    if(permissionRequest){
+                        if(permissionRequest[i].accessType === permissions[i].accessType && permissionRequest[i].recordType === permissions[i].recordType){
+                            console.log('Permission granted for ' + permissions[i].recordType);
+                        }else{
+                            throw new Error('Some permissions are required to continue');
+                        }
+                    }else{
+                        throw new Error('Some permissions are required to continue');
+                    }
+                }
+
+            }
+        }catch(e){
+            console.log('Error occurred: ' + e.message);
+            throw new Error('Please install HealthConnect and allow required permissions to continue\n*If issue still persists, please re-install the app and try again!');
+        }
     }
 
     async processLogin(email, password, loginType){
@@ -27,6 +74,7 @@ class LoginPresenter{
                 
                 switch(loginType){
                     case "u":
+                        await this.checkHealthConnectExist();
                         this.loginAccount = new User();
                         break;
                     case "c":
@@ -36,6 +84,7 @@ class LoginPresenter{
                         this.loginAccount = new SystemAdmin();
                         break;
                 }
+                
                 const loginResult = await this.loginAccount.login(email, password);
 
                 // Save the login result to AsyncStorage for persistence
@@ -68,6 +117,7 @@ class LoginPresenter{
                 
                 let remember;
                 if(type === 'u'){
+                    await this.checkHealthConnectExist();
                     remember = new User();
                 }
                 if (type === 'c'){
@@ -82,9 +132,6 @@ class LoginPresenter{
                     
                     
                 }
-
-
-                
 
             }
         }catch(e){

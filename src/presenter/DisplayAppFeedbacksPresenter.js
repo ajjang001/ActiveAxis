@@ -11,8 +11,21 @@ class DisplayAppFeedbacksPresenter {
     try {
       const feedbacks = await this.af.fetchFeedbacks();
       this.fiveStarFeedbacks = feedbacks.filter((feedback) => feedback.rating === 5);
-      this.displayRandomFeedback();
+      this.displayLatestFeedback();
+      // this.displayRandomFeedback();
     } catch (error) {
+      this.view.displayError(error.message);
+    }
+  }
+
+  displayLatestFeedback(){
+    try{
+      // Sort the top 5 latest feedbacks (using dateSubmitted - type is Firebase timestamp)
+      const sortedFeedbacks = this.fiveStarFeedbacks.sort((a, b) => b.dateSubmitted - a.dateSubmitted).slice(0, 5);
+
+      this.view.displayFeedback(sortedFeedbacks);
+      
+    }catch(error){
       this.view.displayError(error.message);
     }
   }

@@ -1,12 +1,9 @@
 // src/view/coach/CoachHomePage.js
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, Image, StyleSheet, ImageBackground, ScrollView, Modal } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { scale } from '../../components/scale';
 
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
-import { app, auth, db, storage } from '../../firebase/firebaseConfig';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import DisplayListOfFitnessPlanPresenter from "../../presenter/DisplayListOfFitnessPlanPresenter";
