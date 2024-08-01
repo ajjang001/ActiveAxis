@@ -27,7 +27,6 @@ const LoginPage = ({navigation})=>{
     const [modalMsg, setModalMsg] = useState('');
     const [logo, setLogo] = useState(null);
 
-    const [checkingSession, setCheckingSession] = useState(true);
 
     
     // to close dropdown
@@ -79,13 +78,9 @@ const LoginPage = ({navigation})=>{
      
     // Check User Session function
     const checkUserSession = async () =>{
-        // Remove remember me
-        // await AsyncStorage.removeItem('remember');
-
         try{
             // Display loading screen
             changeLoadingVisible(true);
-            setCheckingSession(true);
             // Check if user is logged in
             await new LoginPresenter({updateLoginAcc: setLoginAccount, updateLoginType: setLoginType}).checkSession();
             
@@ -95,7 +90,6 @@ const LoginPage = ({navigation})=>{
         }finally{
             // Hide loading screen
             changeLoadingVisible(false);
-            setCheckingSession(false);
         }
     };
 
