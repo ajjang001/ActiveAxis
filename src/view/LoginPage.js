@@ -92,11 +92,15 @@ const LoginPage = ({navigation})=>{
     const processLogin = async (email, password, loginType) => {
         // Display loading screen
         try{
+            changeLoadingVisible(true);
             // Call the presenter to process the login
             await new LoginPresenter({updateLoginAcc: setLoginAccount}).processLogin(email.toLowerCase(), password, loginType);
         }catch(e){
             // Display error message
             changeModalVisible(true, e.message);
+        }finally{
+            // Close loading screen
+            changeLoadingVisible(false);
         }
     };
 
