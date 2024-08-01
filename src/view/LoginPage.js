@@ -67,29 +67,21 @@ const LoginPage = ({navigation})=>{
 
     const loadLogo = async ()=>{
         try{
-            changeLoadingVisible(true);
             await new DisplayAboutActiveAxisPresenter({changeLogoURL: setLogo}).displayLogoURL();
         }catch(e){
             changeModalVisible(true, e.message);
-        }finally{
-            setTimeout(()=>changeLoadingVisible(false), 1000);
         }
     };
      
     // Check User Session function
     const checkUserSession = async () =>{
         try{
-            // Display loading screen
-            changeLoadingVisible(true);
             // Check if user is logged in
             await new LoginPresenter({updateLoginAcc: setLoginAccount, updateLoginType: setLoginType}).checkSession();
             
         }catch(e){
             // Display error message
             changeModalVisible(true, e.message);
-        }finally{
-            // Hide loading screen
-            changeLoadingVisible(false);
         }
     };
 
@@ -99,25 +91,16 @@ const LoginPage = ({navigation})=>{
     // Process Login function
     const processLogin = async (email, password, loginType) => {
         // Display loading screen
-        changeLoadingVisible(true);
         try{
-            
             // Call the presenter to process the login
             await new LoginPresenter({updateLoginAcc: setLoginAccount}).processLogin(email.toLowerCase(), password, loginType);
         }catch(e){
             // Display error message
             changeModalVisible(true, e.message);
-        }finally{
-            // Hide loading screen
-            changeLoadingVisible(false);
-            
         }
-
-        
     };
 
     const redirect = () =>{
-        changeLoadingVisible(true);
         if(loginAccount !== null){
             if(loginType === "u"){
                 navigation.navigate('UserHomePage', {user:loginAccount});
@@ -129,27 +112,34 @@ const LoginPage = ({navigation})=>{
                 navigation.navigate('SystemAdminHomePage', {admin:loginAccount});
             }
         }
-        changeLoadingVisible(false);
 
     };
 
+    const loadComponents = async () =>{
+        try{
+            changeLoadingVisible(true);
+            await loadLogo();
+            await checkUserSession();
+        }catch(e){
+            changeModalVisible(true, e.message);
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
     
 
     
-    
-
-    
-
     // Check if User logged in
     useEffect(()=>{
-        loadLogo();
-        checkUserSession();
+        loadComponents();
     },[]);
 
     // Redirection when account is set and ready to login
     useEffect(()=>{
         redirect();
     },[loginAccount]);
+
 
     return(
         <View style = {styles.container}>
@@ -160,7 +150,7 @@ const LoginPage = ({navigation})=>{
                 />
             </Modal>
 
-            <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
+            <Modal transparent={true} animationType='fade' visible={isLoading} onRequestClose={() => changeLoadingVisible(false)}>
                 <LoadingDialog />
             </Modal>
             
