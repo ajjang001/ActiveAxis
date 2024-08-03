@@ -40,6 +40,7 @@ import UserCoachHistoryPage from './src/view/user/UserCoachHistoryPage';
 import UserAchievementPage from './src/view/user/UserAchievementPage';
 import UserShareAchievementPage from './src/view/user/UserShareAchievementPage';
 import SmartWearablePage from './src/view/user/SmartWearablePage';
+import UserWorkoutPage from './src/view/user/UserWorkoutPage';
 
 // Coach Pages
 import CoachHomePage from './src/view/coach/CoachHomePage';
@@ -86,6 +87,8 @@ import UserAccountListPage from './src/view/system_admin/UserAccountListPage';
 import UserAccountDetailsPage from './src/view/system_admin/UserAccountDetailsPage';
 import EditUserAccountDetailsPage from './src/view/system_admin/EditUserAccountDetailsPage';
 import SystemAdminUpdatePasswordPage from './src/view/system_admin/SystemAdminUpdatePasswordPage';
+import CompetitionTypePage from './src/view/system_admin/CompetitionTypePage';
+import FitnessGoalsPage from './src/view/system_admin/FitnessGoalsPage';
 import ManageAchievementTypePage from './src/view/system_admin/ManageAchievementTypePage';
 
 const Stack = createStackNavigator();
@@ -154,7 +157,7 @@ const UserTabs = ({ route }) => {
     >
       {/* Put the pages here */}
       <userTab.Screen name="Home" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
-      <userTab.Screen name="Workout" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
+      <userTab.Screen name="Workout" component={UserWorkoutPage} initialParams={{ user }} options={{ headerShown: false }} />
       <userTab.Screen name="Competition" component={CompetitionStack} initialParams={{ user }}options={{ headerShown: false }} />
       <userTab.Screen name="Coach" component={CoachStack} initialParams={{ user }} options={{ headerShown: false }} />
       <userTab.Screen name="Account" component={UserAccountSettingPage} initialParams={{ user }} options={{ headerShown: false }} />
@@ -295,6 +298,8 @@ export default function App() {
           <Stack.Screen name="EditUserAccountDetailsPage" component={EditUserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>     
           <Stack.Screen name="SystemAdminAccountSettingPage" component={SystemAdminAccountSettingPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
           <Stack.Screen name="SystemAdminUpdatePasswordPage" component={SystemAdminUpdatePasswordPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+          <Stack.Screen name="CompetitionTypePage" component={CompetitionTypePage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="FitnessGoalsPage" component={FitnessGoalsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="ManageAchievementTypePage" component={ManageAchievementTypePage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
 
           
