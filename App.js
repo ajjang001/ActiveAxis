@@ -40,6 +40,7 @@ import UserCoachHistoryPage from './src/view/user/UserCoachHistoryPage';
 import UserAchievementPage from './src/view/user/UserAchievementPage';
 import UserShareAchievementPage from './src/view/user/UserShareAchievementPage';
 import SmartWearablePage from './src/view/user/SmartWearablePage';
+import UserWorkoutPage from './src/view/user/UserWorkoutPage';
 
 // Coach Pages
 import CoachHomePage from './src/view/coach/CoachHomePage';
@@ -153,7 +154,7 @@ const UserTabs = ({ route }) => {
     >
       {/* Put the pages here */}
       <userTab.Screen name="Home" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
-      <userTab.Screen name="Workout" component={UserHomePage} initialParams={{ user }} options={{ headerShown: false }} />
+      <userTab.Screen name="Workout" component={UserWorkoutPage} initialParams={{ user }} options={{ headerShown: false }} />
       <userTab.Screen name="Competition" component={CompetitionStack} initialParams={{ user }}options={{ headerShown: false }} />
       <userTab.Screen name="Coach" component={CoachStack} initialParams={{ user }} options={{ headerShown: false }} />
       <userTab.Screen name="Account" component={UserAccountSettingPage} initialParams={{ user }} options={{ headerShown: false }} />
