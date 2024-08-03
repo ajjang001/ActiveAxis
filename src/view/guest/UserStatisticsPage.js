@@ -73,7 +73,7 @@ const UserStatisticsPage = () => {
         <Text style={styles.cardTitle}>Average Rating</Text>
         
         <View style={{alignItems: "center", flexDirection: "row", gap:scale(5)}}>
-          <Text style={styles.cardValue}>{avgRating.toFixed(2)}</Text>
+          <Text style={styles.cardValue}>{avgRating.toFixed(1)}</Text>
           <Icon
           name="star"
           size={scale(33)}
