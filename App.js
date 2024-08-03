@@ -86,6 +86,8 @@ import UserAccountListPage from './src/view/system_admin/UserAccountListPage';
 import UserAccountDetailsPage from './src/view/system_admin/UserAccountDetailsPage';
 import EditUserAccountDetailsPage from './src/view/system_admin/EditUserAccountDetailsPage';
 import SystemAdminUpdatePasswordPage from './src/view/system_admin/SystemAdminUpdatePasswordPage';
+import CompetitionTypePage from './src/view/system_admin/CompetitionTypePage';
+import FitnessGoalsPage from './src/view/system_admin/FitnessGoalsPage';
 
 const Stack = createStackNavigator();
 const coachTab = createBottomTabNavigator();
@@ -294,6 +296,8 @@ export default function App() {
           <Stack.Screen name="EditUserAccountDetailsPage" component={EditUserAccountDetailsPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>     
           <Stack.Screen name="SystemAdminAccountSettingPage" component={SystemAdminAccountSettingPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
           <Stack.Screen name="SystemAdminUpdatePasswordPage" component={SystemAdminUpdatePasswordPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}/>
+          <Stack.Screen name="CompetitionTypePage" component={CompetitionTypePage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="FitnessGoalsPage" component={FitnessGoalsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           
           <Stack.Screen name="CoachHomePage" component={CoachTabs} options={{headerShown:false}} />
           <Stack.Screen name = "CoachListOfFitnessPlansPage" component={CoachListOfFitnessPlansPage} options={{title:'Back', headerStyle:{backgroundColor:'#FBF5F3'}, ...TransitionPresets.SlideFromRightIOS }}  />
