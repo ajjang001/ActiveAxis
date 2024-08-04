@@ -78,14 +78,15 @@ class Competition{
 
             }
 
-            // Invite friends
-            friendList.forEach(async(friend)=>{
-                await addDoc(collection(db, "competitioninvitation",{
+            for (const friend of friendList){
+                await addDoc(collection(db, "competitioninvite"),{
                     competitionID: docRef.id,
                     participant_userID: friend,
                     status: "Pending"
-                }));
-            });
+                });
+            }
+
+
 
 
 
