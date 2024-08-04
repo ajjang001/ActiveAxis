@@ -16,6 +16,21 @@ class InviteFriendToCompetitionPresenter {
     }
   }
 
+  async searchFriend(userId, keyword) {
+    try{
+        if (keyword === '') {
+            await this.getFriends(userId);
+        }else{
+            this.model = new Friends();
+            const users = await this.model.searchFriend(userId, keyword);
+            this.view.updateFriends(users);
+        }
+        
+    }catch(error){
+      throw new Error(error);
+    }
+  }
+
 }
 
 export default InviteFriendToCompetitionPresenter;

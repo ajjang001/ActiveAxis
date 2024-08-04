@@ -1,5 +1,5 @@
 import { db } from '../firebase/firebaseConfig';
-import { collection, query, where, getDocs, addDoc, deleteDoc, updateDoc, getDoc, doc} from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, deleteDoc, updateDoc, getDoc, doc, limit} from 'firebase/firestore';
 
 import User from './User';
 
@@ -101,6 +101,36 @@ class Friends {
         const searched = users.filter(user => user.fullName === searchText || user.username === searchText);
 
         return searched;
+    }
+
+    async searchFriend(userId, keyword) {
+        try{
+            const result = [];
+            const u = new User(); 
+            const temp = await u.search(keyword);
+
+            for (const d of temp) {
+                let q = query(collection(db, 'friends'), where('userID1', '==', userId), where('userID2', '==', d.id), where('status', '==', 'Friend'));
+                let s = await getDocs(q);
+                
+                if (s.empty) {
+                    q = query(collection(db, 'friends'), where('userID2', '==', userId), where('userID1', '==', d.id), where('status', '==', 'Friend'));
+                    s = await getDocs(q);
+                    if (!s.empty) {
+                        result.push(d.user);
+                    }
+                } else {
+                    result.push(d.user);
+                }
+            }
+
+
+
+            return result;
+
+        }catch(error){
+            throw new Error(error);
+        }
     }
 
     async searchUser(userId, currentUserId) {

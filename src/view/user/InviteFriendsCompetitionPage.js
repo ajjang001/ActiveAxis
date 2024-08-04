@@ -10,7 +10,7 @@ const InviteFriendsCompetitionPage = ({route, navigation})=>{
 
     const [search, setSearch] = useState("");
     const [users,setUsers] = useState([]);
-
+    
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
@@ -49,11 +49,39 @@ const InviteFriendsCompetitionPage = ({route, navigation})=>{
 
     const checkFriendInInvited = (friend)=>{
         for(let i = 0; i < friendsInvited.length; i++){
-            if(friendsInvited === friend.accountID){
+            if(friendsInvited[i] === friend.accountID){
                 return true;
             }
         }
         return false;
+    }
+
+    const searchHandler = async ()=>{
+        try{
+            changeLoadingVisible(true);
+            setUsers([]);
+            await new InviteFriendToCompetitionPresenter({updateFriends: setUsers}).searchFriend(user.accountID, search.trim());
+        }catch(error){
+            console.log(error);
+            changeModalVisible(true, error.message.replace('Error: ',''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
+    const handleInvite = (friend)=>{
+        friendsInvited.push(friend.accountID);
+        changeModalVisible(true, 'Friend Invited');
+        displayFriends();
+    }
+
+    const handleCancelInvite = (friend)=>{
+        const index = friendsInvited.indexOf(friend.accountID);
+        if(index > -1){
+            friendsInvited.splice(index, 1);
+            changeModalVisible(true, 'Invite Cancelled');
+            displayFriends();
+        }
     }
 
 
@@ -78,7 +106,7 @@ const InviteFriendsCompetitionPage = ({route, navigation})=>{
                 <View style = {styles.topContentContainer}>
                     <View style = {styles.searchBarContainer}>
                         <Image style = {styles.searchLogo} source={require('../../../assets/search_icon.png')} />    
-                        <TextInput onEndEditing = {()=>console.log('aaa')} onChangeText={setSearch} value = {search} placeholder = 'Search User' /> 
+                        <TextInput onEndEditing = {searchHandler} onChangeText={setSearch} value = {search} placeholder = 'Search User' /> 
                     </View>
                 </View>
 
@@ -90,7 +118,6 @@ const InviteFriendsCompetitionPage = ({route, navigation})=>{
                         </View> 
                         :
                         users.map((user, index)=>{
-                            console.log(user);
                             return (
                                 <View style = {styles.usersContainer} key = {index}>
                                     <Image source={{uri: user.profilePicture}} resizeMode='stretch' style = {styles.userImage}/>
@@ -99,7 +126,7 @@ const InviteFriendsCompetitionPage = ({route, navigation})=>{
                                         <Text style = {styles.role}>User</Text>
                                         <View style ={styles.optButtons}>
                                             
-                                            <TouchableOpacity onPress = { (checkFriendInInvited(user) ? ()=>console.log('Invited') : ()=>console.log('Invite') )  } activeOpacity={0.7} style = {[{width:scale(100)}, (checkFriendInInvited(user) ? {backgroundColor: "#00AD3B"} : {backgroundColor: "#E28413"})]} >
+                                            <TouchableOpacity onPress = { (checkFriendInInvited(user) ? ()=> handleCancelInvite(user) : ()=> handleInvite(user) )  } activeOpacity={0.7} style = {[{width:scale(100)}, (checkFriendInInvited(user) ? {backgroundColor: "#E28413"} : {backgroundColor: "#00AD3B"})]} >
                                                 <Text style={styles.inviteText}>{checkFriendInInvited(user) ? 'INVITED' : 'INVITE'}</Text>
                                             </TouchableOpacity>
 
