@@ -34,6 +34,7 @@ import UserExerciseSettingsPage from './src/view/user/UserExerciseSettingsPage';
 import UserUpdateExerciseSettingsPage from './src/view/user/UserUpdateExerciseSettingsPage';
 import UserCompetitionPage from './src/view/user/UserCompetitionPage';
 import UserCreateCompetitionPage from './src/view/user/UserCreateCompetitionPage';
+import InviteFriendsCompetitionPage from './src/view/user/InviteFriendsCompetitionPage';
 import UserCompetitionHistoryPage from './src/view/user/UserCompetitionHistoryPage';
 import UserCoachPage from './src/view/user/UserCoachPage';
 import UserCoachHistoryPage from './src/view/user/UserCoachHistoryPage';
@@ -104,6 +105,7 @@ const CompetitionStack = ({ route }) => {
       <Stack.Screen name="UserCompetitionPage" component={UserCompetitionPage} initialParams={{ user }} options={{ headerShown: false }} />
       <Stack.Screen name="UserCreateCompetitionPage" component={UserCreateCompetitionPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
       <Stack.Screen name="UserCompetitionHistoryPage" component={UserCompetitionHistoryPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }}/> 
+      <Stack.Screen name="InviteFriendsCompetitionPage" component={InviteFriendsCompetitionPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }}/>
       {/*Add New screens here for competition */}
   </Stack.Navigator>
   );

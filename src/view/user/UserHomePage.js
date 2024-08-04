@@ -214,7 +214,7 @@ const UserHomePage = ({ navigation, route }) => {
                     </View>
                     <View style = {styles.subContentStatsView}>
                         <Text style={styles.subContentTitleText}>Min/Max Heart Rate</Text>
-                        <View style = {{justifyContent:'center', alignItems:'center'}}>
+                        <View style = {styles.statsView3}>
                             <Text style={[styles.avgMinMaxText, {fontWeight:'bold'}]}>Avg:</Text>
                             <Text style={styles.avgMinMaxText}>{averageHeartRate} bpm</Text>
                             <Text style={[styles.avgMinMaxText, {fontWeight:'bold'}]}>Min/Max:</Text>
@@ -253,9 +253,8 @@ const styles = StyleSheet.create({
     },
     adviceView:{
         backgroundColor: 'white',
-        height: scale(150),
         borderRadius: scale(16), 
-        padding: scale(16),
+        padding: scale(28),
         marginBottom: scale(16),
         justifyContent: 'center',
         
@@ -272,7 +271,6 @@ const styles = StyleSheet.create({
     },
     topStatsView:{
         backgroundColor: 'white',
-        height: scale(150),
         borderRadius: scale(16),
         paddingVertical: scale(16),
         paddingLeft: scale(32),
@@ -309,9 +307,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     statsView3:{
-        paddingTop: scale(16),
+        paddingVertical: scale(16),
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: '#F5F5F5',
     },
     numText:{
         fontSize: scale(16),
@@ -353,7 +352,6 @@ const styles = StyleSheet.create({
 
     subContentStatsView: {
         backgroundColor: 'white',
-        height: scale(150),
         padding: scale(16),
         borderRadius: scale(16),
         width: '45%',
