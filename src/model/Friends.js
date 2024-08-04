@@ -1,27 +1,29 @@
 import { db } from '../firebase/firebaseConfig';
-import { collection, query, where, getDocs, addDoc, deleteDoc, updateDoc} from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, deleteDoc, updateDoc, getDoc, doc} from 'firebase/firestore';
+
+import User from './User';
 
 class Friends {
     _dateAdded;
     _status;
-    _userID1;
-    _userID2;
+    _user1;
+    _user2;
 
     get dateAdded() { return this._dateAdded; }
     get status() { return this._status; }
-    get userID1() { return this._userID1; }
-    get userID2() { return this._userID2; }
+    get user1() { return this._user1; }
+    get user2() { return this._user2; }
 
     set dateAdded(dateAdded) { this._dateAdded = dateAdded; }
     set status(status) { this._status = status; }
-    set userID1(userID1) { this._userID1 = userID1; }
-    set userID2(userID2) { this._userID2 = userID2; }
+    set user1(user1) { this._user1 = user1; }
+    set user2(user2) { this._user2 = user2; }
 
     constructor() {
         this._dateAdded = "";
         this._status = "";
-        this._userID1 = "";
-        this._userID2 = "";
+        this._user1 = "";
+        this._user2 = "";
     }
 
     async getFriends(userId) {
@@ -30,16 +32,42 @@ class Friends {
         // Query where User1 == current logged in user
         const user1Query = query(collection(db, 'friends'), where('userID1', '==', userId), where('status', '==', 'Friend'));
         const user1Snapshot = await getDocs(user1Query);
-        user1Snapshot.forEach(doc => {
-            friends.push(doc.data());
-        });
+
+        for ( const d of user1Snapshot.docs ) {
+            // get user data
+            const docRef = doc(db, 'user', d.data().userID2);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const u = new User();
+                u.accountID = d.data().userID2;
+                u.profilePicture = docSnap.data().profilePicture;
+                u.profilePicture = await u.getProfilePictureURL();
+                u.fullName = docSnap.data().fullName;
+                
+                friends.push(u);
+            }
+        }
 
         // Query where User2 == current logged in user
         const user2Query = query(collection(db, 'friends'), where('userID2', '==', userId), where('status', '==', 'Friend'));
         const user2Snapshot = await getDocs(user2Query);
-        user2Snapshot.forEach(doc => {
-            friends.push(doc.data());
-        });
+        
+        for ( const d of user2Snapshot.docs ) {
+            // get user data
+            const docRef = doc(db, 'user', d.data().userID1);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const u = new User();
+                u.accountID = d.data().userID1;
+                u.profilePicture = docSnap.data().profilePicture;
+                u.profilePicture = await u.getProfilePictureURL();
+                u.fullName = docSnap.data().fullName;
+                
+                friends.push(u);
+            }
+        }
 
         return friends;
     }
