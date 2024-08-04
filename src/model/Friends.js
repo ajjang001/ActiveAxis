@@ -2,26 +2,26 @@ import { db } from '../firebase/firebaseConfig';
 import { collection, query, where, getDocs, addDoc, deleteDoc, updateDoc} from 'firebase/firestore';
 
 class Friends {
-    #dateAdded;
-    #status;
-    #userID1;
-    #userID2;
+    _dateAdded;
+    _status;
+    _userID1;
+    _userID2;
 
-    get dateAdded() { return this.#dateAdded; }
-    get status() { return this.#status; }
-    get userID1() { return this.#userID1; }
-    get userID2() { return this.#userID2; }
+    get dateAdded() { return this._dateAdded; }
+    get status() { return this._status; }
+    get userID1() { return this._userID1; }
+    get userID2() { return this._userID2; }
 
-    set dateAdded(dateAdded) { this.#dateAdded = dateAdded; }
-    set status(status) { this.#status = status; }
-    set userID1(userID1) { this.#userID1 = userID1; }
-    set userID2(userID2) { this.#userID2 = userID2; }
+    set dateAdded(dateAdded) { this._dateAdded = dateAdded; }
+    set status(status) { this._status = status; }
+    set userID1(userID1) { this._userID1 = userID1; }
+    set userID2(userID2) { this._userID2 = userID2; }
 
     constructor() {
-        this.#dateAdded = "";
-        this.#status = "";
-        this.#userID1 = "";
-        this.#userID2 = "";
+        this._dateAdded = "";
+        this._status = "";
+        this._userID1 = "";
+        this._userID2 = "";
     }
 
     async getFriends(userId) {
