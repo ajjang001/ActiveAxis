@@ -41,6 +41,10 @@ import UserAchievementPage from './src/view/user/UserAchievementPage';
 import UserShareAchievementPage from './src/view/user/UserShareAchievementPage';
 import SmartWearablePage from './src/view/user/SmartWearablePage';
 import UserWorkoutPage from './src/view/user/UserWorkoutPage';
+import UserFriendsListPage from './src/view/user/UserFriendsListPage';
+import UserAppFeedbackPage from './src/view/user/UserAppFeedbackPage';
+import UserSendAppFeedbackPage from './src/view/user/UserSendAppFeedbackPage';
+import UserUpdateAppFeedbackPage from './src/view/user/UserUpdateAppFeedbackPage';
 
 // Coach Pages
 import CoachHomePage from './src/view/coach/CoachHomePage';
@@ -248,6 +252,10 @@ export default function App() {
           <Stack.Screen name="UserShareAchievementPage" component={UserShareAchievementPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           {/*Remove SmartWearablePage and component/requestpermission.js*/}
           <Stack.Screen name="SmartWearablePage" component={SmartWearablePage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserFriendsListPage" component={UserFriendsListPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserAppFeedbackPage" component={UserAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserSendAppFeedbackPage" component={UserSendAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserUpdateAppFeedbackPage" component={UserUpdateAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           {/* Add user pages here */}
 
           <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{ headerShown: false }} />
