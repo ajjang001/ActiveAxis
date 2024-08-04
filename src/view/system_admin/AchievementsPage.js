@@ -5,7 +5,6 @@ import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Mod
 import DisplayListOfAchievementsPresenter from '../../presenter/DisplayListOfAchievementsPresenter';
 
 
-
 const AchievementsPage = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -25,9 +24,14 @@ const changeLoadingVisible = (b)=>{
 }
 
   const renderHeader = () => (
-    <TouchableOpacity style={styles.createButton} onPress={() => { navigation.navigate('CreateAchievementsPage') }}>
-      <Text style={styles.createButtonText}>Create</Text>
-    </TouchableOpacity>
+    <View style = {{justifyContent:'space-between', flexDirection:'row', marginHorizontal:scale(16)}}>
+      <TouchableOpacity style={styles.createButton} onPress={() => { navigation.navigate('ManageAchievementTypePage') }}>
+        <Text style={styles.createButtonText}>Manage</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.createButton} onPress={() => { navigation.navigate('CreateAchievementsPage') }}>
+        <Text style={styles.createButtonText}>Create</Text>
+      </TouchableOpacity>
+    </View>
   );
 
   const renderSectionHeader = ({ section }) => (
@@ -122,8 +126,7 @@ const styles = StyleSheet.create({
     padding: scale(10),
     borderRadius: 5,
     marginTop: scale(20),
-    alignSelf: 'flex-end',
-    marginRight: 10,
+
   },
   createButtonText: {
     color: '#FFF',

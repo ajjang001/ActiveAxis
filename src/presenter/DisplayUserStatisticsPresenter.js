@@ -7,10 +7,6 @@ class DisplayUserStatisticsPresenter {
     this.view = view;
   }
 
-  async displayActiveUsers(){
-
-  }
-
   async displayTotalAppFeedback(){
     try{
       const appInfo = new AppInfo();
