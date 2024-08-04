@@ -37,10 +37,11 @@ const MyCoacheePage = ({ navigation, route }) => {
             setIsLoading(true);
             setCoachee([]);
             await new DisplayCoacheesPresenter({ updateCoacheeList: setCoachee }).displayCoachees(coachEmail);
-            setIsLoading(false);
         } catch (error) {
             setModalVisible(true);
             setModalMsg(error.message);
+        } finally {
+            setIsLoading(false);
         }
     }, []);
 
