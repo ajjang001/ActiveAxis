@@ -1,26 +1,50 @@
+import FitnessGoals from '../model/FitnessGoals';
+
 class FitnessGoalsPresenter {
     constructor(view) {
-      this.view = view;
-      this.fitnessGoals = ['Goal 1', 'Goal 2', 'Goal 3'];
+        this.view = view;
+        this.fitnessGoalsModel = new FitnessGoals();
+        this.fitnessGoals = [];
     }
-  
-    loadFitnessGoals() {
-      this.view.updateFitnessGoals(this.fitnessGoals);
+
+    async loadFitnessGoals() {
+        try {
+            this.fitnessGoals = await this.fitnessGoalsModel.getFitnessGoals();
+            console.log('Loaded fitness goals:', this.fitnessGoals);  // Debug log
+            this.view.updateFitnessGoals(this.fitnessGoals);
+        } catch (error) {
+            console.error('Failed to load fitness goals:', error);
+        }
     }
-  
-    addFitnessGoal(newGoal) {
-      this.fitnessGoals.push(newGoal);
-      this.view.updateFitnessGoals(this.fitnessGoals);
+
+    async addFitnessGoal(newGoal) {
+        try {
+            const newGoalID = await this.fitnessGoalsModel.addFitnessGoal(newGoal);
+            const newFitnessGoal = new FitnessGoals();
+            newFitnessGoal.goalID = newGoalID;
+            newFitnessGoal.goalName = newGoal;
+            this.fitnessGoals.push(newFitnessGoal);
+            this.view.updateFitnessGoals(this.fitnessGoals);
+        } catch (error) {
+            console.error('Failed to add fitness goal:', error);
+        }
     }
-  
-    updateFitnessGoal(index, updatedGoal) {
-      this.fitnessGoals[index] = updatedGoal;
-      this.view.updateFitnessGoals(this.fitnessGoals);
+
+    async updateFitnessGoal(index, updatedGoalName) {
+        try {
+            const goal = this.fitnessGoals[index];
+            await this.fitnessGoalsModel.updateFitnessGoal(goal.goalID, updatedGoalName);
+            this.fitnessGoals[index].goalName = updatedGoalName;
+            this.view.updateFitnessGoals(this.fitnessGoals);
+        } catch (error) {
+            console.error('Failed to update fitness goal:', error);
+        }
     }
-  }
-  
-  export default FitnessGoalsPresenter;
-  
+}
+
+export default FitnessGoalsPresenter;
+
+
   
   
   

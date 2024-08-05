@@ -7,12 +7,24 @@ const FitnessGoalsPage = ({ navigation }) => {
   const [fitnessGoals, setFitnessGoals] = useState([]);
   const [newGoal, setNewGoal] = useState('');
   const presenter = new FitnessGoalsPresenter({
-    updateFitnessGoals: (goals) => setFitnessGoals(goals)
+    updateFitnessGoals: (goals) => {
+      console.log('Updating fitness goals in view:', goals);  // Debug log
+      setFitnessGoals(goals);
+    }
   });
 
   useEffect(() => {
     presenter.loadFitnessGoals();
   }, []);
+
+  const handleAddFitnessGoal = async () => {
+    await presenter.addFitnessGoal(newGoal);
+    setNewGoal('');
+  };
+
+  const handleUpdateFitnessGoal = async (index, text) => {
+    await presenter.updateFitnessGoal(index, text);
+  };
 
   return (
     <View style={styles.container}>
@@ -23,19 +35,19 @@ const FitnessGoalsPage = ({ navigation }) => {
         value={newGoal}
         onChangeText={setNewGoal}
       />
-      <Button title="Add" onPress={() => presenter.addFitnessGoal(newGoal)} />
+      <Button title="Add" onPress={handleAddFitnessGoal} />
       <FlatList
         data={fitnessGoals}
         renderItem={({ item, index }) => (
           <View style={styles.listItem}>
             <TextInput
               style={styles.listInput}
-              value={item}
-              onChangeText={(text) => presenter.updateFitnessGoal(index, text)}
+              value={item.goalName}
+              onChangeText={(text) => handleUpdateFitnessGoal(index, text)}
             />
           </View>
         )}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item, index) => item.goalID}
       />
     </View>
   );

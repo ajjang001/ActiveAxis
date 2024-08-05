@@ -1,16 +1,21 @@
-import Friends from './Friends';
+import Friends from '../model/Friends';
 
-class DisplayFriendListPresenter {
-  constructor(view, db) {
+class DisplayFriendsListPresenter {
+  constructor(view, userId) {
     this.view = view;
-    this.model = new Friends(db);
+    this.model = new Friends();
     this.currentUserId = userId;
   }
 
-  async loadFriends() {
-    const friends = await this.model.getFriends(this.currentUserId);
-    this.view.displayFriends(friends);
+  async getFriends(userId) {
+    try{
+        this.model = new Friends();
+        const friends = await this.model.getFriends(userId);
+        this.view.updateFriends(friends);
+    }catch(error){
+      throw new Error(error);
+    }
   }
 }
 
-export default DisplayFriendListPresenter;
+export default DisplayFriendsListPresenter;
