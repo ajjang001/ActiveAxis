@@ -310,7 +310,6 @@ const styles = StyleSheet.create({
         paddingVertical: scale(16),
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#F5F5F5',
     },
     numText:{
         fontSize: scale(16),

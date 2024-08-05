@@ -1,13 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { scale } from '../../components/scale';
+import { useFocusEffect } from '@react-navigation/native';
+
+import DisplayCompetitionsPresenter from '../../presenter/DisplayCompetitionsPresenter';
 
 const UserCompetitionPage = ({ navigation, route }) => {
 
     const { user } = route.params;
 
+    const [myCompetitions, setMyCompetitions] = useState([]);
+    const [participatedCompetitions, setParticipatedCompetitions] = useState([]);
+
+    // Date formatter
+    const formatDate = (date) => {
+        if (!date) return "";
+        return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+        });
+    };
+
+    const loadCompetitions = async () => {
+        try{
+            // setMyCompetitions([]);
+            // setParticipatedCompetitions([]);
+            // await new DisplayCompetitionsPresenter({updateMyCompetitions: setMyCompetitions, updateParticipatedCompetitions: setParticipatedCompetitions}).loadCompetitions(user.accountID);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            loadCompetitions();
+        }, [])
+    );
+
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.headerContainer}>
                 <Text style={styles.headerText}>Competitions</Text>
             </View>
@@ -15,7 +47,12 @@ const UserCompetitionPage = ({ navigation, route }) => {
                 <TouchableOpacity style={styles.button} onPress={() =>
                     navigation.navigate("UserCreateCompetitionPage", { user })
                 }>
-                    <Text style={styles.buttonText}>Create Competitions</Text>
+                    <Text style={styles.buttonText}>Create</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() =>
+                    console.log('Invite')
+                }>
+                    <Text style={styles.buttonText}>Invitation</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() =>
                     navigation.navigate("UserCompetitionHistoryPage", { user })
@@ -24,9 +61,57 @@ const UserCompetitionPage = ({ navigation, route }) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.competitionContainer}>
-                <Text>Insert Competitions here!</Text>
+                {
+                    myCompetitions.length <= 0 ? null :
+                    <>
+                    <Text style = {styles.titleText}>My Competitions</Text>
+                    {myCompetitions.map((competition, index) => {
+                        return (
+                            <View style = {styles.competitionView} key={index}>
+                                
+                                <View style = {styles.competitionDetailsView}>
+                                    <Text style = {styles.competitionTitleText}>{competition.competitionName}</Text>
+                                    <View style = {styles.competitionDateView}>
+                                        <Text style = {styles.competitionDateTitle}>Type: </Text>
+                                        <Text>{competition.competitionType}</Text>
+                                        <Text>Start Date:</Text>
+                                        <Text>{formatDate(competition.startDate)}</Text>
+                                        
+                                        <Text>End Date: </Text>
+                                        <Text>{formatDate(competition.endDate)}</Text>
+
+
+                                    </View>
+                                    <View>
+                                        
+                                    </View>
+                                </View>
+                                <View style = {styles.progressView}>
+                                    <Text>{competition.competitionName}</Text>
+                                </View>
+
+                            </View>
+                        );
+                    })}
+                    </>
+                    
+                }
+
+                {
+                    participatedCompetitions.length <= 0 ? null :
+                    <>
+                    <Text style = {styles.titleText}>Participated Competitions</Text>
+                    {participatedCompetitions.map((competition, index) => {
+                        return (
+                            <View key={index}>
+                                <Text>{competition.competitionName}</Text>
+                            </View>
+                        );
+                    })}
+                    </>
+                }
             </View>
-        </View>
+        </ScrollView>
     );
 };
 const styles = StyleSheet.create({
@@ -37,7 +122,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FBF5F3',
     },
     headerContainer: {
-        width: '90%',
+        width: '95%',
     },
     headerText: {
         fontSize: scale(36),
@@ -47,7 +132,7 @@ const styles = StyleSheet.create({
         marginVertical: scale(10),
     },
     buttonContainer: {
-        width: '90%',
+        width: '95%',
         flexDirection: 'row',
     },
     button: {
@@ -57,6 +142,7 @@ const styles = StyleSheet.create({
         marginTop: scale(10),
         flex: 1,
         marginHorizontal: scale(8),
+        borderRadius: scale(8),
 
     },
     buttonText: {
@@ -64,18 +150,50 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontFamily: 'Inter',
         fontWeight: 'bold',
-        fontSize: scale(16)
+        fontSize: scale(16),
     },
     competitionContainer: {
-        width: '90%',
-        backgroundColor: '#E6E6E6',
-        padding: scale(15),
-        borderWidth: 2,
-        borderRadius: scale(15),
-        marginTop: scale(20),
-        borderColor: '#C42847',
-        alignItems: 'center',
+        width: '95%',
+        marginTop: scale(8),
     },
+    titleText:{
+        fontSize: scale(24),
+        fontFamily: 'Inter-SemiBold',
+    },
+    competitionView:{
+        width: '100%',
+        backgroundColor:'#D9D9D9',
+        marginBottom: scale(16),
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    progressView:{
+        backgroundColor: 'white',
+        height: scale(20),
+        width: '45%',
+
+    },
+    competitionDetailsView:{
+        width: '55%',
+        padding: scale(8),
+        margin: scale(8),
+    },
+    competitionTitleText:{
+        fontSize: scale(16),
+        fontFamily: 'Inter-SemiBold',
+        backgroundColor: 'white',
+        paddingHorizontal: scale(8),
+    },
+    competitionDateView:{
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        marginTop: scale(8),
+        backgroundColor: 'white',
+    },
+    competitionDateTitle:{
+        fontFamily: 'Inter-SemiBold',
+        fontSize: scale(14),
+    }
 });
 
 
