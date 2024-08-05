@@ -74,6 +74,7 @@ const RegisterPage = ({ navigation }) => {
   const formatDate = (date) => {
     if (!date) return "";
     return date.toLocaleDateString('en-US', {
+      timeZone: 'Asia/Singapore',
       year: 'numeric',
       month: 'long',
       day: 'numeric'

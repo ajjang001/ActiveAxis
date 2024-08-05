@@ -80,9 +80,10 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
     const formatDate = (date) => {
         if (!date) return "";
         return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+            timeZone: 'Asia/Singapore',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
         });
     };
 

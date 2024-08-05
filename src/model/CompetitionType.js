@@ -1,5 +1,5 @@
 import { db } from '../firebase/firebaseConfig';
-import { getDocs, collection, addDoc, updateDoc, doc } from 'firebase/firestore';
+import { getDocs, collection, addDoc, updateDoc, doc, query, where } from 'firebase/firestore';
 
 class CompetitionType {
     _competitionTypeID;
@@ -15,6 +15,22 @@ class CompetitionType {
 
     set competitionTypeID(competitionTypeID) { this._competitionTypeID = competitionTypeID; }
     set competitionTypeName(competitionTypeName) { this._competitionTypeName = competitionTypeName; }
+
+    async getCompetitionType (typeID) {
+        try{
+            const docRef = query(collection(db, 'competitiontype'), where('competitionTypeID', '==', typeID));
+            const docSnap = await getDocs(docRef);
+            if (!docSnap.empty) {
+                const docData = docSnap.docs[0].data();
+                const type = new CompetitionType();
+                type.competitionTypeID = docData.competitionTypeID;
+                type.competitionTypeName = docData.competitionTypeName;
+                return type;
+            }
+        }catch(error){
+            throw new Error(error);
+        }
+    }
 
     async getCompetitionTypes() {
         try {

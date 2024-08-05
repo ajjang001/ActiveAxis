@@ -1,6 +1,7 @@
 import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, deleteDoc, addDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import {auth, db, storage} from '../firebase/firebaseConfig';
+import CompetitionType from "./CompetitionType";
 
 
 class Competition{
@@ -113,11 +114,7 @@ class Competition{
                 const c = new Competition();
                 c.competitionID = d.id;
                 c.host_userID = data.host_userID;
-
-                const qq = query(collection(db, "competitiontype"), where("competitionTypeID", "==", data.competitionType));
-                const qqSnapshot = await getDocs(qq);
-                c.competitionType = qqSnapshot.docs[0].data().competitionTypeName;
-
+                c.competitionType = await new CompetitionType().getCompetitionType(data.competitionType);
                 c.competitionName = data.competitionName;
                 c.competitionDetails = data.competitionDetails;
                 c.target = data.target;
@@ -151,11 +148,7 @@ class Competition{
                 const c = new Competition();
                 c.competitionID = competitionDoc.id;
                 c.host_userID = competitionDoc.data().host_userID;
-
-                const qq = query(collection(db, "competitiontype"), where("competitionTypeID", "==", competitionDoc.data().competitionType));
-                const qqSnapshot = await getDocs(qq);
-                c.competitionType = qqSnapshot.docs[0].data().competitionTypeName;
-
+                c.competitionType = await new CompetitionType().getCompetitionType(competitionDoc.data().competitionType);
                 c.competitionName = competitionDoc.data().competitionName;
                 c.competitionDetails = competitionDoc.data().competitionDetails;
                 c.target = competitionDoc.data().target;

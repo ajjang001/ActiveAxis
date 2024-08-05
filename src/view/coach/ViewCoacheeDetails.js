@@ -27,9 +27,9 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
     const [goal, setGoal] = useState('');
     const [level, setLevel] = useState('');
     const startDate = new Date(history.startDate.seconds * 1000 + history.startDate.nanoseconds / 1000000);
-    const startDateString = startDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const startDateString = startDate.toLocaleDateString('en-US', { timeZone: 'Asia/Singapore', year: 'numeric', month: 'long', day: 'numeric' });
     const endDate = new Date(history.endDate.seconds * 1000 + history.endDate.nanoseconds / 1000000);
-    const endDateString = endDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const endDateString = endDate.toLocaleDateString('en-US', { timeZone: 'Asia/Singapore', year: 'numeric', month: 'long', day: 'numeric' });
     {/* May insert more Coachee details if needed */ }
 
     // change popup/modal visible

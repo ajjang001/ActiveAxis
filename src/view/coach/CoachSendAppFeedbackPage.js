@@ -74,6 +74,7 @@ const CoachSendAppFeedbackPage = ({navigation, route}) => {
 
       if (user) {
         const dateSubmitted = new Date().toLocaleString('en-US', { 
+          timeZone: 'Asia/Singapore',
           year: 'numeric', 
           month: 'long', 
           day: 'numeric', 

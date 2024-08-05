@@ -8,7 +8,7 @@ const UserShareAchievementPage = ({ route }) => {
     const { achievement } = route.params;
 
     const dateAchieved = new Date(achievement.dateAchieved.seconds * 1000 + achievement.dateAchieved.nanoseconds / 1000000);
-    const dateAchievedString = dateAchieved.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const dateAchievedString = dateAchieved.toLocaleDateString('en-US', { timeZone: 'Asia/Singapore', year: 'numeric', month: 'long', day: 'numeric' });
 
     const handleShare = async (platform) => {
         const shareOptions = {
