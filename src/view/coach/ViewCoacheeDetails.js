@@ -47,12 +47,11 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
         try {
             setIsLoading(true);
             await new ViewCoacheePresenter({ loadCoacheeDetails: setCoachee }).viewCoacheeDetails(userEmail);
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 1500);
         } catch (error) {
             setModalVisible(true);
             setModalMsg(error.message);
+        } finally {
+            setIsLoading(false);
         }
     };
 

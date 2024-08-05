@@ -47,13 +47,13 @@ const UserExerciseSettingsPage = ({ navigation, route }) => {
             setIsLoading(true);
             const presenter = new DisplayExerciseSettingsPresenter(view);
             await presenter.viewAccountDetails(userEmail, userType);
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 1500);
         } catch (error) {
             setIsLoading(false);
             setModalVisible(true);
             setModalMsg(error.message);
+        }
+        finally {
+            setIsLoading(false);
         }
     }, []);
 

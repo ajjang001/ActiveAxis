@@ -14,7 +14,6 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
 
     const [goalsData, setGoalsData] = useState([]);
     const [levelData, setLevelData] = useState([]);
-    console.log(levelData);
 
     const capitalizeFirstLetter = (string) => {
         if (!string) return '';
@@ -26,7 +25,7 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
         { label: "No", value: false },
     ];
 
-    const { user, userDetails } = route.params;
+    const { user, userDetails, userType } = route.params;
 
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -65,7 +64,7 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
     useEffect(() => {
         fetchGoalsData();
         fetchLevelData();
-    }, []); 
+    }, []);
 
     useEffect(() => {
         if (levelData.length > 0) {
@@ -109,10 +108,20 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
     const processUpdate = async () => {
         changeLoadingVisible(true);
         try {
+            const updatedUser = {
+                ...user,
+                gender,
+                phoneNumber: "+65" + phoneNumber,
+                weight,
+                height,
+                fitnessGoal,
+                fitnessLevel,
+                hasMedical
+            };
             // include back +65
             phoneNumber1 = "+65" + phoneNumber;
             await new UpdateAccountDetailsPresenter().updateAccountDetails(email, gender, phoneNumber1, weight, height, fitnessGoal, fitnessLevel, hasMedical);
-            navigation.navigate('UserAccountDetailsPage1', { user })
+            navigation.navigate('UserAccountDetailsPage1', { user: updatedUser, userType })
             Alert.alert('Successfully updated account information!')
         } catch (e) {
             changeModal1Visible(true, e.message);

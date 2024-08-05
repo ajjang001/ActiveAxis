@@ -185,12 +185,12 @@ const style = StyleSheet.create({
         backgroundColor: '#E28413',
     },
     title:{
-        fontSize: 36,
+        fontSize: scale(36),
         fontFamily: 'League-Spartan',
         fontWeight: 'bold',
 
         textAlign: 'center',
-        marginVertical: 20,  
+        marginVertical: scale(20),  
     },
     contentContainer:{
         backgroundColor: '#C42847',

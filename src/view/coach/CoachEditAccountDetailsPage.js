@@ -78,9 +78,8 @@ const CoachEditAccountDetailsPage = () => {
     ).then( async() => {
       changeLoadingVisible(true);
         try {
-            console.log(coachID);
             await new UpdateAccountDetailsPresenter().updatePassword(coachID, newPassword, confirmnewPassword)
-            Alert.alert('Successfully updated password for user!')
+            Alert.alert('Successfully updated password!')
             navigation.navigate('CoachViewAccountDetailsPage', { userEmail, userType })
         } catch (e) {
             console.log(e);

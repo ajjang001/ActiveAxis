@@ -6,7 +6,7 @@ import EditUserAccountDetailsPresenter from '../../presenter/EditUserAccountDeta
 
 const UserUpdatePasswordPage = ({ navigation, route }) => {
 
-    const { user, userDetails } = route.params;
+    const { user, userDetails, userType } = route.params;
     const userID = userDetails[0].id;
 
     const [newPassword, setnewPassword] = useState('');
@@ -40,7 +40,7 @@ const UserUpdatePasswordPage = ({ navigation, route }) => {
             console.log(userID);
             await new EditUserAccountDetailsPresenter().updatePassword(userID, newPassword, confirmnewPassword)
             Alert.alert('Successfully updated password for user!')
-            navigation.navigate('UserAccountDetailsPage1', { user })
+            navigation.navigate('UserAccountDetailsPage1', { user , userType})
         } catch (e) {
             console.log(e);
             changeModal1Visible(true, e.message);
