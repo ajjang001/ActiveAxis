@@ -1,4 +1,4 @@
-import Friends from './Friends';
+import Friends from '../model/Friends';
 
 class AddFriendPresenter {
   constructor(view, db) {

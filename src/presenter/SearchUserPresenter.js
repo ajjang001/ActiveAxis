@@ -1,15 +1,25 @@
-import Friends from './Friends';
+import Friends from '../model/Friends';
 
 class SearchUserPresenter {
-  constructor(view, db) {
+  constructor(view, userId) {
     this.view = view;
-    this.model = new Friends(db);
-    this.currentUserId = userId; // Replace with actual logic to get current logged-in user ID
+    this.model = new Friends();
+    this.currentUserId = userId;
   }
 
-  async handleSearchUsers(searchText) {
-    const users = await this.model.searchUsers(searchText, this.currentUserId);
-    this.view.displaySearchedUsers(users);
+  async handleSearchUsers(userId, keyword) {
+    try{
+        if (keyword === '') {
+            await this.getFriends(userId);
+        }else{
+            this.model = new Friends();
+            const users = await this.model.handleSearchUsers(userId, keyword);
+            this.view.updateFriends(users);
+        }
+        
+    }catch(error){
+      throw new Error(error);
+    }
   }
 }
 
