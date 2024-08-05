@@ -1,7 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
-import { LoadingDialog, ActionDialog } from "../../components/Modal";
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Keyboard, ScrollView, Alert } from 'react-native';
+import { LoadingDialog, ActionDialog, MessageDialog } from "../../components/Modal";
 import { scale } from '../../components/scale';
+import { Dropdown } from 'react-native-element-dropdown';
+import DatePicker from 'react-native-date-picker';
+import { useFocusEffect } from '@react-navigation/native';
+
+import CreateCompetitionPresenter from "../../presenter/CreateCompetitionPresenter";
 
 const UserCreateCompetitionPage = ({ navigation, route }) => {
 
@@ -9,14 +14,36 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
 
     // Competition Details
     const [competitionName, setcompetitionName] = useState('');
-    const [competitionType, setcompetitionType] = useState('');
-    const [startDate, setstartDate] = useState('');
-    const [endDate, setendDate] = useState('');
+    const [competitionType, setcompetitionType] = useState(1);
+    const [startDate, setstartDate] = useState(()=>{
+        const tomorrow = new Date(new Date());
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        return tomorrow;
+    });
+    const [endDate, setendDate] = useState(()=>{
+        const nextWeek = new Date(startDate);
+        nextWeek.setDate(nextWeek.getDate() + 14);
+        nextWeek.setHours(0, 0, 0, 0);
+        return nextWeek;
+    });
+    const [target, setTarget] = useState(0);
     const [competitionDetails, setcompetitionDetails] = useState('');
+    const [friendsInvited, setFriendsInvited] = useState([]);
 
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
+    const [confirmationVisible, setConfirmationVisible] = useState(false);
+    const [confirmMessage, setConfirmMessage] = useState('');
+
+    const [dropdownOpt, setDropdownOpt] = useState([]);
+  
+    // to close dropdown
+    const dropdownRef = useRef(null);
+    // Date Picker
+    const [openStartDate, setOpenStartDate] = useState(false);
+    const [openEndDate, setOpenEndDate] = useState(false);
 
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
@@ -27,28 +54,104 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
     const changeLoadingVisible = (b) => {
         setIsLoading(b);
     }
+
+    // change popup/modal visible
+    const changeConfirmVisible = (b, m)=>{
+        setConfirmMessage(m);
+        setConfirmationVisible(b);
+    }
+
+    // Render Dropdown options
+    const renderItem=(item)=>{
+        return(
+            <TouchableOpacity activeOpacity={.7} style={styles.item}
+            onPress={()=>{
+                setcompetitionType(item.competitionTypeID);
+        
+                dropdownRef.current.close();
+            }}
+            >
+                    <Text style={styles.itemText}>{item.competitionTypeName}</Text>
+            </TouchableOpacity> 
+            );
+        };
+
+    // Date formatter
+    const formatDate = (date) => {
+        if (!date) return "";
+        return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+        });
+    };
+
+    const getTomorrow = (date) => {
+        const tomorrow = new Date(date);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        return tomorrow;
+    }
+
+    const getNext2Weeks = (date) => {
+        const nextWeek = new Date(date);
+        nextWeek.setDate(nextWeek.getDate() + 14);
+        nextWeek.setHours(0, 0, 0, 0);
+        return nextWeek;
+    }
+
+
     // Process Create Competition
     const processCreate = async () => {
         changeLoadingVisible(true);
         try {
-            //insert function here!
-            console.log("Create Competition")
-            navigation.navigate('UserCompetitionPage', { user })
+            console.log("Create Competition");
+            // console.log(target.constructor.name);
+            await new CreateCompetitionPresenter().createCompetition(competitionName.trim(), competitionType, startDate, endDate, parseInt(target), competitionDetails.trim(), friendsInvited, user.accountID);
+            Alert.alert('Competition created successfully.', 'The competition needs at least 2 players. Please let your friends accept the invitation before the competition starts. Otherwise, the competition will be cancelled.');
+            navigation.navigate('UserCompetitionPage', { user });
         } catch (e) {
-            console.log(e.message)
+            changeModalVisible(true, e.message.replace('Error: ', ''));
         } finally {
             changeLoadingVisible(false);
         }
     };
 
+    const loadCompetitionTypes = async () => {
+        try{
+            await new CreateCompetitionPresenter({updateDropdown: setDropdownOpt}).getCompetitionTypes();
+        }catch(e){
+            changeModalVisible(true, e.message.replace('Error: ', ''));
+        }
+    }
+
+    const loadInfo = async () => {
+        try{
+            changeLoadingVisible(true);
+            await loadCompetitionTypes();
+        }catch(e){
+            changeModalVisible(true, e.message.replace('Error: ', ''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
+    useEffect(() => {
+        loadInfo();
+    }, []);
+
+    useEffect(() => {
+        setendDate(getNext2Weeks(startDate));
+    }, [startDate]);
+
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView>
             <View style={styles.container}>
                 <View style={styles.headerBox}>
                     <Text style={styles.headerText}>Create Competition</Text>
                 </View>
                 <View style={styles.detailsBox}>
-                    <TouchableOpacity style={styles.inviteButton} onPress={() => console.log("Invite Friends")}>
+                    <TouchableOpacity style={styles.inviteButton} onPress={() => navigation.navigate('InviteFriendsCompetitionPage', {user, friendsInvited})}>
                         <Text style={styles.inviteText}>Invite Friends</Text>
                     </TouchableOpacity>
                     <Text style={styles.detailsTitle}>Competition Name</Text>
@@ -59,26 +162,93 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
                         onChangeText={setcompetitionName}
                     />
                     <Text style={styles.detailsTitle}>Type</Text>
-                    <TextInput
-                        style={styles.input}
+                    <Dropdown
+                        style={styles.dropdown}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        data={dropdownOpt}
+                        maxHeight={300}
+                        labelField="competitionTypeName"
+                        valueField="competitionTypeID"
+                        placeholder="Select Plan Goal"
                         value={competitionType}
-                        placeholder='Enter competition type'
-                        onChangeText={setcompetitionType}
+                        onChange={type => {
+                            setcompetitionType(type);
+                        }}
+                        renderItem={renderItem}
+                        ref={dropdownRef}
                     />
-                    <Text style={styles.detailsTitle}>Start Date</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={startDate}
-                        placeholder='Enter start date'
-                        onChangeText={setstartDate}
+                    {
+                        competitionType === 0 ? null :
+
+                        <>
+                        <Text style={styles.detailsTitle}>Start Date</Text>
+                        
+                        <TouchableOpacity onPress={() => setOpenStartDate(true)}>
+                            <View>
+                                <Text style={styles.dateContainer}>{startDate ? formatDate(startDate) : "Select start date"}</Text>
+                            </View>
+                        </TouchableOpacity>
+                        {
+                            competitionType === 1 ? 
+                            
+                            <>
+                                <Text style={styles.detailsTitle}>Target (steps)</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={endDate}
+                                    placeholder='Enter number of steps'
+                                    onChangeText={setTarget}
+                                    keyboardType='number-pad'
+                                />
+                                
+                            </>
+
+                            :
+                            <>
+                                <Text style={styles.detailsTitle}>End Date</Text>
+                                <TouchableOpacity onPress={() => setOpenEndDate(true)}>
+                                    <View>
+                                        <Text style={styles.dateContainer}>{endDate ? formatDate(endDate) : "Select end date"}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </>
+                        }
+                        
+                        </>
+                        
+                    }
+                    <DatePicker
+                        modal
+                        open={openStartDate}
+                        date={startDate || getTomorrow(new Date())}
+                        mode='date'
+                        minimumDate={getTomorrow(new Date())}
+                        maximumDate={getNext2Weeks(startDate)}
+                        onConfirm={(date) => {
+                            setOpenStartDate(false);
+                            setstartDate(date);
+                        }}
+                        onCancel={() => {
+                            setOpenStartDate(false);
+                        }}
                     />
-                    <Text style={styles.detailsTitle}>End Date</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={endDate}
-                        placeholder='Enter end date'
-                        onChangeText={setendDate}
+                    <DatePicker
+                        modal
+                        open={openEndDate}
+                        date={endDate || getNext2Weeks(startDate)}
+                        mode='date'
+                        minimumDate={getTomorrow(startDate)}
+                        maximumDate={getNext2Weeks(startDate)}
+                        onConfirm={(date) => {
+                            setOpenEndDate(false);
+                            setendDate(date);
+                        }}
+                        onCancel={() => {
+                            setOpenEndDate(false);
+                        }}
                     />
+                    
                     <Text style={styles.detailsTitle}>Details</Text>
                     <TextInput
                         style={styles.competitionDetailsInput}
@@ -90,22 +260,25 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
                         placeholder="Enter your competition details here..."
                         textAlignVertical="top"
                     />
-                    <TouchableOpacity style={styles.createButton} onPress={() => changeModalVisible(true, 'Do you want to save changes?')}>
+                    <TouchableOpacity style={styles.createButton} onPress={() => changeConfirmVisible(true, 'Do you want to create this competition?')}>
                         <Text style={styles.createText}>CREATE</Text>
                     </TouchableOpacity>
                 </View>
-                <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+                <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={() => changeConfirmVisible(false)}>
                     <ActionDialog
-                        message={modalMsg}
-                        changeModalVisible={changeModalVisible}
+                        message={confirmMessage}
+                        changeModalVisible={changeConfirmVisible}
                         action={processCreate}
                     />
                 </Modal>
                 <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
                     <LoadingDialog />
                 </Modal>
+                <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+                    <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+                </Modal>
             </View>
-        </TouchableWithoutFeedback>
+        </ScrollView>
 
     );
 };
@@ -193,6 +366,45 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: scale(16)
     },
+    dropdown: {
+        height: scale(50),
+        width: '100%',
+        padding:scale(10),
+        backgroundColor: 'white',
+        borderColor: '#CCC',
+        borderWidth: 1,
+        borderRadius: 5,
+        marginBottom: scale(20),
+    },
+    placeholderStyle: {
+        fontSize: scale(13)
+    },
+    selectedTextStyle: {
+        fontSize: scale(15),
+        height:scale(18),
+    },
+    item: {
+        paddingLeft: scale(5),
+        height:scale(30),
+        borderWidth:1,
+        borderColor: 'lightgrey',
+        paddingVertical: scale(5),
+    },
+    itemText: {
+        fontSize: scale(12),
+        fontFamily:'Poppins-Medium'
+    },
+    dateContainer: {
+        fontFamily: 'Inter',
+        fontSize: scale(16),
+        marginBottom: scale(5),
+        paddingHorizontal: scale(15),
+        paddingVertical: scale(10),
+        borderRadius: scale(8),
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderColor: '#ccc',
+      },
 });
 
 

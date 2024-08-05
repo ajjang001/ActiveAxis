@@ -8,6 +8,7 @@ import DisplayAccountDetailsPresenter from '../../presenter/DisplayAccountDetail
 const UserAccountDetailsPage = ({ navigation, route }) => {
 
     const { user, userType } = route.params;
+    console.log({user})
     const userEmail = user.email;
 
     //check when this screen is focus
@@ -56,13 +57,13 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
             setIsLoading(true);
             const presenter = new DisplayAccountDetailsPresenter(view);
             await presenter.viewAccountDetails(userEmail, userType);
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 1500);
         } catch (error) {
             setIsLoading(false);
             setModalVisible(true);
             setModalMsg(error.message);
+        }
+        finally {
+            setIsLoading(false);
         }
     }, []);
 
@@ -135,10 +136,10 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
                 <Text style={styles.detailsText}>{medical}</Text>
             </View>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate("UserUpdateAccountDetailsPage", { user, userDetails })}>
+                <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate("UserUpdateAccountDetailsPage", { user, userDetails, userType })}>
                     <Text style={styles.editText}>Edit Information</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.passwordButton} onPress={() => navigation.navigate("UserUpdatePasswordPage", { user, userDetails })}>
+                <TouchableOpacity style={styles.passwordButton} onPress={() => navigation.navigate("UserUpdatePasswordPage", { user, userDetails, userType })}>
                     <Text style={styles.editText}>Change Password</Text>
                 </TouchableOpacity>
             </View>

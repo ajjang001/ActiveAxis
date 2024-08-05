@@ -32,10 +32,12 @@ const CoacheeFeedbackPage = ({ route }) => {
         try {
             setIsLoading(true);
             await new DisplayFeedbackFromCoacheePresenter({ updateFeedback: setFeedback }).displayCoachFeedbacks(coachEmail);
-            setIsLoading(false);
         } catch (error) {
             setModalVisible(true);
             setModalMsg(error.message);
+        }
+        finally {
+            setIsLoading(false);
         }
     };
 
@@ -87,7 +89,7 @@ const styles = StyleSheet.create({
     headerContainer: {
         width: '90%',
         marginVertical: scale(10),
-        alignSelf:'center'
+        alignSelf: 'center'
     },
     headerText: {
         fontSize: scale(36),

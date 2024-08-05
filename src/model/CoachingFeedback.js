@@ -6,31 +6,31 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from 'axios';
 
 class CoachingFeedback {
-    #coachID;
-    #dateSubmitted;
-    #feedbackText;
-    #rating;
-    #userID;
+    _coachID;
+    _dateSubmitted;
+    _feedbackText;
+    _rating;
+    _userID;
 
-    get coachID() { return this.#coachID; }
-    get dateSubmitted() { return this.#dateSubmitted; }
-    get feedbackText() { return this.#feedbackText; }
-    get rating() { return this.#rating; }
-    get userID() { return this.#userID; }
+    get coachID() { return this._coachID; }
+    get dateSubmitted() { return this._dateSubmitted; }
+    get feedbackText() { return this._feedbackText; }
+    get rating() { return this._rating; }
+    get userID() { return this._userID; }
 
-    set coachID(coachID) { this.#coachID = coachID; }
-    set dateSubmitted(dateSubmitted) { this.#dateSubmitted = dateSubmitted; }
-    set feedbackText(feedbackText) { this.#feedbackText = feedbackText; }
-    set rating(rating) { this.#rating = rating; }
-    set userID(userID) { this.#userID = userID; }
+    set coachID(coachID) { this._coachID = coachID; }
+    set dateSubmitted(dateSubmitted) { this._dateSubmitted = dateSubmitted; }
+    set feedbackText(feedbackText) { this._feedbackText = feedbackText; }
+    set rating(rating) { this._rating = rating; }
+    set userID(userID) { this._userID = userID; }
 
 
     constructor() {
-        this.#coachID = "";
-        this.#dateSubmitted = "";
-        this.#feedbackText = "";
-        this.#rating = 0;
-        this.#userID = "";
+        this._coachID = "";
+        this._dateSubmitted = "";
+        this._feedbackText = "";
+        this._rating = 0;
+        this._userID = "";
     }
 
 

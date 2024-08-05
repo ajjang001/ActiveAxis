@@ -7,32 +7,32 @@ import Coach from './Coach';
 import User from './User';
 
 class AppFeedback{
-    #feedbackID;
-    #dateSubmitted;
-    #feedbackText;
-    #rating
-    #accountID
-    #avatar
-    #fullName
-    #profilePicture
+    _feedbackID;
+    _dateSubmitted;
+    _feedbackText;
+    _rating
+    _accountID
+    _avatar
+    _fullName
+    _profilePicture
 
-    get feedbackID(){return this.#feedbackID;}
-    get dateSubmitted(){return this.#dateSubmitted;}
-    get feedbackText(){return this.#feedbackText;}
-    get rating(){return this.#rating;}
-    get accountID(){return this.#accountID;}
-    get avatar(){return this.#avatar;}
-    get fullName(){return this.#fullName;}
-    get profilePicture(){return this.#profilePicture;}
+    get feedbackID(){return this._feedbackID;}
+    get dateSubmitted(){return this._dateSubmitted;}
+    get feedbackText(){return this._feedbackText;}
+    get rating(){return this._rating;}
+    get accountID(){return this._accountID;}
+    get avatar(){return this._avatar;}
+    get fullName(){return this._fullName;}
+    get profilePicture(){return this._profilePicture;}
 
-    set feedbackID(feedbackID){this.#feedbackID = feedbackID;}
-    set dateSubmitted(dateSubmitted){this.#dateSubmitted = dateSubmitted;}
-    set feedbackText(feedbackText){this.#feedbackText = feedbackText;}
-    set rating(rating){this.#rating = rating;}
-    set accountID(accountID){this.#accountID = accountID;}
-    set avatar(avatar){this.#avatar = avatar;}
-    set fullName(fullName){this.#fullName = fullName;}
-    set profilePicture(profilePicture){this.#profilePicture = profilePicture;}
+    set feedbackID(feedbackID){this._feedbackID = feedbackID;}
+    set dateSubmitted(dateSubmitted){this._dateSubmitted = dateSubmitted;}
+    set feedbackText(feedbackText){this._feedbackText = feedbackText;}
+    set rating(rating){this._rating = rating;}
+    set accountID(accountID){this._accountID = accountID;}
+    set avatar(avatar){this._avatar = avatar;}
+    set fullName(fullName){this._fullName = fullName;}
+    set profilePicture(profilePicture){this._profilePicture = profilePicture;}
 
     constructor() {
         this.dateSubmitted = '';

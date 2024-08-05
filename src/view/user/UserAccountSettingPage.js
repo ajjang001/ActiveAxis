@@ -80,8 +80,8 @@ const UserAccountSettingPage = ({ navigation, route }) => {
     const options = [
         { label: 'Account Details', onPress: () => navigation.navigate("UserAccountDetailsPage1", { user , userType: 'user'}) },
         { label: 'Exercise Settings', onPress: () => navigation.navigate("UserExerciseSettingsPage", { user , userType: 'user'}) },
-        { label: 'Friends', onPress: () => console.log("Friends") },
-        { label: 'App Feedbacks', onPress: () => console.log("App Feedbacks") },
+        { label: 'Friends', onPress: () => navigation.navigate("UserFriendsListPage", { user }) },
+        { label: 'App Feedbacks', onPress: () => navigation.navigate("UserAppFeedbackPage", { user })},,
         { label: 'Achievements', onPress: () => navigation.navigate("UserAchievementPage", { user }) },
         { label: 'Connect Smart Wearables', onPress: () => navigation.navigate("SmartWearablePage", {user}) },
         { label: 'Log Out', onPress: () => changeConfirmVisible(true, 'Are you sure you want to log out?') }
