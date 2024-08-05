@@ -1,64 +1,83 @@
-
 import { db } from '../firebase/firebaseConfig';
-import { getDocs, collection, orderBy, where, query } from 'firebase/firestore';
+import { getDocs, collection, addDoc, updateDoc, doc } from 'firebase/firestore';
 
-class CompetitionType{
+class CompetitionType {
     _competitionTypeID;
     _competitionTypeName;
 
-    constructor (){
-        this._competitionTypeID = 0;
+    constructor() {
+        this._competitionTypeID = "";
         this._competitionTypeName = "";
     }
 
-    get competitionTypeID() {return this._competitionTypeID;}
-    get competitionTypeName() {return this._competitionTypeName;}
+    get competitionTypeID() { return this._competitionTypeID; }
+    get competitionTypeName() { return this._competitionTypeName; }
 
-    set competitionTypeID(competitionTypeID) {this._competitionTypeID = competitionTypeID;}
-    set competitionTypeName(competitionTypeName) {this._competitionTypeName = competitionTypeName;}
+    set competitionTypeID(competitionTypeID) { this._competitionTypeID = competitionTypeID; }
+    set competitionTypeName(competitionTypeName) { this._competitionTypeName = competitionTypeName; }
 
-    async getCompetitionType(competitionTypeID){
-        try{
-            
-            const q = query(collection(db, 'competitiontype'), where('competitionTypeID', '==', competitionTypeID));
-            const querySnapshot = await getDocs(q);
-
-
-            if (querySnapshot.empty) {
-                return null;
-            }else{
-                const doc = querySnapshot.docs[0];
+    async getCompetitionTypes() {
+        try {
+            const types = [];
+            const querySnapshot = await getDocs(collection(db, 'competitiontype'));
+            querySnapshot.forEach((doc) => {
                 const d = doc.data();
-                return d.competitionTypeName;
-            }
-        }catch(error){
-            throw new Error (error);
+                console.log('Fetched document:', d);  // Debug log
+                const type = new CompetitionType();
+                type.competitionTypeID = d.competitionTypeID;
+                type.competitionTypeName = d.competitionTypeName;
+                types.push(type);
+            });
+            return types;
+        } catch (error) {
+            throw new Error(error);
         }
     }
 
-    async getCompetitionTypes(){
-        try{
-            const types = [];
-            const querySnapshot = await getDocs(collection(db, 'competitiontype'), orderBy('competitionTypeID'));
-            
+    async addCompetitionType(newTypeName) {
+        try {
+            // Fetch the current maximum competitionTypeID
+            const querySnapshot = await getDocs(collection(db, 'competitiontype'));
+            let maxID = 0;
             querySnapshot.forEach((doc) => {
                 const d = doc.data();
-                const t = new CompetitionType();
-                t.competitionTypeID = d.competitionTypeID;
-                t.competitionTypeName = d.competitionTypeName;
-                types.push(t);
+                if (d.competitionTypeID > maxID) {
+                    maxID = d.competitionTypeID;
+                }
             });
 
-            // sort the array by competitionTypeName
-            types.sort((a, b) => {
-                return a.competitionTypeName.localeCompare(b.competitionTypeName);
-            });
+            const newTypeID = maxID + 1;
+            const newType = {
+                competitionTypeID: newTypeID,
+                competitionTypeName: newTypeName,
+            };
+            const docRef = await addDoc(collection(db, 'competitiontype'), newType);
+            return newTypeID; // Return the new incremented ID
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
 
-            return types;
-        }catch(error){
-            throw new Error (error);
+    async updateCompetitionType(typeID, updatedTypeName) {
+        try {
+            const querySnapshot = await getDocs(collection(db, 'competitiontype'));
+            let docID = null;
+            querySnapshot.forEach((doc) => {
+                if (doc.data().competitionTypeID === typeID) {
+                    docID = doc.id;
+                }
+            });
+            if (docID) {
+                const typeRef = doc(db, 'competitiontype', docID);
+                await updateDoc(typeRef, { competitionTypeName: updatedTypeName });
+            } else {
+                throw new Error('Document with given competitionTypeID not found');
+            }
+        } catch (error) {
+            throw new Error(error);
         }
     }
 }
 
 export default CompetitionType;
+

@@ -7,12 +7,28 @@ const CompetitionTypePage = ({ navigation }) => {
   const [competitionTypes, setCompetitionTypes] = useState([]);
   const [newType, setNewType] = useState('');
   const presenter = new CompetitionTypePresenter({
-    updateCompetitionTypes: (types) => setCompetitionTypes(types)
+    updateCompetitionTypes: (types) => {
+      console.log('Updating competition types in view:', types);  // Debug log
+      setCompetitionTypes(types);
+    }
   });
 
   useEffect(() => {
     presenter.loadCompetitionTypes();
   }, []);
+
+  const handleAddCompetitionType = async () => {
+    if (newType.trim() === '') {
+      alert('Please enter a valid competition type.');
+      return;
+    }
+    await presenter.addCompetitionType(newType);
+    setNewType('');
+  };
+
+  const handleUpdateCompetitionType = async (index, text) => {
+    await presenter.updateCompetitionType(index, text);
+  };
 
   return (
     <View style={styles.container}>
@@ -23,19 +39,19 @@ const CompetitionTypePage = ({ navigation }) => {
         value={newType}
         onChangeText={setNewType}
       />
-      <Button title="Add" onPress={() => presenter.addCompetitionType(newType)} />
+      <Button title="Add" onPress={handleAddCompetitionType} />
       <FlatList
         data={competitionTypes}
         renderItem={({ item, index }) => (
           <View style={styles.listItem}>
             <TextInput
               style={styles.listInput}
-              value={item}
-              onChangeText={(text) => presenter.updateCompetitionType(index, text)}
+              value={item.competitionTypeName}
+              onChangeText={(text) => handleUpdateCompetitionType(index, text)}
             />
           </View>
         )}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.competitionTypeID}
       />
     </View>
   );
@@ -76,4 +92,3 @@ const styles = StyleSheet.create({
 });
 
 export default CompetitionTypePage;
-
