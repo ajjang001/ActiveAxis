@@ -7,7 +7,7 @@ import InviteFriendToCompetitionPresenter from "../../presenter/InviteFriendToCo
 
 const InviteFriendsCompetitionPage = ({route, navigation})=>{
     const {user, friendsInvited} = route.params;
-
+k
     const [search, setSearch] = useState("");
     const [users,setUsers] = useState([]);
     
