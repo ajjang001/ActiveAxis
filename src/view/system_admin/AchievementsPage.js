@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView, Image } from 'react-native';
 import { scale } from '../../components/scale';
 import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Modal";
 import DisplayListOfAchievementsPresenter from '../../presenter/DisplayListOfAchievementsPresenter';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 const AchievementsPage = ({ navigation, route }) => {
@@ -59,7 +60,6 @@ const changeLoadingVisible = (b)=>{
   const renderSection = () => (
     <>
       {allAchievements.map((category) => {
-        
           return (
             <View style={styles.section} key = {category.type}>
               {renderSectionHeader({ section: category })}
@@ -95,9 +95,11 @@ const changeLoadingVisible = (b)=>{
     }
   },[route.params?.refresh]);
 
-  useEffect(() => {
-    loadAchievements();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadAchievements();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>

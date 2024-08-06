@@ -1,34 +1,85 @@
-// ManageAchievementTypePage.js
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, TextInput, Button, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { scale } from '../../components/scale';
 import ManageAchievementTypePresenter from '../../presenter/ManageAchievementTypePresenter';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ManageAchievementTypePage = () => {
     const [achievementTypes, setAchievementTypes] = useState([]);
+    const [newType, setNewType] = useState("");
+    const [tempUpdate, setTempUpdate] = useState(null);
+    const [editingIndex, setEditingIndex] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const presenter = new ManageAchievementTypePresenter({
-            displayAchievementTypes: (types) => {
-                setAchievementTypes(types);
-                setIsLoading(false);
-            }
-        });
+    // Initialize presenter once
+    const presenter = new ManageAchievementTypePresenter({
+        displayAchievementTypes: (types) => {
+            setAchievementTypes(types);
+            setIsLoading(false);
+        },
+        updateAchievementTypeArray: (types) => {
+            setAchievementTypes(types);
+        }
+    });
 
+    useFocusEffect(
+        useCallback(()=>{
+            setAchievementTypes([]);
+            presenter.getAchievementTypes();
+            console.log(achievementTypes);
+        },[])
+    );
+
+
+    const handleAddAchievementType = async () => {
+        if (newType.trim() === '') {
+            alert('Please enter a valid achievement type.');
+            return;
+        }
+        await presenter.addAchievementType(newType, achievementTypes);
+        setAchievementTypes([]);
         presenter.getAchievementTypes();
-    }, []);
+        setNewType('');
+    };
+
+    const handleUpdateAchievementType = async (index) => {
+        if(tempUpdate.trim()===''){
+            alert('Please enter a non-empty achievement type to update');
+            return;
+        }
+        await presenter.updateAchievementType(index, tempUpdate, achievementTypes);
+    };
 
     return (
         <View style={styles.container}>
+            <Text style={styles.title}>Achievement Types</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Add new type"
+                value={newType}
+                onChangeText={(text)=>setNewType(text)}
+            />
+            <Button title="Add" onPress={handleAddAchievementType} />
             {isLoading ? (
-                <Text>Loading...</Text>
+
+                <ActivityIndicator size ="large"/>
+            
             ) : (
                 <FlatList
                     data={achievementTypes}
                     keyExtractor={(item) => item.achievementTypeID.toString()}
-                    renderItem={({ item }) => (
-                        <View style={styles.itemContainer}>
-                            <Text style={styles.itemText}>{item.achievementTypeName}</Text>
+                    renderItem={({ item, index }) => (
+                        <View style={styles.listItem}>
+                            <TextInput
+                                style={styles.listInput}
+                                value={editingIndex === index ? tempUpdate : item.achievementTypeName}
+                                onChangeText={(text)=>{
+                                    setEditingIndex(index);
+                                    setTempUpdate(text);
+                                    console.log(text);
+                                }}
+                                onEndEditing={() => handleUpdateAchievementType(index)}
+                            />
                         </View>
                     )}
                 />
@@ -40,16 +91,34 @@ const ManageAchievementTypePage = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        backgroundColor: '#fff',
+        padding: scale(20),
+        backgroundColor: '#FBF5F3',
     },
-    itemContainer: {
-        padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
+    title: {
+        fontSize: scale(24),
+        fontWeight: 'bold',
+        marginBottom: scale(10),
     },
-    itemText: {
-        fontSize: 18,
+    input: {
+        borderWidth: 1,
+        borderColor: '#ddd',
+        padding: scale(10),
+        marginBottom: scale(10),
+        borderRadius: 5,
+    },
+    listItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: scale(10),
+    },
+    listInput: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        padding: scale(10),
+        borderRadius: 5,
+        marginRight: scale(10),
     },
 });
 

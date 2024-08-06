@@ -1,6 +1,6 @@
 
 import { db } from '../firebase/firebaseConfig';
-import { getDocs, collection, orderBy, where, query } from 'firebase/firestore';
+import { getDocs, collection, doc, addDoc, updateDoc, orderBy, where, query } from 'firebase/firestore';
 
 class AchievementType{
     _achievementTypeID;
@@ -57,6 +57,50 @@ class AchievementType{
             return types;
         }catch(error){
             throw new Error (error);
+        }
+    }
+
+    async addAchievementType(newTypeName){
+        try{
+            // Fetch the current maximum achievementTypeID
+            const querySnapshot = await getDocs(collection(db, 'achievementtype'));
+            let maxID = 0;
+            querySnapshot.forEach((doc) => {
+                const d = doc.data();
+                if (d.achievementTypeID > maxID) {
+                    maxID = d.achievementTypeID;
+                }
+            });
+
+            const newTypeID = maxID + 1;
+            const newType = {
+                achievementTypeID: newTypeID,
+                achievementTypeName: newTypeName,
+            };
+            const refDoc = await addDoc(collection(db, 'achievementtype'), newType);
+            return newTypeID; // Return the new incremented ID
+        } catch(error){
+            throw new Error(error);
+        }
+    }
+
+    async updateAchievementType(typeID, updatedTypeName){
+        try{
+            const querySnapshot = await getDocs(collection(db, 'achievementtype'));
+            let docID = null;
+            querySnapshot.forEach((doc) => {
+                if (doc.data().achievementTypeID === typeID) {
+                    docID = doc.id;
+                }
+            });
+            if (docID) {
+                const typeRef = doc(db, 'achievementtype', docID);
+                await updateDoc(typeRef, { achievementTypeName: updatedTypeName });
+            } else {
+                throw new Error('Document with given achievementTypeID not found');
+            }
+        } catch(error){
+            throw new Error(error);
         }
     }
 }
