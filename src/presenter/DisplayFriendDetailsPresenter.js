@@ -6,9 +6,10 @@ class DisplayFriendDetailsPresenter {
       this.model = new Friends(db);
   }
 
-  async loadFriendDetails(selectedUserId) {
+  async loadFriendDetails(friend) {
       try {
-          const friendDetails = await this.model.getFriendDetails(selectedUserId);
+        console.log("Details for friend accountID:", friend.accountID);
+          const friendDetails = await this.model.getFriendDetails(friend.accountID);
           this.view.displayFriendDetails(friendDetails);
       } catch (error) {
           console.error("Failed to load friend details:", error);

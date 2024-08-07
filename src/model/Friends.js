@@ -73,6 +73,7 @@ class Friends {
     }
 
     async getFriendDetails(userId) {
+        console.log("Fetching details for userId:", userId);
         const docRef = doc(db, 'users', userId);
         const docSnap = await getDoc(docRef);
     

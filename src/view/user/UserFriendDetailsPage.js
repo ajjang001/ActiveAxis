@@ -6,7 +6,7 @@ import { scale } from "../../components/scale";
 import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Modal";
 
 const UserFriendDetailsPage = ({ route }) => {
-    const { userId, selectedUserId } = route.params;
+    const { friend } = route.params;
 
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -35,8 +35,9 @@ const UserFriendDetailsPage = ({ route }) => {
         const fetchDetails = async () => {
             setIsLoading(true);
             try {
+                console.log("Loading details for friend:", friend);
                 const presenter = new DisplayFriendDetailsPresenter({ displayFriendDetails: setFriendDetails }, db);
-                await presenter.loadFriendDetails(selectedUserId);
+                await presenter.loadFriendDetails(friend);
                 setModalVisible(true);
             } catch (error) {
                 console.error("Failed to load friend details:", error);
@@ -46,7 +47,7 @@ const UserFriendDetailsPage = ({ route }) => {
         };
 
         fetchDetails();
-    }, [selectedUserId]);
+    }, [friend]);
 
     return (
         <View style={styles.container}>
