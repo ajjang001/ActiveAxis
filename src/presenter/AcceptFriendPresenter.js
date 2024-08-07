@@ -1,16 +1,18 @@
 import Friends from '../model/Friends';
 
-class AcceptFriendPresenter {
-  constructor(view, db) {
-    this.view = view;
-    this.model = new Friends(db);
-    this.currentUserId = userId;
-  }
+class AcceptFriendRequestPresenter {
+    constructor() {
+        this.friends = new Friends();
+    }
 
-  async handleAcceptFriend(selectedUserId) {
-    await this.model.respondToFriendRequest(this.currentUserId, selectedUserId, true);
-    this.view.refreshFriendRequests(); // Method to refresh the friend requests
-  }
+    async acceptRequest(currentUserId, selectedUserId) {
+        try {
+            await this.friends.respondToFriendRequest(currentUserId, selectedUserId, true);
+        } catch (error) {
+            console.error("Error accepting friend request:", error);
+            throw new Error(error.message);
+        }
+    }
 }
 
-export default AcceptFriendPresenter;
+export default AcceptFriendRequestPresenter;
