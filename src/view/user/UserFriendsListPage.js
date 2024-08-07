@@ -12,6 +12,7 @@ const UserFriendsListPage = ({route, navigation}) =>{
     const {user, friendRemove} = route.params;
     const [search, setSearch] = useState("");
     const [users, setUsers] = useState([]);
+    
 
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -55,12 +56,17 @@ const UserFriendsListPage = ({route, navigation}) =>{
 
     const viewDetails = (friend) => {
         // Navigate to the details page
-        // navigation.navigate('FriendDetailsPage', { friend });
+        navigation.navigate('UserFriendDetailsPage', { friend });
     }
 
     const handleAddFriend = () => {
         // Navigate to the add friend page or show the add friend modal
-        // navigation.navigate('AddFriendPage', { user });
+        navigation.navigate('UserAddFriendPage', { user });
+    }
+
+    const handleFriendRequest = () => {
+        // Navigate to the friend request page or show the friend request modal
+        navigation.navigate('UserFriendRequestPage', { user });
     }
 
     const removeFriend = async (friend) => {
@@ -82,6 +88,9 @@ const UserFriendsListPage = ({route, navigation}) =>{
         <View>
             <View style = {styles.titleView}>
                 <Text style = {styles.title}>Friend List</Text>
+                <TouchableOpacity onPress={handleFriendRequest} style={styles.friendRequestButton}>
+                    <Text style={styles.friendRequestButtonText}>Friend Request</Text>
+                </TouchableOpacity>
             </View>
             <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
                 <LoadingDialog />
@@ -142,14 +151,27 @@ const UserFriendsListPage = ({route, navigation}) =>{
 const styles = StyleSheet.create({
     titleView:{
         backgroundColor: '#E28413',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: scale(10),
+        paddingVertical: scale(10),
     },
     title:{
-        fontSize: 36,
+        fontSize: scale(36),
         fontFamily: 'League-Spartan',
         fontWeight: 'bold',
-
         textAlign: 'center',
-        marginVertical: 20,  
+    },
+    friendRequestButton: {
+        backgroundColor: 'black',
+        padding: scale(10),
+        borderRadius: scale(5),
+    },
+    friendRequestButtonText: {
+        color: 'white',
+        fontSize: scale(15),
+        fontFamily: 'League-Spartan-SemiBold',
     },
     contentContainer:{
         backgroundColor: '#C42847',

@@ -72,6 +72,24 @@ class Friends {
         return friends;
     }
 
+    async getFriendDetails(userId) {
+        const docRef = doc(db, 'users', userId);
+        const docSnap = await getDoc(docRef);
+    
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            return {
+                profilePicture: data.profilePicture ? await new User().getProfilePictureURL(data.profilePicture) : '',
+                fullName: data.fullName || '',
+                gender: data.gender || '',
+                fitnessGoal: data.fitnessGoal || '',
+                fitnessLevel: data.fitnessLevel || ''
+            };
+        } else {
+            throw new Error('No such document!');
+        }
+    }
+
     async removeFriend(userId1, userId2) {
         // Query to delete the friend relationship
         const user1Query = query(collection(db, 'friends'), where('userID1', '==', userId1), where('userID2', '==', userId2));
@@ -88,20 +106,23 @@ class Friends {
     }
 
     async searchUsers(searchText, currentUserId) {
-        // Fetch all users except the current logged in user and those who are suspended
         const usersSnapshot = await getDocs(collection(db, 'users'), where('isSuspended', '==', false));
         let users = [];
         usersSnapshot.forEach(doc => {
-            if (doc.data().username !== currentUserId) {
-                users.push(doc.data());
-            }
+          if (doc.data().accountID !== currentUserId) {
+            users.push({ id: doc.id, ...doc.data() });
+          }
         });
-
+      
         // Filter users based on search text
-        const searched = users.filter(user => user.fullName === searchText || user.username === searchText);
-
+        const searched = users.filter(user => 
+          user.fullName.toLowerCase().includes(searchText.toLowerCase()) || 
+          user.username.toLowerCase().includes(searchText.toLowerCase())
+        );
+      
         return searched;
-    }
+      }
+      
 
     async searchFriend(userId, keyword) {
         try{
