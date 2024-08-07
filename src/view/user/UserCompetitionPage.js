@@ -9,6 +9,7 @@ import DisplayCompetitionsPresenter from '../../presenter/DisplayCompetitionsPre
 const UserCompetitionPage = ({ navigation, route }) => {
     const { user } = route.params;
 
+
     const [myCompetitions, setMyCompetitions] = useState([]);
     const [participatedCompetitions, setParticipatedCompetitions] = useState([]);
 
@@ -38,7 +39,6 @@ const UserCompetitionPage = ({ navigation, route }) => {
     // Date formatter
     const formatDate = (date) => {
         if (!date) return "";
-        console.log(date.toLocaleString());
         return date.toLocaleString('en-US', {
             timeZone: 'Asia/Singapore',
             year: 'numeric',
@@ -56,6 +56,7 @@ const UserCompetitionPage = ({ navigation, route }) => {
             setParticipatedCompetitions([]);
             await new DisplayCompetitionsPresenter({updateMyCompetitions: setMyCompetitions, updateParticipatedCompetitions: setParticipatedCompetitions}).loadCompetitions(user.accountID);
         }catch(error){
+            console.log(error);
             changeModalVisible(true, error.message.replace('Error: ', ''));
         }finally{
             changeLoadingVisible(false);
@@ -70,7 +71,7 @@ const UserCompetitionPage = ({ navigation, route }) => {
     );
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <Text style={styles.headerText}>Competitions</Text>
             </View>
@@ -87,7 +88,7 @@ const UserCompetitionPage = ({ navigation, route }) => {
                     <Text style={styles.buttonText}>Create</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() =>
-                    console.log('Invite')
+                    navigation.navigate("UserCompetitionInvitationPage", { user })
                 }>
                     <Text style={styles.buttonText}>Invitation</Text>
                 </TouchableOpacity>
@@ -97,7 +98,7 @@ const UserCompetitionPage = ({ navigation, route }) => {
                     <Text style={styles.buttonText}>History</Text>
                 </TouchableOpacity>
             </View>
-            <View style={styles.competitionContainer}>
+            <ScrollView contentContainerStyle={styles.competitionContainer}>
                 {
                     myCompetitions.length <= 0 ? null :
                     <>
@@ -112,17 +113,20 @@ const UserCompetitionPage = ({ navigation, route }) => {
                                         <Text style = {styles.competitionDateTitle}>Type:</Text>
                                         <Text style = {[styles.competitionDateTitle, {fontFamily:'Inter'}]}>    {competition.competitionType.competitionTypeName}</Text>
                                         <Text style = {styles.competitionDateTitle}>Start Date:</Text>
-                                        <Text style = {[styles.competitionDateTitle, {fontFamily:'Inter'}]}>    {formatDate(competition.startDate)}</Text>
+                                        <Text style = {[styles.competitionDateTitle, {fontFamily:'Inter'}]}>    {formatDate(competition.startDate.toDate())}</Text>
                                         <Text style = {styles.competitionDateTitle}>End Date:</Text>
-                                        <Text style = {[styles.competitionDateTitle, {fontFamily:'Inter'}]}>    {formatDate(competition.endDate)}</Text>
+                                        <Text style = {[styles.competitionDateTitle, {fontFamily:'Inter'}]}>    {formatDate(competition.endDate.toDate())}</Text>
                                     </View>
                                     <View style = {styles.competitionDateButtonsView}>
-                                        <TouchableOpacity onPress = {()=>{console.log('details')}} style = {[{backgroundColor: '#E28413'}, styles.competitionDateButtons]}>
+                                        <TouchableOpacity onPress = {()=>{navigation.navigate('UserCompetitionDetailsPage', {user, competition})}} style = {[{backgroundColor: '#E28413'}, styles.competitionDateButtons]}>
                                             <Text style ={[styles.competitionDateTitle, {textAlign:'center', color:'white'}]}>View Details</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress = {()=>{console.log('leave')}} style = {[{backgroundColor: '#BA0000'}, styles.competitionDateButtons]}>
-                                            <Text style ={[styles.competitionDateTitle, {textAlign:'center', color:'white'}]}>Leave</Text>
-                                        </TouchableOpacity>
+                                        {
+                                            competition.startDate.toDate() > new Date() ?
+                                            <TouchableOpacity onPress = {()=>{console.log('Delete')}} style = {[{backgroundColor: '#BA0000'}, styles.competitionDateButtons]}>
+                                                <Text style ={[styles.competitionDateTitle, {textAlign:'center', color:'white'}]}>Delete</Text>
+                                            </TouchableOpacity>: null
+                                        }
                                     </View>
                                 </View>
                                 <View style = {styles.progressView}>
@@ -158,15 +162,61 @@ const UserCompetitionPage = ({ navigation, route }) => {
                     <Text style = {styles.titleText}>Participated Competitions</Text>
                     {participatedCompetitions.map((competition, index) => {
                         return (
-                            <View key={index}>
-                                <Text>{competition.competitionName}</Text>
+                            <View style = {styles.competitionView} key={index}>
+                                
+                                <View style = {styles.competitionDetailsView}>
+                                    <Text style = {styles.competitionTitleText}>{competition.competitionName}</Text>
+                                    <View style = {styles.competitionDateView}>
+                                        <Text style = {styles.competitionDateTitle}>Type:</Text>
+                                        <Text style = {[styles.competitionDateTitle, {fontFamily:'Inter'}]}>    {competition.competitionType.competitionTypeName}</Text>
+                                        <Text style = {styles.competitionDateTitle}>Start Date:</Text>
+                                        <Text style = {[styles.competitionDateTitle, {fontFamily:'Inter'}]}>    {formatDate(competition.startDate.toDate())}</Text>
+                                        <Text style = {styles.competitionDateTitle}>End Date:</Text>
+                                        <Text style = {[styles.competitionDateTitle, {fontFamily:'Inter'}]}>    {formatDate(competition.endDate.toDate())}</Text>
+                                    </View>
+                                    <View style = {styles.competitionDateButtonsView}>
+                                        <TouchableOpacity onPress = {()=>{navigation.navigate('UserCompetitionDetailsPage', {user, competition})}} style = {[{backgroundColor: '#E28413'}, styles.competitionDateButtons]}>
+                                            <Text style ={[styles.competitionDateTitle, {textAlign:'center', color:'white'}]}>View Details</Text>
+                                        </TouchableOpacity>
+                                        {
+                                            competition.startDate.toDate() > new Date() ?
+                                            <TouchableOpacity onPress = {()=>{console.log('leave')}} style = {[{backgroundColor: '#BA0000'}, styles.competitionDateButtons]}>
+                                                <Text style ={[styles.competitionDateTitle, {textAlign:'center', color:'white'}]}>Leave</Text>
+                                            </TouchableOpacity>: null
+
+                                        }
+                                        
+                                    </View>
+                                </View>
+                                <View style = {styles.progressView}>
+                                    <View style = {styles.progress}>
+                                        <Text style = {styles.progressText}>Progress: </Text>
+                                        {
+                                            competition.competitionType.competitionTypeID === 1 ?
+                                            <Text style = {styles.progressText}>0%</Text> : null
+                                        }
+                                        
+                                        {
+                                            competition.competitionType.competitionTypeID === 2 ?
+                                            <>
+                                                <Text style = {styles.progressText}>0</Text>
+                                                <Text style = {[styles.progressText, {fontSize:scale(16)}]}>steps</Text>
+                                            </>
+                                            : null
+                                        }
+                                    </View>
+                                    <Text style = {styles.progressTopBottomText}>{competition.participants.length} Participants</Text>
+                                </View>
+
                             </View>
                         );
+
                     })}
+
                     </>
                 }
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View>
     );
 };
 const styles = StyleSheet.create({
@@ -189,6 +239,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         width: '95%',
         flexDirection: 'row',
+        paddingVertical: scale(8),
     },
     button: {
         borderWidth: 1,
@@ -214,24 +265,29 @@ const styles = StyleSheet.create({
     titleText:{
         fontSize: scale(24),
         fontFamily: 'Inter-SemiBold',
+        paddingVertical: scale(8),
     },
     competitionView:{
         width: '100%',
         marginBottom: scale(16),
         flexDirection: 'row',
-        alignItems: 'center',
         borderRadius: scale(8),
+        backgroundColor: 'white',
+
+        
     },
     progressView:{
-        width: '45%',
+        width: '40%',
+        justifyContent: 'space-between',
+        borderWidth: 2,
+        borderBottomRightRadius: scale(8),
+        borderTopRightRadius: scale(8),
     },
     progress:{
         backgroundColor: 'white',
         borderTopRightRadius: scale(8),
-        borderWidth: 2,
-        justifyContent: 'center',
-        alignItems: 'center',
         height: scale(175),
+        justifyContent: 'center',
     },
     progressTopBottomText:{
         fontSize: scale(16),
@@ -241,13 +297,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'black',
-        borderBottomRightRadius: scale(8),
         
     },
     competitionDetailsView:{
-        width: '55%',
+        width: '60%',
         padding: scale(8),
         backgroundColor:'#D9D9D9',
+        borderTopLeftRadius: scale(8),
+        borderBottomLeftRadius: scale(8),
 
     },
     competitionTitleText:{
@@ -255,6 +312,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Inter-SemiBold',
         backgroundColor: 'white',
         paddingHorizontal: scale(8),
+        
     },
     competitionDateView:{
         flexDirection: 'column',
@@ -278,6 +336,7 @@ const styles = StyleSheet.create({
     progressText:{
         fontSize: scale(24),
         fontFamily: 'Inter-SemiBold',
+        textAlign: 'center',
     }
 });
 

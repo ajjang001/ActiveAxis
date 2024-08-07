@@ -106,8 +106,6 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
     const processCreate = async () => {
         changeLoadingVisible(true);
         try {
-            console.log("Create Competition");
-            // console.log(target.constructor.name);
             await new CreateCompetitionPresenter().createCompetition(competitionName.trim(), competitionType, startDate, endDate, parseInt(target), competitionDetails.trim(), friendsInvited, user.accountID);
             Alert.alert('Competition created successfully.', 'The competition needs at least 2 players. Please let your friends accept the invitation before the competition starts. Otherwise, the competition will be cancelled.');
             navigation.navigate('UserCompetitionPage', { user });
@@ -161,6 +159,7 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
                         value={competitionName}
                         placeholder='Enter competition name'
                         onChangeText={setcompetitionName}
+                        maxLength={24}
                     />
                     <Text style={styles.detailsTitle}>Type</Text>
                     <Dropdown

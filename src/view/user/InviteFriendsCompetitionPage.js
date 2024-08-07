@@ -7,6 +7,8 @@ import InviteFriendToCompetitionPresenter from "../../presenter/InviteFriendToCo
 
 const InviteFriendsCompetitionPage = ({route, navigation})=>{
     const {user, friendsInvited} = route.params;
+    const {competitionID} = route.params;
+    const [hasInvited, setHasInvited] = useState([]);
 
     const [search, setSearch] = useState("");
     const [users,setUsers] = useState([]);
@@ -56,6 +58,14 @@ const InviteFriendsCompetitionPage = ({route, navigation})=>{
         return false;
     }
 
+    const checkFriendInPending = (friend)=>{
+        for(let i = 0; i < hasInvited.length; i++){
+            if(hasInvited[i].participant_userID === friend.accountID){
+                return true;
+            }
+        }
+    }
+
     const searchHandler = async ()=>{
         try{
             changeLoadingVisible(true);
@@ -69,13 +79,13 @@ const InviteFriendsCompetitionPage = ({route, navigation})=>{
         }
     }
 
-    const handleInvite = (friend)=>{
+    const addToInvite = (friend)=>{
         friendsInvited.push(friend.accountID);
         changeModalVisible(true, 'Friend Invited');
         displayFriends();
     }
 
-    const handleCancelInvite = (friend)=>{
+    const removeFromInvite = (friend)=>{
         const index = friendsInvited.indexOf(friend.accountID);
         if(index > -1){
             friendsInvited.splice(index, 1);
@@ -83,10 +93,62 @@ const InviteFriendsCompetitionPage = ({route, navigation})=>{
             displayFriends();
         }
     }
+    const handleCancelInvite = async (user) =>{
+        try{
+            changeLoadingVisible(true);
+            await new InviteFriendToCompetitionPresenter().cancelInvite(competitionID, user.accountID);
+
+            const index = hasInvited.findIndex((friend)=> friend.participant_userID === user.accountID);
+            if(index > -1){
+                hasInvited.splice(index, 1);
+            }
+
+            changeModalVisible(true, 'Invite Cancelled');
+
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ',''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
+    const handleAddUser = async (user) =>{
+        try{
+            changeLoadingVisible(true);
+            await new InviteFriendToCompetitionPresenter().inviteFriend(competitionID, user.accountID);
+
+            hasInvited.push({competitionID: competitionID, participant_userID: user.accountID, status: "Pending"});
+
+            changeModalVisible(true, 'Invite Sent');
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ',''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
+    const loadData = async ()=>{
+        try{
+            changeLoadingVisible(true);
+
+            if(competitionID){
+                await new InviteFriendToCompetitionPresenter({updatePendingInvites: setHasInvited}).getPendingInvites(competitionID);
+            }else{
+                console.log('No competition ID');
+            }
+
+            await displayFriends();
+
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ',''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
 
 
     useEffect(()=>{
-        displayFriends();
+        loadData();
     },[]);
 
     
@@ -125,10 +187,21 @@ const InviteFriendsCompetitionPage = ({route, navigation})=>{
                                         <Text style = {styles.name}>{user.fullName}</Text>
                                         <Text style = {styles.role}>User</Text>
                                         <View style ={styles.optButtons}>
+
+                                            {
+                                                competitionID ? 
+
+                                                <TouchableOpacity disabled={checkFriendInInvited(user)} onPress = { (checkFriendInPending(user) ? ()=> handleCancelInvite(user) : ()=> handleAddUser(user) )  } activeOpacity={0.7} style = {[{width:scale(100), borderRadius:scale(8)}, (checkFriendInInvited(user) ? {backgroundColor: "black"} : checkFriendInPending(user) ? {backgroundColor: "#E28413"} : {backgroundColor: "#00AD3B"})]} >
+                                                    <Text style={styles.inviteText}>{checkFriendInInvited(user) ? 'JOINED' : checkFriendInPending(user) ? "PENDING" : "INVITE" }</Text>
+                                                </TouchableOpacity>
+
+                                                : 
+                                                <TouchableOpacity onPress = { (checkFriendInInvited(user) ? ()=> removeFromInvite(user) : ()=> addToInvite(user) )  } activeOpacity={0.7} style = {[{width:scale(100), borderRadius:scale(8)}, (checkFriendInInvited(user) ? {backgroundColor: "#E28413"} : {backgroundColor: "#00AD3B"})]} >
+                                                    <Text style={styles.inviteText}>{checkFriendInInvited(user) ? 'INVITED' : 'INVITE'}</Text>
+                                                </TouchableOpacity>
+                                            }
+
                                             
-                                            <TouchableOpacity onPress = { (checkFriendInInvited(user) ? ()=> handleCancelInvite(user) : ()=> handleInvite(user) )  } activeOpacity={0.7} style = {[{width:scale(100)}, (checkFriendInInvited(user) ? {backgroundColor: "#E28413"} : {backgroundColor: "#00AD3B"})]} >
-                                                <Text style={styles.inviteText}>{checkFriendInInvited(user) ? 'INVITED' : 'INVITE'}</Text>
-                                            </TouchableOpacity>
 
                                         </View>
                                     </View>
@@ -258,7 +331,7 @@ const styles = StyleSheet.create({
     },
     inviteText:{
         fontFamily:'League-Spartan-SemiBold',
-        fontSize: scale(15),
+        fontSize: scale(16),
         color:'white',
         textAlign:'center',
     }

@@ -10,7 +10,6 @@ class DisplayCompetitionsPresenter{
     async loadCompetitions(userid){
         this.model = new Competition();
         let competitionList = await this.model.getCompetitions(userid);
-        console.log(competitionList);
         this.view.updateMyCompetitions(competitionList.myCompetitions);
         this.view.updateParticipatedCompetitions(competitionList.participatedCompetitions);
     }
