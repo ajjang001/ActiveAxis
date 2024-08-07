@@ -85,13 +85,8 @@ const UserFriendsListPage = ({route, navigation}) =>{
     },[]);
 
     return (
-        <View>
-            <View style = {styles.titleView}>
-                <Text style = {styles.title}>Friend List</Text>
-                <TouchableOpacity onPress={handleFriendRequest} style={styles.friendRequestButton}>
-                    <Text style={styles.friendRequestButtonText}>Friend Request</Text>
-                </TouchableOpacity>
-            </View>
+        <View style = {styles.container}>
+            
             <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
                 <LoadingDialog />
             </Modal>
@@ -100,6 +95,10 @@ const UserFriendsListPage = ({route, navigation}) =>{
             </Modal>
 
             <View style = {styles.contentContainer}>
+                <View style = {styles.titleView}>
+                    <Text style = {styles.title}>Friend List</Text>
+                    
+                </View>
                 <View style = {styles.topContentContainer}>
                     <View style = {styles.searchBarContainer}>
                         <Image style = {styles.searchLogo} source={require('../../../assets/search_icon.png')} />    
@@ -137,11 +136,15 @@ const UserFriendsListPage = ({route, navigation}) =>{
                     }
                     </ScrollView>
                 </View>
-                <View style={styles.addButtonContainer}>
-                    <TouchableOpacity onPress={handleAddFriend} activeOpacity={0.7} style={styles.addButton}>
-                        <Text style={styles.addButtonText}>ADD FRIEND</Text>
-                    </TouchableOpacity>
-                </View>
+                
+            </View>
+            <View style={styles.addButtonContainer}>
+                <TouchableOpacity onPress={handleFriendRequest} style={styles.friendRequestButton}>
+                    <Text style={styles.friendRequestButtonText}>Friend Request</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleAddFriend} activeOpacity={0.7} style={styles.addButton}>
+                    <Text style={styles.addButtonText}>Add Friend</Text>
+                </TouchableOpacity>
             </View>
             
         </View>
@@ -149,10 +152,14 @@ const UserFriendsListPage = ({route, navigation}) =>{
 }
 
 const styles = StyleSheet.create({
+    container:{
+        flex: 1,
+        backgroundColor: '#E28413',
+    },
     titleView:{
         backgroundColor: '#E28413',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: scale(10),
         paddingVertical: scale(10),
@@ -162,6 +169,7 @@ const styles = StyleSheet.create({
         fontFamily: 'League-Spartan',
         fontWeight: 'bold',
         textAlign: 'center',
+        
     },
     friendRequestButton: {
         backgroundColor: 'black',
@@ -175,8 +183,8 @@ const styles = StyleSheet.create({
     },
     contentContainer:{
         backgroundColor: '#C42847',
-        height: '100%',
         width: '100%',
+        height: '85%',
     },
     topContentContainer:{
         width: '100%',
@@ -299,7 +307,9 @@ const styles = StyleSheet.create({
         width: '100%',
         padding: scale(20),
         backgroundColor: '#E28413',
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
     },
     addButton: {
         width: scale(120),
