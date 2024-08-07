@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, Image } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, Image, ActivityIndicator } from 'react-native';
 import { scale } from '../../components/scale';
 import { LoadingDialog, MessageDialog } from "../../components/Modal";
 import DisplayCoachHistoryPresenter from '../../presenter/DisplayCoachHistoryPresenter';
@@ -81,9 +81,13 @@ const UserCoachHistoryPage = ({ navigation, route }) => {
                 <Text style={styles.headerText}>Coach History</Text>
             </View>
             {coach.length === 0 ? (
-                <View style={styles.nohistory}>
-                    <Text style={styles.nohistoryText}>No History Available</Text>
-                </View>
+                isLoading ? (
+                    <ActivityIndicator size="large" color="white" />
+                ) : (
+                    <View style={styles.nohistory}>
+                        <Text style={styles.nohistoryText}>No History Available</Text>
+                    </View>
+                )
             ) : (
                 <View style={styles.coachContainer}>
                     <ScrollView>
@@ -95,12 +99,20 @@ const UserCoachHistoryPage = ({ navigation, route }) => {
                                     <Text style={styles.date}>Start Date: {formatDate(item.startDate)}</Text>
                                     <Text style={styles.date}>End Date: {formatDate(item.endDate)}</Text>
                                     <View style={styles.buttonContainer}>
-                                        <TouchableOpacity style={styles.detailsButton} onPress={() =>
-                                            navigation.navigate("UserCoachHistoryDetails", { user, coachDetails: item })}>
+                                        <TouchableOpacity
+                                            style={styles.detailsButton}
+                                            onPress={() =>
+                                                navigation.navigate("UserCoachHistoryDetails", { user, coachDetails: item })
+                                            }
+                                        >
                                             <Text style={styles.buttonText}>Details</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity style={styles.feedbackButton} onPress={() =>
-                                            navigation.navigate("UserCoachHistoryFeedback", { user, coachDetails: item })}>
+                                        <TouchableOpacity
+                                            style={styles.feedbackButton}
+                                            onPress={() =>
+                                                navigation.navigate("UserCoachHistoryFeedback", { user, coachDetails: item })
+                                            }
+                                        >
                                             <Text style={styles.buttonText}>Feedback</Text>
                                         </TouchableOpacity>
                                     </View>

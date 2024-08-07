@@ -1,6 +1,6 @@
 
 import { db, storage } from "../firebase/firebaseConfig";
-import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt } from "firebase/firestore";
+import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, addDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import axios from 'axios';
@@ -33,6 +33,15 @@ class CoachingFeedback {
         this._userID = "";
     }
 
+    async getURL(r) {
+        try {
+            const ppRef = ref(storage, r);
+            const ppURL = await getDownloadURL(ppRef);
+            return ppURL;
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
 
     async getCoachFeedbacks(coachID) {
         try {
@@ -92,6 +101,57 @@ class CoachingFeedback {
     } catch(e) {
         throw new Error(e.message);
     }
+
+    async getUserCoachFeedback(userID, coachID) {
+        try {
+            const q = query(collection(db, 'coachingfeedback'), where('userID', '==', userID), where('coachID', '==', coachID));
+            const querySnapshot = await getDocs(q);
+
+            const feedback = [];
+            for (const docSnapshot of querySnapshot.docs) {
+                const data = docSnapshot.data();
+                const userDoc = await getDoc(doc(db, 'user', userID));
+                const userData = userDoc.exists() ? userDoc.data() : {};
+
+                let userProfilePicture = "";
+                if (userData.profilePicture) {
+                    userProfilePicture = await this.getURL(userData.profilePicture);
+                }
+
+                const feedbackItem = {
+                    id: docSnapshot.id, // Include the document ID
+                    fullName: userData.fullName,
+                    profilePicture: userProfilePicture,
+                    rating: data.rating,
+                    feedbackText: data.feedbackText,
+                };
+
+                feedback.push(feedbackItem);
+            }
+            return feedback;
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async submitUserCoachFeedback(feedbackData) {
+        const feedbackCollection = collection(db, 'coachingfeedback');
+        await addDoc(feedbackCollection, feedbackData);
+    }
+
+    async updateUserCoachFeedback(feedbackID, feedbackData) {
+        try {
+            // Reference to the specific document in the 'coachingfeedback' collection
+            const feedbackDocRef = doc(db, 'coachingfeedback', feedbackID);
+            // Update the document with the new data
+            await setDoc(feedbackDocRef, feedbackData, { merge: true });
+            console.log("Feedback updated successfully.");
+        } catch (e) {
+            console.error("Error updating feedback: ", e.message);
+            throw new Error(e.message);
+        }
+    }
 }
+
 
 export default CoachingFeedback;
