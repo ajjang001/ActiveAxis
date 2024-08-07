@@ -5,10 +5,11 @@ import { scale } from "../../components/scale";
 import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Modal";
 import DisplayFriendsListPresenter from "../../presenter/DisplayFriendsListPresenter";
 import SearchUserPresenter from "../../presenter/SearchUserPresenter";
+import RemoveFriendPresenter from "../../presenter/RemoveFriendPresenter";
 
 const UserFriendsListPage = ({route, navigation}) =>{
     // state variables
-    const {user} = route.params;
+    const {user, friendRemove} = route.params;
     const [search, setSearch] = useState("");
     const [users, setUsers] = useState([]);
 
@@ -43,12 +44,33 @@ const UserFriendsListPage = ({route, navigation}) =>{
         try{
             changeLoadingVisible(true);
             setUsers([]);
-            await new SearchUserPresenter({updateFriends: setUsers}).handleSearchUsers(user.accountID, search.trim());
+            await new SearchUserPresenter({updateFriends: setUsers}).searchFriend(user.accountID, search.trim());
         }catch(error){
             console.log(error);
             changeModalVisible(true, error.message.replace('Error: ',''));
         }finally{
             changeLoadingVisible(false);
+        }
+    }
+
+    const viewDetails = (friend) => {
+        // Navigate to the details page
+        // navigation.navigate('FriendDetailsPage', { friend });
+    }
+
+    const handleAddFriend = () => {
+        // Navigate to the add friend page or show the add friend modal
+        // navigation.navigate('AddFriendPage', { user });
+    }
+
+    const removeFriend = async (friend) => {
+        try {
+            const removeFriendPresenter = new RemoveFriendPresenter(null, user.accountID);
+            await removeFriendPresenter.handleRemoveFriend(friend.accountID);
+            changeModalVisible(true, 'Friend Removed');
+            displayFriends();
+        } catch (error) {
+            changeModalVisible(true, error.message.replace('Error: ', ''));
         }
     }
 
@@ -91,9 +113,12 @@ const UserFriendsListPage = ({route, navigation}) =>{
                                         <Text style = {styles.name}>{user.fullName}</Text>
                                         <Text style = {styles.role}>User</Text>
                                         <View style ={styles.optButtons}>
-                                            
-                                          
-
+                                        <TouchableOpacity onPress={() => viewDetails(user)} activeOpacity={0.7} style={[styles.detailsButton]}>
+                                                    <Text style={styles.detailsText}>DETAILS</Text>
+                                                </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => removeFriend(user)} activeOpacity={0.7} style={[styles.removeButton]}>
+                                                    <Text style={styles.removeText}>REMOVE</Text>
+                                                </TouchableOpacity>                                       
                                         </View>
                                     </View>
                                 </View>
@@ -103,7 +128,11 @@ const UserFriendsListPage = ({route, navigation}) =>{
                     }
                     </ScrollView>
                 </View>
-
+                <View style={styles.addButtonContainer}>
+                    <TouchableOpacity onPress={handleAddFriend} activeOpacity={0.7} style={styles.addButton}>
+                        <Text style={styles.addButtonText}>ADD FRIEND</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
             
         </View>
@@ -215,15 +244,53 @@ const styles = StyleSheet.create({
     },
     optButtons:{
         flexDirection:'row',
-        justifyContent:'flex-end',
+        justifyContent:'space-between',
         alignItems:'center',
         width: scale(275),
     },
-    inviteText:{
-        fontFamily:'League-Spartan-SemiBold',
+    detailsButton: {
+        width: scale(100),
+        backgroundColor: "#D9D9D9",
+        paddingVertical: scale(5),
+        borderRadius: scale(8),
+        marginRight: scale(10),
+    },
+    detailsText: {
+        fontFamily: 'League-Spartan-SemiBold',
         fontSize: scale(15),
-        color:'white',
-        textAlign:'center',
+        color: 'black',
+        textAlign: 'center',
+    },
+    removeButton: {
+        width: scale(100),
+        backgroundColor: "#E28413",
+        paddingVertical: scale(5),
+        borderRadius: scale(8),
+    },
+    removeText: {
+        fontFamily: 'League-Spartan-SemiBold',
+        fontSize: scale(15),
+        color: 'white',
+        textAlign: 'center',
+    },
+    addButtonContainer: {
+        width: '100%',
+        padding: scale(20),
+        backgroundColor: '#E28413',
+        alignItems: 'center',
+    },
+    addButton: {
+        width: scale(120),
+        backgroundColor: '#00AD3B',
+        paddingVertical: scale(10),
+        paddingHorizontal: scale(20),
+        borderRadius: scale(8),
+    },
+    addButtonText: {
+        fontFamily: 'League-Spartan-SemiBold',
+        fontSize: scale(15),
+        color: 'white',
+        textAlign: 'center',
     }
 });
 

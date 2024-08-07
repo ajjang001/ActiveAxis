@@ -40,6 +40,8 @@ import UserCompetitionHistoryPage from './src/view/user/UserCompetitionHistoryPa
 import UserCompetitionInvitationPage from './src/view/user/UserCompetitionInvitationPage';
 import UserCoachPage from './src/view/user/UserCoachPage';
 import UserCoachHistoryPage from './src/view/user/UserCoachHistoryPage';
+import UserCoachHistoryDetails from './src/view/user/UserCoachHistoryDetails';
+import UserCoachHistoryFeedback from './src/view/user/UserCoachHistoryFeedback';
 import UserAchievementPage from './src/view/user/UserAchievementPage';
 import UserShareAchievementPage from './src/view/user/UserShareAchievementPage';
 import SmartWearablePage from './src/view/user/SmartWearablePage';
@@ -263,6 +265,8 @@ export default function App() {
           <Stack.Screen name="UserAppFeedbackPage" component={UserAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserSendAppFeedbackPage" component={UserSendAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserUpdateAppFeedbackPage" component={UserUpdateAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserCoachHistoryDetails" component={UserCoachHistoryDetails} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserCoachHistoryFeedback" component={UserCoachHistoryFeedback} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           {/* Add user pages here */}
 
           <Stack.Screen name="SystemAdminHomePage" component={SystemAdminHomePage} options={{ headerShown: false }} />

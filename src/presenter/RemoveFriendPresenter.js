@@ -1,9 +1,9 @@
 import Friends from '../model/Friends';
 
 class RemoveFriendPresenter {
-  constructor(view, db) {
+  constructor(view, userId) {
     this.view = view;
-    this.model = new Friends(db);
+    this.model = new Friends();
     this.currentUserId = userId;
   }
 
