@@ -49,6 +49,7 @@ import UserWorkoutPage from './src/view/user/UserWorkoutPage';
 import UserFriendsListPage from './src/view/user/UserFriendsListPage';
 import UserFriendDetailsPage from './src/view/user/UserFriendDetailsPage';
 import UserFriendRequestPage from './src/view/user/UserFriendRequestPage';
+import UserAddFriendPage from './src/view/user/UserAddFriendPage';
 import UserAppFeedbackPage from './src/view/user/UserAppFeedbackPage';
 import UserSendAppFeedbackPage from './src/view/user/UserSendAppFeedbackPage';
 import UserUpdateAppFeedbackPage from './src/view/user/UserUpdateAppFeedbackPage';
@@ -265,7 +266,8 @@ export default function App() {
           <Stack.Screen name="SmartWearablePage" component={SmartWearablePage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserFriendsListPage" component={UserFriendsListPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserFriendDetailsPage" component={UserFriendDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
-          <Stack.Screen name="UserFriendRequestPage" component={UserFriendRequestPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />          
+          <Stack.Screen name="UserFriendRequestPage" component={UserFriendRequestPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />   
+          <Stack.Screen name="UserAddFriendPage" component={UserAddFriendPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />                 
           <Stack.Screen name="UserAppFeedbackPage" component={UserAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserSendAppFeedbackPage" component={UserSendAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserUpdateAppFeedbackPage" component={UserUpdateAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />

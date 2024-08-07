@@ -61,7 +61,7 @@ const UserFriendsListPage = ({route, navigation}) =>{
 
     const handleAddFriend = () => {
         // Navigate to the add friend page or show the add friend modal
-        // navigation.navigate('AddFriendPage', { user });
+        navigation.navigate('UserAddFriendPage', { user });
     }
 
     const handleFriendRequest = () => {

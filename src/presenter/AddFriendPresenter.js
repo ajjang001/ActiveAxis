@@ -1,15 +1,29 @@
-import Friends from '../model/Friends';
+import Friends from "../model/Friends";
 
 class AddFriendPresenter {
-  constructor(view, db) {
+  constructor(view) {
     this.view = view;
-    this.model = new Friends(db);
-    this.currentUserId = userId;
+    this.model = new Friends();
   }
 
-  async handleAddFriend(selectedUserId) {
-    await this.model.addFriend(this.currentUserId, selectedUserId);
-    this.view.refreshSearchResults(); // Method to refresh the search results
+  async addFriend(currentUserId, selectedUserId) {
+    try {
+      await this.model.addFriend(currentUserId, selectedUserId);
+      this.view.updateFriendStatus(selectedUserId, "Pending");
+    } catch (error) {
+      console.error(error);
+      this.view.showError(error.message);
+    }
+  }
+
+  async cancelFriendRequest(currentUserId, selectedUserId) {
+    try {
+      await this.model.cancelFriendRequest(currentUserId, selectedUserId);
+      this.view.updateFriendStatus(selectedUserId, "Add");
+    } catch (error) {
+      console.error(error);
+      this.view.showError(error.message);
+    }
   }
 }
 
