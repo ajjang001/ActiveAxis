@@ -5,13 +5,16 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
 
 import InviteFriendToCompetitionPresenter from '../../presenter/InviteFriendToCompetitionPresenter';
+import AcceptCompetitionPresenter from '../../presenter/AcceptCompetitionPresenter';
+import RejectCompetitionPresenter from '../../presenter/RejectCompetitionPresenter';
 
 const UserCompetitionInvitationPage = ({navigation, route})=>{
 
     const {user} = route.params;
 
     const [competitionList, setCompetitionList] = useState([]);
-    console.log(competitionList);
+
+    const [selectedCompetition, setSelectedCompetition] = useState(null);
 
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -51,10 +54,38 @@ const UserCompetitionInvitationPage = ({navigation, route})=>{
     const loadInvitations = async () => {
         try{
             changeLoadingVisible(true);
+            setCompetitionList([]);
             await new InviteFriendToCompetitionPresenter({updateCompetitionList: setCompetitionList}).getMyPendingInvites(user.accountID);
 
         }catch(error){
+            console.log(error);
             changeModalVisible(true, error.message);
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
+    const handleAccept = async (userID, competitionID) => {
+        try{
+            changeLoadingVisible(true);
+            await new AcceptCompetitionPresenter().acceptInvitation(userID, competitionID);
+            changeModalVisible(true, 'Invitation accepted');
+            await loadInvitations();
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
+    const handleReject = async (userID, competitionID) => {
+        try{
+            changeLoadingVisible(true);
+            await new RejectCompetitionPresenter().rejectInvitation(userID, competitionID);
+            changeModalVisible(true, 'Invitation rejected');
+            await loadInvitations();
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
         }finally{
             changeLoadingVisible(false);
         }
@@ -73,6 +104,13 @@ const UserCompetitionInvitationPage = ({navigation, route})=>{
             </Modal>
             <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
                 <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+            </Modal>
+            <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeConfirmVisible(false)}>
+                <ActionDialog
+                message = {confirmMessage}
+                changeModalVisible = {changeConfirmVisible}
+                action = {()=>{handleReject(user.accountID, selectedCompetition.competitionID)}}
+                />
             </Modal>
             <View style={styles.headerContainer}>
                 <Text style={styles.headerText}>Invitation</Text>
@@ -98,7 +136,28 @@ const UserCompetitionInvitationPage = ({navigation, route})=>{
                                                 <Text style = {styles.competitionDateTitle}>End Date:</Text>
                                                 <Text style = {[styles.competitionDateTitle, {fontFamily:'Inter'}]}>    {formatDate(competition.endDate.toDate())}</Text>
                                             </View>
+                                            <View style = {styles.competitionDateButtonsView}>
+                                                <TouchableOpacity onPress = {()=>navigation.navigate('UserCompetitionDetailsPage', {user, competition})} style = {[{backgroundColor: '#E28413'}, styles.competitionDateButtons]}>
+                                                    <Text style ={[styles.competitionDateTitle, {textAlign:'center', color:'white'}]}>View Details</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress = {()=>handleAccept(user.accountID, competition.competitionID)} style = {[{backgroundColor: '#00AD3B'}, styles.competitionDateButtons]}>
+                                                    <Text style ={[styles.competitionDateTitle, {textAlign:'center', color:'white'}]}>Accept</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress = {()=>{ setSelectedCompetition(competition); changeConfirmVisible(true, "Are you sure you want to reject this invitation?")}} style = {[{backgroundColor: '#BA0000'}, styles.competitionDateButtons]}>
+                                                    <Text style ={[styles.competitionDateTitle, {textAlign:'center', color:'white'}]}>Reject</Text>
+                                                </TouchableOpacity>
+                                            </View>
                                         </View>
+
+                                        <View style = {styles.progressView}>
+                                            <View style = {styles.progress}>
+                                            <Text style = {styles.progressTitleText}>Host name: </Text>
+                                            <Text style = {styles.progressText}>{competition.host_user.fullName}</Text>
+                                            <Text style = {styles.progressText}>{competition.host_user.username}</Text>
+                                        </View>
+                                        <Text style = {styles.progressTopBottomText}>{competition.participants.length} Participants</Text>
+                                        </View>
+
                                     </View>      
                                 );
                             })
@@ -169,6 +228,48 @@ const styles = StyleSheet.create({
     competitionDateTitle:{
         fontFamily: 'Inter-SemiBold',
         fontSize: scale(14),
+    },
+    progressView:{
+        width: '40%',
+        justifyContent: 'space-between',
+        borderWidth: 2,
+        borderBottomRightRadius: scale(8),
+        borderTopRightRadius: scale(8),
+    },
+    progress:{
+        backgroundColor: 'white',
+        borderTopRightRadius: scale(8),
+        height: scale(175),
+        justifyContent: 'center',
+    },
+    
+    progressTitleText:{
+        fontSize: scale(24),
+        fontFamily: 'Inter-SemiBold',
+        textAlign: 'center',
+    },
+    progressText:{
+        fontSize: scale(16),
+        fontFamily: 'Inter',
+        textAlign: 'center',
+    },
+    progressTopBottomText:{
+        fontSize: scale(16),
+        color: 'white',
+        fontFamily: 'Inter-SemiBold',
+        textAlign: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'black',
+        
+    },
+    competitionDateButtonsView:{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    competitionDateButtons:{
+        marginTop: scale(8),
+        paddingHorizontal: scale(8),
     },
 
 

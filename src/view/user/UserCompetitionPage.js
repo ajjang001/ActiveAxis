@@ -5,6 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
 
 import DisplayCompetitionsPresenter from '../../presenter/DisplayCompetitionsPresenter';
+import LeaveCompetitionPresenter from '../../presenter/LeaveCompetitionPresenter';
 
 const UserCompetitionPage = ({ navigation, route }) => {
     const { user } = route.params;
@@ -12,6 +13,8 @@ const UserCompetitionPage = ({ navigation, route }) => {
 
     const [myCompetitions, setMyCompetitions] = useState([]);
     const [participatedCompetitions, setParticipatedCompetitions] = useState([]);
+
+    const [selectedCompetition, setSelectedCompetition] = useState(null);
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
@@ -63,6 +66,21 @@ const UserCompetitionPage = ({ navigation, route }) => {
         }
     }
 
+    const handleLeave = async (userID, competitionID) => {
+        try{
+            changeLoadingVisible(true);
+            await new LeaveCompetitionPresenter().leaveCompetition(userID, competitionID);
+            changeModalVisible(true, 'Successfully left the competition');
+            loadCompetitions();
+            
+        }catch(error){
+            console.log(error);
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }finally{
+            changeConfirmVisible(false);
+        }
+    }
+
 
     useFocusEffect(
         useCallback(() => {
@@ -80,6 +98,13 @@ const UserCompetitionPage = ({ navigation, route }) => {
             </Modal>
             <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
                 <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+            </Modal>
+            <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeConfirmVisible(false)}>
+                <ActionDialog
+                message = {confirmMessage}
+                changeModalVisible = {changeConfirmVisible}
+                action = {()=>{handleLeave(user.accountID, selectedCompetition.competitionID)}}
+                />
             </Modal>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={() =>
@@ -180,7 +205,7 @@ const UserCompetitionPage = ({ navigation, route }) => {
                                         </TouchableOpacity>
                                         {
                                             competition.startDate.toDate() > new Date() ?
-                                            <TouchableOpacity onPress = {()=>{console.log('leave')}} style = {[{backgroundColor: '#BA0000'}, styles.competitionDateButtons]}>
+                                            <TouchableOpacity onPress = {()=>{setSelectedCompetition(competition); changeConfirmVisible(true, 'Are you sure you want to leave this competition?')}} style = {[{backgroundColor: '#BA0000'}, styles.competitionDateButtons]}>
                                                 <Text style ={[styles.competitionDateTitle, {textAlign:'center', color:'white'}]}>Leave</Text>
                                             </TouchableOpacity>: null
 

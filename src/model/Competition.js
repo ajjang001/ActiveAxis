@@ -2,11 +2,12 @@ import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, upda
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import {auth, db, storage} from '../firebase/firebaseConfig';
 import CompetitionType from "./CompetitionType";
+import User from "./User";
 
 
 class Competition{
     _competitionID;
-    _host_userID;
+    _host_user;
     _competitionType;
     _competitionName;
     _competitionDetails;
@@ -17,7 +18,7 @@ class Competition{
 
     constructor(){
         this._competitionID = "";
-        this._host_userID = "";
+        this._host_user = null;
         this._competitionType = "";
         this._competitionName = "";
         this._competitionDetails = "";
@@ -28,7 +29,7 @@ class Competition{
     }
 
     get competitionID(){return this._competitionID;}
-    get host_userID(){return this._host_userID;}
+    get host_user(){return this._host_user;}
     get competitionType(){return this._competitionType;}
     get competitionName(){return this._competitionName;}
     get competitionDetails(){return this._competitionDetails;}
@@ -39,7 +40,7 @@ class Competition{
 
     
     set competitionID(value){this._competitionID = value;}
-    set host_userID(value){this._host_userID = value;}
+    set host_user(value){this._host_user = value;}
     set competitionType(value){this._competitionType = value;}
     set competitionName(value){this._competitionName = value;}
     set competitionDetails(value){this._competitionDetails = value;}
@@ -50,8 +51,6 @@ class Competition{
 
     async createCompetition(name, type, startDate, endDate, target, details, friendList, hostUserID){
         try{
-
-
             // Be there first
             let docRef;
 
@@ -109,7 +108,7 @@ class Competition{
 
                 const c = new Competition();
                 c.competitionID = d.id;
-                c.host_userID = data.host_userID;
+                c.host_user = await new User().getInfoByID(data.host_userID);
                 c.competitionType = await new CompetitionType().getCompetitionType(data.competitionType);
                 c.competitionName = data.competitionName;
                 c.competitionDetails = data.competitionDetails;
@@ -118,12 +117,10 @@ class Competition{
                 c.endDate = data.endDate;
 
                 // get participants
-                console.log(c.competitionID);
                 const participantsQuery = query(collection(db, "competitioninvite"), where("competitionID", "==", c.competitionID));
                 const participantsSnapshot = await getDocs(participantsQuery);
 
                 for(const p of participantsSnapshot.docs){
-                    console.log(p.id);
 
                     // push all accepted participants
                     if(p.data().status === "Accepted"){
@@ -133,7 +130,6 @@ class Competition{
                         // if not accepted, check if the event has started
                         // if has started, remove the remaining pendings
                         if(c.startDate.toDate() < new Date()){
-                            console.log(p.id);
                             await deleteDoc(doc(db, "competitioninvite", p.id));
                         }
 
@@ -144,7 +140,7 @@ class Competition{
                 }
 
                 // Add the host to participant
-                c.participants.push(c.host_userID);
+                c.participants.push(data.host_userID);
 
                 // Check if competition has started
                 // and delete competition if no participants
@@ -154,7 +150,6 @@ class Competition{
                 }
 
                 myCompetitions.push(c);
-                console.log('\n');
             }
 
 
@@ -177,7 +172,7 @@ class Competition{
 
                 const c = new Competition();
                 c.competitionID = competitionDoc.id;
-                c.host_userID = competitionDoc.data().host_userID;
+                c.host_user = await new User().getInfoByID(competitionDoc.data().host_userID);
                 c.competitionType = await new CompetitionType().getCompetitionType(competitionDoc.data().competitionType);
                 c.competitionName = competitionDoc.data().competitionName;
                 c.competitionDetails = competitionDoc.data().competitionDetails;
@@ -196,7 +191,7 @@ class Competition{
                 }
 
                 // Add the host to participant
-                c.participants.push(c.host_userID);
+                c.participants.push(competitionDoc.data().host_userID);
 
                 participatedCompetitions.push(c);
 
@@ -287,9 +282,9 @@ class Competition{
                 const data = d.data();
 
                 const docRef = await getDoc(doc(db, "competition", data.competitionID));
-                const endDate = docRef.data().endDate.toDate();
+                const startDate = docRef.data().startDate.toDate();
 
-                if(endDate < new Date()){
+                if(startDate < new Date()){
                     await deleteDoc(doc(db, "competitioninvite", d.id));
                 }
             }
@@ -301,7 +296,7 @@ class Competition{
                 
                 const c = new Competition();
                 c.competitionID = docRef.id;
-                c.host_userID = docRef.data().host_userID;
+                c.host_user = await new User().getInfoByID(docRef.data().host_userID);
                 c.competitionType = await new CompetitionType().getCompetitionType(docRef.data().competitionType);
                 c.competitionName = docRef.data().competitionName;
                 c.competitionDetails = docRef.data().competitionDetails;
@@ -320,12 +315,90 @@ class Competition{
                 }
 
                 // Add the host to participant
-                c.participants.push(c.host_userID);
+                c.participants.push(docRef.data().host_userID);
 
                 myInvites.push(c); 
             }
 
+            // sort the invite by start date in ascending order
+            myInvites.sort((a, b) => (a.startDate > b.startDate) ? 1 : -1);
+
             return myInvites;
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
+    async acceptInvitation(userID, competitionID){
+        try{
+            const inviteQuery = query(collection(db, "competitioninvite"), where("competitionID", "==", competitionID), where("participant_userID", "==", userID), where("status", "==", "Pending"));
+            const inviteSnapshot = await getDocs(inviteQuery);
+
+            // assume theres only 1 invite
+            await updateDoc(doc(db, "competitioninvite", inviteSnapshot.docs[0].id),{
+                status: "Accepted"
+            });
+            
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
+    async rejectInvitation(userID, competitionID){
+        try{
+
+            const inviteQuery = query(collection(db, "competitioninvite"), where("competitionID", "==", competitionID), where("participant_userID", "==", userID), where("status", "==", "Pending"));
+            const inviteSnapshot = await getDocs(inviteQuery);
+
+            // assume theres only 1 invite
+            await deleteDoc(doc(db, "competitioninvite", inviteSnapshot.docs[0].id));
+
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
+    async leaveCompetition(userID, competitionID){
+        try{
+            const inviteQuery = query(collection(db, "competitioninvite"), where("competitionID", "==", competitionID), where("participant_userID", "==", userID), where("status", "==", "Accepted"));
+            const inviteSnapshot = await getDocs(inviteQuery);
+
+            // assume theres only 1 invite
+            await deleteDoc(doc(db, "competitioninvite", inviteSnapshot.docs[0].id));
+            
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
+    async editCompetition(name, type, startDate, endDate, target, details, competitionID){
+        try{
+
+            let docRef;
+
+            if(type === 1){
+                docRef = await updateDoc(doc(db, "competition", competitionID),{
+                    competitionName: name,
+                    competitionDetails: details,
+                    competitionType: type,
+                    target: target,
+                    startDate: startDate,
+                    endDate: endDate,
+                });
+
+            }
+
+            if(type === 2){
+                docRef = await updateDoc(doc(db, "competition", competitionID),{
+                    competitionName: name,
+                    competitionDetails: details,
+                    competitionType: type,
+                    target: null,
+                    startDate: startDate,
+                    endDate: endDate,
+                });
+            }
+
         }catch(error){
             throw new Error(error);
         }

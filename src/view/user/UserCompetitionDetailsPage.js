@@ -1,11 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, Image } from 'react-native';
 import { scale } from '../../components/scale';
 import { useFocusEffect } from '@react-navigation/native';
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
 
+import DisplayCompetitionDetailsPresenter from '../../presenter/DisplayCompetitionDetailsPresenter';
+
 const UserCompetitionDetailsPage = ({ navigation, route }) => {
     const { user, competition } = route.params;
+
+    const [userDetails, setUserDetails] = useState([]);
 
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -29,6 +33,22 @@ const UserCompetitionDetailsPage = ({ navigation, route }) => {
         setConfirmationVisible(b);
     }
 
+    const getUserInformation = async () => {
+        try{
+            changeLoadingVisible(true);
+            setUserDetails([]);
+            const ud = [];
+            for(let i = competition.participants.length-1; i >= 0; i--){
+                ud.push(await new DisplayCompetitionDetailsPresenter().getUserDetails(competition.participants[i]));
+            }
+            setUserDetails(ud);
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
     // Date formatter
     const formatDate = (date) => {
         if (!date) return "";
@@ -42,20 +62,25 @@ const UserCompetitionDetailsPage = ({ navigation, route }) => {
         });
     };
 
+    useEffect(() => {
+        getUserInformation();
+    }, []);
+
     return(
-        <ScrollView >
+        <View style = {styles.container}>
             <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
                 <LoadingDialog />
             </Modal>
             <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
                 <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
             </Modal>
-            <View style = {styles.container}>
+            
+            <ScrollView contentContainerStyle ={styles.scrollView}>
                 <View style={styles.detailsBox}>
                     {
-                        (user.accountID === competition.host_userID) && (competition.startDate.toDate() > new Date())
+                        (user.accountID === competition.host_user.accountID) && (competition.startDate.toDate() > new Date())
                         ? <View style = {styles.topButtonView}>
-                            <TouchableOpacity style={styles.topButton}>
+                            <TouchableOpacity onPress={()=>navigation.navigate('UserEditCompetitionPage', {user, competition})} style={styles.topButton}>
                                 <Text style={styles.topButtonText}>Edit</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.topButton} onPress={() => navigation.navigate('InviteFriendsCompetitionPage', {user, competitionID: competition.competitionID ,friendsInvited: competition.participants})}>
@@ -91,25 +116,51 @@ const UserCompetitionDetailsPage = ({ navigation, route }) => {
                     <Text style={styles.detailsTitle}>Details</Text>
                     <Text style={styles.textInfoContainer}>{competition.competitionDetails}</Text>
 
-                    <View style ={styles.bottomButtonView}>
-                        <TouchableOpacity style = {styles.topButton} onPress={() => console.log('LeaderboardPage')}>
-                            <Text style = {styles.topButtonText}>Leaderboard</Text>
-                        </TouchableOpacity>
-                    </View>
+                    {
+                        new Date() >= competition.startDate.toDate() ?
+                        <View style ={styles.bottomButtonView}>
+                            <TouchableOpacity style = {styles.topButton} onPress={() => console.log('LeaderboardPage')}>
+                                <Text style = {styles.topButtonText}>Leaderboard</Text>
+                            </TouchableOpacity>
+                        </View>: null
+
+                    }
+
+                    
                 </View>
 
-                
+                <View style = {styles.participantsView}>
+                    <Text style ={styles.participantsViewTitleText}>Participants</Text>
+                    {
+                        
+                        userDetails.map((u, index) => {
+                            return(
+                                <View style = {styles.participant} key={index}>
+                                    <Text style = {styles.participantText}>{index+1}. {u.fullName} ~ {u.username} {u.accountID === user.accountID ? "(You)" : null} </Text>
+                                    {
+                                        competition.host_user.accountID === u.accountID ?
+                                        <Image source={require('../../../assets/crown_icon.png')} style={{width: scale(20), height: scale(20), alignSelf: 'flex-end'}} />: null
+                                    }
+                                </View>
+                            );
+                        })       
+                    }
+                </View>
 
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container:{
         flex: 1,
-        alignItems: 'center',
         backgroundColor: '#FBF5F3',
+
+    },
+    scrollView:{
+        width: '100%',  
+        alignItems:'center'
     },
     detailsBox: {
         width: '90%',
@@ -160,6 +211,26 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         marginTop: scale(28)
+    },
+    participantsView:{
+        width: '90%',
+        paddingVertical: scale(16),
+    },
+    participantsViewTitleText:{
+        fontFamily: 'Inter-SemiBold',
+        fontSize: scale(32),
+        textAlign: 'center',
+        marginBottom: scale(10),
+        borderBottomWidth: 1,
+    },
+    participant:{
+        flexDirection: 'row',
+        gap: scale(8),
+        alignItems: 'center',
+    },
+    participantText:{
+        fontFamily: 'Inter',
+        fontSize: scale(16),
     }
 });
 

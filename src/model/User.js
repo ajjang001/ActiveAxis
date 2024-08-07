@@ -60,10 +60,10 @@ class User extends Account {
                 const iv = user.emailVerified;
 
                 if (!iv) {
-                    //await sendEmailVerification(user, {
-                    //    handleCodeInApp: true,
-                    //    url: "https://activeaxis-c49ed.firebaseapp.com",
-                    //});
+                    await sendEmailVerification(user, {
+                       handleCodeInApp: true,
+                       url: "https://activeaxis-c49ed.firebaseapp.com",
+                    });
 
                     // Account is not verified
                     throw new Error('Please verify your email first\nCheck your email for the verification link.');
@@ -139,6 +139,45 @@ class User extends Account {
 
 
             return u;
+        }
+
+    }
+
+    async getInfoByID(userID) {
+        try{
+
+            const q = doc(db, 'user', userID);
+            const queryResult = await getDoc(q);
+
+            if (queryResult.exists()) {
+                // Get the user data
+                const data = queryResult.data();
+
+                const u = new User();
+                u.accountID = userID;
+                u.username = data.username;
+                u.email = data.email;
+                u.profilePicture = data.profilePicture;
+                u.profilePicture = await u.getProfilePictureURL();
+                u.fullName = data.fullName;
+                u.dob = data.dob;
+                u.gender = data.gender;
+                u.phoneNumber = data.phoneNumber;
+                u.hasMedical = data.hasMedical;
+                u.isSuspended = data.isSuspended;
+                u.weight = data.weight;
+                u.height = data.height;
+                u.fitnessGoal = data.fitnessGoal;
+                u.fitnessLevel = data.fitnessLevel;
+                u.restInterval = data.restInterval;
+                u.stepTarget = data.stepTarget;
+                u.calorieTarget = data.calorieTarget;
+
+                return u;
+            }
+
+        }catch(e){
+            throw new Error(e.message);
         }
 
     }

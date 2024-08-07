@@ -6,31 +6,19 @@ import { Dropdown } from 'react-native-element-dropdown';
 import DatePicker from 'react-native-date-picker';
 import { useFocusEffect } from '@react-navigation/native';
 
-import CreateCompetitionPresenter from "../../presenter/CreateCompetitionPresenter";
+import EditCompetitionPresenter from '../../presenter/EditCompetitionPresenter';
 
-const UserCreateCompetitionPage = ({ navigation, route }) => {
+const UserEditCompetitionPage = ({ navigation, route }) => {
+    const {user, competition } = route.params;
 
-    const { user } = route.params;
-
-    // Competition Details
-    const [competitionName, setcompetitionName] = useState('');
-    const [competitionType, setcompetitionType] = useState(1);
-    const [startDate, setstartDate] = useState(()=>{
-        const tomorrow = new Date(new Date());
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0);
-        return tomorrow;
-    });
-    const [endDate, setendDate] = useState(()=>{
-        const nextWeek = new Date(startDate);
-        nextWeek.setDate(nextWeek.getDate() + 14);
-        nextWeek.setHours(0, 0, 0, 0);
-        return nextWeek;
-    });
-    const [target, setTarget] = useState(0);
-    const [competitionDetails, setcompetitionDetails] = useState('');
-    const [friendsInvited, setFriendsInvited] = useState([]);
-
+    const [competitionName, setcompetitionName] = useState(competition.competitionName || '');
+    const [competitionType, setcompetitionType] = useState(competition.competitionType.competitionTypeID || 1);
+    const [startDate, setstartDate] = useState( competition.startDate.toDate() || new Date(new Date().setDate(new Date().getDate() + 1)) );
+    const [endDate, setendDate] = useState( competition.endDate.toDate() || new Date(new Date().setDate(new Date().getDate() + 14)));
+        
+    const [target, setTarget] = useState(competition.target ||0);
+    const [competitionDetails, setcompetitionDetails] = useState( competition.competitionDetails ||'');
+    
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
@@ -73,8 +61,8 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
             >
                     <Text style={styles.itemText}>{item.competitionTypeName}</Text>
             </TouchableOpacity> 
-            );
-        };
+        );
+    };
 
     // Date formatter
     const formatDate = (date) => {
@@ -101,24 +89,22 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
         return nextWeek;
     }
 
-
-    // Process Create Competition
-    const processCreate = async () => {
-        changeLoadingVisible(true);
-        try {
-            await new CreateCompetitionPresenter().createCompetition(competitionName.trim(), competitionType, startDate, endDate, parseInt(target), competitionDetails.trim(), friendsInvited, user.accountID);
-            Alert.alert('Competition created successfully.', 'The competition needs at least 2 players. Please let your friends accept the invitation before the competition starts. Otherwise, the competition will be cancelled.');
-            navigation.navigate('UserCompetitionPage', { user });
-        } catch (e) {
+    const processEditCompetition = async () => {
+        try{
+            changeLoadingVisible(true);
+            await new EditCompetitionPresenter().editCompetitionDetails(competitionName.trim(), competitionType, startDate, endDate, parseInt(target), competitionDetails.trim(), competition.competitionID);
+            Alert.alert('Success', 'Competition details updated successfully');
+            navigation.pop(2);
+        }catch(e){
             changeModalVisible(true, e.message.replace('Error: ', ''));
-        } finally {
+        }finally{
             changeLoadingVisible(false);
         }
-    };
+    }
 
     const loadCompetitionTypes = async () => {
         try{
-            await new CreateCompetitionPresenter({updateDropdown: setDropdownOpt}).getCompetitionTypes();
+            await new EditCompetitionPresenter({updateDropdown: setDropdownOpt}).getCompetitionTypes();
         }catch(e){
             changeModalVisible(true, e.message.replace('Error: ', ''));
         }
@@ -143,16 +129,14 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
         setendDate(getNext2Weeks(startDate));
     }, [startDate]);
 
-    return (
-        <ScrollView>
-            <View style={styles.container}>
+    return(
+        <View style={styles.container}>
+            
+            <ScrollView contentContainerStyle = {styles.scrollView}>
                 <View style={styles.headerBox}>
-                    <Text style={styles.headerText}>Create Competition</Text>
+                    <Text style={styles.headerText}>Edit Competition</Text>
                 </View>
                 <View style={styles.detailsBox}>
-                    <TouchableOpacity style={styles.inviteButton} onPress={() => navigation.navigate('InviteFriendsCompetitionPage', {user, friendsInvited})}>
-                        <Text style={styles.inviteText}>Invite Friends</Text>
-                    </TouchableOpacity>
                     <Text style={styles.detailsTitle}>Competition Name</Text>
                     <TextInput
                         style={styles.input}
@@ -161,6 +145,7 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
                         onChangeText={setcompetitionName}
                         maxLength={24}
                     />
+
                     <Text style={styles.detailsTitle}>Type</Text>
                     <Dropdown
                         style={styles.dropdown}
@@ -260,37 +245,41 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
                         placeholder="Enter your competition details here..."
                         textAlignVertical="top"
                     />
-                    <TouchableOpacity style={styles.createButton} onPress={() => changeConfirmVisible(true, 'Do you want to create this competition?')}>
-                        <Text style={styles.createText}>CREATE</Text>
+                    <TouchableOpacity style={styles.createButton} onPress={() => changeConfirmVisible(true, 'Do you want to save changes?')}>
+                        <Text style={styles.createText}>Save Changes</Text>
                     </TouchableOpacity>
                 </View>
-                <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={() => changeConfirmVisible(false)}>
-                    <ActionDialog
-                        message={confirmMessage}
-                        changeModalVisible={changeConfirmVisible}
-                        action={processCreate}
-                    />
-                </Modal>
                 <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
                     <LoadingDialog />
                 </Modal>
                 <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
                     <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
                 </Modal>
-            </View>
-        </ScrollView>
+                <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={() => changeConfirmVisible(false)}>
+                    <ActionDialog
+                        message={confirmMessage}
+                        changeModalVisible={changeConfirmVisible}
+                        action={processEditCompetition}
+                    />
+                </Modal>
 
+            </ScrollView>
+        </View>
     );
-};
+
+}
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
         backgroundColor: '#FBF5F3',
+    },
+    scrollView:{
+        alignItems: 'center',
+        width: '100%',
     },
     headerBox: {
         width: '100%',
-        height: '8%',
     },
     headerText: {
         fontSize: scale(36),
@@ -335,37 +324,6 @@ const styles = StyleSheet.create({
         fontSize: scale(18),
         fontFamily: 'Inter',
     },
-    createButton: {
-        borderWidth: 1,
-        width: '50%',
-        alignSelf: 'center',
-        backgroundColor: '#C42847',
-        paddingHorizontal: scale(50),
-        paddingVertical: scale(5),
-        marginTop: scale(15),
-        marginBottom: scale(15)
-    },
-    createText: {
-        color: 'white',
-        textAlign: 'center',
-        fontWeight: 'bold',
-        fontSize: scale(16)
-    },
-    inviteButton: {
-        width: '35%',
-        backgroundColor: '#E28413',
-        paddingVertical: scale(5),
-        alignSelf: 'flex-end',
-        marginBottom: scale(10),
-        marginRight: scale(2),
-        borderRadius: scale(8)
-    },
-    inviteText: {
-        color: 'white',
-        textAlign: 'center',
-        fontWeight: 'bold',
-        fontSize: scale(16)
-    },
     dropdown: {
         height: scale(50),
         width: '100%',
@@ -405,7 +363,22 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
       },
+    createButton: {
+        borderWidth: 1,
+        width: '50%',
+        alignSelf: 'center',
+        backgroundColor: '#C42847',
+        paddingVertical: scale(8),
+        marginTop: scale(8),
+        marginBottom: scale(8),
+        borderRadius: scale(8),
+    },
+    createText: {
+        color: 'white',
+        textAlign: 'center',
+        fontWeight: 'bold',
+        fontSize: scale(16)
+    },
 });
 
-
-export default UserCreateCompetitionPage;
+export default UserEditCompetitionPage;
