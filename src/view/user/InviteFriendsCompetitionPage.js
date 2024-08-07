@@ -191,12 +191,12 @@ const InviteFriendsCompetitionPage = ({route, navigation})=>{
                                             {
                                                 competitionID ? 
 
-                                                <TouchableOpacity disabled={checkFriendInInvited(user)} onPress = { (checkFriendInPending(user) ? ()=> handleCancelInvite(user) : ()=> handleAddUser(user) )  } activeOpacity={0.7} style = {[{width:scale(100), borderRadius:scale(8)}, (checkFriendInInvited(user) ? {backgroundColor: "black"} : checkFriendInPending(user) ? {backgroundColor: "#E28413"} : {backgroundColor: "#00AD3B"})]} >
+                                                <TouchableOpacity disabled={checkFriendInInvited(user)} onPress = { (checkFriendInPending(user) ? ()=> handleCancelInvite(user) : ()=> handleAddUser(user) )  } activeOpacity={0.7} style = {[{width:scale(100), borderRadius:scale(6)}, (checkFriendInInvited(user) ? {backgroundColor: "black"} : checkFriendInPending(user) ? {backgroundColor: "#E28413"} : {backgroundColor: "#00AD3B"})]} >
                                                     <Text style={styles.inviteText}>{checkFriendInInvited(user) ? 'JOINED' : checkFriendInPending(user) ? "PENDING" : "INVITE" }</Text>
                                                 </TouchableOpacity>
 
                                                 : 
-                                                <TouchableOpacity onPress = { (checkFriendInInvited(user) ? ()=> removeFromInvite(user) : ()=> addToInvite(user) )  } activeOpacity={0.7} style = {[{width:scale(100), borderRadius:scale(8)}, (checkFriendInInvited(user) ? {backgroundColor: "#E28413"} : {backgroundColor: "#00AD3B"})]} >
+                                                <TouchableOpacity onPress = { (checkFriendInInvited(user) ? ()=> removeFromInvite(user) : ()=> addToInvite(user) )  } activeOpacity={0.7} style = {[{width:scale(100), borderRadius:scale(6)}, (checkFriendInInvited(user) ? {backgroundColor: "#E28413"} : {backgroundColor: "#00AD3B"})]} >
                                                     <Text style={styles.inviteText}>{checkFriendInInvited(user) ? 'INVITED' : 'INVITE'}</Text>
                                                 </TouchableOpacity>
                                             }

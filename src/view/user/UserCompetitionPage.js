@@ -357,6 +357,7 @@ const styles = StyleSheet.create({
     competitionDateButtons:{
         width: '45%',
         marginTop: scale(8),
+        borderRadius: scale(6),
     },
     progressText:{
         fontSize: scale(24),

@@ -121,12 +121,12 @@ const UserFriendsListPage = ({route, navigation}) =>{
                                         <Text style = {styles.name}>{user.fullName}</Text>
                                         <Text style = {styles.role}>User</Text>
                                         <View style ={styles.optButtons}>
-                                        <TouchableOpacity onPress={() => viewDetails(user)} activeOpacity={0.7} style={[styles.detailsButton]}>
+                                            <TouchableOpacity onPress={() => viewDetails(user)} activeOpacity={0.7} style={[styles.detailsButton]}>
                                                     <Text style={styles.detailsText}>DETAILS</Text>
                                                 </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => removeFriend(user)} activeOpacity={0.7} style={[styles.removeButton]}>
-                                                    <Text style={styles.removeText}>REMOVE</Text>
-                                                </TouchableOpacity>                                       
+                                            <TouchableOpacity onPress={() => removeFriend(user)} activeOpacity={0.7} style={[styles.removeButton]}>
+                                                <Text style={styles.removeText}>REMOVE</Text>
+                                            </TouchableOpacity>                                       
                                         </View>
                                     </View>
                                 </View>
@@ -281,21 +281,17 @@ const styles = StyleSheet.create({
     detailsButton: {
         width: scale(100),
         backgroundColor: "#D9D9D9",
-        paddingVertical: scale(5),
-        borderRadius: scale(8),
-        marginRight: scale(10),
+        borderRadius: scale(6),
     },
     detailsText: {
         fontFamily: 'League-Spartan-SemiBold',
-        fontSize: scale(15),
-        color: 'black',
+        fontSize: scale(16),
         textAlign: 'center',
     },
     removeButton: {
         width: scale(100),
         backgroundColor: "#E28413",
-        paddingVertical: scale(5),
-        borderRadius: scale(8),
+        borderRadius: scale(6),
     },
     removeText: {
         fontFamily: 'League-Spartan-SemiBold',
