@@ -12,6 +12,23 @@ const UserAddFriendPage = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
 
+  // change popup/modal visible
+  const changeConfirmVisible = (b, m)=>{
+    setConfirmMessage(m);
+    setConfirmationVisible(b);
+    }
+
+  // change popup/modal visible
+  const changeModalVisible = (b, m)=>{
+    setModalMsg(m);
+    setModalVisible(b);
+    }
+
+  // change popup/modal visible
+  const changeLoadingVisible = (b)=>{
+    setIsLoading(b);
+    }
+
   const presenter = new AddFriendPresenter({
     updateFriendStatus: (userId, status) => {
       const updatedUsers = users.map((user) => {
@@ -29,8 +46,19 @@ const UserAddFriendPage = ({ route, navigation }) => {
   });
 
   const searchHandler = async () => {
-    // Implement search functionality here
+    setIsLoading(true);
+    try {
+      const result = await presenter.model.searchUsers(search, user.accountID);
+      console.log('Fetched Users:', result); // Debugging line
+      setUsers(result);
+    } catch (error) {
+      console.error(error);
+      presenter.view.showError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
+  
 
   const addFriend = (userId) => {
     presenter.addFriend(user.accountID, userId);
@@ -38,12 +66,26 @@ const UserAddFriendPage = ({ route, navigation }) => {
 
   const cancelFriendRequest = (userId) => {
     presenter.cancelFriendRequest(user.accountID, userId);
-  };
+  };  
 
   useEffect(() => {
-    // Fetch initial users list if needed
+    const fetchInitialUsers = async () => {
+      setIsLoading(true);
+      try {
+        const result = await presenter.model.searchUsers('', user.accountID);
+        console.log('Initial Users:', result); // Debugging line
+        setUsers(result);
+      } catch (error) {
+        console.error(error);
+        presenter.view.showError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchInitialUsers();
   }, []);
-
+  
   return (
     <View>
       <View style={styles.titleView}>

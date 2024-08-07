@@ -25,6 +25,15 @@ class AddFriendPresenter {
       this.view.showError(error.message);
     }
   }
+  async searchUsers(searchText, currentUserId) {
+    try {
+      const result = await this.model.searchUsers(searchText, currentUserId);
+      this.view.setUsers(result);
+    } catch (error) {
+      console.error(error);
+      this.view.showError(error.message);
+    }
+  }
 }
 
 export default AddFriendPresenter;

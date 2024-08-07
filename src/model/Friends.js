@@ -106,20 +106,23 @@ class Friends {
     }
 
     async searchUsers(searchText, currentUserId) {
-        // Fetch all users except the current logged in user and those who are suspended
         const usersSnapshot = await getDocs(collection(db, 'users'), where('isSuspended', '==', false));
         let users = [];
         usersSnapshot.forEach(doc => {
-            if (doc.data().username !== currentUserId) {
-                users.push(doc.data());
-            }
+          if (doc.data().accountID !== currentUserId) {
+            users.push({ id: doc.id, ...doc.data() });
+          }
         });
-
+      
         // Filter users based on search text
-        const searched = users.filter(user => user.fullName === searchText || user.username === searchText);
-
+        const searched = users.filter(user => 
+          user.fullName.toLowerCase().includes(searchText.toLowerCase()) || 
+          user.username.toLowerCase().includes(searchText.toLowerCase())
+        );
+      
         return searched;
-    }
+      }
+      
 
     async searchFriend(userId, keyword) {
         try{
