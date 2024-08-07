@@ -13,7 +13,7 @@ const UserFriendDetailsPage = ({ route }) => {
     const [modalMsg, setModalMsg] = useState('');
 
     // change popup/modal visible
-    const changeModalVisible = (b, m)=>{
+    const changeModalVisible = (b, m = '')=>{
         setModalMsg(m);
         setModalVisible(b);
     }
@@ -41,6 +41,7 @@ const UserFriendDetailsPage = ({ route }) => {
                 setModalVisible(true);
             } catch (error) {
                 console.error("Failed to load friend details:", error);
+                changeModalVisible(true, error.message);
             } finally {
                 setIsLoading(false);
             }

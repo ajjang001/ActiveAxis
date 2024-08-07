@@ -1,5 +1,6 @@
-import { db } from '../firebase/firebaseConfig';
+import { db, storage } from '../firebase/firebaseConfig';
 import { collection, query, where, getDocs, addDoc, deleteDoc, updateDoc, getDoc, doc, limit} from 'firebase/firestore';
+import { ref, getDownloadURL } from 'firebase/storage';
 
 import User from './User';
 
@@ -74,19 +75,28 @@ class Friends {
 
     async getFriendDetails(userId) {
         console.log("Fetching details for userId:", userId);
-        const docRef = doc(db, 'users', userId);
+        const docRef = doc(db, 'user', userId);
         const docSnap = await getDoc(docRef);
-    
+        
+        console.log("Document reference:", docRef); // Debugging line
+        console.log("Document snapshot exists:", docSnap.exists()); // Debugging line
+
         if (docSnap.exists()) {
             const data = docSnap.data();
+            let profilePictureURL = '';
+            if (data.profilePicture) {
+                const profilePicRef = ref(storage, data.profilePicture); // Create a non-root reference
+                profilePictureURL = await getDownloadURL(profilePicRef); // Get the download URL
+            }
             return {
-                profilePicture: data.profilePicture ? await new User().getProfilePictureURL(data.profilePicture) : '',
+                profilePicture: profilePictureURL,
                 fullName: data.fullName || '',
                 gender: data.gender || '',
                 fitnessGoal: data.fitnessGoal || '',
                 fitnessLevel: data.fitnessLevel || ''
             };
         } else {
+            console.error("No document found for userId:", userId); // Debugging line
             throw new Error('No such document!');
         }
     }
@@ -107,7 +117,7 @@ class Friends {
     }
 
     async searchUsers(searchText, currentUserId) {
-        const usersSnapshot = await getDocs(collection(db, 'users'), where('isSuspended', '==', false));
+        const usersSnapshot = await getDocs(collection(db, 'user'), where('isSuspended', '==', false));
         let users = [];
         usersSnapshot.forEach(doc => {
           if (doc.data().accountID !== currentUserId) {
@@ -159,7 +169,7 @@ class Friends {
         // Check if the user is a friend or if a request is pending
         const tempArray = [];
 
-        const userSnapshot = await getDocs(query(collection(db, 'users'), where('isSuspended', '==', false), where('username', '!=', currentUserId), limit(10)));
+        const userSnapshot = await getDocs(query(collection(db, 'user'), where('isSuspended', '==', false), where('username', '!=', currentUserId), limit(10)));
         userSnapshot.forEach(async doc => {
             let user = doc.data();
             let status = "Not Friend";
