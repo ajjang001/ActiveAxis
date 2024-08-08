@@ -309,6 +309,31 @@ class User extends Account {
         }
     }
 
+    async getDetails(userID) {
+        console.log("Fetching details for userId:", userID); // Debugging line
+        const docRef = doc(db, 'user', userID);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            console.log("User data:", data); // Debugging line
+            let profilePictureURL = '';
+            if (data.profilePicture) {
+                const profilePicRef = ref(storage, data.profilePicture);
+                profilePictureURL = await getDownloadURL(profilePicRef);
+            }
+            return {
+                profilePicture: profilePictureURL,
+                fullName: data.fullName || '',
+                gender: data.gender || '',
+                fitnessGoal: data.fitnessGoal || '',
+                fitnessLevel: data.fitnessLevel || ''
+            };
+        } else {
+            throw new Error('No such document!');
+        }
+    }
+
     async getUserList() {
         try {
             // Get all users

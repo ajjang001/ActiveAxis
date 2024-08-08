@@ -73,6 +73,8 @@ class Friends {
         return friends;
     }
 
+    
+
     async getFriendDetails(userId) {
         console.log("Fetching details for userId:", userId);
         const docRef = doc(db, 'user', userId);
@@ -117,22 +119,28 @@ class Friends {
     }
 
     async searchUsers(searchText, currentUserId) {
-        const usersSnapshot = await getDocs(collection(db, 'user'), where('isSuspended', '==', false));
-        let users = [];
-        usersSnapshot.forEach(doc => {
-          if (doc.data().accountID !== currentUserId) {
+    const usersSnapshot = await getDocs(collection(db, 'user'), where('isSuspended', '==', false));
+    let users = [];
+    usersSnapshot.forEach(doc => {
+        if (doc.data().accountID !== currentUserId) {
             users.push({ id: doc.id, ...doc.data() });
-          }
-        });
-      
-        // Filter users based on search text
-        const searched = users.filter(user => 
-          user.fullName.toLowerCase().includes(searchText.toLowerCase()) || 
-          user.username.toLowerCase().includes(searchText.toLowerCase())
-        );
-      
-        return searched;
-      }
+        }
+    });
+
+    // Fetch current user's friends
+    const friends = await this.getFriends(currentUserId);
+    const friendIds = friends.map(friend => friend.accountID);
+
+    // Filter users based on search text and exclude friends and current user
+    const searched = users.filter(user => 
+        (user.fullName.toLowerCase().includes(searchText.toLowerCase()) || 
+        user.username.toLowerCase().includes(searchText.toLowerCase())) &&
+        user.id !== currentUserId &&
+        !friendIds.includes(user.id)
+    );
+
+    return searched;
+}
       
 
     async searchFriend(userId, keyword) {
@@ -165,36 +173,7 @@ class Friends {
         }
     }
 
-    async searchUser(userId, currentUserId) {
-        // Check if the user is a friend or if a request is pending
-        const tempArray = [];
-
-        const userSnapshot = await getDocs(query(collection(db, 'user'), where('isSuspended', '==', false), where('username', '!=', currentUserId), limit(10)));
-        userSnapshot.forEach(async doc => {
-            let user = doc.data();
-            let status = "Not Friend";
-
-            const friendQuery1 = query(collection(db, 'friends'), where('userID1', '==', currentUserId), where('userID2', '==', user.id));
-            const friendSnapshot1 = await getDocs(friendQuery1);
-            if (friendSnapshot1.empty) {
-                const friendQuery2 = query(collection(db, 'friends'), where('userID2', '==', currentUserId), where('userID1', '==', user.id));
-                const friendSnapshot2 = await getDocs(friendQuery2);
-                if (!friendSnapshot2.empty) {
-                    status = friendSnapshot2.docs[0].data().status;
-                }
-            } else {
-                status = friendSnapshot1.docs[0].data().status;
-            }
-
-            tempArray.push({
-                user1: currentUserId,
-                user2: user,
-                status: status
-            });
-        });
-
-        return tempArray;
-    }
+    
 
     async addFriend(currentUserId, selectedUserId) {
         await addDoc(collection(db, 'friends'), {
