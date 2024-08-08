@@ -39,6 +39,7 @@ import UserCompetitionDetailsPage from './src/view/user/UserCompetitionDetailsPa
 import UserEditCompetitionPage from './src/view/user/UserEditCompetitionPage';
 import UserCompetitionHistoryPage from './src/view/user/UserCompetitionHistoryPage';
 import UserCompetitionInvitationPage from './src/view/user/UserCompetitionInvitationPage';
+import CompetitionLeaderboardPage from './src/view/user/CompetitionLeaderboardPage';
 import UserCoachPage from './src/view/user/UserCoachPage';
 import UserCoachHistoryPage from './src/view/user/UserCoachHistoryPage';
 import UserCoachHistoryDetails from './src/view/user/UserCoachHistoryDetails';
@@ -123,6 +124,7 @@ const CompetitionStack = ({ route }) => {
       <Stack.Screen name="UserCompetitionDetailsPage" component={UserCompetitionDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }}/>
       <Stack.Screen name="UserEditCompetitionPage" component={UserEditCompetitionPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }}/>
       <Stack.Screen name="UserCompetitionInvitationPage" component={UserCompetitionInvitationPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }}/>
+      <Stack.Screen name="CompetitionLeaderboardPage" component={CompetitionLeaderboardPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }}/>
       {/*Add New screens here for competition */}
   </Stack.Navigator>
   );

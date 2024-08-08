@@ -93,8 +93,75 @@ class Competition{
         }
     }
 
+    async deleteCompetition(competitionID){
+        try{
+            // delete competition in competition collection
+            await deleteDoc(doc(db, "competition", competitionID));
+
+            // delete the existing invites
+            const inviteQuery = query(collection(db, "competitioninvite"), where("competitionID", "==", competitionID));
+            const inviteSnapshot = await getDocs(inviteQuery);
+
+            for(const d of inviteSnapshot.docs){
+                await deleteDoc(doc(db, "competitioninvite", d.id));
+            }
+
+
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
     async getCompetitions(userID){
         try{
+            // find all competitions that has started
+            // and delete if no participants
+            const q1 = query(collection(db, "competition"), where("startDate", "<=", Timestamp.now()), where("endDate", ">=", Timestamp.now()));
+            const qs1 = await getDocs(q1);
+
+            for(const d of qs1.docs){
+                // find all participants in the competition
+                const q2 = query(collection(db, "competitioninvite"), where("competitionID", "==", d.id), where("status", "==", "Accepted"));
+                const qs2 = await getDocs(q2);
+
+                // get number of accepted users
+                const numAcceptedUsers = qs2.docs.length;
+
+                // if none, delete the competition
+                // and delete the existing invites
+                if(numAcceptedUsers == 0){
+                    await this.deleteCompetition(d.id);
+
+                    const inviteQuery = query(collection(db, "competitioninvite"), where("competitionID", "==", d.id));
+                    const inviteSnapshot = await getDocs(inviteQuery);
+
+                    for(const d of inviteSnapshot.docs){
+                        await deleteDoc(doc(db, "competitioninvite", d.id));
+                    }
+                    
+                }else{
+                    // if exist, check if competition type is 1
+                    if(d.data().competitionType == 1){
+                        // check if anyone has reached the target
+                        // if yes, end the competition
+
+                        const qLeaderboard = query(collection(db, "competitionleaderboard"), where("competitionID", "==", d.id), orderBy("userProgress", "desc"));
+                        const qsLeaderboard = await getDocs(qLeaderboard);
+
+                        if(qsLeaderboard.docs[0].data().userProgress >= d.data().target){
+                            await updateDoc(doc(db, "competition", d.id),{
+                                endDate: Timestamp.now()
+                            });
+                        }
+
+                    }
+                }
+            }
+
+                    
+
+
+
             const myCompetitions = [];
             const participatedCompetitions = [];
 
@@ -145,6 +212,7 @@ class Competition{
                 // Check if competition has started
                 // and delete competition if no participants
                 if(c.startDate.toDate() < new Date() && c.participants.length <= 1){
+                    console.log("Deleting competition: " + c.competitionID);
                     await this.deleteCompetition(c.competitionID);
                     continue;
                 }
@@ -197,6 +265,9 @@ class Competition{
 
             }
 
+
+
+
             return {myCompetitions, participatedCompetitions};
 
         }catch(error){
@@ -204,24 +275,7 @@ class Competition{
         }
     }
 
-    async deleteCompetition(competitionID){
-        try{
-            // delete competition in competition collection
-            await deleteDoc(doc(db, "competition", competitionID));
-
-            // delete the existing invites
-            const inviteQuery = query(collection(db, "competitioninvite"), where("competitionID", "==", competitionID));
-            const inviteSnapshot = await getDocs(inviteQuery);
-
-            for(const d of inviteSnapshot.docs){
-                await deleteDoc(doc(db, "competitioninvite", d.id));
-            }
-
-
-        }catch(error){
-            throw new Error(error);
-        }
-    }
+    
 
 
     async cancelInvite(competitionID, userID){
@@ -331,6 +385,13 @@ class Competition{
 
     async acceptInvitation(userID, competitionID){
         try{
+
+            // check if competition has been deleted
+            const docRef = await getDoc(doc(db, "competition", competitionID));
+            if(!docRef.exists()){
+                throw new Error("Competition has been cancelled");
+            }
+
             const inviteQuery = query(collection(db, "competitioninvite"), where("competitionID", "==", competitionID), where("participant_userID", "==", userID), where("status", "==", "Pending"));
             const inviteSnapshot = await getDocs(inviteQuery);
 

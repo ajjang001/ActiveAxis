@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, Image } fr
 import { scale } from '../../components/scale';
 import { useFocusEffect } from '@react-navigation/native';
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
+import CompetitionLeaderboard from '../../model/CompetitionLeaderboard';
 
 import DisplayCompetitionDetailsPresenter from '../../presenter/DisplayCompetitionDetailsPresenter';
 
@@ -42,6 +43,7 @@ const UserCompetitionDetailsPage = ({ navigation, route }) => {
                 ud.push(await new DisplayCompetitionDetailsPresenter().getUserDetails(competition.participants[i]));
             }
             setUserDetails(ud);
+            new CompetitionLeaderboard().initializeLeaderboard();
         }catch(error){
             changeModalVisible(true, error.message.replace('Error: ', ''));
         }finally{
@@ -119,7 +121,7 @@ const UserCompetitionDetailsPage = ({ navigation, route }) => {
                     {
                         new Date() >= competition.startDate.toDate() ?
                         <View style ={styles.bottomButtonView}>
-                            <TouchableOpacity style = {styles.topButton} onPress={() => console.log('LeaderboardPage')}>
+                            <TouchableOpacity style = {styles.topButton} onPress={() => navigation.navigate('CompetitionLeaderboardPage', {user, competition})}>
                                 <Text style = {styles.topButtonText}>Leaderboard</Text>
                             </TouchableOpacity>
                         </View>: null

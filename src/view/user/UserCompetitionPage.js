@@ -6,6 +6,7 @@ import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Mod
 
 import DisplayCompetitionsPresenter from '../../presenter/DisplayCompetitionsPresenter';
 import LeaveCompetitionPresenter from '../../presenter/LeaveCompetitionPresenter';
+import DisplayCompetitionProgressPresenter from '../../presenter/DisplayCompetitionProgressPresenter';
 
 const UserCompetitionPage = ({ navigation, route }) => {
     const { user } = route.params;
@@ -13,6 +14,7 @@ const UserCompetitionPage = ({ navigation, route }) => {
 
     const [myCompetitions, setMyCompetitions] = useState([]);
     const [participatedCompetitions, setParticipatedCompetitions] = useState([]);
+    const [progress, setProgress] = useState([]);
 
     const [selectedCompetition, setSelectedCompetition] = useState(null);
 
@@ -57,7 +59,9 @@ const UserCompetitionPage = ({ navigation, route }) => {
             changeLoadingVisible(true);
             setMyCompetitions([]);
             setParticipatedCompetitions([]);
+            setProgress([]);
             await new DisplayCompetitionsPresenter({updateMyCompetitions: setMyCompetitions, updateParticipatedCompetitions: setParticipatedCompetitions}).loadCompetitions(user.accountID);
+            await new DisplayCompetitionProgressPresenter({updateProgress: setProgress}).getUserCompetitionProgress(user.accountID, myCompetitions);
         }catch(error){
             console.log(error);
             changeModalVisible(true, error.message.replace('Error: ', ''));
@@ -159,13 +163,13 @@ const UserCompetitionPage = ({ navigation, route }) => {
                                         <Text style = {styles.progressText}>Progress: </Text>
                                         {
                                             competition.competitionType.competitionTypeID === 1 ?
-                                            <Text style = {styles.progressText}>0%</Text> : null
+                                            <Text style = {styles.progressText}>{isNaN(progress[index]/competition.target*100) ? 0 : (progress[index]/competition.target*100).toFixed(0)}%</Text> : null
                                         }
                                         
                                         {
                                             competition.competitionType.competitionTypeID === 2 ?
                                             <>
-                                                <Text style = {styles.progressText}>0</Text>
+                                                <Text style = {styles.progressText}>{progress[index] || '--'}</Text>
                                                 <Text style = {[styles.progressText, {fontSize:scale(16)}]}>steps</Text>
                                             </>
                                             : null

@@ -6,7 +6,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LoadingDialog, MessageDialog } from '../../components/Modal';
 import DisplayFitnessStatisticsPresenter from '../../presenter/DisplayFitnessStatisticsPresenter';
 import DisplayNotificationPresenter from '../../presenter/DisplayNotificationPresenter';
-  
+import DisplayCompetitionProgressPresenter from '../../presenter/DisplayCompetitionProgressPresenter';
 
 const UserHomePage = ({ navigation, route }) => {
     // Get the user from the route params
@@ -84,12 +84,21 @@ const UserHomePage = ({ navigation, route }) => {
         }
     }
 
+    const updateUserCompetitionProgress = async () => {
+        try{
+            new DisplayCompetitionProgressPresenter().updateUserCompetitionProgress(user.accountID, steps);
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
     const loadInfo = () => {
         try{
             changeLoadingVisible(true);
             getBMI();
             getTodayStatistics();
             scheduleNotification();
+            updateUserCompetitionProgress();
         }catch(error){
             changeModalVisible(true, error.message.replace('Error: ', ''));
         }finally{
