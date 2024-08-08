@@ -8,6 +8,7 @@ const UserAddFriendPage = ({ route, navigation }) => {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
 
+
   const [isLoading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
@@ -59,6 +60,10 @@ const UserAddFriendPage = ({ route, navigation }) => {
     }
   };
   
+  const viewDetails = (userId) => {
+    // Navigate to the details page
+    navigation.navigate('UserDetailsPage', { userId });
+  }
 
   const addFriend = (userId) => {
     presenter.addFriend(user.accountID, userId);
@@ -112,6 +117,9 @@ const UserAddFriendPage = ({ route, navigation }) => {
                     <Text style={styles.name}>{user.fullName}</Text>
                     <Text style={styles.role}>User</Text>
                     <View style={styles.optButtons}>
+                    <TouchableOpacity onPress={() => viewDetails(user)} activeOpacity={0.7} style={[styles.detailsButton]}>
+                         <Text style={styles.detailsText}>DETAILS</Text>
+                    </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => (user.status === "Pending" ? cancelFriendRequest(user.id) : addFriend(user.id))}
                         activeOpacity={0.7}
@@ -218,10 +226,20 @@ const styles = StyleSheet.create({
   },
   optButtons: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
     width: scale(275),
   },
+  detailsButton: {
+    width: scale(100),
+    backgroundColor: "#D9D9D9",
+    borderRadius: scale(6),
+},
+  detailsText: {
+    fontFamily: 'League-Spartan-SemiBold',
+    fontSize: scale(16),
+    textAlign: 'center',
+},
   inviteText: {
     fontSize: scale(16),
     color: 'white',
