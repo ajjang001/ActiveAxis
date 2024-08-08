@@ -1,13 +1,13 @@
 import { View, Text, StyleSheet, TextInput, Image, ScrollView, TouchableOpacity, Modal } from "react-native";
 import React, { useEffect, useState } from "react";
 import AddFriendPresenter from "../../presenter/AddFriendPresenter";
+import { LoadingDialog, MessageDialog } from "../../components/Modal";
 import { scale } from "../../components/scale";
 
 const UserAddFriendPage = ({ route, navigation }) => {
   const { user } = route.params;
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
-
 
   const [isLoading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -96,6 +96,12 @@ const UserAddFriendPage = ({ route, navigation }) => {
       <View style={styles.titleView}>
         <Text style={styles.title}>Search User</Text>
       </View>
+      <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+        <LoadingDialog />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+        <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
+      </Modal>
       <View style={styles.contentContainer}>
         <View style={styles.topContentContainer}>
           <View style={styles.searchBarContainer}>
@@ -112,7 +118,7 @@ const UserAddFriendPage = ({ route, navigation }) => {
             ) : (
               users.map((user, index) => (
                 <View style={styles.usersContainer} key={index}>
-                  <Image source={{ uri: user.profilePicture }} resizeMode="stretch" style={styles.userImage} />
+                  <Image source={{ uri: user.profilePictureURL }} resizeMode="stretch" style={styles.userImage} />
                   <View style={styles.userDetails}>
                     <Text style={styles.name}>{user.fullName}</Text>
                     <Text style={styles.role}>User</Text>

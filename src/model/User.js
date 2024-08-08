@@ -1,7 +1,8 @@
 
-import { db, auth } from '../firebase/firebaseConfig';
+import { db, auth, storage } from '../firebase/firebaseConfig';
 import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, orderBy, startAt, endAt, updateDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
+import { ref, getDownloadURL } from "firebase/storage";
 import axios from 'axios';
 import Account from './Account';
 
@@ -310,18 +311,20 @@ class User extends Account {
     }
 
     async getDetails(userID) {
+    try {
         console.log("Fetching details for userId:", userID); // Debugging line
+
+        // Reference the document for the specific user
         const docRef = doc(db, 'user', userID);
         const docSnap = await getDoc(docRef);
-        
+
         if (docSnap.exists()) {
             const data = docSnap.data();
             console.log("User data:", data); // Debugging line
-            let profilePictureURL = '';
-            if (data.profilePicture) {
-                const profilePicRef = ref(storage, data.profilePicture);
-                profilePictureURL = await getDownloadURL(profilePicRef);
-            }
+            profilePicRef = ref(storage, data.profilePicture);
+            profilePictureURL = await getDownloadURL(profilePicRef);
+
+            // Return an object with the user's details
             return {
                 profilePicture: profilePictureURL,
                 fullName: data.fullName || '',
@@ -330,9 +333,16 @@ class User extends Account {
                 fitnessLevel: data.fitnessLevel || ''
             };
         } else {
+            // Handle the case where the document does not exist
             throw new Error('No such document!');
         }
+    } catch (error) {
+        // Handle any errors that occur during the process
+        console.error("Error fetching user details:", error.message);
+        throw new Error(error.message);
     }
+}
+
 
     async getUserList() {
         try {
