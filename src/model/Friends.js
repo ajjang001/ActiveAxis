@@ -130,8 +130,16 @@ class Friends {
             profilePictureURL = await getDownloadURL(profilePicRef);
 
             if (doc.data().accountID !== currentUserId) {
+                // Check if there's a pending friend request
+                const friendRequestQuery = query(
+                    collection(db, 'friends'),
+                    where('userID1', '==', currentUserId),
+                    where('userID2', '==', userId)
+            );
+            const friendRequestSnapshot = await getDocs(friendRequestQuery);
+            const status = friendRequestSnapshot.empty ? "Add" : "Pending";
 
-                users.push({ id: userId, ...userData, profilePictureURL });
+                users.push({ id: userId, ...userData, profilePictureURL, status });
             }
         };
 

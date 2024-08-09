@@ -65,9 +65,18 @@ const UserAddFriendPage = ({ route, navigation }) => {
     navigation.navigate('UserDetailsPage', { userId });
   }
 
-  const addFriend = (userId) => {
-    presenter.addFriend(user.accountID, userId);
+  const addFriend = async (userId) => {
+    try {
+        await presenter.addFriend(user.accountID, userId);
+        const updatedUsers = users.map((user) =>
+            user.id === userId ? { ...user, status: "Pending" } : user
+        );
+        setUsers(updatedUsers);
+    } catch (error) {
+        presenter.view.showError(error.message);
+    }
   };
+
 
   const cancelFriendRequest = (userId) => {
     presenter.cancelFriendRequest(user.accountID, userId);
@@ -131,7 +140,7 @@ const UserAddFriendPage = ({ route, navigation }) => {
                         activeOpacity={0.7}
                         style={[
                           { width: scale(100), borderRadius: scale(8) },
-                          user.status === "Pending" ? { backgroundColor: "#E28413" } : { backgroundColor: "#00AD3B" },
+                          user.status === "Pending" ? { backgroundColor: "#000000" } : { backgroundColor: "#00AD3B" },
                         ]}
                       >
                         <Text style={styles.inviteText}>{user.status === "Pending" ? "PENDING" : "ADD"}</Text>

@@ -1,20 +1,19 @@
 import Friends from '../model/Friends';
 
 class DisplayFriendRequestsPresenter {
-    constructor({ updateFriendRequests }) {
-        this.updateFriendRequests = updateFriendRequests;
-        this.friends = new Friends();
-    }
+  constructor(view) {
+    this.view = view;
+    this.model = new Friends();
+  }
 
-    async getFriendRequests(userId) {
-        try {
-            const friendRequests = await this.friends.getFriendRequests(userId);
-            this.updateFriendRequests(friendRequests);
-        } catch (error) {
-            console.error("Error getting friend requests:", error);
-            throw new Error(error.message);
-        }
+  async fetchRequests(userId) {
+    try {
+      const requests = await this.model.getFriendRequests(userId);
+      this.view.onRequestsFetched(requests);
+    } catch (error) {
+      this.view.showError(error.message);
     }
+  }
 }
 
 export default DisplayFriendRequestsPresenter;

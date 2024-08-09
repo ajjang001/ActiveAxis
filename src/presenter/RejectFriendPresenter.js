@@ -1,18 +1,19 @@
 import Friends from '../model/Friends';
 
-class RejectFriendRequestPresenter {
-    constructor() {
-        this.friends = new Friends();
-    }
+class RejectFriendPresenter {
+  constructor(view) {
+    this.view = view;
+    this.model = new Friends();
+  }
 
-    async rejectRequest(currentUserId, selectedUserId) {
-        try {
-            await this.friends.respondToFriendRequest(currentUserId, selectedUserId, false);
-        } catch (error) {
-            console.error("Error rejecting friend request:", error);
-            throw new Error(error.message);
-        }
+  async rejectFriend(currentUserId, selectedUserId) {
+    try {
+      await this.model.respondToFriendRequest(currentUserId, selectedUserId, false);
+      this.view.onFriendRejected(selectedUserId);
+    } catch (error) {
+      this.view.showError(error.message);
     }
+  }
 }
 
-export default RejectFriendRequestPresenter;
+export default RejectFriendPresenter;
