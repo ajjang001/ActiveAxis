@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, Alert } from 'react-native';
 import { scale } from '../../components/scale';
 import { useFocusEffect } from '@react-navigation/native';
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
 
 import DisplayCompetitionHistoryPresenter from '../../presenter/DisplayCompetitionHistoryPresenter';
+import ObtainAchievementPresenter from '../../presenter/ObtainAchievementPresenter';
 
 const UserCompetitionHistoryPage = ({ route, navigation }) => {
 
@@ -54,9 +55,30 @@ const UserCompetitionHistoryPage = ({ route, navigation }) => {
             setCompetitions([]);
             await new DisplayCompetitionHistoryPresenter({updateCompetitions: setCompetitions}).getCompetitionHistory(user.accountID);
         }catch(err){
+            console.log(err);
             changeModalVisible(true, err.message.replace('Error: ', ''));
         }finally{
             changeLoadingVisible(false);
+        }
+    }
+
+    const checkCompetitionAchievements = async() =>{
+        try{
+            const justObtainedAchievements = await new ObtainAchievementPresenter().checkAchievementCompetition(user.accountID, competitions);
+        
+            if(justObtainedAchievements){
+                console.log(justObtainedAchievements);
+                if(justObtainedAchievements.length > 0){
+                    for(let i = 0; i < justObtainedAchievements.length; i++){
+                        Alert.alert('Achievement Unlocked', justObtainedAchievements[i]);
+                        console.log(`Achievement Unlocked: ${justObtainedAchievements[i]}`);
+                    }
+                }
+            }
+            
+        }catch(err){
+            console.log(err);
+            changeModalVisible(true, err.message.replace('Error: ', ''));
         }
     }
 
@@ -65,6 +87,12 @@ const UserCompetitionHistoryPage = ({ route, navigation }) => {
             loadCompetitions();
         }, [])
     );
+
+    useEffect(() => {
+        if(competitions.length > 0){
+            checkCompetitionAchievements();
+        }
+    }, [competitions]);
 
     return (
         <View style={styles.container}>

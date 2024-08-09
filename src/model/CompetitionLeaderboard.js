@@ -95,8 +95,8 @@ class CompetitionLeaderboard{
             const qs0 = await getDocs(q0);
 
             // if have then update leaderboard
-            for (const doc of qs0.docs){
-                const q1 = query(collection(db, "competitionleaderboard"), where("participant_userID", "==", userID), where("competitionID", "==", doc.id));
+            for (const d of qs0.docs){
+                const q1 = query(collection(db, "competitionleaderboard"), where("participant_userID", "==", userID), where("competitionID", "==", d.id));
                 const qs1 = await getDocs(q1);
 
                 // get user current step
@@ -107,8 +107,8 @@ class CompetitionLeaderboard{
                 }else{
                     const timeRangeFilter = {
                         operator: 'between',
-                        startTime: new Date(doc.data().startDate.toDate()).toISOString(),
-                        endTime: new Date(doc.data().endDate.toDate()).toISOString(),
+                        startTime: new Date(d.data().startDate.toDate()).toISOString(),
+                        endTime: new Date(d.data().endDate.toDate()).toISOString(),
                     }
                     // Reading steps record
                     const stepsRecords = await readRecords('Steps', { timeRangeFilter });
@@ -122,12 +122,16 @@ class CompetitionLeaderboard{
                     await updateDoc(qs1.docs[0].ref, {
                         userProgress: steps
                     });
+
+                console.log('updated ' + d.data().competitionName + ' ' + steps);
                 }else{
                     await addDoc(collection(db, 'competitionleaderboard'), {
                         participant_userID: userID,
-                        competitionID: doc.id,
+                        competitionID: d.id,
                         userProgress: steps
                     });
+
+                    console.log('added ' + d.data().competitionName + ' ' + steps);
                 }
             }
             
@@ -136,17 +140,13 @@ class CompetitionLeaderboard{
             const qs1 = await getDocs(q1);
 
 
-            for(const doc of qs1.docs){
+            for(const d of qs1.docs){
+                
                 // check if competition has started
-                const competitionID = doc.id;
-                const q2 = query(collection(db, "competition"), where("competitionID", "==", competitionID), where("startDate", "<=", Timestamp.now()), where("endDate", ">=", Timestamp.now()));
-                const qs2 = await getDocs(q2);
+                const competitionID = d.data().competitionID;
+                const qs2 = await getDoc(doc(db, "competition", competitionID));
 
-                // if exist then update leaderboard
-                if(qs2.docs.length > 0){
-                    const q3 = query(collection(db, "competitionleaderboard"), where("participant_userID", "==", userID), where("competitionID", "==", competitionID));
-                    const qs3 = await getDocs(q3);
-
+                if(qs2.data().startDate.toDate() <= new Date() && qs2.data().endDate.toDate() >= new Date()){
                     // get user current step
                     const isInitialized = await initialize();
                     let steps = 0;
@@ -155,29 +155,36 @@ class CompetitionLeaderboard{
                     }else{
                         const timeRangeFilter = {
                             operator: 'between',
-                            startTime: new Date(q2.docs[0].data().startDate.toDate()).toISOString(),
-                            endTime: new Date(q2.docs[0].data().endDate.toDate()).toISOString(),
+                            startTime: new Date(qs2.data().startDate.toDate()).toISOString(),
+                            endTime: new Date(qs2.data().endDate.toDate()).toISOString(),
                         }
                         // Reading steps record
                         const stepsRecords = await readRecords('Steps', { timeRangeFilter });
-                        steps = stepsRecords.length === 0 ? 0 : stepsRecords.reduce((acc, record) => acc + record.count, 0);
                         
+                        steps = stepsRecords.length === 0 ? 0 : stepsRecords.reduce((acc, record) => acc + record.count, 0);
                     }
 
-                    // if exists then update and assume there is only 1 entry each user in each competition
-                    // otherwise add new entry
+                    // check if user is already in leaderboard
+                    const q3 = query(collection(db, "competitionleaderboard"), where("participant_userID", "==", userID), where("competitionID", "==", competitionID));
+                    const qs3 = await getDocs(q3);
+
                     if(qs3.docs.length > 0){
                         await updateDoc(qs3.docs[0].ref, {
                             userProgress: steps
                         });
+
+                        console.log('updated ' + qs2.data().competitionName + ' ' + steps);
                     }else{
                         await addDoc(collection(db, 'competitionleaderboard'), {
                             participant_userID: userID,
                             competitionID: competitionID,
                             userProgress: steps
                         });
+
+                        console.log('added ' + qs2.data().competitionName + ' ' + steps);
                     }
                 }
+                
             }
 
 
@@ -214,6 +221,7 @@ class CompetitionLeaderboard{
 
                 leaderboard.push(l);
             }
+
 
 
             return leaderboard;

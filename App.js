@@ -47,7 +47,6 @@ import UserCoachHistoryFeedback from './src/view/user/UserCoachHistoryFeedback';
 import UserCoachUpdateFeedbackPage from './src/view/user/UserCoachUpdateFeedbackPage';
 import UserAchievementPage from './src/view/user/UserAchievementPage';
 import UserShareAchievementPage from './src/view/user/UserShareAchievementPage';
-import SmartWearablePage from './src/view/user/SmartWearablePage';
 import UserWorkoutPage from './src/view/user/UserWorkoutPage';
 import UserFriendsListPage from './src/view/user/UserFriendsListPage';
 import UserFriendDetailsPage from './src/view/user/UserFriendDetailsPage';
@@ -268,8 +267,6 @@ export default function App() {
           <Stack.Screen name="UserUpdateExerciseSettingsPage" component={UserUpdateExerciseSettingsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserAchievementPage" component={UserAchievementPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserShareAchievementPage" component={UserShareAchievementPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
-          {/*Remove SmartWearablePage and component/requestpermission.js*/}
-          <Stack.Screen name="SmartWearablePage" component={SmartWearablePage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserFriendsListPage" component={UserFriendsListPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserFriendDetailsPage" component={UserFriendDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserFriendRequestPage" component={UserFriendRequestPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />   

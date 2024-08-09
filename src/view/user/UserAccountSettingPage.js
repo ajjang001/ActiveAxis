@@ -83,7 +83,6 @@ const UserAccountSettingPage = ({ navigation, route }) => {
         { label: 'Friends', onPress: () => navigation.navigate("UserFriendsListPage", { user }) },
         { label: 'App Feedbacks', onPress: () => navigation.navigate("UserAppFeedbackPage", { user })},,
         { label: 'Achievements', onPress: () => navigation.navigate("UserAchievementPage", { user }) },
-        { label: 'Connect Smart Wearables', onPress: () => navigation.navigate("SmartWearablePage", {user}) },
         { label: 'Log Out', onPress: () => changeConfirmVisible(true, 'Are you sure you want to log out?') }
     ];
 

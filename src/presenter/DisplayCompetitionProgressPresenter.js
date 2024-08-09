@@ -7,9 +7,9 @@ class DisplayCompetitionProgressPresenter{
         this.model = new CompetitionLeaderboard();
     }
 
-    async updateUserCompetitionProgress(userID, steps){
+    async updateUserCompetitionProgress(userID){
         try{
-            await this.model.updateLeaderboard(userID, steps);
+            await this.model.updateLeaderboard(userID);
 
             
         }catch(error){

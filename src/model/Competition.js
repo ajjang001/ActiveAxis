@@ -522,49 +522,51 @@ class Competition{
             for(const d of participatedCompetitionsSnapshot.docs){
                 const data = d.data();
 
-                const competitionQuery = query(collection(db, "competition"), where("competitionID", "==", data.competitionID), where("endDate", "<", Timestamp.now()));
-                const competitionSnapshot = await getDocs(competitionQuery);
+                const competitionDoc = await getDoc(doc(db, "competition", data.competitionID));
+                const endDate = competitionDoc.data().endDate.toDate();
 
-                // check if data exists
-                if(competitionSnapshot.empty){
+                // if competition still on going, skip
+                if(endDate > new Date()){
                     continue;
-                }else{
-                    const competitionData = competitionSnapshot.docs[0].data();
-
-                    const c = new Competition();
-                    c.competitionID = competitionSnapshot.docs[0].id;
-                    c.host_user = await new User().getInfoByID(competitionData.host_userID);
-                    c.competitionType = await new CompetitionType().getCompetitionType(competitionData.competitionType);
-                    c.competitionName = competitionData.competitionName;
-                    c.competitionDetails = competitionData.competitionDetails;
-                    c.target = competitionData.target;
-                    c.startDate = competitionData.startDate;
-                    c.endDate = competitionData.endDate;
-
-                    // get participants
-                    const participantsQuery = query(collection(db, "competitioninvite"), where("competitionID", "==", c.competitionID), where("status", "==", "Accepted"));
-                    const participantsSnapshot = await getDocs(participantsQuery);
-
-                    for(const p of participantsSnapshot.docs){
-                        c.participants.push(p.data().participant_userID);
-                    }
-
-                    // Add the host to participant
-                    c.participants.push(competitionData.host_userID);
-
-                    const leaderboard = new CompetitionLeaderboard().getLeaderboard(c.competitionID);
-                    let position = 0;
-
-                    for(const l of leaderboard){
-                        position++;
-
-                        if(l.participant.accountID === userID){
-                            break;
-                        }
-                    }
-
-                    participatedCompetitions.push({competition: c, position: position});
                 }
+
+                const c = new Competition();
+                c.competitionID = data.competitionID;
+                c.host_user = await new User().getInfoByID(competitionDoc.data().host_userID);
+                c.competitionType = await new CompetitionType().getCompetitionType(competitionDoc.data().competitionType);
+                c.competitionName = competitionDoc.data().competitionName;
+                c.competitionDetails = competitionDoc.data().competitionDetails;
+                c.target = competitionDoc.data().target;
+                c.startDate = competitionDoc.data().startDate;
+                c.endDate = competitionDoc.data().endDate;
+
+                // get participants
+                const participantsQuery = query(collection(db, "competitioninvite"), where("competitionID", "==", c.competitionID), where("status", "==", "Accepted"));
+                const participantsSnapshot = await getDocs(participantsQuery);
+
+                for(const p of participantsSnapshot.docs){
+                    c.participants.push(p.data().participant_userID);
+                }
+
+                // Add the host to participant
+                c.participants.push(competitionDoc.data().host_userID);
+
+                const leaderboard = await new CompetitionLeaderboard().getLeaderboard(c.competitionID);
+                let position = 0;
+
+                
+
+                for(const l of leaderboard){
+                    position++;
+
+                    if(l.participant.accountID === userID){
+                        break;
+                    }
+                }
+
+                participatedCompetitions.push({competition: c, position: position});
+                
+
             }
 
             // sort all competitions in descending order by end date

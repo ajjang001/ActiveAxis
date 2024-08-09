@@ -86,7 +86,7 @@ const UserHomePage = ({ navigation, route }) => {
 
     const updateUserCompetitionProgress = async () => {
         try{
-            new DisplayCompetitionProgressPresenter().updateUserCompetitionProgress(user.accountID, steps);
+            new DisplayCompetitionProgressPresenter().updateUserCompetitionProgress(user.accountID);
         }catch(error){
             throw new Error(error);
         }

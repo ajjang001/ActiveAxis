@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, Modal, TouchableOpacity, ScrollView } from 'react-native';
 import { scale } from '../../components/scale';
 import { LoadingDialog, MessageDialog } from "../../components/Modal";
 import DisplayAchievementPresenter from '../../presenter/DisplayAchievementPresenter';
@@ -92,33 +92,51 @@ const UserAchievementPage = ({ navigation, route }) => {
       <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
         <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
       </Modal>
-      <Text style={styles.subHeaderText}>Unlocked</Text>
-      {completedAchievements.length === 0 && !isLoading ? (
-        <Text style={styles.noachievementText}>No Achievements Unlocked</Text>
-      ) : (
-        <FlatList
-          data={completedAchievements}
+      <ScrollView contentContainerStyle={{alignItems:'center'}}>
+        <Text style={styles.subHeaderText}>Unlocked</Text>
+        {completedAchievements.length === 0 && !isLoading ? (
+          <Text style={styles.noachievementText}>No Achievements Unlocked</Text>
+        ) : (
+          // <FlatList
+          //   data={completedAchievements}
+          //   keyExtractor={(item) => item._achievementID}
+          //   renderItem={({ item }) => <AchievementItem achievement={item} obtained={true} onPress={handlePressAchievement} />}
+          //   contentContainerStyle={styles.listContainer}
+          //   numColumns={2}
+          //   style={[
+          //     styles.flatList,
+          //     completedAchievements.length <= 2 ? { minHeight: '20%' } : { maxHeight: '60%' },
+          //   ]}
+          // />
+          <View style = {{flexDirection:'row', flexWrap:'wrap',}}>
+            {
+              completedAchievements.map((item, index) => (
+                <AchievementItem key={index} achievement={item} obtained={true} onPress={handlePressAchievement} />
+              ))
+            }
+          </View>
+          
+          )}
+        <Text style={styles.subHeaderText}>Locked</Text>
+        {/* <FlatList
+          data={lockedAchievements}
           keyExtractor={(item) => item._achievementID}
-          renderItem={({ item }) => <AchievementItem achievement={item} obtained={true} onPress={handlePressAchievement} />}
+          renderItem={({ item }) => <AchievementItem achievement={item} obtained={false} />}
           contentContainerStyle={styles.listContainer}
           numColumns={2}
           style={[
             styles.flatList,
             completedAchievements.length <= 2 ? { minHeight: '20%' } : { maxHeight: '60%' },
           ]}
-        />)}
-      <Text style={styles.subHeaderText}>Locked</Text>
-      <FlatList
-        data={lockedAchievements}
-        keyExtractor={(item) => item._achievementID}
-        renderItem={({ item }) => <AchievementItem achievement={item} obtained={false} />}
-        contentContainerStyle={styles.listContainer}
-        numColumns={2}
-        style={[
-          styles.flatList,
-          completedAchievements.length <= 2 ? { minHeight: '20%' } : { maxHeight: '60%' },
-        ]}
-      />
+        /> */}
+        <View style = {{flexDirection:'row', flexWrap:'wrap'}}>
+            {
+              lockedAchievements.map((item, index) => (
+                <AchievementItem key={index} achievement={item} obtained={false} />
+              ))
+            }
+          </View>
+      </ScrollView>
     </View>
 
 
@@ -128,6 +146,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    backgroundColor: '#FBF5F3',
+    
   },
   headerContainer: {
     width: '90%',

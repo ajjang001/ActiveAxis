@@ -1,7 +1,7 @@
 import Achievements from "./Achievements";
 import AchievementType from "./AchievementType";
 import { db, storage } from '../firebase/firebaseConfig';
-import { getDocs, collection, query, where } from 'firebase/firestore';
+import { getDocs, collection, query, where, addDoc, Timestamp } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
 
 class AchievementsObtained {
@@ -85,6 +85,33 @@ class AchievementsObtained {
             } else {
                 return []; // Return an empty array if no achievements are found
             }
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async checkAchievement(userID, achievementID) {
+        try{
+            const q = query(collection(db, 'achievementsobtained'), where('userID', '==', userID), where('achievementID', '==', achievementID));
+            const queryResult = await getDocs(q);
+
+            if(!queryResult.empty){
+                return queryResult.docs[0].data();
+            }else{
+                return null;
+            }
+        }catch(e){
+            throw new Error(e.message);
+        }
+    }
+
+    async unlockAchievement(userID, achievementID) {
+        try {
+            await addDoc(collection(db, 'achievementsobtained'), {
+                achievementID: achievementID,
+                dateAchieved: Timestamp.now(),
+                userID: userID
+            });
         } catch (e) {
             throw new Error(e.message);
         }

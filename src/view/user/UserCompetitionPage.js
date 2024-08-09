@@ -123,6 +123,8 @@ const UserCompetitionPage = ({ navigation, route }) => {
         
         if(myCompetitions.length > 0 || participatedCompetitions.length > 0){
             loadProgress();
+        }else{
+            console.log(myCompetitions.length, participatedCompetitions.length);
         }
     }, [myCompetitions, participatedCompetitions]);
 
