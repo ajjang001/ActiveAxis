@@ -1,5 +1,5 @@
 import { db, storage } from '../firebase/firebaseConfig';
-import { collection, query, where, getDocs, addDoc, deleteDoc, updateDoc, getDoc, doc, limit} from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, deleteDoc, updateDoc, getDoc, doc, limit } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
 
 import User from './User';
@@ -34,7 +34,7 @@ class Friends {
         const user1Query = query(collection(db, 'friends'), where('userID1', '==', userId), where('status', '==', 'Friend'));
         const user1Snapshot = await getDocs(user1Query);
 
-        for ( const d of user1Snapshot.docs ) {
+        for (const d of user1Snapshot.docs) {
             // get user data
             const docRef = doc(db, 'user', d.data().userID2);
             const docSnap = await getDoc(docRef);
@@ -45,7 +45,7 @@ class Friends {
                 u.profilePicture = docSnap.data().profilePicture;
                 u.profilePicture = await u.getProfilePictureURL();
                 u.fullName = docSnap.data().fullName;
-                
+
                 friends.push(u);
             }
         }
@@ -53,8 +53,8 @@ class Friends {
         // Query where User2 == current logged in user
         const user2Query = query(collection(db, 'friends'), where('userID2', '==', userId), where('status', '==', 'Friend'));
         const user2Snapshot = await getDocs(user2Query);
-        
-        for ( const d of user2Snapshot.docs ) {
+
+        for (const d of user2Snapshot.docs) {
             // get user data
             const docRef = doc(db, 'user', d.data().userID1);
             const docSnap = await getDoc(docRef);
@@ -65,7 +65,7 @@ class Friends {
                 u.profilePicture = docSnap.data().profilePicture;
                 u.profilePicture = await u.getProfilePictureURL();
                 u.fullName = docSnap.data().fullName;
-                
+
                 friends.push(u);
             }
         }
@@ -73,13 +73,13 @@ class Friends {
         return friends;
     }
 
-    
+
 
     async getFriendDetails(userId) {
         console.log("Fetching details for userId:", userId);
         const docRef = doc(db, 'user', userId);
         const docSnap = await getDoc(docRef);
-        
+
         console.log("Document reference:", docRef); // Debugging line
         console.log("Document snapshot exists:", docSnap.exists()); // Debugging line
 
@@ -119,40 +119,48 @@ class Friends {
     }
 
     async searchUsers(searchText, currentUserId) {
-    const usersSnapshot = await getDocs(collection(db, 'user'), where('isSuspended', '==', false));
-    let users = [];
-    usersSnapshot.forEach(doc => {
-        if (doc.data().accountID !== currentUserId) {
-            users.push({ id: doc.id, ...doc.data() });
-        }
-    });
+        const usersSnapshot = await getDocs(collection(db, 'user'), where('isSuspended', '==', false));
+        let users = [];
 
-    // Fetch current user's friends
-    const friends = await this.getFriends(currentUserId);
-    const friendIds = friends.map(friend => friend.accountID);
+        for (const doc of usersSnapshot.docs) {
+            const userData = doc.data();
+            const userId = doc.id;
+            const profilePicRef = ref(storage, userData.profilePicture);
+            // Get the download URL
+            profilePictureURL = await getDownloadURL(profilePicRef);
 
-    // Filter users based on search text and exclude friends and current user
-    const searched = users.filter(user => 
-        (user.fullName.toLowerCase().includes(searchText.toLowerCase()) || 
-        user.username.toLowerCase().includes(searchText.toLowerCase())) &&
-        user.id !== currentUserId &&
-        !friendIds.includes(user.id)
-    );
+            if (doc.data().accountID !== currentUserId) {
 
-    return searched;
-}
-      
+                users.push({ id: userId, ...userData, profilePictureURL });
+            }
+        };
+
+        // Fetch current user's friends
+        const friends = await this.getFriends(currentUserId);
+        const friendIds = friends.map(friend => friend.accountID);
+
+        // Filter users based on search text and exclude friends and current user
+        const searched = users.filter(user =>
+            (user.fullName.toLowerCase().includes(searchText.toLowerCase()) ||
+                user.username.toLowerCase().includes(searchText.toLowerCase())) &&
+            user.id !== currentUserId &&
+            !friendIds.includes(user.id)
+        );
+
+        return searched;
+    }
+
 
     async searchFriend(userId, keyword) {
-        try{
+        try {
             const result = [];
-            const u = new User(); 
+            const u = new User();
             const temp = await u.search(keyword);
 
             for (const d of temp) {
                 let q = query(collection(db, 'friends'), where('userID1', '==', userId), where('userID2', '==', d.id), where('status', '==', 'Friend'));
                 let s = await getDocs(q);
-                
+
                 if (s.empty) {
                     q = query(collection(db, 'friends'), where('userID2', '==', userId), where('userID1', '==', d.id), where('status', '==', 'Friend'));
                     s = await getDocs(q);
@@ -168,12 +176,12 @@ class Friends {
 
             return result;
 
-        }catch(error){
+        } catch (error) {
             throw new Error(error);
         }
     }
 
-    
+
 
     async addFriend(currentUserId, selectedUserId) {
         await addDoc(collection(db, 'friends'), {
@@ -205,7 +213,7 @@ class Friends {
         // Find the friend request document
         const friendRequestQuery = query(collection(db, 'friends'), where('userID1', '==', selectedUserId), where('userID2', '==', currentUserId), where('status', '==', 'Pending'));
         const friendRequestSnapshot = await getDocs(friendRequestQuery);
-        
+
         friendRequestSnapshot.forEach(doc => {
             const friendRequestDoc = doc.ref;
             if (accept) {
