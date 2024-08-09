@@ -107,8 +107,8 @@ class CompetitionLeaderboard{
                 }else{
                     const timeRangeFilter = {
                         operator: 'between',
-                        startTime: doc.data().startDate.toDate().toISOString(),
-                        endTime: doc.data().endDate.toDate().toISOString(),
+                        startTime: new Date(doc.data().startDate.toDate()).toISOString(),
+                        endTime: new Date(doc.data().endDate.toDate()).toISOString(),
                     }
                     // Reading steps record
                     const stepsRecords = await readRecords('Steps', { timeRangeFilter });
@@ -155,8 +155,8 @@ class CompetitionLeaderboard{
                     }else{
                         const timeRangeFilter = {
                             operator: 'between',
-                            startTime: q2.docs[0].data().startDate.toDate().toISOString(),
-                            endTime: q2.docs[0].data().endDate.toDate().toISOString(),
+                            startTime: new Date(q2.docs[0].data().startDate.toDate()).toISOString(),
+                            endTime: new Date(q2.docs[0].data().endDate.toDate()).toISOString(),
                         }
                         // Reading steps record
                         const stepsRecords = await readRecords('Steps', { timeRangeFilter });

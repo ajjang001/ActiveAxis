@@ -51,7 +51,7 @@ class DisplayFitnessStatisticsPresenter {
           startTime: new Date(date.setHours(0,0,0,0)).toISOString(),
           endTime: new Date(date.setHours(23,59,59,999)).toISOString(),
         }
-
+        
         // Reading steps record
         const stepsRecords = await readRecords('Steps', { timeRangeFilter });
         this.view.updateSteps(stepsRecords.length === 0 ? 0 : stepsRecords[0].count);

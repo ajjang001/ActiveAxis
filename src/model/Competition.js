@@ -61,8 +61,8 @@ class Competition{
                     competitionDetails: details,
                     competitionType: type,
                     target: target,
-                    startDate: startDate,
-                    endDate: endDate,
+                    startDate: new Date(startDate.setHours(0,0,0,0)),
+                    endDate: new Date(endDate.setHours(23,59,59,999)),
                 });
             }
 
@@ -74,8 +74,8 @@ class Competition{
                     competitionDetails: details,
                     competitionType: type,
                     target: null,
-                    startDate: startDate,
-                    endDate: endDate,
+                    startDate: new Date(startDate.setHours(0,0,0,0)),
+                    endDate: new Date(endDate.setHours(23,59,59,999)),
                 });
 
             }
@@ -443,8 +443,8 @@ class Competition{
                     competitionDetails: details,
                     competitionType: type,
                     target: target,
-                    startDate: startDate,
-                    endDate: endDate,
+                    startDate: new Date(startDate.setHours(0,0,0,0)),
+                    endDate: new Date(endDate.setHours(23,59,59,999)),
                 });
 
             }
@@ -455,8 +455,8 @@ class Competition{
                     competitionDetails: details,
                     competitionType: type,
                     target: null,
-                    startDate: startDate,
-                    endDate: endDate,
+                    startDate: new Date(startDate.setHours(0,0,0,0)),
+                    endDate: new Date(endDate.setHours(23,59,59,999)),
                 });
             }
 

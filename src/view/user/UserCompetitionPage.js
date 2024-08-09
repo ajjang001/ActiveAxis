@@ -17,7 +17,9 @@ const UserCompetitionPage = ({ navigation, route }) => {
     const [participatedCompetitions, setParticipatedCompetitions] = useState([]);
     const [progress, setProgress] = useState([]);
     const [participatedProgress, setParticipatedProgress] = useState([]);
-    
+
+    console.log(progress);
+    console.log(participatedProgress);
 
     const [selectedCompetition, setSelectedCompetition] = useState(null);
     const [isLeave, setIsLeave] = useState(false);
@@ -178,19 +180,26 @@ const UserCompetitionPage = ({ navigation, route }) => {
                                 </View>
                                 <View style = {styles.progressView}>
                                     <View style = {styles.progress}>
-                                        <Text style = {styles.progressText}>Progress: </Text>
+                                        
                                         {
-                                            competition.competitionType.competitionTypeID === 1 ?
-                                            <Text style = {styles.progressText}>{isNaN(progress[index]/competition.target*100) ? '--' : (progress[index]/competition.target*100).toFixed(0)}%</Text> : null
+                                            progress.length !==0 && competition.competitionType.competitionTypeID === 1 ?
+                                            <>
+                                                <Text style = {styles.progressText}>Progress: </Text>
+                                                <Text style = {styles.progressText}>{progress[index]/competition.target*100 ? (progress[index]/competition.target*100).toFixed(0): '--'}%</Text>
+                                            </> 
+                                            : null
+                                            
                                         }
                                         
                                         {
-                                            competition.competitionType.competitionTypeID === 2 ?
+                                            progress.length !==0 && competition.competitionType.competitionTypeID === 2 ?
                                             <>
+                                                <Text style = {styles.progressText}>Progress: </Text>
                                                 <Text style = {styles.progressText}>{progress[index] || '--'}</Text>
                                                 <Text style = {[styles.progressText, {fontSize:scale(16)}]}>steps</Text>
                                             </>
                                             : null
+
                                         }
                                     </View>
                                     <Text style = {styles.progressTopBottomText}>{competition.participants.length} Participants</Text>
@@ -237,15 +246,20 @@ const UserCompetitionPage = ({ navigation, route }) => {
                                 </View>
                                 <View style = {styles.progressView}>
                                     <View style = {styles.progress}>
-                                        <Text style = {styles.progressText}>Progress: </Text>
+                                        
                                         {
                                             competition.competitionType.competitionTypeID === 1 ?
-                                            <Text style = {styles.progressText}>{ isNaN(participatedProgress[index]/competition.target*100) ? '--' : (participatedProgress[index]/competition.target*100).toFixed(0)}%</Text> : null
+                                            <>
+                                                <Text style = {styles.progressText}>Progress: </Text>
+                                                <Text style = {styles.progressText}>{ participatedProgress[index]/competition.target*100 ? (participatedProgress[index]/competition.target*100).toFixed(0):'--'}%</Text> 
+                                            </>
+                                            : null
                                         }
                                         
                                         {
                                             competition.competitionType.competitionTypeID === 2 ?
                                             <>
+                                                <Text style = {styles.progressText}>Progress: </Text>
                                                 <Text style = {styles.progressText}>{participatedProgress[index] || '--'}</Text>
                                                 <Text style = {[styles.progressText, {fontSize:scale(16)}]}>steps</Text>
                                             </>
