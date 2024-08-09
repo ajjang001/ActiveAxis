@@ -6,6 +6,7 @@ import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Mod
 
 import DisplayCompetitionsPresenter from '../../presenter/DisplayCompetitionsPresenter';
 import LeaveCompetitionPresenter from '../../presenter/LeaveCompetitionPresenter';
+import DeleteCompetitionPresenter from '../../presenter/DeleteCompetitionPresenter';
 import DisplayCompetitionProgressPresenter from '../../presenter/DisplayCompetitionProgressPresenter';
 
 const UserCompetitionPage = ({ navigation, route }) => {
@@ -15,8 +16,11 @@ const UserCompetitionPage = ({ navigation, route }) => {
     const [myCompetitions, setMyCompetitions] = useState([]);
     const [participatedCompetitions, setParticipatedCompetitions] = useState([]);
     const [progress, setProgress] = useState([]);
+    const [participatedProgress, setParticipatedProgress] = useState([]);
+    
 
     const [selectedCompetition, setSelectedCompetition] = useState(null);
+    const [isLeave, setIsLeave] = useState(false);
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
@@ -60,8 +64,9 @@ const UserCompetitionPage = ({ navigation, route }) => {
             setMyCompetitions([]);
             setParticipatedCompetitions([]);
             setProgress([]);
+            setParticipatedProgress([]);
             await new DisplayCompetitionsPresenter({updateMyCompetitions: setMyCompetitions, updateParticipatedCompetitions: setParticipatedCompetitions}).loadCompetitions(user.accountID);
-            await new DisplayCompetitionProgressPresenter({updateProgress: setProgress}).getUserCompetitionProgress(user.accountID, myCompetitions);
+            await new DisplayCompetitionProgressPresenter({updateProgress: setProgress, updateParticipatedProgress: setParticipatedProgress}).getUserCompetitionProgress(user.accountID, myCompetitions, participatedCompetitions);
         }catch(error){
             console.log(error);
             changeModalVisible(true, error.message.replace('Error: ', ''));
@@ -75,13 +80,26 @@ const UserCompetitionPage = ({ navigation, route }) => {
             changeLoadingVisible(true);
             await new LeaveCompetitionPresenter().leaveCompetition(userID, competitionID);
             changeModalVisible(true, 'Successfully left the competition');
-            loadCompetitions();
+            await loadCompetitions();
             
         }catch(error){
             console.log(error);
             changeModalVisible(true, error.message.replace('Error: ', ''));
         }finally{
             changeConfirmVisible(false);
+        }
+    }
+
+    const handleDelete = async (competitionID) => {
+        try{
+            changeLoadingVisible(true);
+            await new DeleteCompetitionPresenter().deleteCompetition(competitionID);
+            changeModalVisible(true, 'Successfully deleted the competition');
+            await loadCompetitions();
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }finally{
+            changeLoadingVisible(false);
         }
     }
 
@@ -105,9 +123,9 @@ const UserCompetitionPage = ({ navigation, route }) => {
             </Modal>
             <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeConfirmVisible(false)}>
                 <ActionDialog
-                message = {confirmMessage}
-                changeModalVisible = {changeConfirmVisible}
-                action = {()=>{handleLeave(user.accountID, selectedCompetition.competitionID)}}
+                    message = {confirmMessage}
+                    changeModalVisible = {changeConfirmVisible}
+                    action = { isLeave ? ()=>{handleLeave(user.accountID, selectedCompetition.competitionID)} : ()=>{handleDelete(selectedCompetition.competitionID)} }
                 />
             </Modal>
             <View style={styles.buttonContainer}>
@@ -152,7 +170,7 @@ const UserCompetitionPage = ({ navigation, route }) => {
                                         </TouchableOpacity>
                                         {
                                             competition.startDate.toDate() > new Date() ?
-                                            <TouchableOpacity onPress = {()=>{console.log('Delete')}} style = {[{backgroundColor: '#BA0000'}, styles.competitionDateButtons]}>
+                                            <TouchableOpacity onPress = {()=>{setSelectedCompetition(competition); setIsLeave(false); changeConfirmVisible(true, 'Are you sure you want to delete and cancel this competition?')}} style = {[{backgroundColor: '#BA0000'}, styles.competitionDateButtons]}>
                                                 <Text style ={[styles.competitionDateTitle, {textAlign:'center', color:'white'}]}>Delete</Text>
                                             </TouchableOpacity>: null
                                         }
@@ -163,7 +181,7 @@ const UserCompetitionPage = ({ navigation, route }) => {
                                         <Text style = {styles.progressText}>Progress: </Text>
                                         {
                                             competition.competitionType.competitionTypeID === 1 ?
-                                            <Text style = {styles.progressText}>{isNaN(progress[index]/competition.target*100) ? 0 : (progress[index]/competition.target*100).toFixed(0)}%</Text> : null
+                                            <Text style = {styles.progressText}>{isNaN(progress[index]/competition.target*100) ? '--' : (progress[index]/competition.target*100).toFixed(0)}%</Text> : null
                                         }
                                         
                                         {
@@ -209,7 +227,7 @@ const UserCompetitionPage = ({ navigation, route }) => {
                                         </TouchableOpacity>
                                         {
                                             competition.startDate.toDate() > new Date() ?
-                                            <TouchableOpacity onPress = {()=>{setSelectedCompetition(competition); changeConfirmVisible(true, 'Are you sure you want to leave this competition?')}} style = {[{backgroundColor: '#BA0000'}, styles.competitionDateButtons]}>
+                                            <TouchableOpacity onPress = {()=>{setSelectedCompetition(competition); setIsLeave(true); changeConfirmVisible(true, 'Are you sure you want to leave this competition?')}} style = {[{backgroundColor: '#BA0000'}, styles.competitionDateButtons]}>
                                                 <Text style ={[styles.competitionDateTitle, {textAlign:'center', color:'white'}]}>Leave</Text>
                                             </TouchableOpacity>: null
 
@@ -222,13 +240,13 @@ const UserCompetitionPage = ({ navigation, route }) => {
                                         <Text style = {styles.progressText}>Progress: </Text>
                                         {
                                             competition.competitionType.competitionTypeID === 1 ?
-                                            <Text style = {styles.progressText}>0%</Text> : null
+                                            <Text style = {styles.progressText}>{ isNaN(participatedProgress[index]/competition.target*100) ? '--' : (participatedProgress[index]/competition.target*100).toFixed(0)}%</Text> : null
                                         }
                                         
                                         {
                                             competition.competitionType.competitionTypeID === 2 ?
                                             <>
-                                                <Text style = {styles.progressText}>0</Text>
+                                                <Text style = {styles.progressText}>{participatedProgress[index] || '--'}</Text>
                                                 <Text style = {[styles.progressText, {fontSize:scale(16)}]}>steps</Text>
                                             </>
                                             : null

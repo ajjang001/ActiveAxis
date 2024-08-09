@@ -17,7 +17,7 @@ class DisplayCompetitionProgressPresenter{
         }
     }
 
-    async getUserCompetitionProgress(userID, competitions){
+    async getUserCompetitionProgress(userID, competitions, participatedCompetitions){
         try{
             const progress = [];
             for(const c of competitions){
@@ -25,7 +25,14 @@ class DisplayCompetitionProgressPresenter{
                 progress.push(p);
             }
 
+            const participatedProgress = [];
+            for(const c of participatedCompetitions){
+                const p = await this.model.getCompetitionProgress(userID, c.competitionID);
+                participatedProgress.push(p);
+            }
+
             this.view.updateProgress(progress);
+            this.view.updateParticipatedProgress(participatedProgress);
 
         }catch(error){
             throw new Error(error);
