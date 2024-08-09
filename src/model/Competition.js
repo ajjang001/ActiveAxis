@@ -3,6 +3,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "fire
 import {auth, db, storage} from '../firebase/firebaseConfig';
 import CompetitionType from "./CompetitionType";
 import User from "./User";
+import CompetitionLeaderboard from "./CompetitionLeaderboard";
 
 
 class Competition{
@@ -459,6 +460,118 @@ class Competition{
                     endDate: new Date(endDate.setHours(23,59,59,999)),
                 });
             }
+
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
+    async getCompetitionHistory(userID){
+        try{
+            const myCompetitions = [];
+            const participatedCompetitions = [];
+
+            // Get all competitions created by the user (as host)
+            const myCompetitionsQuery = query(collection(db, "competition"), where("host_userID", "==", userID), where("endDate", "<", Timestamp.now()));
+            const myCompetitionsSnapshot = await getDocs(myCompetitionsQuery);
+            
+
+            for(const d of myCompetitionsSnapshot.docs){
+                const data = d.data();
+
+                const c = new Competition();
+                c.competitionID = d.id;
+                c.host_user = await new User().getInfoByID(data.host_userID);
+                c.competitionType = await new CompetitionType().getCompetitionType(data.competitionType);
+                c.competitionName = data.competitionName;
+                c.competitionDetails = data.competitionDetails;
+                c.target = data.target;
+                c.startDate = data.startDate;
+                c.endDate = data.endDate;
+
+                // get participants
+                const participantsQuery = query(collection(db, "competitioninvite"), where("competitionID", "==", c.competitionID), where("status", "==", "Accepted"));
+                const participantsSnapshot = await getDocs(participantsQuery);
+                
+
+                for(const p of participantsSnapshot.docs){
+                    c.participants.push(p.data().participant_userID);    
+                }
+
+                // Add the host to participant
+                c.participants.push(data.host_userID);
+                const leaderboard = await new CompetitionLeaderboard().getLeaderboard(c.competitionID);
+                let position = 0;
+
+                for(const l of leaderboard){
+                    position++;
+
+                    if(l.participant.accountID === userID){
+                        break;
+                    }
+                }
+
+
+                myCompetitions.push({competition: c, position: position});
+            }
+
+            // Get all competitions participated by the user
+            const participatedCompetitionsQuery = query(collection(db, "competitioninvite"), where("participant_userID", "==", userID), where("status", "==", "Accepted"));
+            const participatedCompetitionsSnapshot = await getDocs(participatedCompetitionsQuery);
+
+            for(const d of participatedCompetitionsSnapshot.docs){
+                const data = d.data();
+
+                const competitionQuery = query(collection(db, "competition"), where("competitionID", "==", data.competitionID), where("endDate", "<", Timestamp.now()));
+                const competitionSnapshot = await getDocs(competitionQuery);
+
+                // check if data exists
+                if(competitionSnapshot.empty){
+                    continue;
+                }else{
+                    const competitionData = competitionSnapshot.docs[0].data();
+
+                    const c = new Competition();
+                    c.competitionID = competitionSnapshot.docs[0].id;
+                    c.host_user = await new User().getInfoByID(competitionData.host_userID);
+                    c.competitionType = await new CompetitionType().getCompetitionType(competitionData.competitionType);
+                    c.competitionName = competitionData.competitionName;
+                    c.competitionDetails = competitionData.competitionDetails;
+                    c.target = competitionData.target;
+                    c.startDate = competitionData.startDate;
+                    c.endDate = competitionData.endDate;
+
+                    // get participants
+                    const participantsQuery = query(collection(db, "competitioninvite"), where("competitionID", "==", c.competitionID), where("status", "==", "Accepted"));
+                    const participantsSnapshot = await getDocs(participantsQuery);
+
+                    for(const p of participantsSnapshot.docs){
+                        c.participants.push(p.data().participant_userID);
+                    }
+
+                    // Add the host to participant
+                    c.participants.push(competitionData.host_userID);
+
+                    const leaderboard = new CompetitionLeaderboard().getLeaderboard(c.competitionID);
+                    let position = 0;
+
+                    for(const l of leaderboard){
+                        position++;
+
+                        if(l.participant.accountID === userID){
+                            break;
+                        }
+                    }
+
+                    participatedCompetitions.push({competition: c, position: position});
+                }
+            }
+
+            // sort all competitions in descending order by end date
+            const sortedCompetitions = myCompetitions.concat(participatedCompetitions).sort((a, b) => (a.competition.endDate < b.competition.endDate) ? 1 : -1);
+
+            return sortedCompetitions;
+
 
         }catch(error){
             throw new Error(error);

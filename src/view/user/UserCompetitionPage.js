@@ -18,9 +18,6 @@ const UserCompetitionPage = ({ navigation, route }) => {
     const [progress, setProgress] = useState([]);
     const [participatedProgress, setParticipatedProgress] = useState([]);
 
-    console.log(progress);
-    console.log(participatedProgress);
-
     const [selectedCompetition, setSelectedCompetition] = useState(null);
     const [isLeave, setIsLeave] = useState(false);
 
@@ -68,6 +65,16 @@ const UserCompetitionPage = ({ navigation, route }) => {
             setProgress([]);
             setParticipatedProgress([]);
             await new DisplayCompetitionsPresenter({updateMyCompetitions: setMyCompetitions, updateParticipatedCompetitions: setParticipatedCompetitions}).loadCompetitions(user.accountID);
+        }catch(error){
+            console.log(error);
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+    const loadProgress = async () => {
+        try{
+            changeLoadingVisible(true);
             await new DisplayCompetitionProgressPresenter({updateProgress: setProgress, updateParticipatedProgress: setParticipatedProgress}).getUserCompetitionProgress(user.accountID, myCompetitions, participatedCompetitions);
         }catch(error){
             console.log(error);
@@ -112,6 +119,13 @@ const UserCompetitionPage = ({ navigation, route }) => {
         }, [])
     );
 
+    useEffect(() => {
+        
+        if(myCompetitions.length > 0 || participatedCompetitions.length > 0){
+            loadProgress();
+        }
+    }, [myCompetitions, participatedCompetitions]);
+
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
@@ -148,6 +162,11 @@ const UserCompetitionPage = ({ navigation, route }) => {
                 </TouchableOpacity>
             </View>
             <ScrollView contentContainerStyle={styles.competitionContainer}>
+                {
+                    myCompetitions.length <= 0 && participatedCompetitions.length <= 0 ?
+                    <Text style = {styles.noAvailableText}>No Competitions Available</Text>
+                    : null
+                }
                 {
                     myCompetitions.length <= 0 ? null :
                     <>
@@ -399,6 +418,12 @@ const styles = StyleSheet.create({
         fontSize: scale(24),
         fontFamily: 'Inter-SemiBold',
         textAlign: 'center',
+    },
+    noAvailableText:{
+        paddingVertical: scale(32),
+        fontSize: scale(18),
+        fontFamily: 'Inter-SemiBold',
+
     }
 });
 

@@ -215,6 +215,7 @@ class CompetitionLeaderboard{
                 leaderboard.push(l);
             }
 
+
             return leaderboard;
 
         }catch(error){
