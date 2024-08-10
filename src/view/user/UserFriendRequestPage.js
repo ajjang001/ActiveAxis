@@ -5,7 +5,7 @@ import AcceptFriendPresenter from '../../presenter/AcceptFriendPresenter';
 import RejectFriendPresenter from '../../presenter/RejectFriendPresenter';
 import { scale } from "../../components/scale";
 
-const UserFriendRequestPage = ({ route }) => {
+const UserFriendRequestPage = ({ route, navigation }) => {
   const { user } = route.params;
   const [requests, setRequests] = useState([]);
 
@@ -40,130 +40,165 @@ const UserFriendRequestPage = ({ route }) => {
     },
   });
 
+  const viewDetails = (userId) => {
+    // Navigate to the details page
+    navigation.navigate('UserDetailsPage', { userId });
+  }
+
   useEffect(() => {
     displayFriendRequestsPresenter.fetchRequests(user.accountID);
   }, []);
 
   return (
     <View style={styles.container}>
-      <View style={styles.titleView}>
-        <Text style={styles.title}>Friend Requests</Text>
-      </View>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {requests.map((request, index) => (
-          <View key={index} style={styles.requestContainer}>
-            <Image style={styles.userImage} source={{ uri: request.profilePictureURL }} />
-            <View style={styles.userDetails}>
-              <Text style={styles.name}>{request.userID1}</Text>
-              <Text style={styles.role}>User</Text>
-              <View style={styles.optButtons}>
-                <TouchableOpacity style={styles.detailsButton}>
-                  <Text style={styles.detailsText}>DETAILS</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => acceptFriendPresenter.acceptFriend(user.accountID, request.userID1)}
-                  style={styles.acceptButton}
-                >
-                  <Text style={styles.inviteText}>Accept</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => rejectFriendPresenter.rejectFriend(user.accountID, request.userID1)}
-                  style={styles.rejectButton}
-                >
-                  <Text style={styles.inviteText}>Reject</Text>
-                </TouchableOpacity>
-              </View>
+      <View style={styles.contentContainer}>
+                <View style={styles.titleView}>
+                    <Text style={styles.title}>Friend Requests</Text>
+                </View>
+                <View style={styles.middleContentContainer}>
+                    <ScrollView style={styles.userListContainer} contentContainerStyle={styles.userListContent}>
+                        {requests.length === 0 ? (
+                            <View>
+                                <Text style={{ color: 'white', fontSize: scale(20) }}>No friend requests</Text>
+                            </View>
+                        ) : (
+                            requests.map((request, index) => (
+                                <View style={styles.usersContainer} key={index}>
+                                    <Image source={{ uri: request.profilePictureURL }} resizeMode='stretch' style={styles.userImage} />
+                                    <View style={styles.userDetails}>
+                                        <Text style={styles.name}>{request.fullName}</Text>
+                                        <Text style={styles.role}>User</Text>
+                                        <View style={styles.optButtons}>
+                                            <TouchableOpacity onPress={() => viewDetails(user)} activeOpacity={0.7} style={[styles.detailsButton]}>
+                                              <Text style={styles.detailsText}>Details</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity
+                                                onPress={() => acceptFriendPresenter.acceptFriend(user.accountID, request.userID1)}
+                                                style={styles.acceptButton}
+                                            >
+                                                <Text style={styles.inviteText}>Accept</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity
+                                                onPress={() => rejectFriendPresenter.rejectFriend(user.accountID, request.userID1)}
+                                                style={styles.rejectButton}
+                                            >
+                                                <Text style={styles.inviteText}>Reject</Text>
+                                            </TouchableOpacity>
+                                            </View>
+                                    </View>
+                                </View>
+                            ))
+                        )}
+                    </ScrollView>
+                </View>
             </View>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
-  );
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#C42847',
+      flex: scale(2),
+      backgroundColor: '#E28413',
   },
   titleView: {
-    backgroundColor: '#E28413',
-    paddingVertical: scale(20),
-    alignItems: 'center',
+      backgroundColor: '#E28413',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: scale(10),
+      paddingVertical: scale(10),
   },
   title: {
-    fontSize: scale(36),
-    fontWeight: 'bold',
-    color: 'black',
+      fontSize: scale(36),
+      fontFamily: 'League-Spartan',
+      fontWeight: 'bold',
+      textAlign: 'center',
   },
-  scrollContainer: {
-    paddingVertical: scale(20),
-    paddingHorizontal: scale(15),
+  contentContainer: {
+      backgroundColor: '#C42847',
+      width: '100%',
+      height: '85%',
   },
-  requestContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#C42847',
-    marginBottom: scale(10),
-    paddingVertical: scale(10),
-    paddingHorizontal: scale(10),
-    borderRadius: scale(8),
+  middleContentContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+  },
+  userListContainer: {
+      height: '65%',
+      width: '85%',
+  },
+  userListContent: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+  },
+  usersContainer: {
+      width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingBottom: scale(15),
   },
   userImage: {
-    width: scale(100),
-    height: scale(100),
-    backgroundColor: 'white',
-    marginRight: scale(15),
+      width: scale(100),
+      height: scale(100),
+      backgroundColor: 'white',
   },
   userDetails: {
-    flex: 1,
-    justifyContent: 'space-between',
-    flexDirection: 'column',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-end',
+      flexDirection: 'column',
+      gap: scale(10),
+      height: scale(100),
   },
   name: {
-    fontSize: scale(18),
-    fontWeight: 'bold',
-    color: 'white',
+      fontFamily: 'League-Spartan-SemiBold',
+      fontSize: scale(15),
+      backgroundColor: 'white',
+      width: scale(275),
+      paddingHorizontal: scale(5),
   },
   role: {
-    fontSize: scale(15),
-    color: 'white',
-    marginVertical: scale(5),
+      fontFamily: 'League-Spartan-SemiBold',
+      fontSize: scale(13),
+      backgroundColor: 'white',
+      width: scale(275),
+      padding: scale(5),
   },
   optButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      width: scale(275),
   },
   detailsButton: {
-    width: scale(80),
-    backgroundColor: '#D9D9D9',
-    borderRadius: scale(6),
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: scale(10),
+      width: scale(90),
+      backgroundColor: "#D9D9D9",
+      borderRadius: scale(6),
   },
   detailsText: {
-    fontSize: scale(16),
-    color: 'black',
+      fontFamily: 'League-Spartan-SemiBold',
+      fontSize: scale(16),
+      textAlign: 'center',
   },
   acceptButton: {
-    width: scale(80),
-    backgroundColor: '#00AD3B',
-    borderRadius: scale(6),
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: scale(10),
+      width: scale(90),
+      backgroundColor: "#00AD3B",
+      borderRadius: scale(6),
   },
   rejectButton: {
-    width: scale(80),
-    backgroundColor: '#E28413',
-    borderRadius: scale(6),
-    justifyContent: 'center',
-    alignItems: 'center',
+      width: scale(90),
+      backgroundColor: "#E28413",
+      borderRadius: scale(6),
   },
   inviteText: {
-    fontSize: scale(16),
-    color: 'white',
+      fontFamily: 'League-Spartan-SemiBold',
+      fontSize: scale(15),
+      color: 'white',
+      textAlign: 'center',
   },
 });
 

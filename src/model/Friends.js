@@ -210,11 +210,30 @@ class Friends {
         // Query where User2 == current logged in user and status == "Pending"
         const friendRequestsQuery = query(collection(db, 'friends'), where('userID2', '==', userId), where('status', '==', 'Pending'));
         const friendRequestsSnapshot = await getDocs(friendRequestsQuery);
-        friendRequestsSnapshot.forEach(doc => {
-            friendRequests.push(doc.data());
-        });
 
-        return friendRequests;
+        for (const docSnapshot of friendRequestsSnapshot.docs) {
+        const requestData = docSnapshot.data();
+        const userDocRef = doc(db, 'user', requestData.userID1);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+            const userData = userDoc.data();  // Correctly get the data object
+            let profilePictureURL = '';
+            if (userData.profilePicture) {
+                const profilePicRef = ref(storage, userData.profilePicture);
+                profilePictureURL = await getDownloadURL(profilePicRef);
+            }
+
+            friendRequests.push({
+                userID1: requestData.userID1,
+                fullName: userData.fullName || 'Unknown User',
+                profilePictureURL: profilePictureURL,
+                // Add any other details you want to use
+            });
+        }
+    }
+
+    return friendRequests;
     }
 
     async respondToFriendRequest(currentUserId, selectedUserId, accept) {

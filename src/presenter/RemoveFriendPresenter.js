@@ -9,7 +9,6 @@ class RemoveFriendPresenter {
 
   async handleRemoveFriend(selectedUserId) {
     await this.model.removeFriend(this.currentUserId, selectedUserId);
-    this.view.refreshFriendList(); // Method to refresh the friend list
   }
 }
 
