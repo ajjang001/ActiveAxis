@@ -282,6 +282,34 @@ class Achievements{
         }
     }
 
+    async getStepsAchievements(){
+        try{
+            // Assume that the achievement type is "Steps" (ID = 3)
+            const achievements = [];
+            const achievementType = 3;
+
+            const q = query(collection(db, "achievements"), where("achievementTypeID", "==", achievementType));
+            const querySnapshot = await getDocs(q);
+
+            for(const d of querySnapshot.docs){
+                const a = new Achievements();
+                a.achievementID = d.id;
+                a.achievementName = d.data().achievementName;
+                a.achievementPicture = await this.getURL(d.data().achievementPicture);
+                a.achievementType = await new AchievementType().getAchievementType(achievementType);
+                a.description = d.data().description;
+                a.maxProgress = d.data().maxProgress;
+
+                achievements.push(a);
+            }
+
+            return achievements;
+
+        }catch(e){
+            throw new Error(e.message);
+        }
+    }
+
     async getCompetitionsAchievements(){
         try{
             // Assume that the achievement type is "Competitions Won" (ID = 1)

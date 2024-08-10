@@ -7,6 +7,40 @@ class ObtainAchievementPresenter{
         this.model = null;
     }
 
+    async checkAchievementSteps(userID, steps){
+        try{
+            console.log("Checking achievements for steps");
+            const justObtained = [];
+
+            // Get all achievements related to steps
+            const achievements = await new Achievements().getStepsAchievements();
+            console.log(achievements);
+
+            // Check if user has reached enough steps to unlock an achievement
+            for(let i = 0; i < achievements.length; i++){
+                if(steps >= achievements[i].maxProgress){
+                    // Check if user has already unlocked the achievement
+                    const achievementObtained = await new AchievementsObtained().checkAchievement(userID, achievements[i].achievementID);
+                    if(achievementObtained === null){
+                        // Unlock the achievement
+                        await new AchievementsObtained().unlockAchievement(userID, achievements[i].achievementID);
+                        justObtained.push(achievements[i].achievementName);
+                    }
+                }
+            }
+
+            if(justObtained.length > 0){
+                console.log("Achievements obtained: ", justObtained);
+                return justObtained;
+            }
+            console.log("No achievements obtained");
+            return null;
+
+        }catch(err){
+            throw new Error(err.message);
+        }
+    }
+
     async checkAchievementCompetition(userID, competitionList){
         try{
             const justObtained = [];

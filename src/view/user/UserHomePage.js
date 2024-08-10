@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, Image, StyleSheet, ImageBackground, ScrollView, Modal } from 'react-native';
+import { View, Text, Image, StyleSheet, ImageBackground, ScrollView, Alert, Modal } from 'react-native';
 import { scale } from '../../components/scale';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -7,6 +7,7 @@ import { LoadingDialog, MessageDialog } from '../../components/Modal';
 import DisplayFitnessStatisticsPresenter from '../../presenter/DisplayFitnessStatisticsPresenter';
 import DisplayNotificationPresenter from '../../presenter/DisplayNotificationPresenter';
 import DisplayCompetitionProgressPresenter from '../../presenter/DisplayCompetitionProgressPresenter';
+import ObtainAchievementPresenter from '../../presenter/ObtainAchievementPresenter';
 
 const UserHomePage = ({ navigation, route }) => {
     // Get the user from the route params
@@ -92,6 +93,25 @@ const UserHomePage = ({ navigation, route }) => {
         }
     }
 
+    const checkStepsAchievements = async () => {
+        try{
+            const justObtainedAchievements = await new ObtainAchievementPresenter().checkAchievementSteps(user.accountID, steps);
+
+            if(justObtainedAchievements){
+                console.log(justObtainedAchievements);
+                if(justObtainedAchievements.length > 0){
+                    for(let i = 0; i < justObtainedAchievements.length; i++){
+                        Alert.alert('Achievement Unlocked', justObtainedAchievements[i]);
+                        console.log(`Achievement Unlocked: ${justObtainedAchievements[i]}`);
+                    }
+                }
+            }
+        }catch(error){
+            console.log(error);
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }
+    }
+
     const loadInfo = () => {
         try{
             changeLoadingVisible(true);
@@ -112,6 +132,12 @@ const UserHomePage = ({ navigation, route }) => {
             loadInfo();
         }, [])
     );
+
+    useEffect(() => {
+        if(steps > 0){
+            checkStepsAchievements();
+        }
+    }, [steps]);
     
 
 

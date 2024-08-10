@@ -25,7 +25,7 @@ const AchievementItem = ({ achievement, obtained, onPress }) => {
 const UserAchievementPage = ({ navigation, route }) => {
 
   const { user } = route.params;
-  userID = user.accountID;
+  let userID = user.accountID;
 
   const [achievements, setAchievements] = useState([]);
   const [obtainedAchievements, setObtainedAchievements] = useState([]);
