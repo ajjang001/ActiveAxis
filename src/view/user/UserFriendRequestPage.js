@@ -40,9 +40,11 @@ const UserFriendRequestPage = ({ route, navigation }) => {
     },
   });
 
-  const viewDetails = (userId) => {
+  const viewDetails = (friend) => {
     // Navigate to the details page
-    navigation.navigate('UserDetailsPage', { userId });
+    // console.log(friend);
+    // navigation.navigate('UserFriendDetailsPage', { selectedUserId });
+    navigation.navigate('UserFriendDetailsPage', { friend: { accountID: selectedUserId } });
   }
 
   useEffect(() => {
