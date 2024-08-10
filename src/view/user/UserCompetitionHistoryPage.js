@@ -6,6 +6,7 @@ import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Mod
 
 import DisplayCompetitionHistoryPresenter from '../../presenter/DisplayCompetitionHistoryPresenter';
 import ObtainAchievementPresenter from '../../presenter/ObtainAchievementPresenter';
+import ShareCompetitionPresenter from '../../presenter/ShareCompetitionPresenter';
 
 const UserCompetitionHistoryPage = ({ route, navigation }) => {
 
@@ -82,6 +83,14 @@ const UserCompetitionHistoryPage = ({ route, navigation }) => {
         }
     }
 
+    const handleShare = async (competition) => {
+        try{
+            await new ShareCompetitionPresenter().shareCompetition(competition);
+        }catch(err){
+            console.log(err);
+        }
+    }
+
     useFocusEffect(
         useCallback(() => {
             loadCompetitions();
@@ -128,6 +137,9 @@ const UserCompetitionHistoryPage = ({ route, navigation }) => {
                                             <View style = {styles.competitionDateButtonsView}>
                                                 <TouchableOpacity onPress = {()=>{navigation.navigate('UserCompetitionDetailsPage', {user, competition: competition.competition})}} style = {[{backgroundColor: '#E28413'}, styles.competitionDateButtons]}>
                                                     <Text style ={[styles.competitionDateTitle, {textAlign:'center', color:'white'}]}>View Details</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress = {()=>{handleShare(competition)}} style = {[{backgroundColor: 'black'}, styles.competitionDateButtons]}>
+                                                    <Text style ={[styles.competitionDateTitle, {textAlign:'center', color:'white'}]}>Share Result</Text>
                                                 </TouchableOpacity>
                                             </View>
                                         </View>
