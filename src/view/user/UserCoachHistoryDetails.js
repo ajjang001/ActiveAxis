@@ -17,9 +17,6 @@ const UserCoachHistoryDetails = ({ route }) => {
 
     // star filter
     const starFilter = [5, 4, 3, 2, 1];
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
 
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);

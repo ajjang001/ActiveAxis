@@ -1,14 +1,15 @@
-import Coach from '../model/Coach.js';
+import CoachingHistory from '../model/CoachingHistory.js';
 
 class HireCoachPresenter{
     constructor(view){
         this.view = view;
-        this.coach = new Coach();
+        this.history = new CoachingHistory();
     }
 
-    async displayCoaches(){
+    async displayCoaches(setCoaches){
         try{
-            //this.view.updateCoachList(await this.coach.getCoachList());
+            const coaches = await this.history.getCoaches();
+            setCoaches(coaches);
         }catch(error){
             throw new Error(error);
         }
