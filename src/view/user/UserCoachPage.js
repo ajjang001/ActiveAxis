@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, ActivityIndicator, Image } from 'react-native';
 import { scale } from '../../components/scale';
+import { useFocusEffect } from '@react-navigation/native';
 import { LoadingDialog, MessageDialog } from "../../components/Modal";
 import HireCoachPresenter from '../../presenter/HireCoachPresenter';
 
@@ -41,10 +42,11 @@ const UserCoachPage = ({ navigation, route }) => {
         }
     };
 
-    useEffect(() => {
-        fetchCoaches();
-        console.log(coaches)
-    }, [userID]);
+    useFocusEffect(
+        useCallback(() => {
+            fetchCoaches();
+        }, [])
+    );
 
     return (
         <View style={styles.container}>
@@ -85,8 +87,7 @@ const UserCoachPage = ({ navigation, route }) => {
                                         <TouchableOpacity
                                             style={styles.detailsButton}
                                             onPress={() =>
-                                                //navigation.navigate("UserCoachHistoryDetails", { user, coachDetails: item })
-                                                console.log("Coach Details")
+                                                navigation.navigate("UserCoachDetailsPage", { user, coachDetails: item.coach })
                                             }
                                         >
                                             <Text style={styles.buttonText}>Details</Text>
