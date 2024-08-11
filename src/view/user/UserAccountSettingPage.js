@@ -12,18 +12,32 @@ import { storage } from '../../firebase/firebaseConfig';
 const UserAccountSettingPage = ({ navigation, route }) => {
 
     const [user, setUser] = useState(route.params.user !== undefined ? route.params.user : null);
-
+    const [userDetails, setuserDetails] = useState(null);
     const [imageURL, setImageURL] = useState('');
 
     // get image url
-    useEffect(() => {
-        const getImageURL = async (c) => {
-            const storageRef = ref(storage, c.profilePicture);
-            const url = await getDownloadURL(storageRef);
-            setImageURL(url);
-        };
-        getImageURL(user);
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            const getImageURL = async (c) => {
+                try {
+                    const storageRef = ref(storage, c.profilePicture);
+                    const url = await getDownloadURL(storageRef);
+
+                    if (userDetails && userDetails[0]?.user?.profilePicture) {
+                        setImageURL(userDetails[0].user.profilePicture);
+                    } else {
+                        setImageURL(url);
+                    }
+                } catch (error) {
+                    console.error("Error fetching image URL:", error);
+                }
+            };
+
+            getImageURL(user);
+
+        }, [user, userDetails]) // Dependencies to trigger reload
+    );
+
 
     // State to control the visibility of the modal
     const [isLoading, setIsLoading] = useState(false);
@@ -71,17 +85,18 @@ const UserAccountSettingPage = ({ navigation, route }) => {
             // Reset state when the component gains focus
             return () => {
                 setUser(route.params.user !== undefined ? route.params.user : null);
+                setuserDetails(route.params.userDetails !== undefined ? route.params.userDetails : null);
                 setModalVisible(false);
             };
-        }, [route.params.user])
+        }, [route.params.user, route.params.userDetails])
     );
 
     // Options for the user
     const options = [
-        { label: 'Account Details', onPress: () => navigation.navigate("UserAccountDetailsPage1", { user , userType: 'user'}) },
-        { label: 'Exercise Settings', onPress: () => navigation.navigate("UserExerciseSettingsPage", { user , userType: 'user'}) },
+        { label: 'Account Details', onPress: () => navigation.navigate("UserAccountDetailsPage1", { user, userType: 'user' }) },
+        { label: 'Exercise Settings', onPress: () => navigation.navigate("UserExerciseSettingsPage", { user, userType: 'user' }) },
         { label: 'Friends', onPress: () => navigation.navigate("UserFriendsListPage", { user }) },
-        { label: 'App Feedbacks', onPress: () => navigation.navigate("UserAppFeedbackPage", { user })},,
+        { label: 'App Feedbacks', onPress: () => navigation.navigate("UserAppFeedbackPage", { user }) }, ,
         { label: 'Achievements', onPress: () => navigation.navigate("UserAchievementPage", { user }) },
         { label: 'Log Out', onPress: () => changeConfirmVisible(true, 'Are you sure you want to log out?') }
     ];

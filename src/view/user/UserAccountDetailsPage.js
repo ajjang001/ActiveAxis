@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native"
+import { View, Text, StyleSheet, Modal, TouchableOpacity, ActivityIndicator, Image } from "react-native"
 import { scale } from "../../components/scale";
 import React, { useEffect, useState, useCallback } from "react";
 import { useIsFocused } from '@react-navigation/native';
@@ -8,7 +8,7 @@ import DisplayAccountDetailsPresenter from '../../presenter/DisplayAccountDetail
 const UserAccountDetailsPage = ({ navigation, route }) => {
 
     const { user, userType } = route.params;
-    console.log({user})
+    console.log({ user })
     const userEmail = user.email;
 
     //check when this screen is focus
@@ -20,6 +20,7 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
     const [modalMsg, setModalMsg] = useState('');
 
     // User Details
+    const [profilePic, setprofilePic] = useState('');
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [phoneNumber, setphoneNumber] = useState('');
@@ -81,6 +82,7 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
     useEffect(() => {
         // Ensure user is populated before logging or using it
         if (userDetails.length > 0) {
+            setprofilePic(userDetails[0].user.profilePicture)
             setFullName(userDetails[0].user.fullName);
             setEmail(userDetails[0].user.email);
             setphoneNumber(userDetails[0].user.phoneNumber);
@@ -104,6 +106,23 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
         }
     }, [userDetails]);
 
+        // Navigate back with data
+        const navigateBackWithData = () => {
+            navigation.navigate('Account', { userDetails });
+        }
+    
+        useEffect(() => {
+            const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+                // Prevent default behavior of leaving the screen
+                e.preventDefault();
+    
+                // Manually trigger the navigation back with data
+                navigateBackWithData();
+            });
+    
+            return unsubscribe;
+        }, [navigation, userDetails]);
+
     return (
         <View style={styles.container}>
             <View style={styles.headerView}>
@@ -116,6 +135,13 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
                 <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
             </Modal>
             <View style={styles.detailsBox}>
+                {profilePic !== '' ? (
+                    <View style={styles.pictureContainer}>
+                        <Image source={{ uri: profilePic }} resizeMode='stretch' style={styles.userImage} />
+                    </View>
+                ) : (
+                    <ActivityIndicator style={styles.pictureContainer} size="large" />
+                )}
                 <Text style={styles.detailsTitle}>Name</Text>
                 <Text style={styles.detailsText}>{fullName}</Text>
                 <Text style={styles.detailsTitle}>Email</Text>
@@ -172,7 +198,7 @@ const styles = StyleSheet.create({
         padding: scale(15),
         borderWidth: 2,
         borderRadius: scale(36),
-        marginTop: scale(20),
+        marginTop: scale(10),
         borderColor: '#C42847',
     },
     detailsTitle: {
@@ -185,7 +211,7 @@ const styles = StyleSheet.create({
         fontSize: scale(16),
         marginBottom: scale(5),
         paddingHorizontal: scale(15),
-        paddingVertical: scale(10),
+        paddingVertical: scale(7),
         borderRadius: scale(8),
         backgroundColor: 'white',
     },
@@ -193,7 +219,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         backgroundColor: '#E28413',
         paddingVertical: scale(5),
-        marginTop: scale(25),
+        marginTop: scale(15),
         marginHorizontal: scale(15),
         flex: 1,
     },
@@ -212,8 +238,19 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         backgroundColor: '#C42847',
         paddingVertical: scale(5),
-        marginTop: scale(25),
+        marginTop: scale(15),
         marginHorizontal: scale(15),
         flex: 1,
+    },
+    pictureContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    userImage: {
+        width: scale(100),
+        height: scale(100),
+        backgroundColor: 'white',
+        borderRadius: scale(75)
     },
 })

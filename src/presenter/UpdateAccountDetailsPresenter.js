@@ -76,7 +76,7 @@ class UpdateAccountDetailsPresenter {
       }
   }
 
-  async updateAccountDetails(email, gender, phoneNumber, weight, height, fitnessGoal, fitnessLevel, hasMedical) {
+  async updateAccountDetails(email, gender, phoneNumber, weight, height, fitnessGoal, fitnessLevel, hasMedical, profilePic, newprofilePic, userID) {
 
     const phonePattern = /^\+65\d{8}$/;
     const floatPattern = /^\d+(\.\d+)?$/;
@@ -99,6 +99,13 @@ class UpdateAccountDetailsPresenter {
       try {
         this.account = new User();
         await this.account.updateAccountDetails(email, gender, phoneNumber1, parseFloat(weight), parseFloat(height), fitnessGoal, fitnessLevel, hasMedical);
+        
+        if (profilePic === newprofilePic) {
+          console.log("No update to picture.");
+        }
+        else {
+          await this.account.updateAccountPicture(email, newprofilePic);
+        }
       } catch (error) {
         throw new Error(error);
       }
