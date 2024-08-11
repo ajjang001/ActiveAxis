@@ -1,6 +1,6 @@
 
 import { auth, db, storage } from '../firebase/firebaseConfig';
-import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail} from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
 import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, updateDoc, orderBy, startAt, endAt, deleteDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import axios from 'axios';
@@ -333,7 +333,7 @@ class Coach extends Account {
             await updateDoc(q, { isSuspended: false });
 
             const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/enable-account', { uid: coachID });
-            
+
             console.log(res.data.message);
         } catch (e) {
             throw new Error(e.message);
@@ -452,8 +452,8 @@ class Coach extends Account {
         }
     }
 
-    async rejectCoach(coachID){
-        try{
+    async rejectCoach(coachID) {
+        try {
             // Delete storage
             // Delete resume
             const resumeRef = ref(storage, this.resume);
@@ -471,13 +471,13 @@ class Coach extends Account {
             // Delete account in authentication
             const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/delete-account', { uid: coachID });
             console.log(res.data.message);
-            
+
 
 
             // Delete document
             const coachRef = doc(db, 'coach', coachID);
             await deleteDoc(coachRef);
-        }catch(e){
+        } catch (e) {
             throw new Error(e.message);
         }
     }
@@ -521,6 +521,59 @@ class Coach extends Account {
             const res = await axios.post('https://myapi-af5izkapwq-uc.a.run.app/account/update-password', { uid: coachID, newPassword });
             console.log(res.data.message);
         } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async updateAccountPicture(userEmail, newprofilePic) {
+        try {
+
+            const fileObject = {
+                uri: newprofilePic,
+                name: "photo.jpg"
+            };
+            // Convert URI to Blob
+            const uriToBlob = (uri) => {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest()
+                    xhr.onload = function () {
+                        // return the blob
+                        resolve(xhr.response)
+                    }
+                    xhr.onerror = function () {
+                        reject(new Error('uriToBlob failed'))
+                    }
+                    xhr.responseType = 'blob'
+                    xhr.open('GET', uri, true)
+
+                    xhr.send(null)
+                })
+            };
+
+            // Upload file to Firebase Storage
+            const uploadFile = async (file, folderPath) => {
+                if (!file || !file.uri) throw new Error('File URI is invalid');
+
+                const storageRef = ref(storage, folderPath + file.name);
+                const blobFile = await uriToBlob(file.uri);
+                try {
+                    await uploadBytes(storageRef, blobFile);
+                    return `${folderPath}${file.name}`;
+                } catch (e) {
+                    throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support.");
+
+                }
+
+            };
+            // Folder path
+            const folderPath = `coach/${userEmail.split('@')[0]}/`;
+
+            // Upload files to Firebase Storage
+            await uploadFile(fileObject, folderPath);
+
+            console.log("Updated picture!")
+        }
+        catch (e) {
             throw new Error(e.message);
         }
     }
