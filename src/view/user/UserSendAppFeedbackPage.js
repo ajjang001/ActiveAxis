@@ -69,8 +69,8 @@ const UserSendAppFeedbackPage = ({navigation, route}) => {
   const handleSubmit = async () => {
     try {
       changeLoadingVisible(true);
-      const auth = getAuth();
-      const user = auth.currentUser;
+      // const auth = getAuth();
+      // const user = auth.currentUser;
 
       if (user) {
         const dateSubmitted = new Date().toLocaleString('en-US', { 
@@ -87,7 +87,7 @@ const UserSendAppFeedbackPage = ({navigation, route}) => {
           dateSubmitted: dateSubmitted,
           feedbackText: feedback,
           rating: rating,
-          accountID: user.uid, // Use the authenticated user's UID
+          accountID: user.accountID, 
         };
         await presenter.submitFeedback(feedbackData);
 

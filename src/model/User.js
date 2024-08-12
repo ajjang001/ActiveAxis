@@ -2,7 +2,7 @@
 import { db, auth, storage } from '../firebase/firebaseConfig';
 import { getDoc, doc, getDocs, query, collection, where, setDoc, Timestamp, orderBy, startAt, endAt, updateDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
-import { ref, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import axios from 'axios';
 import Account from './Account';
 
@@ -650,6 +650,61 @@ class User extends Account {
             });
 
         } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async updateAccountPicture(email, newprofilePic) {
+        try {
+
+            const fileObject = {
+                uri: newprofilePic,
+                name: "photo.jpg"
+            };
+            // Convert URI to Blob
+            const uriToBlob = (uri) => {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest()
+                    xhr.onload = function () {
+                        // return the blob
+                        resolve(xhr.response)
+                    }
+                    xhr.onerror = function () {
+                        reject(new Error('uriToBlob failed'))
+                    }
+                    xhr.responseType = 'blob'
+                    xhr.open('GET', uri, true)
+
+                    xhr.send(null)
+                })
+            };
+
+            // Upload file to Firebase Storage
+            const uploadFile = async (file, folderPath) => {
+                if (!file || !file.uri) throw new Error('File URI is invalid');
+
+                const storageRef = ref(storage, folderPath + file.name);
+                const blobFile = await uriToBlob(file.uri);
+                try {
+                    await uploadBytes(storageRef, blobFile);
+                    return `${folderPath}${file.name}`;
+                } catch (e) {
+                    throw new Error("Error occurred: " + e.message + "\nPlease try again or contact customer support.");
+
+                }
+
+            };
+            // Folder path
+            const folderPath = `user/${email.split('@')[0]}/`;
+
+            // Upload files to Firebase Storage
+            const photoPath = await uploadFile(fileObject, folderPath);
+            await updateDoc(doc(db, "user", userID), {
+                profilePicture: photoPath,
+            });
+            console.log("Updated picture!")
+        }
+        catch (e) {
             throw new Error(e.message);
         }
     }

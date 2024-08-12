@@ -1,5 +1,5 @@
 import React, {useState, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal} from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, BackHandler} from 'react-native';
 import { useFocusEffect, StackActions } from '@react-navigation/native';
 import { TransitionPresets } from '@react-navigation/stack';
 import {scale} from '../../components/scale';
@@ -62,6 +62,18 @@ const SystemAdminHomePage = ({navigation, route}) => {
                 setModalVisible(false);
             };
         }, [route.params.admin])
+    );
+
+    useFocusEffect(
+        useCallback(() => {
+            const onBackPress = () => {
+                return true;  
+            };
+    
+            const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    
+            return () => backHandler.remove();
+        }, [])
     );
 
     // Options for the system admin

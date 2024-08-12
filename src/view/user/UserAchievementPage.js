@@ -64,17 +64,22 @@ const UserAchievementPage = ({ navigation, route }) => {
   }, [userID]);
 
   const completedAchievements = useMemo(
-    () => obtainedAchievements.map(obt => {
-      const achievement = achievements.find(ach => ach._achievementID === obt._achievementID);
-      return { ...achievement, dateAchieved: obt.dateAchieved };
-    }),
+    () => obtainedAchievements
+      .map(obt => {
+        const achievement = achievements.find(ach => ach._achievementID === obt._achievementID);
+        return { ...achievement, dateAchieved: obt.dateAchieved };
+      })
+      .sort((a, b) => a._achievementType.localeCompare(b._achievementType)),
     [achievements, obtainedAchievements]
   );
-
+  
   const lockedAchievements = useMemo(
-    () => achievements.filter(ach => !obtainedAchievements.some(obt => obt._achievementID === ach._achievementID)),
+    () => achievements
+      .filter(ach => !obtainedAchievements.some(obt => obt._achievementID === ach._achievementID))
+      .sort((a, b) => a._achievementType.localeCompare(b._achievementType)),
     [achievements, obtainedAchievements]
-  ); 
+  );
+  
 
   const handlePressAchievement = (achievement) => {
     navigation.navigate('UserShareAchievementPage', { achievement });

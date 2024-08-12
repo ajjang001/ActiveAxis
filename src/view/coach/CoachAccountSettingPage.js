@@ -16,14 +16,18 @@ const CoachAccountSettingPage = ({ navigation, route }) => {
     const [imageURL, setImageURL] = useState('');
 
     // get image url
-    useEffect(() => {
-        const getImageURL = async (c) => {
-            const storageRef = ref(storage, c.profilePicture);
-            const url = await getDownloadURL(storageRef);
-            setImageURL(url);
-        };
-        getImageURL(coach);
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            const getImageURL = async (c) => {
+                const storageRef = ref(storage, c.profilePicture);
+                const url = await getDownloadURL(storageRef);
+                setImageURL(url);
+            };
+
+            getImageURL(coach);
+
+        }, [coach]) // Add dependencies here
+    );
 
     // State to control the visibility of the modal
     const [isLoading, setIsLoading] = useState(false);

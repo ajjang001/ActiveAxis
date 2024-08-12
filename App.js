@@ -41,6 +41,7 @@ import UserCompetitionHistoryPage from './src/view/user/UserCompetitionHistoryPa
 import UserCompetitionInvitationPage from './src/view/user/UserCompetitionInvitationPage';
 import CompetitionLeaderboardPage from './src/view/user/CompetitionLeaderboardPage';
 import UserCoachPage from './src/view/user/UserCoachPage';
+import UserCoachDetailsPage from './src/view/user/UserCoachDetailsPage';
 import UserCoachHistoryPage from './src/view/user/UserCoachHistoryPage';
 import UserCoachHistoryDetails from './src/view/user/UserCoachHistoryDetails';
 import UserCoachHistoryFeedback from './src/view/user/UserCoachHistoryFeedback';
@@ -275,6 +276,7 @@ export default function App() {
           <Stack.Screen name="UserAppFeedbackPage" component={UserAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserSendAppFeedbackPage" component={UserSendAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserUpdateAppFeedbackPage" component={UserUpdateAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserCoachDetailsPage" component={UserCoachDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserCoachHistoryDetails" component={UserCoachHistoryDetails} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserCoachHistoryFeedback" component={UserCoachHistoryFeedback} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserCoachUpdateFeedbackPage" component={UserCoachUpdateFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />

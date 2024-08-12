@@ -1,6 +1,8 @@
 import { db, storage } from '../firebase/firebaseConfig';
 import { getDoc, getDocs, query, collection, where, doc } from "firebase/firestore";
 import { ref, getDownloadURL } from 'firebase/storage';
+import Coach from "./Coach";
+
 
 class CoachingHistory {
     _coachID;
@@ -64,6 +66,44 @@ class CoachingHistory {
             }
             return historyList;
 
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async getCoaches() {
+        try {
+            const q = query(collection(db, 'coach'), where('isPending', '==', false));
+            const queryResult = await getDocs(q);
+            const coaches = [];
+
+            for (const doc of queryResult.docs) {
+                const data = doc.data();
+                const c = new Coach();
+
+                c.accountID = doc.id;
+                c.username = data.username;
+                c.email = data.email;
+                c.profilePicture = data.profilePicture;
+                c.profilePicture = await c.getProfilePictureURL();
+                c.fullName = data.fullName;
+                c.dob = data.dob;
+                c.gender = data.gender;
+                c.phoneNumber = data.phoneNumber;
+                c.isPending = data.isPending;
+                c.isSuspended = data.isSuspended;
+                c.chargePerMonth = data.chargePerMonth;
+                c.certificate = data.certificate;
+                c.id = data.photoID;
+                c.resume = data.resume;
+
+
+
+                coaches.push({ id: doc.id, coach: c });
+
+            }
+
+            return coaches;
         } catch (e) {
             throw new Error(e.message);
         }

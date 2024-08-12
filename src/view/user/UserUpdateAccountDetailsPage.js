@@ -1,8 +1,9 @@
-import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, Alert } from "react-native"
+import { View, Text, StyleSheet, Modal, TouchableOpacity, ActivityIndicator, Image, TextInput , Alert} from "react-native"
 import { scale } from "../../components/scale";
 import React, { useState, useEffect } from "react";
 import { Dropdown } from 'react-native-element-dropdown';
 import { LoadingDialog, ActionDialog, MessageDialog } from "../../components/Modal";
+import { launchImageLibrary } from 'react-native-image-picker';
 import UpdateAccountDetailsPresenter from '../../presenter/UpdateAccountDetailsPresenter';
 
 const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
@@ -26,6 +27,7 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
     ];
 
     const { user, userDetails, userType } = route.params;
+    userID = user.accountID;
 
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -40,8 +42,10 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
     const [height, setHeight] = useState(String(userDetails[0].user.height));
     const [fitnessGoal, setGoal] = useState(userDetails[0].user.fitnessGoal);
     const [fitnessLevel, setLevel] = useState(userDetails[0].user.fitnessLevel);
-
     const [hasMedical, setMedical] = useState(userDetails[0].user.hasMedical);
+
+    const [profilePic, setprofilePic] = useState(userDetails[0].user.profilePicture);
+    const [newprofilePic, setnewprofilePic] = useState(userDetails[0].user.profilePicture);
 
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
@@ -103,6 +107,28 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
         }
     };
 
+    // handle select photo
+    const handleSelectPhoto = async () => {
+        try {
+            const response = await launchImageLibrary({ mediaType: 'photo' });
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.errorCode) {
+                console.error('ImagePicker Error: ', response.errorMessage);
+            } else {
+                const asset = response.assets[0];
+                const uri = asset.uri;
+                let name = asset.fileName || uri.split('/').pop();
+                const ext = name.split('.').pop();
+                name = `photo.${ext}`;
+
+                setnewprofilePic(uri);
+            }
+        } catch (error) {
+            console.error('Error selecting photo:', error.message);
+        }
+    };
 
     // Process Update Account Details
     const processUpdate = async () => {
@@ -120,7 +146,7 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
             };
             // include back +65
             phoneNumber1 = "+65" + phoneNumber;
-            await new UpdateAccountDetailsPresenter().updateAccountDetails(email, gender, phoneNumber1, weight, height, fitnessGoal, fitnessLevel, hasMedical);
+            await new UpdateAccountDetailsPresenter().updateAccountDetails(email, gender, phoneNumber1, weight, height, fitnessGoal, fitnessLevel, hasMedical, profilePic, newprofilePic, userID);
             navigation.navigate('UserAccountDetailsPage1', { user: updatedUser, userType })
             Alert.alert('Successfully updated account information!')
         } catch (e) {
@@ -137,6 +163,15 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
                 <Text style={styles.headerText}>Edit Account Details</Text>
             </View>
             <View style={styles.detailsBox}>
+                <TouchableOpacity onPress={() => handleSelectPhoto()}>
+                    {newprofilePic !== '' ? (
+                        <View style={styles.pictureContainer}>
+                            <Image source={{ uri: newprofilePic }} resizeMode='stretch' style={styles.userImage} />
+                        </View>
+                    ) : (
+                        <ActivityIndicator style={styles.pictureContainer} size="large" />
+                    )}
+                </TouchableOpacity>
                 <Text style={styles.detailsTitle}>Name</Text>
                 <Text style={styles.detailsText}>{userDetails[0].user.fullName}</Text>
                 <Text style={styles.detailsTitle}>Email</Text>
@@ -265,7 +300,7 @@ const styles = StyleSheet.create({
         padding: scale(15),
         borderWidth: 2,
         borderRadius: scale(36),
-        marginTop: scale(20),
+        marginTop: scale(10),
         borderColor: '#C42847',
     },
     detailsTitle: {
@@ -278,7 +313,7 @@ const styles = StyleSheet.create({
         fontSize: scale(16),
         marginBottom: scale(5),
         paddingHorizontal: scale(15),
-        paddingVertical: scale(10),
+        paddingVertical: scale(7),
         borderRadius: scale(8),
         backgroundColor: '#F5F5F5', // Light gray background to indicate it's not editable
         color: '#999999', // Muted text color
@@ -287,7 +322,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#000022',
         width: '80%',
         padding: scale(10),
-        marginTop: scale(20),
+        marginTop: scale(25),
         borderRadius: scale(10),
         alignItems: 'center',
     },
@@ -302,7 +337,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderBottomColor: 'gray',
         paddingHorizontal: scale(15),
-        paddingVertical: scale(2),
         borderRadius: scale(8),
     },
     phoneinput: {
@@ -318,7 +352,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Inter',
         fontSize: scale(16),
         paddingHorizontal: scale(15),
-        paddingVertical: scale(10),
+        paddingVertical: scale(8),
         borderRadius: scale(8),
         marginRight: scale(5),
         backgroundColor: '#F5F5F5', // Light gray background to indicate it's not editable
@@ -328,6 +362,17 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         paddingHorizontal: scale(15),
         borderRadius: scale(8),
-        paddingVertical: scale(8),
+        paddingVertical: scale(5),
+    },
+    pictureContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    userImage: {
+        width: scale(100),
+        height: scale(100),
+        backgroundColor: 'white',
+        borderRadius: scale(75)
     },
 })

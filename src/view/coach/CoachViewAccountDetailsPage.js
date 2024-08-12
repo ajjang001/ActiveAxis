@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useCallback, useState, useEffect } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, ActivityIndicator, Image } from 'react-native';
 import DisplayAccountDetailsPresenter from '../../presenter/DisplayAccountDetailsPresenter';
+import { LoadingDialog, MessageDialog } from "../../components/Modal";
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
+import { scale } from '../../components/scale';
 
 const CoachViewAccountDetailsPage = () => {
   const route = useRoute();
@@ -12,25 +15,51 @@ const CoachViewAccountDetailsPage = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   // const [password, setPassword] = useState(''); // Typically, password shouldn't be fetched or displayed
+  const [profilePic, setprofilePic] = useState('');
 
-  const presenter = new DisplayAccountDetailsPresenter({
-    displayAccountDetails: (accountDetails) => {
-      console.log("Displaying account details:", accountDetails);
-      setName(accountDetails.fullName);
-      setPhoneNumber(accountDetails.phoneNumber);
-      setEmail(accountDetails.email);
-      // Password should not be handled this way due to security reasons
-      // setPassword(accountDetails.password);
-    }
-  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
 
-  useEffect(() => {
-    if (userEmail && userType) {
-      presenter.viewAccountDetails(userEmail, userType).catch((error) => {
-        console.error("Error in presenter:", error.message);
-      });
-    }
-  }, [userEmail, userType]);
+  // change popup/modal visible
+  const changeModalVisible = (b, m) => {
+    setModalMsg(m);
+    setModalVisible(b);
+  }
+
+  // change popup/modal visible
+  const changeLoadingVisible = (b) => {
+    setIsLoading(b);
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchAccountDetails = async () => {
+        try {
+          setIsLoading(true);
+          if (userEmail && userType) {
+            const presenter = new DisplayAccountDetailsPresenter({
+              displayAccountDetails: (accountDetails) => {
+                console.log("Displaying account details:", accountDetails);
+                setName(accountDetails.fullName);
+                setPhoneNumber(accountDetails.phoneNumber);
+                setEmail(accountDetails.email);
+                setprofilePic(accountDetails.profilePicture);
+              }
+            });
+  
+            await presenter.viewAccountDetails(userEmail, userType);
+          }
+        } catch (error) {
+          console.error("Error in presenter:", error.message);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+  
+      fetchAccountDetails();
+    }, [userEmail, userType])
+);
 
   const handleEdit = () => {
     navigation.navigate('CoachEditAccountDetailsPage', { userEmail, userType });
@@ -38,8 +67,21 @@ const CoachViewAccountDetailsPage = () => {
 
   return (
     <View style={styles.container}>
+      <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+        <LoadingDialog />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+        <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
+      </Modal>
       <Text style={styles.title}>Account Details</Text>
       <View style={styles.formContainer}>
+      {profilePic !== '' ? (
+            <View style={styles.pictureContainer}>
+              <Image source={{ uri: profilePic }} resizeMode='stretch' style={styles.coachImage} />
+            </View>
+          ) : (
+            <ActivityIndicator style={styles.pictureContainer} size="large" />
+          )}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Name</Text>
           <TextInput
@@ -78,50 +120,61 @@ const CoachViewAccountDetailsPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: scale(20),
     backgroundColor: '#FDF4F1',
   },
   title: {
-    fontSize: 24,
+    fontSize: scale(24),
     fontWeight: 'bold',
     color: '#000',
-    marginBottom: 20,
+    marginBottom: scale(20),
   },
   formContainer: {
-    padding: 20,
+    padding: scale(20),
     borderWidth: 2,
     borderColor: '#C53A45',
-    borderRadius: 10,
+    borderRadius: scale(10),
     backgroundColor: '#F1F1F1',
   },
   inputGroup: {
-    marginBottom: 15,
+    marginBottom: scale(15),
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
-    marginBottom: 5,
+    marginBottom: scale(5),
   },
   input: {
     height: 40,
     borderColor: '#CCCCCC',
     borderWidth: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: scale(10),
     backgroundColor: '#FFFFFF',
   },
   button: {
-    marginTop: 20,
+    marginTop: scale(20),
     alignSelf: 'center',
     backgroundColor: '#E28413',
-    paddingVertical: 10,
-    paddingHorizontal: 40,
-    borderRadius: 5,
+    paddingVertical: scale(10),
+    paddingHorizontal: scale(40),
+    borderRadius: scale(5),
   },
   buttonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  pictureContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  coachImage: {
+    width: scale(100),
+    height: scale(100),
+    backgroundColor: 'white',
+    borderRadius: scale(75)
   },
 });
 

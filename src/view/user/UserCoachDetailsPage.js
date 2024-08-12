@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import FeedbackCard from '../../components/FeedbackCard';
 import DisplayCoachDetailsPresenter from '../../presenter/DisplayCoachDetailsPresenter';
 
-const UserCoachHistoryDetails = ({ route }) => {
+const UserCoachDetailsPage = ({ route }) => {
 
     const { user, coachDetails } = route.params;
 
@@ -37,7 +37,7 @@ const UserCoachHistoryDetails = ({ route }) => {
     const loadFeedbacks = async () => {
         try {
             changeLoadingVisible(true);
-            await new DisplayCoachDetailsPresenter({ updateFeedback: setFeedback, coachID: coachDetails.coachID }).displayCoachFeedbacks();
+            await new DisplayCoachDetailsPresenter({ updateFeedback: setFeedback, coachID: coachDetails.accountID }).displayCoachFeedbacks();
         } catch (error) {
             changeModalVisible(true, error.message);
         } finally {
@@ -50,7 +50,7 @@ const UserCoachHistoryDetails = ({ route }) => {
     }, []);
 
 
-    const formattedPrice = coachDetails.coachPrice.toFixed(2);
+    const formattedPrice = coachDetails.chargePerMonth.toFixed(2);
 
     return (
         <View style={styles.container}>
@@ -66,17 +66,17 @@ const UserCoachHistoryDetails = ({ route }) => {
             <View style={styles.detailsBox}>
                 {coachDetails.coachPicture !== '' ? (
                     <View style={styles.pictureContainer}>
-                        <Image source={{ uri: coachDetails.coachPicture }} resizeMode='stretch' style={styles.coachImage} />
+                        <Image source={{ uri: coachDetails.profilePicture }} resizeMode='stretch' style={styles.coachImage} />
                     </View>
                 ) : (
                     <ActivityIndicator style={styles.pictureContainer} size="large" />
                 )}
                 <Text style={styles.detailsTitle}>Name</Text>
-                <Text style={styles.detailsText}>{coachDetails.coachFullName}</Text>
+                <Text style={styles.detailsText}>{coachDetails.fullName}</Text>
                 <Text style={styles.detailsTitle}>Email</Text>
-                <Text style={styles.detailsText}>{coachDetails.coachEmail}</Text>
+                <Text style={styles.detailsText}>{coachDetails.email}</Text>
                 <Text style={styles.detailsTitle}>Phone Number</Text>
-                <Text style={styles.detailsText}>{coachDetails.coachPhone}</Text>
+                <Text style={styles.detailsText}>{coachDetails.phoneNumber}</Text>
                 <Text style={styles.detailsTitle}>Coach Rate (Monthly)</Text>
                 <Text style={styles.detailsText}>${formattedPrice}</Text>
             </View>
@@ -207,4 +207,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default UserCoachHistoryDetails;
+export default UserCoachDetailsPage;

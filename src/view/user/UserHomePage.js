@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, Image, StyleSheet, ImageBackground, ScrollView, Alert, Modal } from 'react-native';
+import { View, Text, Image, StyleSheet, ImageBackground, ScrollView, Alert, Modal, BackHandler  } from 'react-native';
 import { scale } from '../../components/scale';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -132,6 +132,19 @@ const UserHomePage = ({ navigation, route }) => {
             loadInfo();
         }, [])
     );
+
+    useFocusEffect(
+        useCallback(() => {
+            const onBackPress = () => {
+                return true;  
+            };
+    
+            const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    
+            return () => backHandler.remove();
+        }, [])
+    );
+
 
     useEffect(() => {
         if(steps > 0){

@@ -43,6 +43,11 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
         setIsLoading(b);
     }
 
+    const capitalizeFirstLetter = (string) => {
+        if (!string) return '';
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
     const loadCoacheeDetails = async () => {
         try {
             setIsLoading(true);
@@ -100,7 +105,7 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
         <View style={styles.container}>
             <ScrollView style={styles.scrollContainer}>
                 <View style={styles.headerBox}>
-                    <Text style={styles.headerText}>Coachee Name Details</Text>
+                    <Text style={styles.headerText}>Coachee Details</Text>
                 </View>
                 <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
                     <LoadingDialog />
@@ -131,7 +136,7 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
                     <Text style={styles.detailsTitle}>Fitness Goal</Text>
                     <Text style={styles.detailsText}>{goal}</Text>
                     <Text style={styles.detailsTitle}>Fitness Level</Text>
-                    <Text style={styles.detailsText}>{level}</Text>
+                    <Text style={styles.detailsText}>{capitalizeFirstLetter(level)}</Text>
                     <Text style={styles.detailsTitle}>Medical Condition</Text>
                     <Text style={styles.detailsText}>{medical}</Text>
                     <Text style={styles.detailsTitle}>Start Date</Text>
@@ -158,7 +163,7 @@ const styles = StyleSheet.create({
     },
     headerBox: {
         backgroundColor: '#D9D9D9',
-        width: '90%',
+        width: '85%',
         marginVertical: scale(15),
         borderRadius: scale(20),
         alignSelf: 'center'
