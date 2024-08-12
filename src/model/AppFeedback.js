@@ -69,6 +69,10 @@ class AppFeedback{
                 const userData = docRef.data();
                 feedback.fullName = userData.fullName;
                 feedback.profilePicture = userData.profilePicture;
+
+                const u = new User();
+                u.profilePicture = userData.profilePicture;
+                feedback.profilePicture = await u.getProfilePictureURL();
             }else{
                 const coachDocRef = await getDoc(doc(db, 'coach', data.accountID));
                 if (coachDocRef.exists()) {
