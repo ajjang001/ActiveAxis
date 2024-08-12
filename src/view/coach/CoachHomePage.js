@@ -1,6 +1,6 @@
 // src/view/coach/CoachHomePage.js
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, Image, StyleSheet, ImageBackground, ScrollView, Modal } from 'react-native';
+import { View, Text, Image, StyleSheet, ImageBackground, ScrollView, Modal, BackHandler } from 'react-native';
 import { scale } from '../../components/scale';
 
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
@@ -53,6 +53,18 @@ const CoachHomePage = ({ navigation, route }) => {
             changeLoadingVisible(false);
         }
     }
+    
+    useFocusEffect(
+        useCallback(() => {
+            const onBackPress = () => {
+                return true;  
+            };
+    
+            const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    
+            return () => backHandler.remove();
+        }, [])
+    );
 
     useFocusEffect(
         useCallback(() => {
