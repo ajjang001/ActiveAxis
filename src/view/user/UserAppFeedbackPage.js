@@ -9,7 +9,6 @@ import SendAppFeedbackPresenter from '../../presenter/SendAppFeedbackPresenter';
 const UserAppFeedbackPage = ({ navigation, route }) => {
   const [feedback, setFeedback] = useState(null);
   const {user} = route.params;
-  console.log(user);
   
   // State to control the visibility of the modal
   const [isLoading, setIsLoading] = useState(false);
