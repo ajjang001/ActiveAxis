@@ -43,8 +43,7 @@ const UserFriendRequestPage = ({ route, navigation }) => {
   const viewDetails = (friend) => {
     // Navigate to the details page
     // console.log(friend);
-    // navigation.navigate('UserFriendDetailsPage', { selectedUserId });
-    navigation.navigate('UserFriendDetailsPage', { friend: { accountID: selectedUserId } });
+    navigation.navigate('UserFriendDetailsPage', { friend });
   }
 
   useEffect(() => {
@@ -71,7 +70,7 @@ const UserFriendRequestPage = ({ route, navigation }) => {
                                         <Text style={styles.name}>{request.fullName}</Text>
                                         <Text style={styles.role}>User</Text>
                                         <View style={styles.optButtons}>
-                                            <TouchableOpacity onPress={() => viewDetails(user)} activeOpacity={0.7} style={[styles.detailsButton]}>
+                                            <TouchableOpacity onPress={() => viewDetails(request)} activeOpacity={0.7} style={[styles.detailsButton]}>
                                               <Text style={styles.detailsText}>Details</Text>
                                             </TouchableOpacity>
                                             <TouchableOpacity

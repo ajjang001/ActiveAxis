@@ -119,26 +119,67 @@ class Friends {
     }
 
     async searchUsers(searchText, currentUserId) {
+        console.log(searchText);
         const usersSnapshot = await getDocs(collection(db, 'user'), where('isSuspended', '==', false));
         let users = [];
 
         for (const doc of usersSnapshot.docs) {
             const userData = doc.data();
             const userId = doc.id;
+            // console.log(userData);
             const profilePicRef = ref(storage, userData.profilePicture);
             // Get the download URL
-            profilePictureURL = await getDownloadURL(profilePicRef);
+            const profilePictureURL = await getDownloadURL(profilePicRef);
 
             if (doc.data().accountID !== currentUserId) {
                 // Check if there's a pending friend request
                 const friendRequestQuery = query(
                     collection(db, 'friends'),
                     where('userID1', '==', currentUserId),
-                    where('userID2', '==', userId)
-            );
-            const friendRequestSnapshot = await getDocs(friendRequestQuery);
-            const status = friendRequestSnapshot.empty ? "Add" : "Pending";
+                    where('userID2', '==', userId),
+                    where ('status', '==', "Pending"),
+                );
+                const friendRequestQuery2 = query(
+                    collection(db, 'friends'),
+                    where('userID1', '==', userId),
+                    where('userID2', '==', currentUserId),
+                    where ('status', '==', "Pending"),
+                );
+                const friendRequestSnapshot = await getDocs(friendRequestQuery);
+                const friendRequestSnapshot2 = await getDocs(friendRequestQuery2);
 
+                // const status = friendRequestSnapshot.empty ? "Add" : "Pending";
+                let status;
+                if (friendRequestSnapshot.empty && friendRequestSnapshot2.empty){
+                    status = "Add";
+                }
+                else{
+                    if (!friendRequestSnapshot.empty){
+                        if (friendRequestSnapshot.docs[0].data().status == "Pending"){
+                            status = "Pending";
+                        }
+                        if (friendRequestSnapshot.docs[0].data().status == "Friend"){
+                            status = "Friend";
+                        }
+                    }
+                    if (!friendRequestSnapshot2.empty){
+                        if (friendRequestSnapshot2.docs[0].data().status == "Pending"){
+                            status = "Pending";
+                        }
+                        if (friendRequestSnapshot2.docs[0].data().status == "Friend"){
+                            status = "Friend";
+                        }
+                    }
+                    /*if (friendRequestSnapshot.docs[0].data().status == "Pending" || 
+                    friendRequestSnapshot2.docs[0].data().status == "Pending"){
+                        status = "Pending";
+                    }
+                    if (friendRequestSnapshot.docs[0].data().status == "Friend" || 
+                    friendRequestSnapshot2.docs[0].data().status == "Friend"){
+                        status = "Friend";
+                    }*/
+                }
+                console.log({userId, status});
                 users.push({ id: userId, ...userData, profilePictureURL, status });
             }
         };
@@ -146,7 +187,7 @@ class Friends {
         // Fetch current user's friends
         const friends = await this.getFriends(currentUserId);
         const friendIds = friends.map(friend => friend.accountID);
-
+        console.log(users);
         // Filter users based on search text and exclude friends and current user
         const searched = users.filter(user =>
             (user.fullName.toLowerCase().includes(searchText.toLowerCase()) ||

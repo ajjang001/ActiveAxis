@@ -2,15 +2,17 @@ import Friends from '../model/Friends';
 import User from '../model/User';
 
 class DisplayFriendDetailsPresenter {
-  constructor(view, db) {
+  constructor(view) {
       this.view = view;
-      this.model = new Friends(db);
+      this.model = new Friends();
   }
 
   async loadFriendDetails(friend) {
+    console.log("Test");
+    console.log(friend);
       try {
-        console.log("Details for friend accountID:", friend.accountID);
-          const friendDetails = await this.model.getFriendDetails(friend.accountID);
+        console.log("Details for friend accountID:", friend.userID1);
+          const friendDetails = await this.model.getFriendDetails(friend.userID1);
           this.view.displayFriendDetails(friendDetails);
       } catch (error) {
           console.error("Failed to load friend details:", error);
