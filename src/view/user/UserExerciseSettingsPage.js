@@ -90,8 +90,8 @@ const UserExerciseSettingsPage = ({ navigation, route }) => {
             </Modal>
             <View style={styles.settingsContainer}>
                 <ExerciseSettingCard title="Exercise Rest Interval" value={restInterval} unit="seconds" />
-                <ExerciseSettingCard title="Daily Step Target" value={stepTarget} unit="steps" />
-                <ExerciseSettingCard title="Daily Calorie Burn Target" value={calorieTarget} unit="calories" />
+                <ExerciseSettingCard title="Daily Steps Target" value={stepTarget} unit="steps" />
+                <ExerciseSettingCard title="Daily Calorie Burn Target" value={calorieTarget} unit="kcal" />
             </View>
             <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('UserUpdateExerciseSettingsPage', { user, userDetails })}>
                 <Text style={styles.editText}>Edit</Text>

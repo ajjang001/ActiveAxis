@@ -8,7 +8,7 @@ import { scale } from "../../components/scale";
 const UserDetailsPage = ({ route }) => {
     const { userId } = route.params;
 
-    userID = userId.id;
+    let userID = userId.id;
     fitnessLevel = userId.fitnessLevel;
     fitnessGoal = userId.fitnessGoal;
 
@@ -102,7 +102,9 @@ const UserDetailsPage = ({ route }) => {
                 <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
             </Modal>
             <View style={styles.detailsContainer}>
-                {/* <Image source={{ uri: userDetails.profilePicture }} style={styles.profilePicture} /> */}
+                {
+                    userDetails.profilePicture ? <Image source={{ uri: userDetails.profilePicture }} style={styles.profilePicture} /> : null
+                }
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>Name</Text>
                     <Text style={styles.value}>{userDetails.fullName}</Text>

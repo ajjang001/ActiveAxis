@@ -17,12 +17,12 @@ const AchievementsPage = ({ navigation, route }) => {
   const changeModalVisible = (b, m)=>{
     setModalMsg(m);
     setModalVisible(b);
-}
+  }
 
-// change popup/modal visible
-const changeLoadingVisible = (b)=>{
-    setIsLoading(b);
-}
+  // change popup/modal visible
+  const changeLoadingVisible = (b)=>{
+      setIsLoading(b);
+  }
 
   const renderHeader = () => (
     <View style = {{justifyContent:'space-between', flexDirection:'row', marginHorizontal:scale(16)}}>

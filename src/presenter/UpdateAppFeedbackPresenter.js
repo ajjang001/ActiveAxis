@@ -9,7 +9,7 @@ class UpdateAppFeedbackPresenter {
     async updateFeedback(feedbackText, rating) {
         try {
             this.model = this.view.feedback;
-            this.model.updateFeedback(feedbackText, rating);
+            await this.model.updateFeedback(feedbackText, rating);
 
         } catch (error) {
             throw new Error(error.message);

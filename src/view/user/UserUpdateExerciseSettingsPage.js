@@ -101,7 +101,7 @@ const UserUpdateExerciseSettingsPage = ({ navigation, route }) => {
                             overlayOpacity: 0.2,
                         }}
                     />
-                    <Text style={styles.inputText}>Daily Step Target (steps)</Text>
+                    <Text style={styles.inputText}>Daily Steps Target (steps)</Text>
                     <TextInput
                         style={styles.input}
                         keyboardType="numeric"
@@ -109,7 +109,7 @@ const UserUpdateExerciseSettingsPage = ({ navigation, route }) => {
                         maxLength={5}
                         onChangeText={setstepTarget}
                     />
-                    <Text style={styles.inputText}>Daily Calorie Burn Target (calories)</Text>
+                    <Text style={styles.inputText}>Daily Calorie Burn Target (kcal)</Text>
                     <TextInput
                         style={styles.input}
                         keyboardType="numeric"

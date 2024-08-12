@@ -34,11 +34,12 @@ const UserFriendDetailsPage = ({ route }) => {
     };
 
     const [friendDetails, setFriendDetails] = useState([]);
+    console.log(friendDetails);
 
     const fetchDetails = async () => {
         setIsLoading(true);
         try {
-            console.log("Loading details for friend:", friend);
+            // console.log("Loading details for friend:", friend);
             const presenter = new DisplayFriendDetailsPresenter({ displayFriendDetails: setFriendDetails });
             await presenter.loadFriendDetails(friend);
         } catch (error) {
@@ -71,7 +72,9 @@ const UserFriendDetailsPage = ({ route }) => {
     }
 
     useEffect(() => {
-        fetchDetails();
+        if(friend){
+            fetchDetails();
+        }
     }, [friend]);
 
     useEffect(() => {

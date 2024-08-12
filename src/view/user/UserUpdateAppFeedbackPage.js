@@ -42,11 +42,9 @@ const UserUpdateAppFeedbackPage = ({ route, navigation }) => {
     try{
       changeLoadingVisible(true);
       await new UpdateAppFeedbackPresenter({feedback: feedback}).updateFeedback(feedbackText, rating);
+      Alert.alert('Success', 'Feedback updated successfully');
+      navigation.navigate('UserAppFeedbackPage', {refresh: true, user});
       
-      setTimeout(() => {
-        navigation.navigate('UserAppFeedbackPage', {refresh: true, user});
-        Alert.alert('Success', 'Feedback updated successfully');
-      }, 500);
     }catch (e){
       changeModalVisible(true, e.message);
     }finally{

@@ -197,35 +197,7 @@ const CoachRegisterPage = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.bottomDesign}>
-        <Text style={{ top: scale(70), zIndex: 2 }}>Already have an account? <Text style={{ fontWeight: 'bold', zIndex: 2, }} onPress={() => { navigation.navigate('LoginPage') }}>Login Now</Text></Text>
-        <Svg style={{ zIndex: 1 }}
-          width="1000"
-          height="150"
-          viewBox="0 0 360 150"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <Path
-            d="M442.5 120C442.5 151.549 414.144 180.934 366.352 202.575C318.789 224.113 252.906 237.5 180 237.5C107.094 237.5 41.2109 224.113 -6.35203 202.575C-54.144 180.934 -82.5 151.549 -82.5 120C-82.5 88.4511 -54.144 59.0662 -6.35203 37.4246C41.2109 15.8866 107.094 2.5 180 2.5C252.906 2.5 318.789 15.8866 366.352 37.4246C414.144 59.0662 442.5 88.4511 442.5 120Z"
-            fill="url(#paint0_linear_52_26)"
-            stroke="#C42847"
-            strokeWidth="5"
-          />
-          <Defs>
-            <LinearGradient
-              id="paint0_linear_52_26"
-              x1="180"
-              y1="0"
-              x2="180"
-              y2="240"
-              gradientUnits="userSpaceOnUse"
-            >
-              <Stop stopColor="#E28413" />
-            </LinearGradient>
-          </Defs>
-        </Svg>
-      </View>
+      
     </KeyboardAvoidingView>
   )
 }

@@ -1,11 +1,12 @@
 import { View,Text, StyleSheet, TextInput, Image, ScrollView, Modal, TouchableOpacity} from "react-native"
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { scale } from "../../components/scale";
 import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Modal";
 import DisplayFriendsListPresenter from "../../presenter/DisplayFriendsListPresenter";
 import SearchUserPresenter from "../../presenter/SearchUserPresenter";
 import RemoveFriendPresenter from "../../presenter/RemoveFriendPresenter";
+import { useFocusEffect } from "@react-navigation/native";
 
 const UserFriendsListPage = ({route, navigation}) =>{
     // state variables
@@ -80,9 +81,11 @@ const UserFriendsListPage = ({route, navigation}) =>{
         }
     }
 
-    useEffect(()=>{
-        displayFriends();
-    },[]);
+    useFocusEffect(
+        useCallback(() => {
+            displayFriends();
+        }, [])
+    );
 
     return (
         <View style = {styles.container}>

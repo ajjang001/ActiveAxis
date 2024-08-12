@@ -20,8 +20,8 @@ const AboutOurApp = ({ navigation }) => {
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle ={{alignItems:'center'}}>
         <TouchableOpacity style={[styles.button, { backgroundColor: 'rgba(186, 0, 0, 0.2)' }]} onPress={() => handlePress('About ActiveAxis')}>
           <Text style={styles.buttonText}>About ActiveAxis</Text>
         </TouchableOpacity>
@@ -34,17 +34,15 @@ const AboutOurApp = ({ navigation }) => {
         <TouchableOpacity style={[styles.button, { backgroundColor: 'rgba(226, 132, 19, 0.2)' }]} onPress={() => handlePress('User Statistics')}>
           <Text style={styles.buttonText}>User Statistics</Text>
         </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FBF5F3', // Background color of the entire view
+    backgroundColor: '#FBF5F3',
     padding: scale(10),
   },
   button: {

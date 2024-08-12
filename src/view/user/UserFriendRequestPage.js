@@ -1,13 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Modal } from 'react-native';
 import DisplayFriendRequestsPresenter from '../../presenter/DisplayFriendRequestsPresenter';
 import AcceptFriendPresenter from '../../presenter/AcceptFriendPresenter';
 import RejectFriendPresenter from '../../presenter/RejectFriendPresenter';
+import { LoadingDialog, MessageDialog } from "../../components/Modal";
+
 import { scale } from "../../components/scale";
 
 const UserFriendRequestPage = ({ route, navigation }) => {
   const { user } = route.params;
   const [requests, setRequests] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
+
+  // change popup/modal visible
+  const changeModalVisible = (b, m) => {
+      setModalMsg(m);
+      setModalVisible(b);
+  }
+
+  // change popup/modal visible
+  const changeLoadingVisible = (b) => {
+      setIsLoading(b);
+  }
 
   const displayFriendRequestsPresenter = new DisplayFriendRequestsPresenter({
     onRequestsFetched: (requests) => {
@@ -17,6 +34,8 @@ const UserFriendRequestPage = ({ route, navigation }) => {
       console.error(message);
     },
   });
+
+  
 
   const acceptFriendPresenter = new AcceptFriendPresenter({
     onFriendAccepted: (friendId) => {
@@ -42,16 +61,33 @@ const UserFriendRequestPage = ({ route, navigation }) => {
 
   const viewDetails = (friend) => {
     // Navigate to the details page
-    // console.log(friend);
+    console.log(friend);
     navigation.navigate('UserFriendDetailsPage', { friend });
   }
 
+  const loadRequests = async () => {
+    try{
+      changeLoadingVisible(true);
+      await displayFriendRequestsPresenter.fetchRequests(user.accountID);
+    }catch(error){
+      changeModalVisible(true, error.message.replace("GraphQL error: ", ""));
+    }finally{
+      changeLoadingVisible(false);
+    }
+  }
+
   useEffect(() => {
-    displayFriendRequestsPresenter.fetchRequests(user.accountID);
+    loadRequests();
   }, []);
 
   return (
     <View style={styles.container}>
+      <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+          <LoadingDialog />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+          <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
+      </Modal>
       <View style={styles.contentContainer}>
                 <View style={styles.titleView}>
                     <Text style={styles.title}>Friend Requests</Text>
@@ -125,6 +161,7 @@ const styles = StyleSheet.create({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+      paddingVertical: scale(16),
   },
   userListContainer: {
       height: '65%',

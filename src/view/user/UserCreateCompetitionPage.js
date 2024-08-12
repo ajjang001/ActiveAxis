@@ -343,7 +343,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: scale(50),
         paddingVertical: scale(5),
         marginTop: scale(15),
-        marginBottom: scale(15)
+        marginBottom: scale(15),
+        borderRadius: scale(8)
     },
     createText: {
         color: 'white',

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { LineChart } from 'react-native-chart-kit';
 import { Card } from 'react-native-elements';
 import { Dimensions } from 'react-native';
 import { scale } from '../../components/scale';
+import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Modal";
+
 import DisplayUserStatisticsPresenter from '../../presenter/DisplayUserStatisticsPresenter';
 
 const screenWidth = Dimensions.get('window').width;
@@ -14,16 +16,34 @@ const UserStatisticsPage = () => {
   const [avgRating, setAvgRating] = useState(0);
   const [previousDays, setPreviousDays] = useState([]);
   const [userCount, setUserCount] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMsg, setModalMsg] = useState('');
+
+  // change popup/modal visible
+  const changeModalVisible = (b, m)=>{
+    setModalMsg(m);
+    setModalVisible(b);
+  }
+
+  // change popup/modal visible
+  const changeLoadingVisible = (b)=>{
+      setIsLoading(b);
+  }
   
   // function buat panggil controller
   const loadData = async () => {
     try{
+      changeLoadingVisible(true);
       await new DisplayUserStatisticsPresenter({changeTotalFeedback: setTotalFeedback}).displayTotalAppFeedback();
       await new DisplayUserStatisticsPresenter({changeAvgRating: setAvgRating}).displayAvgRatings();
       await new DisplayUserStatisticsPresenter({changePreviousDays: setPreviousDays, changeDataStats: setUserCount}).displayDaysAndUsers();
       
     } catch (e){
-      console.log(e.message);
+      changeModalVisible(true, e.message.replace('Error: ', ''));
+    }finally{
+      changeLoadingVisible(false);
     }
   }
 
@@ -33,6 +53,12 @@ const UserStatisticsPage = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
+          <LoadingDialog />
+      </Modal>
+      <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
+          <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+      </Modal>
       <Text style={styles.title}>User Statistics</Text>
       <Card containerStyle={styles.card}>
         <Text style={styles.cardTitle}>Total Active Users</Text>
@@ -70,7 +96,7 @@ const UserStatisticsPage = () => {
         />
       </Card>
       <Card containerStyle={styles.card}>
-        <Text style={styles.cardTitle}>Average Rating</Text>
+        <Text style={styles.cardTitle}>Ratings</Text>
         
         <View style={{alignItems: "center", flexDirection: "row", gap:scale(5)}}>
           <Text style={styles.cardValue}>{avgRating.toFixed(1)}</Text>

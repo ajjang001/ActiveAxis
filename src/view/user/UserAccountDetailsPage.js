@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
         marginTop: scale(15),
         marginHorizontal: scale(15),
         flex: 1,
+        borderRadius: scale(8),
     },
     editText: {
         color: 'white',
@@ -241,6 +242,7 @@ const styles = StyleSheet.create({
         marginTop: scale(15),
         marginHorizontal: scale(15),
         flex: 1,
+        borderRadius: scale(8),
     },
     pictureContainer: {
         display: 'flex',

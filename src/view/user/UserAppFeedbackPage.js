@@ -70,7 +70,7 @@ const UserAppFeedbackPage = ({ navigation, route }) => {
 
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
       <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
           <LoadingDialog />
       </Modal>
@@ -91,9 +91,9 @@ const UserAppFeedbackPage = ({ navigation, route }) => {
         
 
       <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(feedback)}>
-            <Text style={styles.editButtonText}>{feedback === null ? "CREATE" : "EDIT"}</Text>
-          </TouchableOpacity>
-    </ScrollView>
+        <Text style={styles.editButtonText}>{feedback === null ? "CREATE" : "EDIT"}</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(10),
     alignItems: 'center',
     backgroundColor: '#FBF5F3',
+    flex: 1,
   },
   editButton: {
     backgroundColor: '#DA872A',

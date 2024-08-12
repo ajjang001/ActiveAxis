@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#000022',
         width: '80%',
         padding: scale(10),
-        marginTop: scale(25),
+        marginTop: scale(16),
         borderRadius: scale(10),
         alignItems: 'center',
     },
