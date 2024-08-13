@@ -1,5 +1,6 @@
 import AllocatePlan from "../model/AllocatePlan";
 import FitnessGoals from "../model/FitnessGoals";
+import WorkoutRoutine from "../model/WorkoutRoutine";
 
 class DisplayFitnessPlanDetailsPresenter{
     constructor(view){
@@ -23,6 +24,41 @@ class DisplayFitnessPlanDetailsPresenter{
         }catch(error){
             throw new Error(error);
         }
+    }
+
+    async loadRoutines(repetition, isNewEndDate){
+        try{
+            this.model = this.view.fitnessPlan;
+            await this.model.loadRoutines();
+
+            if(isNewEndDate){
+                // duplicate the routines based on the repetition (excluding the first repetition)
+                const routines = [...this.model.routinesList];
+                const l = routines.length;
+                
+                for(let i = 1; i < repetition; i++){
+                    for(let j = 0; j < l; j++){
+                        const routine = routines[j];
+                        const exercises = routine.exercisesList;
+
+                        const newRoutine = new WorkoutRoutine();
+                        newRoutine.dayNumber = routine.dayNumber + (i * routines.length);
+                        newRoutine.estCaloriesBurned = routine.estCaloriesBurned;
+                        newRoutine.exercisesList = exercises;
+                        newRoutine.fitnessPlanID = routine.fitnessPlanID;
+                        newRoutine.isRestDay = routine.isRestDay;
+                        newRoutine.routineID = routine.routineID;
+
+                        console.log('done day ' + newRoutine.dayNumber);
+
+                        this.model.routinesList.push(newRoutine);
+                    }
+                }
+            }
+        }catch(e){
+            throw new Error(e);
+        }
+
     }
 }
 

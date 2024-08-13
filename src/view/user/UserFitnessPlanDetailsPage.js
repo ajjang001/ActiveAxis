@@ -16,8 +16,6 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
     const {allocatedPlans} = route.params;
 
 
-    
-
     const [fitnessGoal, setFitnessGoal] = useState('');
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -97,14 +95,10 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
 
     const getFitnessGoalByID = async(goalID) =>{
         try{
-            changeLoadingVisible(true);
-
             await new DisplayFitnessPlanDetailsPresenter({updateFitnessGoal: setFitnessGoal}).getFitnessGoalByID(goalID);
 
         }catch(error){
             changeModalVisible(true, error.message.replace("Error: ", ""));
-        }finally{
-            changeLoadingVisible(false);
         }
     }
 
@@ -148,14 +142,6 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
     const handleSave = async()=>{
         try{
             changeLoadingVisible(true);
-            console.log('\n');
-            // console.log(fitnessPlan.fitnessPlanID);
-            // console.log(session.sessionID);
-            console.log(planAllocation.allocationID);
-            console.log('---')
-            console.log(repetition);
-            console.log(newEndDate);
-            console.log('\n');
 
             await new DisplayFitnessPlanDetailsPresenter().updateAllocationPlan(planAllocation.allocationID, repetition, newEndDate);
             Alert.alert('Success', 'Plan Length has been updated successfully');
@@ -168,13 +154,36 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
         }
     }
 
-    useEffect(() => {
-        if(fitnessPlan && session && planAllocation && allocatedPlans){
-            getFitnessGoalByID(fitnessPlan.planGoal);
-            if(!planAllocation.isNewEndDate){
-                loadLength(fitnessPlan.routinesList.length);
-            }
+    const loadRoutines = async() =>{
+        try{
+            const rep = planAllocation.repetition || 1;
+            await new DisplayFitnessPlanDetailsPresenter({fitnessPlan:fitnessPlan}).loadRoutines(rep, planAllocation.isNewEndDate);
+        }catch(error){
+            changeModalVisible(true, error.message.replace("Error: ", ""));
         }
+    };
+
+    const loadInfo = async() =>{
+        try{
+            changeLoadingVisible(true);
+            if(fitnessPlan && session && planAllocation && allocatedPlans){
+                await getFitnessGoalByID(fitnessPlan.planGoal);
+                if(!planAllocation.isNewEndDate){
+                    loadLength(fitnessPlan.routinesList.length);
+                }
+                await loadRoutines();
+                
+            }
+
+        }catch(error){
+            changeModalVisible(true, error.message.replace("Error: ", ""));
+        }finally{
+            changeLoadingVisible(false);
+        }
+    }
+
+    useEffect(() => {
+        loadInfo();
     } ,[ fitnessPlan, session, planAllocation, allocatedPlans]);
 
     useEffect(() => {
@@ -269,7 +278,7 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
 
             </ScrollView>
             <View style = {styles.bottomButtonView}>
-                <TouchableOpacity style = {styles.bottomButton}>
+                <TouchableOpacity onPress ={()=>{navigation.navigate('UserFitnessPlanDetailsPage2', {user, fitnessPlan, planAllocation, session, isOnProgress, repetition})}} style = {styles.bottomButton}>
                     <Text style = {styles.bottomButtonText}>View Routines</Text>
                 </TouchableOpacity>
                 {

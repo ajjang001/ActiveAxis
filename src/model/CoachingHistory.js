@@ -61,6 +61,7 @@ class CoachingHistory {
             }
 
         }catch(e){
+            console.log(e.message);
             throw new Error(e.message);
         }
     }
