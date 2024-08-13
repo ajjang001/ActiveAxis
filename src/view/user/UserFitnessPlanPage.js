@@ -114,7 +114,7 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                                     {
                                         onProgress.map((plan, index)=>{
                                             return(
-                                                <TouchableOpacity onPress = {()=>{navigation.navigate('UserFitnessPlanDetailsPage', {user, fitnessPlan: plan.details, planAllocation:plan.plan, session, isOnProgress: true})}} style = {[styles.planItem,{gap: scale(25),}]} key = {index}>
+                                                <TouchableOpacity onPress = {()=>{navigation.navigate('UserFitnessPlanDetailsPage', {user, fitnessPlan: plan.details, planAllocation:plan.plan, session, allocatedPlans, isOnProgress: true})}} style = {[styles.planItem,{gap: scale(25),}]} key = {index}>
                                                     {plan.details === null ?
                                                         <View style = {styles.planImage}/>
                                                         :
@@ -132,11 +132,11 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                                                             <View style = {styles.statsView}>
                                                                 <View style = {styles.stats}>
                                                                     <Image source = {require('../../../assets/clock_icon.png')} style = {styles.statsIcon}/>
-                                                                    <Text>{plan.details.routinesList.length} Days</Text>
+                                                                    <Text>{plan.details.routinesList.length * plan.plan.repetition} Days</Text>
                                                                 </View>
                                                                 <View style = {styles.stats}>
                                                                     <Image source = {require('../../../assets/fire_icon.png')} style = {styles.statsIcon}/>
-                                                                    <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0))} kcal</Text>
+                                                                    <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0)) * plan.plan.repetition} kcal</Text>
                                                                 </View>
                                                             </View>
 
@@ -155,7 +155,7 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                                     {
                                         allocatedPlans.map((plan, index) => {
                                             return (
-                                                <TouchableOpacity onPress = {()=>{navigation.navigate('UserFitnessPlanDetailsPage', {user, fitnessPlan: plan.details, planAllocation:plan.plan, session, isOnProgress: false})}} style = {[styles.planItem, {justifyContent:'space-between', }]} key = {index}>
+                                                <TouchableOpacity onPress = {()=>{navigation.navigate('UserFitnessPlanDetailsPage', {user, fitnessPlan: plan.details, planAllocation:plan.plan, session, allocatedPlans, isOnProgress: false})}} style = {[styles.planItem, {justifyContent:'space-between', }]} key = {index}>
                                                     <View style = {{flexDirection:'row', gap: scale(25)}}>
                                                     {plan.details !== null ?
                                                         <Image source = {{uri: plan.details.fitnessPlanPicture}} style = {styles.planImage} />
@@ -175,11 +175,11 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                                                             <View style = {styles.statsView}>
                                                                 <View style = {styles.stats}>
                                                                     <Image source = {require('../../../assets/clock_icon.png')} style = {styles.statsIcon}/>
-                                                                    <Text>{plan.details.routinesList.length} Days</Text>
+                                                                    <Text>{plan.details.routinesList.length * plan.plan.repetition} Days</Text>
                                                                 </View>
                                                                 <View style = {styles.stats}>
                                                                     <Image source = {require('../../../assets/fire_icon.png')} style = {styles.statsIcon}/>
-                                                                    <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0))} kcal</Text>
+                                                                    <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0)) * plan.plan.repetition} kcal</Text>
                                                                 </View>
                                                             </View>
             

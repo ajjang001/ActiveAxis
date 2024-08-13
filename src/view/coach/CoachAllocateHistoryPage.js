@@ -38,6 +38,16 @@ const CoachAllocateHistoryPage = ({navigation, route})=>{
         }
     }
 
+    const formatDate = (date) => {
+        if (!date) return "";
+        return date.toLocaleString('en-US', {
+            timeZone: 'Asia/Singapore',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+    };
+
     useEffect(() => {
         loadHistory();
     }, []);
@@ -58,6 +68,7 @@ const CoachAllocateHistoryPage = ({navigation, route})=>{
                 <Text style = {styles.noTitle}>No Fitness Plan Allocated</Text> 
                 : 
                 historyArr.map((plan, index) => {
+                    console.log(plan.plan);
                     return(
                         <View style = {styles.planItem} key = {index}>
                             {plan.details !== null ?
@@ -72,17 +83,17 @@ const CoachAllocateHistoryPage = ({navigation, route})=>{
                             :
 
                                 <View>
-                                    <Text>{`${plan.plan.startDate.toDateString()} - ${plan.plan.endDate.toDateString()}`}</Text>
+                                    <Text>{`${formatDate(plan.plan.startDate)} - ${formatDate(plan.plan.endDate)}`}</Text>
                                     <Text style = {styles.planNameText}>{plan.details.fitnessPlanName}</Text>
 
                                     <View style = {styles.statsView}>
                                         <View style = {styles.stats}>
                                             <Image source = {require('../../../assets/clock_icon.png')} style = {styles.icon}/>
-                                            <Text>{plan.details.routinesList.length} Days</Text>
+                                            <Text>{plan.details.routinesList.length * plan.plan.repetition} Days</Text>
                                         </View>
                                         <View style = {styles.stats}>
                                             <Image source = {require('../../../assets/fire_icon.png')} style = {styles.icon}/>
-                                            <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0))} kcal</Text>
+                                            <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0)) * plan.plan.repetition} kcal</Text>
                                         </View>
                                     </View>
 

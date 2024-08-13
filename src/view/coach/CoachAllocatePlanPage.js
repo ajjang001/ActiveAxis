@@ -9,6 +9,7 @@ import { useFocusEffect } from "@react-navigation/native";
 const CoachAllocatePlanPage = ({navigation, route}) => {
 
     const { coach, history } = route.params;
+    
 
     const [allocatedPlans, setAllocatedPlans] = useState([]);
     const [onProgress, setOnProgress] = useState([]);
@@ -128,11 +129,11 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
                                                 <View style = {styles.statsView}>
                                                     <View style = {styles.stats}>
                                                         <Image source = {require('../../../assets/clock_icon.png')} style = {styles.statsIcon}/>
-                                                        <Text>{plan.details.routinesList.length} Days</Text>
+                                                        <Text>{plan.details.routinesList.length * plan.plan.repetition} Days</Text>
                                                     </View>
                                                     <View style = {styles.stats}>
                                                         <Image source = {require('../../../assets/fire_icon.png')} style = {styles.statsIcon}/>
-                                                        <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0))} kcal</Text>
+                                                        <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0)) * plan.plan.repetition} kcal</Text>
                                                     </View>
                                                 </View>
 
@@ -170,11 +171,11 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
                                                 <View style = {styles.statsView}>
                                                     <View style = {styles.stats}>
                                                         <Image source = {require('../../../assets/clock_icon.png')} style = {styles.statsIcon}/>
-                                                        <Text>{plan.details.routinesList.length} Days</Text>
+                                                        <Text>{plan.details.routinesList.length * plan.plan.repetition} Days</Text>
                                                     </View>
                                                     <View style = {styles.stats}>
                                                         <Image source = {require('../../../assets/fire_icon.png')} style = {styles.statsIcon}/>
-                                                        <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0))} kcal</Text>
+                                                        <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0))*plan.plan.repetition} kcal</Text>
                                                     </View>
                                                 </View>
 

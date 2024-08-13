@@ -13,24 +13,27 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
     const {planAllocation} = route.params;
     const {session} = route.params;
     const {isOnProgress} = route.params;
+    const {allocatedPlans} = route.params;
+
+
+    
 
     const [fitnessGoal, setFitnessGoal] = useState('');
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
     const [confirmationVisible, setConfirmationVisible] = useState(false);
     const [confirmMessage, setConfirmMessage] = useState('');
 
-    const [initPlanLength, setInitPlanLength] = useState(fitnessPlan.routinesList.length || 0);
+    const [initPlanLength, setInitPlanLength] = useState(fitnessPlan.routinesList.length * planAllocation.repetition || 0);
     const [planLength, setPlanLength] = useState(initPlanLength || 0);
-    const [initCalBurn, setInitCalBurn] = useState(Math.ceil(fitnessPlan.routinesList.map(routine => routine.estCaloriesBurned).reduce((a, b) => a + b, 0)) || 0);
+    const [initCalBurn, setInitCalBurn] = useState(Math.ceil(fitnessPlan.routinesList.map(routine => routine.estCaloriesBurned).reduce((a, b) => a + b, 0)) * planAllocation.repetition || 0);
     const [calBurn, setCalBurn] = useState(initCalBurn || 0);
-    const [repetition, setRepetition] = useState(1);
+    const [repetition, setRepetition] = useState(planAllocation.repetition || 1);
 
     const [newEndDate, setNewEndDate] = useState(planAllocation.endDate || null);
-    console.log(newEndDate);
+    
 
     const [dropdownOpt, setDropdownOpt] = useState([]);
     // to close dropdown
@@ -110,8 +113,29 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
         for(let i = 1; i <= 4; i++){
             const val = i *oldLength;
 
+            const estEndDate = planAllocation.startDate.toDate().getTime() + val * 86400000;
+
             // check if val (number of days) + plan start date is not greater than session end date
-            if(planAllocation.startDate.toDate().getTime() + val * 86400000 >= session.historyItem.endDate.toDate().getTime()){
+            if( estEndDate > session.historyItem.endDate.toDate().getTime()){
+                break;
+            }
+
+            // check if val (number of days) + plan start date does not overlap with other allocated plans
+            // excluding this plan
+            let isOverlap = false;
+
+            for(let i = 0; i < allocatedPlans.length; i++){
+                if(allocatedPlans[i].plan.allocationID === planAllocation.allocationID){
+                    continue;
+                }
+
+                if (estEndDate >= allocatedPlans[i].plan.startDate.toDate().getTime() && estEndDate <= allocatedPlans[i].plan.endDate.toDate().getTime()){
+                    isOverlap = true;
+                    break;
+                }
+            }
+            
+            if(isOverlap){
                 break;
             }
 
@@ -121,12 +145,37 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
         setDropdownOpt(opt);
     }
 
-    useEffect(() => {
-        if(fitnessPlan && session && planAllocation){
-            getFitnessGoalByID(fitnessPlan.planGoal);
-            loadLength(fitnessPlan.routinesList.length);
+    const handleSave = async()=>{
+        try{
+            changeLoadingVisible(true);
+            console.log('\n');
+            // console.log(fitnessPlan.fitnessPlanID);
+            // console.log(session.sessionID);
+            console.log(planAllocation.allocationID);
+            console.log('---')
+            console.log(repetition);
+            console.log(newEndDate);
+            console.log('\n');
+
+            await new DisplayFitnessPlanDetailsPresenter().updateAllocationPlan(planAllocation.allocationID, repetition, newEndDate);
+            Alert.alert('Success', 'Plan Length has been updated successfully');
+            navigation.goBack()
+
+        }catch(error){
+            changeModalVisible(true, error.message.replace("Error: ", ""));
+        }finally{
+            changeLoadingVisible(false);
         }
-    } ,[fitnessPlan]);
+    }
+
+    useEffect(() => {
+        if(fitnessPlan && session && planAllocation && allocatedPlans){
+            getFitnessGoalByID(fitnessPlan.planGoal);
+            if(!planAllocation.isNewEndDate){
+                loadLength(fitnessPlan.routinesList.length);
+            }
+        }
+    } ,[ fitnessPlan, session, planAllocation, allocatedPlans]);
 
     useEffect(() => {
         if(planLength > 0){
@@ -141,6 +190,13 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
             </Modal>
             <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
                 <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+            </Modal>
+            <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeConfirmVisible(false)}>
+                <ActionDialog
+                message = {confirmMessage}
+                changeModalVisible = {changeConfirmVisible}
+                action = {handleSave}
+                />
             </Modal>
 
             <ScrollView>
@@ -179,10 +235,11 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
                     <Text style = {styles.detailsText}>{formatDate(planAllocation.startDate.toDate())}</Text>
 
                     {
-                        !isOnProgress ?
+                        !isOnProgress  ?
                         <>
                             <Text style = {styles.detailsTitleText}>SELECT PLAN LENGTH:</Text>
                             <Dropdown
+                                disable={dropdownOpt.length === 0}
                                 style={styles.dropdown}
                                 placeholderStyle={styles.placeholderStyle}
                                 selectedTextStyle={styles.selectedTextStyle}
@@ -190,7 +247,7 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
                                 maxHeight={300}
                                 labelField="label"
                                 valueField="value"
-                                placeholder="Select Plan Length"
+                                placeholder= {dropdownOpt.length === 0? "No Changes Allowed" : "Select Plan Length"}
                                 value={planLength}
                                 onChange={l => {
                                     setRepetition(l / initPlanLength);
@@ -205,7 +262,7 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
                         :null
                     }
 
-                    <Text style = {styles.detailsTitleText}>{ !isOnProgress ? 'ESTIMATED ' : null}END DATE</Text>
+                    <Text style = {styles.detailsTitleText}>{ !isOnProgress && !planAllocation.isNewEndDate ? 'ESTIMATED ' : null}END DATE</Text>
                     <Text style = {styles.detailsText}>{formatDate(newEndDate)}</Text>
                 </View>
 
@@ -217,7 +274,7 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
                 </TouchableOpacity>
                 {
                     !isOnProgress ?
-                    <TouchableOpacity style = {styles.bottomButton}>
+                    <TouchableOpacity disabled ={dropdownOpt.length === 0} onPress={()=>{changeConfirmVisible( true, 'Once you save, you cannot modify the plan length anymore.\n\nAre you sure you want to save changes?')}} style = {[styles.bottomButton, dropdownOpt.length ===0 ? {backgroundColor:'#808080'} : null]}>
                         <Text style = {styles.bottomButtonText}>Save Changes</Text>
                     </TouchableOpacity>
                     :
@@ -319,7 +376,7 @@ const styles = StyleSheet.create({
     },
     dropdown: {
         height: scale(30),
-        width: '40%',
+        width: '50%',
         margin:5,
         padding:scale(10),
         borderBottomColor: 'gray',
