@@ -66,9 +66,7 @@ const CoachDetailsPage = ({route}) => {
     return(
         <View style = {styles.container}>
             <View style = {styles.blackbox}>
-                <TouchableOpacity style = {styles.deleteButton}>
-                    <Text style = {styles.deleteText}>Delete</Text>
-                </TouchableOpacity>
+                
             </View>
 
             <Modal transparent={true} animationType='fade' visible={loading} nRequestClose={()=>changeLoadingVisible(false)}>
@@ -176,19 +174,6 @@ const styles = StyleSheet.create({
         marginHorizontal: scale(25),
         backgroundColor:'white',
         borderRadius: scale(75),
-    },
-    deleteButton:{
-        borderWidth:1, 
-        backgroundColor:'#E28413', 
-        paddingHorizontal:scale(50), 
-        
-    },
-    deleteText:{
-        color:'white', 
-        textAlign:'center', 
-        fontFamily:'Inter', 
-        fontWeight:'bold', 
-        fontSize:scale(16)
     },
     detailsBox:{
         width: '90%',
