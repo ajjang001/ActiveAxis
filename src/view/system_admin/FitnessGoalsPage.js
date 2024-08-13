@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { scale } from '../../components/scale';
 import FitnessGoalsPresenter from '../../presenter/FitnessGoalsPresenter';
 
@@ -35,7 +35,9 @@ const FitnessGoalsPage = ({ navigation }) => {
         value={newGoal}
         onChangeText={setNewGoal}
       />
-      <Button title="Add" onPress={handleAddFitnessGoal} />
+      <TouchableOpacity style={styles.addButton} onPress={handleAddFitnessGoal}>
+        <Text style={styles.addButtonText}>Add</Text>
+      </TouchableOpacity>
       <FlatList
         data={fitnessGoals}
         renderItem={({ item, index }) => (
@@ -71,6 +73,17 @@ const styles = StyleSheet.create({
     marginBottom: scale(10),
     borderRadius: 5,
   },
+  addButton: {
+    backgroundColor: 'orange',
+    padding: scale(10),
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: scale(20),
+  },
+  addButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
   listItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -88,3 +101,4 @@ const styles = StyleSheet.create({
 });
 
 export default FitnessGoalsPage;
+
