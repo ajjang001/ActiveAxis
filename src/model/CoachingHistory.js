@@ -60,7 +60,8 @@ class CoachingHistory {
                 return { session: { sessionID: querySnapshot.docs[0].id, historyItem }, coach: coach };
             }
 
-        } catch (e) {
+        }catch(e){
+            console.log(e.message);
             throw new Error(e.message);
         }
     }
