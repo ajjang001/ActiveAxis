@@ -1,5 +1,5 @@
 import { db, storage } from '../firebase/firebaseConfig';
-import { getDoc, getDocs, query, collection, where, doc, Timestamp } from "firebase/firestore";
+import { getDoc, getDocs, query, collection, where, doc, Timestamp, addDoc, updateDoc } from "firebase/firestore";
 import { ref, getDownloadURL } from 'firebase/storage';
 import Coach from "./Coach";
 
@@ -39,13 +39,13 @@ class CoachingHistory {
     }
 
     async getCurrentSession(userID) {
-        try{
-            const q = query(collection(db, 'coachinghistory'), where ('userID', '==', userID), where('startDate', '<=' , Timestamp.now()), where('endDate', '>=', Timestamp.now()));
+        try {
+            const q = query(collection(db, 'coachinghistory'), where('userID', '==', userID), where('startDate', '<=', Timestamp.now()), where('endDate', '>=', Timestamp.now()));
             const querySnapshot = await getDocs(q);
 
-            if(querySnapshot.empty){
+            if (querySnapshot.empty) {
                 throw new Error('No active session found.\nHire a coach to start a session.');
-            }else{
+            } else {
                 const data = querySnapshot.docs[0].data();
 
                 const historyItem = new CoachingHistory();
@@ -57,10 +57,10 @@ class CoachingHistory {
                 const coach = await new Coach().getInfoByID(data.coachID);
 
 
-                return {session: {sessionID: querySnapshot.docs[0].id, historyItem}, coach: coach};
+                return { session: { sessionID: querySnapshot.docs[0].id, historyItem }, coach: coach };
             }
 
-        }catch(e){
+        } catch (e) {
             throw new Error(e.message);
         }
     }
@@ -133,6 +133,79 @@ class CoachingHistory {
             return coaches;
         } catch (e) {
             throw new Error(e.message);
+        }
+    }
+
+    async hireCoach(userID, selectedCoach) {
+        try {
+            console.log('Hiring coach...');
+
+            const startDate = new Date();
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 30); // Adds 30 days
+
+            // Assuming you're using Firebase Firestore
+            await addDoc(collection(db, 'coachinghistory'), {
+                userID: userID,
+                coachID: selectedCoach,
+                startDate: startDate,
+                endDate: endDate,
+            });
+            console.log('Coach hired successfully!');
+        }
+        catch (error) {
+            console.error('Error hiring coach:', error);
+        }
+    }
+
+    async getHired(userID) {
+        try {
+            const q = query(collection(db, 'coachinghistory'), where('userID', '==', userID), where('startDate', '<=', Timestamp.now()), where('endDate', '>=', Timestamp.now()));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                return false;
+            } else {
+                const data = querySnapshot.docs[0].data();
+
+                const historyItem = new CoachingHistory();
+                historyItem.coachID = data.coachID;
+                historyItem.endDate = data.endDate;
+                historyItem.startDate = data.startDate;
+                historyItem.userID = data.userID;
+
+                const coach = await new Coach().getInfoByID(data.coachID);
+
+
+                return { session: { sessionID: querySnapshot.docs[0].id, historyItem }, coach: coach };
+            }
+
+        } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async extendHireCoach(endDate, sessionID) {
+        try {
+            const docRef = doc(db, 'coachinghistory', sessionID);
+            // Get the current document snapshot
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+
+                const currentEndDate = docSnap.data().endDate.toDate(); // Convert Firestore Timestamp to JavaScript Date
+                const newEndDate = new Date(currentEndDate);
+                newEndDate.setDate(currentEndDate.getDate() + 30);
+
+                // Update the document with the new end date
+                await updateDoc(docRef, {
+                    endDate: Timestamp.fromDate(newEndDate) // Convert JavaScript Date to Firestore Timestamp
+                });
+
+                console.log('Coach hire extended successfully!');
+            }
+        } catch (error) {
+            console.error('Error extending coach hire:', error);
         }
     }
 
