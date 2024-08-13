@@ -72,7 +72,7 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
             timeZone: 'Asia/Singapore',
             year: 'numeric',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
         });
     };
 
@@ -103,6 +103,47 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
 
             <ScrollView contentContainerStyle = {styles.planView}>
                 <View style = {styles.allocateContainer}>
+                {onProgress.length === 0 ? null :
+                    <View style = {styles.onProgressContainer}>
+                        <Text style = {styles.titleText}>On Progress</Text>
+                        {
+                            onProgress.map((plan, index) => {
+                                return(
+                                    <View style = {[styles.planItem,{gap: scale(25),}]} key = {index}>
+                                        {plan.details !== null ?
+                                            <Image source = {{uri: plan.details.fitnessPlanPicture}} style = {styles.planImage} />
+                                            :
+                                            <View style = {styles.planImage}/>
+                                        }
+
+                                        {plan.details === null ? 
+                                        
+                                            <Text style = {styles.deletedText}>Plan unavailable or deleted</Text>
+                                        :
+
+                                            <View>
+                                                <Text>{`${formatDate(plan.plan.startDate.toDate())} - ${formatDate(plan.plan.endDate.toDate())}`}</Text>
+                                                <Text style = {styles.planNameText}>{plan.details.fitnessPlanName}</Text>
+
+                                                <View style = {styles.statsView}>
+                                                    <View style = {styles.stats}>
+                                                        <Image source = {require('../../../assets/clock_icon.png')} style = {styles.statsIcon}/>
+                                                        <Text>{plan.details.routinesList.length} Days</Text>
+                                                    </View>
+                                                    <View style = {styles.stats}>
+                                                        <Image source = {require('../../../assets/fire_icon.png')} style = {styles.statsIcon}/>
+                                                        <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0))} kcal</Text>
+                                                    </View>
+                                                </View>
+
+                                            </View>
+                                        }
+                                    </View>
+                                );
+                            })
+                        }
+                    </View>
+                    }
                     <Text style = {styles.titleText}>Allocate Plan</Text>
                     {
                             allocatedPlans.length === 0 ?
@@ -123,7 +164,7 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
                                         :
 
                                             <View >
-                                                <Text>{`${formatDate(plan.plan.startDate)} - ${formatDate(plan.plan.endDate)}`}</Text>
+                                                <Text>{`${formatDate(plan.plan.startDate.toDate())} - ${formatDate(plan.plan.endDate.toDate())}`}</Text>
                                                 <Text style = {styles.planNameText}>{plan.details.fitnessPlanName}</Text>
 
                                                 <View style = {styles.statsView}>
@@ -154,47 +195,7 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
                     </TouchableOpacity>
                 </View>
 
-                {onProgress.length === 0 ? null :
-                <View style = {styles.onProgressContainer}>
-                    <Text style = {styles.titleText}>On Progress</Text>
-                    {
-                        onProgress.map((plan, index) => {
-                            return(
-                                <View style = {[styles.planItem,{gap: scale(25),}]} key = {index}>
-                                {plan.details !== null ?
-                                    <Image source = {{uri: plan.details.fitnessPlanPicture}} style = {styles.planImage} />
-                                    :
-                                    <View style = {styles.planImage}/>
-                                }
-
-                                {plan.details === null ? 
-                                
-                                    <Text style = {styles.deletedText}>Plan unavailable or deleted</Text>
-                                :
-
-                                    <View>
-                                        <Text>{`${formatDate(plan.plan.startDate)} - ${formatDate(plan.plan.endDate)}`}</Text>
-                                        <Text style = {styles.planNameText}>{plan.details.fitnessPlanName}</Text>
-
-                                        <View style = {styles.statsView}>
-                                            <View style = {styles.stats}>
-                                                <Image source = {require('../../../assets/clock_icon.png')} style = {styles.statsIcon}/>
-                                                <Text>{plan.details.routinesList.length} Days</Text>
-                                            </View>
-                                            <View style = {styles.stats}>
-                                                <Image source = {require('../../../assets/fire_icon.png')} style = {styles.statsIcon}/>
-                                                <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0))} kcal</Text>
-                                            </View>
-                                        </View>
-
-                                    </View>
-                                }
-                            </View>
-                            );
-                        })
-                    }
-                </View>
-                }
+                
                 
             </ScrollView>
 

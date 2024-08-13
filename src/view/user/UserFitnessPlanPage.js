@@ -74,7 +74,8 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
             timeZone: 'Asia/Singapore',
             year: 'numeric',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
+            
         });
     };
 
@@ -113,11 +114,11 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                                     {
                                         onProgress.map((plan, index)=>{
                                             return(
-                                                <TouchableOpacity style = {[styles.planItem,{gap: scale(25),}]} key = {index}>
-                                                    {plan.details !== null ?
-                                                        <Image source = {{uri: plan.details.fitnessPlanPicture}} style = {styles.planImage} />
-                                                        :
+                                                <TouchableOpacity onPress = {()=>{navigation.navigate('UserFitnessPlanDetailsPage', {user, fitnessPlan: plan.details, planAllocation:plan.plan, session, isOnProgress: true})}} style = {[styles.planItem,{gap: scale(25),}]} key = {index}>
+                                                    {plan.details === null ?
                                                         <View style = {styles.planImage}/>
+                                                        :
+                                                        <Image source = {{uri: plan.details.fitnessPlanPicture}} style = {styles.planImage} />
                                                     }
                                                     {plan.details === null ? 
                                 
@@ -125,7 +126,7 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                                                     :
 
                                                         <View>
-                                                            <Text>{`${formatDate(plan.plan.startDate)} - ${formatDate(plan.plan.endDate)}`}</Text>
+                                                            <Text>{`${formatDate(plan.plan.startDate.toDate())} - ${formatDate(plan.plan.endDate.toDate())}`}</Text>
                                                             <Text style = {styles.planNameText}>{plan.details.fitnessPlanName}</Text>
 
                                                             <View style = {styles.statsView}>
@@ -154,7 +155,7 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                                     {
                                         allocatedPlans.map((plan, index) => {
                                             return (
-                                                <TouchableOpacity style = {[styles.planItem, {justifyContent:'space-between', }]} key = {index}>
+                                                <TouchableOpacity onPress = {()=>{navigation.navigate('UserFitnessPlanDetailsPage', {user, fitnessPlan: plan.details, planAllocation:plan.plan, session, isOnProgress: false})}} style = {[styles.planItem, {justifyContent:'space-between', }]} key = {index}>
                                                     <View style = {{flexDirection:'row', gap: scale(25)}}>
                                                     {plan.details !== null ?
                                                         <Image source = {{uri: plan.details.fitnessPlanPicture}} style = {styles.planImage} />
@@ -168,7 +169,7 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                                                     :
             
                                                         <View>
-                                                            <Text>{`${formatDate(plan.plan.startDate)} - ${formatDate(plan.plan.endDate)}`}</Text>
+                                                            <Text>{`${formatDate(plan.plan.startDate.toDate())} - ${formatDate(plan.plan.endDate.toDate())}`}</Text>
                                                             <Text style = {styles.planNameText}>{plan.details.fitnessPlanName}</Text>
             
                                                             <View style = {styles.statsView}>

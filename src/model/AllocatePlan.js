@@ -42,8 +42,8 @@ class AllocatePlan{
                 allocation.allocationID = doc.id;
                 allocation.fitnessPlanID = data.fitnessPlanID;
                 allocation.sessionID = data.sessionID;
-                allocation.startDate = data.startDate.toDate();
-                allocation.endDate = data.endDate.toDate();
+                allocation.startDate = data.startDate;
+                allocation.endDate = data.endDate;
 
                 allocatePlan.push(allocation);
             }
@@ -68,8 +68,8 @@ class AllocatePlan{
                 allocation.allocationID = doc.id;
                 allocation.fitnessPlanID = data.fitnessPlanID;
                 allocation.sessionID = data.sessionID;
-                allocation.startDate = data.startDate.toDate();
-                allocation.endDate = data.endDate.toDate();
+                allocation.startDate = data.startDate;
+                allocation.endDate = data.endDate;
 
                 allocatePlan.push(allocation);
             }

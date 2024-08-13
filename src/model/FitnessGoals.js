@@ -1,5 +1,5 @@
 import { db } from '../firebase/firebaseConfig';
-import { getDocs, collection, addDoc, updateDoc, doc } from 'firebase/firestore';
+import { getDocs, collection, addDoc, updateDoc, doc, query, where } from 'firebase/firestore';
 
 class FitnessGoals {
     _goalID;
@@ -74,6 +74,24 @@ class FitnessGoals {
                 throw new Error('Document with given goalID not found');
             }
         } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async getFitnessGoalByID(goalID) {
+        try{
+            const q = query(collection(db, 'fitnessgoal'), where('goalID', '==', goalID));
+            const querySnapshot = await getDocs(q);
+
+
+            if(querySnapshot.size === 0){
+                throw new Error('No data found');
+            }else{
+                // assume only return 1 document
+                return querySnapshot.docs[0].data().goalName;
+            }
+
+        }catch(error){
             throw new Error(error);
         }
     }

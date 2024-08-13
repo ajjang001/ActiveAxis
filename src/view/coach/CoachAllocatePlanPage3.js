@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Modal, Image, ScrollView, ActivityIndicator, To
 import { scale } from "../../components/scale";
 import DatePicker from 'react-native-date-picker';
 import React, { useEffect, useState } from "react";
+import moment from "moment-timezone";
 import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Modal";
 
 import AllocatePlanPresenter from "../../presenter/AllocatePlanPresenter";
@@ -14,6 +15,7 @@ const CoachAllocatePlanPage3 = ({navigation, route}) => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
 
+    
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
@@ -50,15 +52,17 @@ const CoachAllocatePlanPage3 = ({navigation, route}) => {
             timeZone: 'Asia/Singapore',
             year: 'numeric',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
         });
     };
 
     const updateEndDate = () => {
         if(startDate){
-            const newEndDate = new Date(startDate.getTime() + selectedPlan.routinesList.length * 86400000);
-            newEndDate.setDate(newEndDate.getDate() - 1);
-            newEndDate.setHours(23, 59, 59, 999);
+            const timezone = 'Asia/Singapore';
+            const newEndDate = moment(startDate).tz(timezone).add(selectedPlan.routinesList.length - 1, 'days').endOf('day').toDate();
+
             setEndDate(newEndDate);
         }
     }
@@ -75,7 +79,7 @@ const CoachAllocatePlanPage3 = ({navigation, route}) => {
             changeLoadingVisible(false);
         }
     }
-
+     
     const getTomorrow = () => {
         const today = new Date();
         const tomorrow = new Date(today);
@@ -95,13 +99,6 @@ const CoachAllocatePlanPage3 = ({navigation, route}) => {
             </Modal>
             <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
                 <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
-            </Modal>
-            <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={()=>changeConfirmVisible(false)}>
-                <ActionDialog
-                message = {confirmMessage}
-                changeModalVisible = {changeConfirmVisible}
-                action = {()=>console.log('Action')}
-                />
             </Modal>
             
             <ScrollView contentContainerStyle = {styles.container}>
@@ -143,13 +140,16 @@ const CoachAllocatePlanPage3 = ({navigation, route}) => {
                     <DatePicker
                     modal
                     open={open}
-                    date={startDate || getTomorrow()}
+                    date={ startDate ? new Date(startDate.getTime() + 8 * 60 * 60 * 1000) : getTomorrow()}
                     mode='date'
-                    minimumDate={getTomorrow()}
+                    minimumDate={
+                        getTomorrow()
+                    } 
                     maximumDate={history.endDate.toDate()}
                     onConfirm={(date) => {
                         setOpen(false);
-                        setStartDate(date);
+                        setStartDate(moment(date).tz('Asia/Singapore').add(0, 'days').startOf('day').toDate());
+                        
                     }}
                     onCancel={() => {
                         setOpen(false);
