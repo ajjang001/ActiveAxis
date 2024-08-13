@@ -49,6 +49,7 @@ import UserCoachUpdateFeedbackPage from './src/view/user/UserCoachUpdateFeedback
 import UserAchievementPage from './src/view/user/UserAchievementPage';
 import UserShareAchievementPage from './src/view/user/UserShareAchievementPage';
 import UserWorkoutPage from './src/view/user/UserWorkoutPage';
+import UserFitnessPlanPage from './src/view/user/UserFitnessPlanPage';
 import UserFriendsListPage from './src/view/user/UserFriendsListPage';
 import UserFriendDetailsPage from './src/view/user/UserFriendDetailsPage';
 import UserFriendRequestPage from './src/view/user/UserFriendRequestPage';
@@ -276,6 +277,7 @@ export default function App() {
           <Stack.Screen name="UserAppFeedbackPage" component={UserAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserSendAppFeedbackPage" component={UserSendAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserUpdateAppFeedbackPage" component={UserUpdateAppFeedbackPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name="UserFitnessPlanPage" component={UserFitnessPlanPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserCoachDetailsPage" component={UserCoachDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserCoachHistoryDetails" component={UserCoachHistoryDetails} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserCoachHistoryFeedback" component={UserCoachHistoryFeedback} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />

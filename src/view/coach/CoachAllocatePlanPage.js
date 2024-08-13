@@ -66,6 +66,15 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
             changeLoadingVisible(false);
         }
     }
+    const formatDate = (date) => {
+        if (!date) return "";
+        return date.toLocaleString('en-US', {
+            timeZone: 'Asia/Singapore',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
 
 
     useFocusEffect(
@@ -114,7 +123,7 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
                                         :
 
                                             <View >
-                                                <Text>{`${plan.plan.startDate.toDateString()} - ${plan.plan.endDate.toDateString()}`}</Text>
+                                                <Text>{`${formatDate(plan.plan.startDate)} - ${formatDate(plan.plan.endDate)}`}</Text>
                                                 <Text style = {styles.planNameText}>{plan.details.fitnessPlanName}</Text>
 
                                                 <View style = {styles.statsView}>
@@ -164,7 +173,7 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
                                 :
 
                                     <View>
-                                        <Text>{`${plan.plan.startDate.toDateString()} - ${plan.plan.endDate.toDateString()}`}</Text>
+                                        <Text>{`${formatDate(plan.plan.startDate)} - ${formatDate(plan.plan.endDate)}`}</Text>
                                         <Text style = {styles.planNameText}>{plan.details.fitnessPlanName}</Text>
 
                                         <View style = {styles.statsView}>

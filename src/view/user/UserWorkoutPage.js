@@ -6,9 +6,7 @@ import { AntDesign } from '@expo/vector-icons';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 import DatePicker from 'react-native-date-picker';
 
-
 import DisplayFitnessStatisticsPresenter from '../../presenter/DisplayFitnessStatisticsPresenter';
-
 
 import { LoadingDialog, MessageDialog } from '../../components/Modal';
 
@@ -235,6 +233,15 @@ const UserWorkoutPage = ({navigation, route}) => {
                     </View>
                     
                 </View>
+
+                <View style = {styles.exerciseHistoryView}>
+                    <View style ={styles.exerciseHistoryHeader}>
+                        <Text style = {styles.historyHeaderText}>Exercise History</Text>
+                        <TouchableOpacity onPress ={()=>{navigation.navigate("UserFitnessPlanPage", {user})}} style = {styles.myPlanButton}>
+                            <Text style = {styles.buttonText}>My Fitness Plans</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
         </ScrollView>
     );
@@ -356,6 +363,30 @@ const styles = StyleSheet.create({
     heartRateReadSubtitle:{
         fontSize: scale(24),
         fontFamily: 'Inter',
+    },
+    exerciseHistoryView:{
+        width: '95%',
+        marginTop: scale(20),
+    },
+    exerciseHistoryHeader:{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    historyHeaderText:{
+        fontSize: scale(24),
+        fontFamily: 'Inter-SemiBold',
+    },
+    myPlanButton:{
+        paddingVertical: scale(8),
+        paddingHorizontal: scale(16),
+        backgroundColor: '#C42847',
+        borderRadius: scale(10),
+    },
+    buttonText:{
+        fontSize: scale(16),
+        fontFamily: 'Inter-SemiBold',
+        color: 'white',
     },
 });
 

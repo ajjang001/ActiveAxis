@@ -123,6 +123,37 @@ class Coach extends Account {
         }
     }
 
+    async getInfoByID(coachID) {
+        try{
+            const q = doc(db, 'coach', coachID);
+            const queryResult = await getDoc(q);
+            if(queryResult.exists()){
+                const data = queryResult.data();
+                const c = new Coach();
+
+                c.accountID = coachID;
+                c.username = data.username;
+                c.email = data.email;
+                c.profilePicture = data.profilePicture;
+                c.profilePicture = await c.getProfilePictureURL();
+                c.fullName = data.fullName;
+                c.dob = data.dob;
+                c.gender = data.gender;
+                c.phoneNumber = data.phoneNumber;
+                c.isPending = data.isPending;
+                c.isSuspended = data.isSuspended;
+                c.chargePerMonth = data.chargePerMonth;
+                c.certificate = data.certificate;
+                c.id = data.photoID;
+                c.resume = data.resume;
+
+                return c;
+            }
+        }catch(e){
+            throw new Error(e.message);
+        }
+    }
+
     async register(name, email, phone, password, gender, dob, chargePM, photo, resume, certificate, identification) {
         try {
             // Create the coach account in Firebase Authentication

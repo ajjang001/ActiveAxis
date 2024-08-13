@@ -1,5 +1,5 @@
 import { db, storage } from '../firebase/firebaseConfig';
-import { getDoc, getDocs, query, collection, where, doc } from "firebase/firestore";
+import { getDoc, getDocs, query, collection, where, doc, Timestamp } from "firebase/firestore";
 import { ref, getDownloadURL } from 'firebase/storage';
 import Coach from "./Coach";
 
@@ -34,6 +34,33 @@ class CoachingHistory {
             const ppURL = await getDownloadURL(ppRef);
             return ppURL;
         } catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async getCurrentSession(userID) {
+        try{
+            const q = query(collection(db, 'coachinghistory'), where ('userID', '==', userID), where('startDate', '<=' , Timestamp.now()), where('endDate', '>=', Timestamp.now()));
+            const querySnapshot = await getDocs(q);
+
+            if(querySnapshot.empty){
+                throw new Error('No active session found.\nHire a coach to start a session.');
+            }else{
+                const data = querySnapshot.docs[0].data();
+
+                const historyItem = new CoachingHistory();
+                historyItem.coachID = data.coachID;
+                historyItem.endDate = data.endDate;
+                historyItem.startDate = data.startDate;
+                historyItem.userID = data.userID;
+
+                const coach = await new Coach().getInfoByID(data.coachID);
+
+
+                return {session: {sessionID: querySnapshot.docs[0].id, historyItem}, coach: coach};
+            }
+
+        }catch(e){
             throw new Error(e.message);
         }
     }
