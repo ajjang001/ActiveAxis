@@ -63,10 +63,12 @@ const UserCoachPage = ({ navigation, route }) => {
         setIsLoading(true);
         try {
             await new HireCoachPresenter().userHireCoach(userID, selectedCoach.accountID);
+            setRefreshKey(prevKey => prevKey + 1);
         } catch (e) {
             changeModal1Visible(true, e.message);
         } finally {
             setIsLoading(false);
+            changeModal1Visible(true, "You have successfully hired a coach.");
         }
     };
 
