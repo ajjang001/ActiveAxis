@@ -68,6 +68,7 @@
     </array>
     <key>UIBackgroundModes</key>
     <array>
+      <string>fetch</string>
       <string>bluetooth-central</string>
       <string>bluetooth-peripheral</string>
     </array>
