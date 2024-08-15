@@ -38,8 +38,6 @@ class DisplayNotificationPresenter {
         await Notifications.cancelAllScheduledNotificationsAsync();
 
         const time = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"];
-        const title = (calories < calTarget) || (steps < stepsTarget) ? "Let's Exercise!" : "Great Work!";
-        const body = (calories < calTarget) || (steps < stepsTarget) ? "You have not reached your daily target. Keep exercise and stay healthy!" : "You have reached your daily target! Please take a break and enjoy your day!";
 
         for (let i = 0; i < time.length; i++) {
             const trigger = new Date(Date.now());
@@ -48,8 +46,8 @@ class DisplayNotificationPresenter {
             trigger.setSeconds(0);
 
             const content = {
-                title: title,
-                body: body,
+                title: "Balance Your Workout!",
+                body: "If you haven't exercised today, it's time to get moving! If you've been active for a while, don't forget to take a break and rest. Find your balance for a healthier you!",
                 sound: true,
                 priority: Notifications.AndroidNotificationPriority.HIGH,
             };
