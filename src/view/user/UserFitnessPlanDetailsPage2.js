@@ -74,7 +74,7 @@ const UserFitnessPlanDetailsPage2 = ({navigation, route}) =>{
                                         
                                         
                                         return (
-                                            <TouchableOpacity onPress={()=>{navigation.navigate('ExerciseInstructionPage', {exercise:e})}} key = {e.exercise.exerciseID}>
+                                            <TouchableOpacity onPress={()=>{navigation.navigate('ExerciseInstructionPage', {exercise:e, user})}} key = {e.exercise.exerciseID}>
                                                 <ExerciseCard
                                                     routine = {routine}
                                                     exercise = {e}

@@ -1,15 +1,18 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import { TimerPickerModal } from "react-native-timer-picker";
 import {Text, View, StyleSheet, TextInput, Image, ScrollView, TouchableOpacity, Modal} from 'react-native';
 import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Modal";
 import { scale } from '../../components/scale';
 import YoutubePlayer from "react-native-youtube-iframe";
 
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import RemoveAdsPresenter from '../../presenter/RemoveAdsPresenter';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ExerciseInstructionPage = ({navigation, route}) => {
-    const {exercise} = route.params;
-    
-    
+    const {exercise, user} = route.params;
+
+    const [ads, setAds] = useState(null);
     
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
@@ -33,6 +36,20 @@ const ExerciseInstructionPage = ({navigation, route}) => {
         setConfirmMessage(m);
         setConfirmationVisible(b);
     }
+
+    const getAdsRemoved = async () => {
+        try {
+            setAds(await new RemoveAdsPresenter().isAdRemoved(user.accountID));
+        } catch (error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }
+    }
+
+        useFocusEffect(
+        useCallback(() => {
+            getAdsRemoved();
+        }, [])
+    );
     
     const modifyText = (text)=>{
         text = text.replace(/_/g, ' ');
@@ -84,6 +101,23 @@ const ExerciseInstructionPage = ({navigation, route}) => {
                             ) : null
                     }
                 </View>
+                {!ads && (
+                <View style={styles.adContainer}>
+                    <BannerAd
+                        unitId={'ca-app-pub-3940256099942544/6300978111'} // Test ad unit ID
+                        size={BannerAdSize.FULL_BANNER} // Adjust size as needed
+                        requestOptions={{
+                            requestNonPersonalizedAdsOnly: true,
+                        }}
+                        onAdLoaded={() => {
+                            console.log('Banner ad loaded');
+                        }}
+                        onAdFailedToLoad={(error) => {
+                            console.error('Failed to load banner ad:', error);
+                        }}
+                    />
+                </View>
+            )}
                 <Text style = {styles.textTitle}>EXERCISE TYPE</Text>
                 <Text style = {styles.textContent}>{modifyText(exercise.exercise.exerciseType)}</Text>
                 <Text style = {styles.textTitle}>TARGET MUSCLE</Text>
@@ -123,7 +157,7 @@ const styles = StyleSheet.create({
     screenView:{
         height: scale(275),
         width: '100%',
-        marginBottom: scale(16),
+        marginBottom: scale(8),
     },
     textTitle:{
         fontSize: scale(20),
@@ -143,6 +177,11 @@ const styles = StyleSheet.create({
         marginBottom: scale(36),
         fontFamily: 'Inter',
     },
+    adContainer: {
+        width: '100%', 
+        alignItems: 'center',
+        padding: scale(5), 
+      },
 });
 
 export default ExerciseInstructionPage;

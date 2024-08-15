@@ -6,6 +6,9 @@ import { AntDesign } from '@expo/vector-icons';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 import DatePicker from 'react-native-date-picker';
 
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import RemoveAdsPresenter from '../../presenter/RemoveAdsPresenter';
+
 import DisplayFitnessStatisticsPresenter from '../../presenter/DisplayFitnessStatisticsPresenter';
 
 import { LoadingDialog, MessageDialog } from '../../components/Modal';
@@ -40,6 +43,7 @@ const UserWorkoutPage = ({navigation, route}) => {
     // Date Picker
     const [open, setOpen] = useState(false);
 
+    const [ads, setAds] = useState(null);
 
     // change popup/modal visible
     const changeModalVisible = (b, m)=>{
@@ -51,6 +55,20 @@ const UserWorkoutPage = ({navigation, route}) => {
     const changeLoadingVisible = (b)=>{
         setIsLoading(b);
     }
+
+    const getAdsRemoved = async () => {
+        try {
+            setAds(await new RemoveAdsPresenter().isAdRemoved(user.accountID));
+        } catch (error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }
+    }
+
+        useFocusEffect(
+        useCallback(() => {
+            getAdsRemoved();
+        }, [])
+    );
 
     const changeDate = (numDays) =>{
         const currentDate = new Date(date);
@@ -258,6 +276,24 @@ const UserWorkoutPage = ({navigation, route}) => {
                         </View>
                         
                     </View>
+
+                    {!ads && (
+                <View style={styles.adContainer}>
+                    <BannerAd
+                        unitId={'ca-app-pub-3940256099942544/6300978111'} // Test ad unit ID
+                        size={BannerAdSize.BANNER} // Adjust size as needed
+                        requestOptions={{
+                            requestNonPersonalizedAdsOnly: true,
+                        }}
+                        onAdLoaded={() => {
+                            console.log('Banner ad loaded');
+                        }}
+                        onAdFailedToLoad={(error) => {
+                            console.error('Failed to load banner ad:', error);
+                        }}
+                    />
+                </View>
+            )}
 
                     <View style = {styles.exerciseHistoryView}>
                         <View style ={styles.exerciseHistoryHeader}>
@@ -507,7 +543,12 @@ const styles = StyleSheet.create({
         fontSize:scale(24),
         textAlign:'center',
         paddingVertical:scale(16)
-    }
+    },
+    adContainer: {
+        width: '100%', 
+        alignItems: 'center',
+        padding: scale(10), 
+      },
     
 });
 

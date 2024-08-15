@@ -5,6 +5,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
 import CompetitionLeaderboard from '../../model/CompetitionLeaderboard';
 
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import RemoveAdsPresenter from '../../presenter/RemoveAdsPresenter';
+
 import DisplayCompetitionDetailsPresenter from '../../presenter/DisplayCompetitionDetailsPresenter';
 
 const UserCompetitionDetailsPage = ({ navigation, route }) => {
@@ -17,6 +20,8 @@ const UserCompetitionDetailsPage = ({ navigation, route }) => {
     const [modalMsg, setModalMsg] = useState('');
     const [confirmationVisible, setConfirmationVisible] = useState(false);
     const [confirmMessage, setConfirmMessage] = useState('');
+
+    const [ads, setAds] = useState(null);
 
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
@@ -33,6 +38,20 @@ const UserCompetitionDetailsPage = ({ navigation, route }) => {
         setConfirmMessage(m);
         setConfirmationVisible(b);
     }
+
+    const getAdsRemoved = async () => {
+        try {
+            setAds(await new RemoveAdsPresenter().isAdRemoved(user.accountID));
+        } catch (error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }
+    }
+
+        useFocusEffect(
+        useCallback(() => {
+            getAdsRemoved();
+        }, [])
+    );
 
     const getUserInformation = async () => {
         try{
@@ -130,7 +149,23 @@ const UserCompetitionDetailsPage = ({ navigation, route }) => {
 
                     
                 </View>
-
+                {!ads && !isLoading && (
+                <View style={styles.adContainer}>
+                    <BannerAd
+                        unitId={'ca-app-pub-3940256099942544/6300978111'} // Test ad unit ID
+                        size={BannerAdSize.BANNER} // Adjust size as needed
+                        requestOptions={{
+                            requestNonPersonalizedAdsOnly: true,
+                        }}
+                        onAdLoaded={() => {
+                            console.log('Banner ad loaded');
+                        }}
+                        onAdFailedToLoad={(error) => {
+                            console.error('Failed to load banner ad:', error);
+                        }}
+                    />
+                </View>
+            )}
                 <View style = {styles.participantsView}>
                     <Text style ={styles.participantsViewTitleText}>Participants</Text>
                     {
@@ -216,7 +251,7 @@ const styles = StyleSheet.create({
     },
     participantsView:{
         width: '90%',
-        paddingVertical: scale(16),
+        paddingVertical: scale(8),
     },
     participantsViewTitleText:{
         fontFamily: 'Inter-SemiBold',
@@ -233,7 +268,12 @@ const styles = StyleSheet.create({
     participantText:{
         fontFamily: 'Inter',
         fontSize: scale(16),
-    }
+    },
+    adContainer: {
+        width: '100%', 
+        alignItems: 'center',
+        padding: scale(5), 
+      },
 });
 
 export default UserCompetitionDetailsPage;

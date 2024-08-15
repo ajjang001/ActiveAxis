@@ -6,7 +6,10 @@ import { Dropdown } from 'react-native-element-dropdown';
 import moment from 'moment-timezone';
 import { useFocusEffect } from '@react-navigation/native';
 import YoutubePlayer from "react-native-youtube-iframe";
-import SoundPlayer from 'react-native-sound-player'
+import SoundPlayer from 'react-native-sound-player';
+
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import RemoveAdsPresenter from '../../presenter/RemoveAdsPresenter';
 
 const UserPerformExercisePage = ({navigation, route}) => {
     const {user} = route.params;
@@ -30,12 +33,27 @@ const UserPerformExercisePage = ({navigation, route}) => {
     const [confirmationVisible, setConfirmationVisible] = useState(false);
     const [confirmMessage, setConfirmMessage] = useState('');
 
+    const [ads, setAds] = useState(null);
 
     // change popup/modal visible
     const changeConfirmVisible = (b, m)=>{
         setConfirmMessage(m);
         setConfirmationVisible(b);
     }
+
+    const getAdsRemoved = async () => {
+        try {
+            setAds(await new RemoveAdsPresenter().isAdRemoved(user.accountID));
+        } catch (error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }
+    }
+
+        useFocusEffect(
+        useCallback(() => {
+            getAdsRemoved();
+        }, [])
+    );
     
 
     const convertToSeconds = (timeString) => {
@@ -230,6 +248,23 @@ const UserPerformExercisePage = ({navigation, route}) => {
                     
                 </View>
             </View>
+            {!ads && (
+                <View style={styles.adContainer}>
+                    <BannerAd
+                        unitId={'ca-app-pub-3940256099942544/6300978111'} // Test ad unit ID
+                        size={BannerAdSize.FULL_BANNER} // Adjust size as needed
+                        requestOptions={{
+                            requestNonPersonalizedAdsOnly: true,
+                        }}
+                        onAdLoaded={() => {
+                            console.log('Banner ad loaded');
+                        }}
+                        onAdFailedToLoad={(error) => {
+                            console.error('Failed to load banner ad:', error);
+                        }}
+                    />
+                </View>
+            )}
         </View>
       );
 
@@ -318,7 +353,14 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: scale(32),
         textAlign: 'center',
-    }
+    },
+    adContainer: {
+        width: '100%', 
+        alignItems: 'center',
+        padding: scale(5), 
+        position: 'absolute', // Allows positioning the container relative to its parent
+        bottom: 0, // Positions the container at the bottom of the screen
+      },
   });
 
 export default UserPerformExercisePage;
