@@ -35,6 +35,38 @@ class ShareFitnessPlanCompletionPresenter{
         }
     }
 
+    async shareFullPlanCompletion(planName, platform){
+        try{
+
+            const shareOptions = {
+                title: 'Fitness Plan Completed!',
+                message: `I have completed a Fitness Plan: ${planName} on ActiveAxis!\n\nDownload the app now and try out fitness plans crafted by our fitness coaches!`,
+                subject: 'Check out my fitness plan completion result!',
+              };
+    
+            switch (platform) {
+                case 'facebook':
+                await Share.shareSingle({ ...shareOptions, social: Share.Social.FACEBOOK });
+                break;
+                case 'twitter':
+                await Share.shareSingle({ ...shareOptions, social: Share.Social.TWITTER });
+                break;
+                case 'whatsapp':
+                await Share.shareSingle({ ...shareOptions, social: Share.Social.WHATSAPP });
+                break;
+                case 'instagram':
+                await Share.shareSingle({ ...shareOptions, social: Share.Social.INSTAGRAM });
+                break;
+                default:
+                await Share.open(shareOptions);
+            }
+        }catch(error){
+            throw new Error(error);
+        }
+    }
+
+
+
 
 }
 

@@ -55,6 +55,7 @@ import UserFitnessPlanDetailsPage2 from './src/view/user/UserFitnessPlanDetailsP
 import UserPerformExercisePage from './src/view/user/UserPerformExercisePage';
 import ExerciseInstructionPage from './src/view/user/ExerciseInstructionPage';
 import FitnessPlanDonePage from './src/view/user/FitnessPlanDonePage';
+import UserFitnessPlanHistoryPage from './src/view/user/UserFitnessPlanHistoryPage'
 import UserFriendsListPage from './src/view/user/UserFriendsListPage';
 import UserFriendDetailsPage from './src/view/user/UserFriendDetailsPage';
 import UserFriendRequestPage from './src/view/user/UserFriendRequestPage';
@@ -287,6 +288,7 @@ export default function App() {
           <Stack.Screen name="UserFitnessPlanDetailsPage2" component={UserFitnessPlanDetailsPage2} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name ="UserPerformExercisePage" component={UserPerformExercisePage} options={{ headerShown: false }} />
           <Stack.Screen name = "FitnessPlanDonePage" component={FitnessPlanDonePage} options={{ headerShown: false }} />
+          <Stack.Screen name="UserFitnessPlanHistoryPage" component={UserFitnessPlanHistoryPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="ExerciseInstructionPage" component={ExerciseInstructionPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserCoachDetailsPage" component={UserCoachDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserCoachHistoryDetails" component={UserCoachHistoryDetails} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />

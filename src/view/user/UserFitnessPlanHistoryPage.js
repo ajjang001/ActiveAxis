@@ -3,10 +3,10 @@ import { scale } from "../../components/scale";
 import React, { useEffect, useState } from "react";
 import { LoadingDialog, MessageDialog } from "../../components/Modal";
 
-import DisplayAllocateHistoryPresenter from '../../presenter/DisplayAllocateHistoryPresenter';
+import DisplayExerciseHistoryPresenter from '../../presenter/DisplayExerciseHistoryPresenter';
+import ShareFitnessPlanCompletionPresenter from '../../presenter/ShareFitnessPlanCompletionPresenter';
 
-
-const CoachAllocateHistoryPage = ({navigation, route})=>{
+const UserFitnessPlanHistoryPage = ({navigation, route}) =>{
 
     const { history } = route.params;
 
@@ -30,7 +30,8 @@ const CoachAllocateHistoryPage = ({navigation, route})=>{
     const loadHistory = async () => {
         try{
             changeLoadingVisible(true);
-            await new DisplayAllocateHistoryPresenter({updateHistory: setHistoryArr}).displayAllocationHistory(history.id);
+            console.log(history);
+            await new DisplayExerciseHistoryPresenter({updateHistory: setHistoryArr}).displayExerciseAllocationHistory(history.sessionID);
         }catch(error){
             changeModalVisible(true, error.message.replace('Error: ', ''));
         }finally{
@@ -47,6 +48,14 @@ const CoachAllocateHistoryPage = ({navigation, route})=>{
             day: 'numeric',
         });
     };
+
+    const handleShare = async(fitnessPlanName) => {
+        try{
+            await new ShareFitnessPlanCompletionPresenter().shareFullPlanCompletion(fitnessPlanName);
+        }catch(error){
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
         loadHistory();
@@ -70,34 +79,39 @@ const CoachAllocateHistoryPage = ({navigation, route})=>{
                 historyArr.map((plan, index) => {
                     return(
                         <View style = {styles.planItem} key = {index}>
-                            {plan.details !== null ?
-                                <Image source = {{uri: plan.details.fitnessPlanPicture}} style = {styles.planImage} />
+                            <View style = {{flexDirection: 'row', gap:scale(24),  width:'85%'}}>
+                                {plan.details !== null ?
+                                    <Image source = {{uri: plan.details.fitnessPlanPicture}} style = {styles.planImage} />
+                                    :
+                                    <View style = {styles.planImage}/>
+                                }
+
+                                {plan.details === null ? 
+                                
+                                    <Text style = {styles.deletedText}>Plan unavailable or deleted</Text>
                                 :
-                                <View style = {styles.planImage}/>
-                            }
 
-                            {plan.details === null ? 
-                            
-                                <Text style = {styles.deletedText}>Plan unavailable or deleted</Text>
-                            :
+                                    <View>
+                                        <Text>{`${formatDate(plan.plan.startDate)} - ${formatDate(plan.plan.endDate)}`}</Text>
+                                        <Text style = {styles.planNameText}>{plan.details.fitnessPlanName}</Text>
 
-                                <View>
-                                    <Text>{`${formatDate(plan.plan.startDate)} - ${formatDate(plan.plan.endDate)}`}</Text>
-                                    <Text style = {styles.planNameText}>{plan.details.fitnessPlanName}</Text>
-
-                                    <View style = {styles.statsView}>
-                                        <View style = {styles.stats}>
-                                            <Image source = {require('../../../assets/clock_icon.png')} style = {styles.icon}/>
-                                            <Text>{plan.details.routinesList.length * plan.plan.repetition} Days</Text>
+                                        <View style = {styles.statsView}>
+                                            <View style = {styles.stats}>
+                                                <Image source = {require('../../../assets/clock_icon.png')} style = {styles.icon}/>
+                                                <Text>{plan.details.routinesList.length * plan.plan.repetition} Days</Text>
+                                            </View>
+                                            <View style = {styles.stats}>
+                                                <Image source = {require('../../../assets/fire_icon.png')} style = {styles.icon}/>
+                                                <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0)) * plan.plan.repetition} kcal</Text>
+                                            </View>
                                         </View>
-                                        <View style = {styles.stats}>
-                                            <Image source = {require('../../../assets/fire_icon.png')} style = {styles.icon}/>
-                                            <Text>{Math.ceil(plan.details.routinesList.map(routine => routine.estCaloriesBurned).reduce((a,b)=>a+b,0)) * plan.plan.repetition} kcal</Text>
-                                        </View>
+
                                     </View>
-
-                                </View>
-                            }
+                                }
+                            </View>
+                            <TouchableOpacity onPress = {()=>handleShare(plan.details.fitnessPlanName)} style = {{padding: scale(10)}}>
+                                <Image style = {styles.icon2} source = {require('../../../assets/share_icon.png')} />
+                            </TouchableOpacity>
                         </View>
                     );
                 })}
@@ -132,10 +146,10 @@ const styles = StyleSheet.create({
     planItem:{
         borderColor: 'lightgray',
         borderWidth: 1,
-        flexDirection: 'row',
         padding: scale(10),
-        gap: scale(25),
+        gap: scale(8),
         alignItems: 'center',
+        flexDirection: 'row',
     },
     deletedText:{
         fontSize: scale(16),
@@ -172,6 +186,10 @@ const styles = StyleSheet.create({
         height: scale(15),
     
     },
+    icon2:{
+        height: scale(25),
+        width: scale(25),
+    },
 });
 
-export default CoachAllocateHistoryPage;
+export default UserFitnessPlanHistoryPage;

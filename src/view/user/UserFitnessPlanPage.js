@@ -12,6 +12,7 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
     const {user} = route.params;
 
     const [session, setSession] = useState(null);
+    // console.log(session)
 
     const [allocatedPlans, setAllocatedPlans] = useState([]);
     const [onProgress, setOnProgress] = useState([]);
@@ -197,6 +198,12 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
 
                     }                    
                 </ScrollView>
+
+                <View style = {styles.bottomView}>
+                    <TouchableOpacity onPress = {()=>{navigation.navigate('UserFitnessPlanHistoryPage', {history:session})}} style = {styles.button}>
+                        <Text style = {styles.buttonText}>History</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     )
@@ -219,7 +226,7 @@ const styles = StyleSheet.create({
         marginVertical: scale(16),
     },
     scrollView:{
-        height: '90%',
+        height: '80%',
         marginVertical: scale(16),
     },
     titleText: {
@@ -278,6 +285,23 @@ const styles = StyleSheet.create({
         height: scale(25),
         width: scale(25),
     },
+    bottomView:{
+        paddingVertical:scale(16),
+        paddingBottom:scale(240),
+        alignItems:'center'
+    },
+    button:{
+        backgroundColor:'#E28413',
+        paddingVertical:scale(4),
+        width:scale(140),
+        borderRadius:scale(8)
+    },
+    buttonText:{
+        textAlign:'center',
+        fontFamily:'Inter-SemiBold',
+        fontSize:scale(18),
+        color:'white'
+    }
 });
 
 export default UserFitnessPlanPage;

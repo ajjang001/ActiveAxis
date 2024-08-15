@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, Image, StyleSheet, ImageBackground, Modal, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, ImageBackground, Modal, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { scale } from '../../components/scale';
 import { useFocusEffect } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import DatePicker from 'react-native-date-picker';
 import DisplayFitnessStatisticsPresenter from '../../presenter/DisplayFitnessStatisticsPresenter';
 
 import { LoadingDialog, MessageDialog } from '../../components/Modal';
+import DisplayExerciseHistoryPresenter from '../../presenter/DisplayExerciseHistoryPresenter';
 
 
 
@@ -27,6 +28,9 @@ const UserWorkoutPage = ({navigation, route}) => {
     const [minHeartRate, setMinHeartRate] = useState('--');
     const [maxHeartRate, setMaxHeartRate] = useState('--');
 
+    const [history, setHistory] = useState([]);
+    // console.log(history);
+
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
@@ -34,14 +38,8 @@ const UserWorkoutPage = ({navigation, route}) => {
     const [confirmMessage, setConfirmMessage] = useState('');
 
     // Date Picker
-    const [open, setOpen] = useState(false)
- 
+    const [open, setOpen] = useState(false);
 
-    // change popup/modal visible
-    const changeConfirmVisible = (b, m)=>{
-        setConfirmMessage(m);
-        setConfirmationVisible(b);
-    }
 
     // change popup/modal visible
     const changeModalVisible = (b, m)=>{
@@ -78,14 +76,24 @@ const UserWorkoutPage = ({navigation, route}) => {
         }
     };
 
-    const loadInfo = () => {
+    const getHistory = async() => {
         try{
-            changeLoadingVisible(true);
-            getStatistics();
+            setIsLoading(true);
+            setHistory([]);
+            await new DisplayExerciseHistoryPresenter({updateHistory:setHistory}).displayExerciseHistory(date, user.accountID);
         }catch(error){
             changeModalVisible(true, error.message.replace('Error: ', ''));
         }finally{
-            changeLoadingVisible(false);
+            setIsLoading(false);
+        }
+    }
+
+    const loadInfo = async () => {
+        try{
+            getStatistics();
+            await getHistory();
+        }catch(error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
         }
     }
 
@@ -96,6 +104,19 @@ const UserWorkoutPage = ({navigation, route}) => {
             caloriesBurned / user.calorieTarget * 100 > 100 ? 100 : caloriesBurned / user.calorieTarget* 100
         ],
         colors: ['limegreen', '#ff6600'] 
+    };
+
+    const formatDate = (date) => {
+        if (!date) return "";
+        return date.toLocaleString('en-US', {
+            timeZone: 'Asia/Singapore',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour:'numeric',
+            minute:'numeric'
+            
+        });
     };
 
     
@@ -112,138 +133,190 @@ const UserWorkoutPage = ({navigation, route}) => {
     },[date]);
 
     return (
-        <ScrollView contentContainerStyle = {styles.container}>
-            <View style = {styles.titleView}>
-                <Text style = {styles.titleText}>User Workout</Text>
-            </View>
-            
-            <View style={styles.datePicker}>
-                <AntDesign
-                    onPress={() => changeDate(-1)}
-                    name="left"
-                    size={scale(32)}
-                    color="black"
+        <View style = {styles.container}>
+            <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+                <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
+            </Modal>
+            <ScrollView >
+                <View style = {styles.titleView}>
+                    <Text style = {styles.titleText}>User Workout</Text>
+                </View>
+                
+                <View style={styles.datePicker}>
+                    <AntDesign
+                        onPress={() => changeDate(-1)}
+                        name="left"
+                        size={scale(32)}
+                        color="black"
+                    />
+
+                    <TouchableOpacity onPress={() => setOpen(true)}>
+                        <Text style={styles.date}>{date.toDateString()}</Text>
+                    </TouchableOpacity>
+
+                    <AntDesign
+                        onPress={new Date().toDateString() === date.toDateString() ? ()=>{} : () => changeDate(1)}
+                        name="right"
+                        size={scale(32)}
+                        color={new Date().toDateString() === date.toDateString() ? 'grey' : 'black'}
+                    />
+                </View>
+
+                <DatePicker
+                    modal
+                    open={open}
+                    date={date}
+                    mode='date'
+                    minimumDate={new Date(2000, 1, 1)}
+                    maximumDate={new Date()}
+                    onConfirm={(date) => {
+                        setOpen(false);
+                        setDate(date);
+                    }}
+                    onCancel={() => {
+                        setOpen(false);
+                    }}
                 />
 
-                <TouchableOpacity onPress={() => setOpen(true)}>
-                    <Text style={styles.date}>{date.toDateString()}</Text>
-                </TouchableOpacity>
-
-                <AntDesign
-                    onPress={new Date().toDateString() === date.toDateString() ? ()=>{} : () => changeDate(1)}
-                    name="right"
-                    size={scale(32)}
-                    color={new Date().toDateString() === date.toDateString() ? 'grey' : 'black'}
-                />
-            </View>
-
-            <DatePicker
-                modal
-                open={open}
-                date={date}
-                mode='date'
-                minimumDate={new Date(2000, 1, 1)}
-                maximumDate={new Date()}
-                onConfirm={(date) => {
-                    setOpen(false);
-                    setDate(date);
-                }}
-                onCancel={() => {
-                    setOpen(false);
-                }}
-            />
 
 
+                <View style = {styles.statsDateView}>
+                    <View style = {styles.statsCircleContainer}>
+                        <View style = {styles.circlesView}>
+                            
+                            <View style = {{position:'absolute', backgroundColor:'transparent'}}>
+                                <AnimatedProgressWheel
+                                    size = {scale(150)}
+                                    width = {scale(12)}
+                                    rotation={'-90deg'}
+                                    color = {progressionData.colors[0]}
+                                    progress = {progressionData.data[0]}
+                                    backgroundColor = '#e0e0e0'
+                                    animateFromValue={0}
+                                    duration = {1000}
+                                />
+                            </View>
 
-            <View style = {styles.statsDateView}>
-                <View style = {styles.statsCircleContainer}>
-                    <View style = {styles.circlesView}>
+                            <View style = {{position:'absolute', backgroundColor:'transparent'}}>
+                                <AnimatedProgressWheel
+                                    size = {scale(110)}
+                                    width = {scale(12)}
+                                    rotation={'-90deg'}
+                                    color = {progressionData.colors[1]}
+                                    progress = {progressionData.data[1]}
+                                    backgroundColor = '#e0e0e0'
+                                    animateFromValue={0}
+                                    duration = {1000}
+                                />
+                            </View>
+                        </View>
+                        <View style = {styles.statsView}>
+                            <View style = {styles.statsItem}>
+                                <Text style = {styles.itemTitle}>Steps: </Text>
+                                <View style = {styles.statsView2}>
+                                    <Image source={require('../../../assets/steps_icon.png')} style = {styles.statsIcon} />
+                                    <Text style = {styles.numText}>{steps}</Text>
+                                </View>
+                                <Text style = {styles.itemSubTitle}>/ {user.stepTarget} steps</Text>
+                            </View>
+                            <View style = {styles.statsItem}>
+                                <Text style = {styles.itemTitle}>Distance:</Text>
+                                <View style = {styles.statsView2}>
+                                    <Image source={require('../../../assets/location_icon.png')} style = {styles.statsIcon} />
+                                    <Text style = {styles.numText}>{distance.toFixed(2)}</Text>
+                                </View>
+                                <Text style = {styles.itemSubTitle}>km</Text>
+                            </View>
+                            <View style = {styles.statsItem}>
+                                <Text style = {styles.itemTitle}>Calories Burned:</Text>
+                                <View style = {styles.statsView2}>
+                                    <Image source={require('../../../assets/fire_color_icon.png')} style = {styles.statsIcon} />
+                                    <Text style = {styles.numText}>{caloriesBurned.toFixed(0)}</Text>
+                                </View>
+                                <Text style = {styles.itemSubTitle}>/ {user.calorieTarget} kcal</Text>
+                            </View>
+                        </View>
+                    </View>
+
+
+
+
+                    <View style = {styles.heartRateContainer}>
                         
-                        <View style = {{position:'absolute', backgroundColor:'transparent'}}>
-                            <AnimatedProgressWheel
-                                size = {scale(150)}
-                                width = {scale(12)}
-                                rotation={'-90deg'}
-                                color = {progressionData.colors[0]}
-                                progress = {progressionData.data[0]}
-                                backgroundColor = '#e0e0e0'
-                                animateFromValue={0}
-                                duration = {1000}
-                            />
+                        <Image source={require('../../../assets/heart_rate_icon.png')} style = {styles.heartIcon} />
+                        <View style = {styles.heartRate}>
+                            <Text style = {styles.heartRateReadTitle}>Avg:</Text>
+                            <Text style = {styles.heartRateReadSubtitle}>{averageHeartRate} bpm</Text>
                         </View>
-
-                        <View style = {{position:'absolute', backgroundColor:'transparent'}}>
-                            <AnimatedProgressWheel
-                                size = {scale(110)}
-                                width = {scale(12)}
-                                rotation={'-90deg'}
-                                color = {progressionData.colors[1]}
-                                progress = {progressionData.data[1]}
-                                backgroundColor = '#e0e0e0'
-                                animateFromValue={0}
-                                duration = {1000}
-                            />
+                        <View style = {styles.heartRate}>
+                            <Text style = {styles.heartRateReadTitle}>Min:</Text>
+                            <Text style = {styles.heartRateReadSubtitle}>{minHeartRate} bpm</Text>
                         </View>
+                        <View style = {styles.heartRate}>
+                            <Text style = {styles.heartRateReadTitle}>Max:</Text>
+                            <Text style = {styles.heartRateReadSubtitle}>{maxHeartRate} bpm</Text>
+                        </View>
+                        
                     </View>
-                    <View style = {styles.statsView}>
-                        <View style = {styles.statsItem}>
-                            <Text style = {styles.itemTitle}>Steps: </Text>
-                            <View style = {styles.statsView2}>
-                                <Image source={require('../../../assets/steps_icon.png')} style = {styles.statsIcon} />
-                                <Text style = {styles.numText}>{steps}</Text>
-                            </View>
-                            <Text style = {styles.itemSubTitle}>/ {user.stepTarget} steps</Text>
+
+                    <View style = {styles.exerciseHistoryView}>
+                        <View style ={styles.exerciseHistoryHeader}>
+                            <Text style = {styles.historyHeaderText}>Exercise History</Text>
+                            <TouchableOpacity onPress ={()=>{navigation.navigate("UserFitnessPlanPage", {user})}} style = {styles.myPlanButton}>
+                                <Text style = {styles.buttonText}>My Fitness Plans</Text>
+                            </TouchableOpacity>
                         </View>
-                        <View style = {styles.statsItem}>
-                            <Text style = {styles.itemTitle}>Distance:</Text>
-                            <View style = {styles.statsView2}>
-                                <Image source={require('../../../assets/location_icon.png')} style = {styles.statsIcon} />
-                                <Text style = {styles.numText}>{distance.toFixed(2)}</Text>
-                            </View>
-                            <Text style = {styles.itemSubTitle}>km</Text>
-                        </View>
-                        <View style = {styles.statsItem}>
-                            <Text style = {styles.itemTitle}>Calories Burned:</Text>
-                            <View style = {styles.statsView2}>
-                                <Image source={require('../../../assets/fire_color_icon.png')} style = {styles.statsIcon} />
-                                <Text style = {styles.numText}>{caloriesBurned.toFixed(0)}</Text>
-                            </View>
-                            <Text style = {styles.itemSubTitle}>/ {user.calorieTarget} kcal</Text>
+                        <View style = {{paddingVertical:scale(16)}}>
+                            {
+                                isLoading ?
+                                <ActivityIndicator size="large" />
+                                :
+
+                                
+                                    history.length === 0  ?
+                                    <Text style = {styles.noHistory}>No History Found</Text>
+                                    :
+                                    
+                                    history.map((history, index)=>{
+                                        return(
+                                            <View style = {[styles.planItem,{gap: scale(25),}]} key = {index}>
+                                                {history.routine === null ?
+                                                    <View style = {styles.planImage}/>
+                                                    :
+                                                    <Image source = {{uri: history.routine.fitnessPlanPicture}} style = {styles.planImage} />
+                                                }
+                                                {
+                                                    history.routine === null ?
+                                                    <Text style = {styles.deletedText}>Plan unavailable or deleted</Text>
+                                                    :
+                                                    <View>
+                                                        <Text>{`${formatDate(history.dateCompleted.toDate())}`}</Text>
+                                                        <Text style = {styles.planNameText}>{history.routine.fitnessPlanName} - Day {history.dayNumber}</Text>
+                                                        <View style = {styles.stats2View}>
+                                                            <View style = {styles.stats}>
+                                                                <Image source = {require('../../../assets/fire_icon.png')} style = {styles.statsIcon}/>
+                                                                <Text>{parseInt(history.estCaloriesBurned || 0).toFixed(0)} kcal</Text>
+                                                            </View>
+    
+                                                        </View>
+                                                    </View>
+    
+                                                }
+                                                
+                                            </View>
+                                        )
+                                    })
+                                    
+                                
+
+
+                            }
+                            
                         </View>
                     </View>
                 </View>
-
-
-
-
-                <View style = {styles.heartRateContainer}>
-                    
-                    <Image source={require('../../../assets/heart_rate_icon.png')} style = {styles.heartIcon} />
-                    <View style = {styles.heartRate}>
-                        <Text style = {styles.heartRateReadTitle}>Avg:</Text>
-                        <Text style = {styles.heartRateReadSubtitle}>{averageHeartRate} bpm</Text>
-                    </View>
-                    <View style = {styles.heartRate}>
-                        <Text style = {styles.heartRateReadTitle}>Min:</Text>
-                        <Text style = {styles.heartRateReadSubtitle}>{minHeartRate} bpm</Text>
-                    </View>
-                    <View style = {styles.heartRate}>
-                        <Text style = {styles.heartRateReadTitle}>Max:</Text>
-                        <Text style = {styles.heartRateReadSubtitle}>{maxHeartRate} bpm</Text>
-                    </View>
-                    
-                </View>
-
-                <View style = {styles.exerciseHistoryView}>
-                    <View style ={styles.exerciseHistoryHeader}>
-                        <Text style = {styles.historyHeaderText}>Exercise History</Text>
-                        <TouchableOpacity onPress ={()=>{navigation.navigate("UserFitnessPlanPage", {user})}} style = {styles.myPlanButton}>
-                            <Text style = {styles.buttonText}>My Fitness Plans</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+        </View>
     );
 
 
@@ -388,6 +461,52 @@ const styles = StyleSheet.create({
         fontFamily: 'Inter-SemiBold',
         color: 'white',
     },
+    planItem:{
+        backgroundColor:'white',
+        flexDirection: 'row',
+        padding: scale(10),
+        
+        alignItems: 'center',
+        borderRadius:scale(20)
+        
+    },
+    planImage:{
+        width: scale(100),
+        height: scale(100),
+        borderRadius: scale(20),
+        backgroundColor: '#D3D3D3',
+    },
+    deletedText:{
+        fontSize: scale(16),
+        fontFamily: 'Poppins-SemiBold',
+        color: '#000000',
+        paddingVertical: scale(5),
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    planNameText:{
+        fontSize: scale(18),
+        fontFamily: 'Poppins-SemiBold',
+        color: '#000000',
+        paddingVertical:scale(5),
+        maxWidth:'80%'
+    },
+    stats2View:{
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    stats:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: scale(5),
+    },
+    noHistory:{
+        fontFamily:'Poppins',
+        fontSize:scale(24),
+        textAlign:'center',
+        paddingVertical:scale(16)
+    }
+    
 });
 
 export default UserWorkoutPage;
