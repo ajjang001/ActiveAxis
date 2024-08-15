@@ -26,7 +26,6 @@ const ManageAchievementTypePage = () => {
         useCallback(()=>{
             setAchievementTypes([]);
             presenter.getAchievementTypes();
-            console.log(achievementTypes);
         },[])
     );
 

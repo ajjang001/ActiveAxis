@@ -4,40 +4,38 @@ class FitnessGoalsPresenter {
     constructor(view) {
         this.view = view;
         this.fitnessGoalsModel = new FitnessGoals();
-        this.fitnessGoals = [];
     }
 
     async loadFitnessGoals() {
         try {
-            this.fitnessGoals = await this.fitnessGoalsModel.getFitnessGoals();
-            console.log('Loaded fitness goals:', this.fitnessGoals);  // Debug log
-            this.view.updateFitnessGoals(this.fitnessGoals);
+            const fitnessGoals = await this.fitnessGoalsModel.getFitnessGoals();
+            this.view.updateFitnessGoals(fitnessGoals);
         } catch (error) {
-            console.error('Failed to load fitness goals:', error);
+            throw new Error(error);
         }
     }
 
-    async addFitnessGoal(newGoal) {
+    async addFitnessGoal(newGoal, fitnessGoals) {
         try {
             const newGoalID = await this.fitnessGoalsModel.addFitnessGoal(newGoal);
             const newFitnessGoal = new FitnessGoals();
             newFitnessGoal.goalID = newGoalID;
             newFitnessGoal.goalName = newGoal;
-            this.fitnessGoals.push(newFitnessGoal);
-            this.view.updateFitnessGoals(this.fitnessGoals);
+            fitnessGoals.push(newFitnessGoal);
+            this.view.updateFitnessGoals(fitnessGoals);
         } catch (error) {
-            console.error('Failed to add fitness goal:', error);
+            throw new Error(error);
         }
     }
 
-    async updateFitnessGoal(index, updatedGoalName) {
+    async updateFitnessGoal(index, updatedGoalName, fitnessGoals) {
         try {
-            const goal = this.fitnessGoals[index];
+            const goal = fitnessGoals[index];
             await this.fitnessGoalsModel.updateFitnessGoal(goal.goalID, updatedGoalName);
-            this.fitnessGoals[index].goalName = updatedGoalName;
-            this.view.updateFitnessGoals(this.fitnessGoals);
+            fitnessGoals[index].goalName = updatedGoalName;
+            this.view.updateFitnessGoals(fitnessGoals);
         } catch (error) {
-            console.error('Failed to update fitness goal:', error);
+            throw new Error(error);
         }
     }
 }
