@@ -10,7 +10,6 @@ const UserCoachHistoryDetails = ({ route }) => {
 
     const { user, coachDetails } = route.params;
 
-    console.log(coachDetails);
 
     const [feedback, setFeedback] = useState([]);
     const [selectedStar, setSelectedStar] = useState(5);
@@ -116,7 +115,7 @@ const UserCoachHistoryDetails = ({ route }) => {
                                     />
                                 ))
                             );
-                        })()
+                        }) 
                     )}
                 </View>
             </ScrollView>

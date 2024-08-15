@@ -30,7 +30,6 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
     const startDateString = startDate.toLocaleDateString('en-US', { timeZone: 'Asia/Singapore', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' });
     const endDate = new Date(history.endDate.seconds * 1000 + history.endDate.nanoseconds / 1000000);
     const endDateString = endDate.toLocaleDateString('en-US', { timeZone: 'Asia/Singapore', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' });
-    {/* May insert more Coachee details if needed */ }
 
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
@@ -144,7 +143,6 @@ const ViewCoacheeDetails = ({ navigation, route }) => {
                     <Text style={styles.detailsText}>{startDateString}</Text>
                     <Text style={styles.detailsTitle}>End Date</Text>
                     <Text style={styles.detailsText}>{endDateString}</Text>
-                    {/* May insert more Coachee details if needed */}
                 </View>
                 <View style = {styles.viewPlanContainer}>
                     <TouchableOpacity style = {styles.viewPlanButton} onPress={() => navigation.navigate("CoachAllocatePlanPage", {coach, history})}>

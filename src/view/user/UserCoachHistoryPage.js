@@ -7,7 +7,7 @@ import DisplayCoachHistoryPresenter from '../../presenter/DisplayCoachHistoryPre
 const UserCoachHistoryPage = ({ navigation, route }) => {
 
     const { user } = route.params;
-    userID = user.accountID;
+    let userID = user.accountID;
 
     const [coach, setCoaches] = useState([]);
 

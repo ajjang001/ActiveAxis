@@ -32,7 +32,7 @@ const FitnessPlanDonePage = ({navigation, route}) => {
         try{
             await new ShareFitnessPlanCompletionPresenter().shareDayPlanCompletion(fitnessPlan.fitnessPlanName, routine.dayNumber);
         }catch(error){
-            console.log(error);
+            changeModalVisible(true, error.message.replace('Error: ', ''));
         }
     }
 

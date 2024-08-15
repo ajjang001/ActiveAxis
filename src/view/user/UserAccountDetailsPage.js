@@ -102,7 +102,6 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
             else {
                 setMedical("Yes")
             }
-            {/* May insert more user details if needed */ }
         }
     }, [userDetails]);
 

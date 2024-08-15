@@ -8,10 +8,9 @@ import UpdateCoachFeedbackPresenter from '../../presenter/UpdateCoachFeedbackPre
 const UserCoachUpdateFeedbackPage = ({ navigation, route }) => {
 
     const { user, coachDetails, feedback } = route.params;
-    userID = user.accountID;
-    coachID = coachDetails.coachID;
-    feedbackID = feedback[0].id;
-    console.log(feedbackID)
+    let userID = user.accountID;
+    let coachID = coachDetails.coachID;
+    let feedbackID = feedback[0].id;
 
     const [updateFeedback, setupdateFeedback] = useState(feedback[0].feedbackText);
     const [rating, setRating] = useState(feedback[0].rating);

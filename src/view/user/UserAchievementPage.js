@@ -102,17 +102,6 @@ const UserAchievementPage = ({ navigation, route }) => {
         {completedAchievements.length === 0 && !isLoading ? (
           <Text style={styles.noachievementText}>No Achievements Unlocked</Text>
         ) : (
-          // <FlatList
-          //   data={completedAchievements}
-          //   keyExtractor={(item) => item._achievementID}
-          //   renderItem={({ item }) => <AchievementItem achievement={item} obtained={true} onPress={handlePressAchievement} />}
-          //   contentContainerStyle={styles.listContainer}
-          //   numColumns={2}
-          //   style={[
-          //     styles.flatList,
-          //     completedAchievements.length <= 2 ? { minHeight: '20%' } : { maxHeight: '60%' },
-          //   ]}
-          // />
           <View style = {{flexDirection:'row', flexWrap:'wrap',}}>
             {
               completedAchievements.map((item, index) => (
@@ -123,17 +112,7 @@ const UserAchievementPage = ({ navigation, route }) => {
           
           )}
         <Text style={styles.subHeaderText}>Locked</Text>
-        {/* <FlatList
-          data={lockedAchievements}
-          keyExtractor={(item) => item._achievementID}
-          renderItem={({ item }) => <AchievementItem achievement={item} obtained={false} />}
-          contentContainerStyle={styles.listContainer}
-          numColumns={2}
-          style={[
-            styles.flatList,
-            completedAchievements.length <= 2 ? { minHeight: '20%' } : { maxHeight: '60%' },
-          ]}
-        /> */}
+        
         <View style = {{flexDirection:'row', flexWrap:'wrap'}}>
             {
               lockedAchievements.map((item, index) => (

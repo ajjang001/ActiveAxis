@@ -37,7 +37,6 @@ const UserUpdatePasswordPage = ({ navigation, route }) => {
     const processUpdate = async () => {
         changeLoadingVisible(true);
         try {
-            console.log(userID);
             await new EditUserAccountDetailsPresenter().updatePassword(userID, newPassword, confirmnewPassword)
             Alert.alert('Successfully updated password for user!')
             navigation.navigate('UserAccountDetailsPage1', { user , userType})

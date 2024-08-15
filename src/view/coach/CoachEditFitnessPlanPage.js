@@ -74,8 +74,6 @@ const CoachEditFitnessPlanPage = ({navigation, route}) => {
         try{
             changeLoadingVisible(true);
             await new EditFitnessPlanPresenter({fitnessPlan: fitnessPlan}).saveFitnessPlan(coach, (photo === fitnessPlan.fitnessPlanPicture? null : photo), goalType, description.trim(), name.trim(), medicalCheck, routines);
-            
-            // navigation.navigate('CoachListOfFitnessPlansPage', {refresh: true, coach: coach});
 
             // remove goback 2 pages
             navigation.pop(2);

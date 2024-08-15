@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, Modal } from 'react-native';
 import DisplayFriendDetailsPresenter from '../../presenter/DisplayFriendDetailsPresenter';
-// import { db } from '../../firebase/firebaseConfig';
+
 import { scale } from "../../components/scale";
 import { LoadingDialog, MessageDialog } from "../../components/Modal";
 
 const UserFriendDetailsPage = ({ route }) => {
     const { friend } = route.params;
-    // console.log(friend);
     //For User Details
     const [gender, setGender] = useState('');
     const [goal, setGoal] = useState('');
@@ -39,7 +38,6 @@ const UserFriendDetailsPage = ({ route }) => {
     const fetchDetails = async () => {
         setIsLoading(true);
         try {
-            // console.log("Loading details for friend:", friend);
             const presenter = new DisplayFriendDetailsPresenter({ displayFriendDetails: setFriendDetails });
             await presenter.loadFriendDetails(friend);
         } catch (error) {
@@ -65,7 +63,7 @@ const UserFriendDetailsPage = ({ route }) => {
 
         } catch (error) {
             console.error("Error fetching goal and level:", error.message); // Log the error
-            // Optionally, you could set an error state here if you want to display an error message to the user
+            changeModalVisible(true, error.message.replace('Error: ', '')); // Show the error message to the user
         } finally {
             setIsLoading(false); // Stop the loading indicator
         }

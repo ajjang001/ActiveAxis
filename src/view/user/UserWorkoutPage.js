@@ -29,7 +29,7 @@ const UserWorkoutPage = ({navigation, route}) => {
     const [maxHeartRate, setMaxHeartRate] = useState('--');
 
     const [history, setHistory] = useState([]);
-    // console.log(history);
+    
 
     const [isLoading, setIsLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);

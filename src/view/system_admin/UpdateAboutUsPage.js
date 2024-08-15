@@ -57,7 +57,7 @@ const UpdateAboutUsPage = () => {
             setAbout(editedAbout);
             const presenter = new UpdateAboutUsPresenter({ changeAbout, changeLogoURL });
             await presenter.updateAboutActiveAxis(editedAbout);
-            //console.log({ editedAbout });
+            
         } catch (error) {
             console.error("Error saving changes: ", error);
         }

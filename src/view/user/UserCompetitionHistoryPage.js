@@ -68,11 +68,9 @@ const UserCompetitionHistoryPage = ({ route, navigation }) => {
             const justObtainedAchievements = await new ObtainAchievementPresenter().checkAchievementCompetition(user.accountID, competitions);
         
             if(justObtainedAchievements){
-                console.log(justObtainedAchievements);
                 if(justObtainedAchievements.length > 0){
                     for(let i = 0; i < justObtainedAchievements.length; i++){
                         Alert.alert('Achievement Unlocked', justObtainedAchievements[i]);
-                        console.log(`Achievement Unlocked: ${justObtainedAchievements[i]}`);
                     }
                 }
             }
@@ -87,7 +85,7 @@ const UserCompetitionHistoryPage = ({ route, navigation }) => {
         try{
             await new ShareCompetitionPresenter().shareCompetition(competition);
         }catch(err){
-            console.log(err);
+            changeModalVisible(true, err.message.replace('Error: ', ''));
         }
     }
 

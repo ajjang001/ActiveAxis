@@ -41,16 +41,13 @@ const EditUserAccountDetailsPage = ({ navigation, route }) => {
     const onPressSave = async () => {
         changeLoadingVisible(true);
         try {
-            console.log(userID);
-            //console.log(newPassword);
-            //console.log(confirmnewPassword);
             await new EditUserAccountDetailsPresenter().updatePassword(userID, newPassword, confirmnewPassword)
             Alert.alert('Successfully updated password for user!')
             navigation.navigate('UserAccountListPage')
         } catch (e) {
             console.log(e);
             changeModal1Visible(true, e.message);
-            //Alert.alert(e.message);
+            
         } finally {
             changeLoadingVisible(false);
         }

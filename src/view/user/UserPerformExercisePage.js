@@ -99,14 +99,7 @@ const UserPerformExercisePage = ({navigation, route}) => {
             setStatus('Rest');
         } else {
             setIsDone(true);
-            // Alert.alert(`${fitnessPlan.fitnessPlanName} - Day ${routine.dayNumber}`, `Congratulations, you have completed the exercise!\nYou can come back to this exercise routine again.`, [
-            //     {
-            //         text: 'OK',
-            //         onPress: () => navigation.goBack(),
-            //     },
-            // ]);
             navigation.navigate('FitnessPlanDonePage', {user, fitnessPlan, routine});
-            console.log('DONE');
         }         
         
         

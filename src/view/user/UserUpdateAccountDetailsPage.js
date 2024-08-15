@@ -145,13 +145,12 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
                 hasMedical
             };
             // include back +65
-            phoneNumber1 = "+65" + phoneNumber;
+            let phoneNumber1 = "+65" + phoneNumber;
             await new UpdateAccountDetailsPresenter().updateAccountDetails(email, gender, phoneNumber1, weight, height, fitnessGoal, fitnessLevel, hasMedical, profilePic, newprofilePic, userID);
             navigation.navigate('UserAccountDetailsPage1', { user: updatedUser, userType })
             Alert.alert('Successfully updated account information!')
         } catch (e) {
             changeModal1Visible(true, e.message);
-            //Alert.alert(e.message);
         } finally {
             changeLoadingVisible(false);
         }

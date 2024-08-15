@@ -8,7 +8,7 @@ import HireCoachPresenter from '../../presenter/HireCoachPresenter';
 const UserCoachPage = ({ navigation, route }) => {
 
     const { user } = route.params;
-    userID = user.accountID;
+    let userID = user.accountID;
 
     const [coaches, setCoaches] = useState([]);
     const [selectedCoach, setSelectedCoach] = useState(null); // State for the selected coach

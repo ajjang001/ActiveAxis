@@ -12,7 +12,6 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
     const {user} = route.params;
 
     const [session, setSession] = useState(null);
-    // console.log(session)
 
     const [allocatedPlans, setAllocatedPlans] = useState([]);
     const [onProgress, setOnProgress] = useState([]);

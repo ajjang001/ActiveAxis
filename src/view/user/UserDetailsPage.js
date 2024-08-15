@@ -66,7 +66,7 @@ const UserDetailsPage = ({ route }) => {
             
         } catch (error) {
             console.error("Error fetching goal and level:", error.message); // Log the error
-            // Optionally, you could set an error state here if you want to display an error message to the user
+            changeModalVisible(true, error.message.replace('Error: ', '')); // Show the error message to the user
         } finally {
             setIsLoading(false); // Stop the loading indicator
         }

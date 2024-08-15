@@ -126,7 +126,7 @@ class Friends {
         for (const doc of usersSnapshot.docs) {
             const userData = doc.data();
             const userId = doc.id;
-            // console.log(userData);
+            
             const profilePicRef = ref(storage, userData.profilePicture);
             // Get the download URL
             const profilePictureURL = await getDownloadURL(profilePicRef);
@@ -170,16 +170,7 @@ class Friends {
                             status = "Friend";
                         }
                     }
-                    /*if (friendRequestSnapshot.docs[0].data().status == "Pending" || 
-                    friendRequestSnapshot2.docs[0].data().status == "Pending"){
-                        status = "Pending";
-                    }
-                    if (friendRequestSnapshot.docs[0].data().status == "Friend" || 
-                    friendRequestSnapshot2.docs[0].data().status == "Friend"){
-                        status = "Friend";
-                    }*/
                 }
-                console.log({userId, status});
                 users.push({ id: userId, ...userData, profilePictureURL, status });
             }
         };
