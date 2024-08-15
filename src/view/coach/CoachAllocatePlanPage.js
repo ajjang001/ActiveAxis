@@ -106,7 +106,7 @@ const CoachAllocatePlanPage = ({navigation, route}) => {
                 <View style = {styles.allocateContainer}>
                 {onProgress.length === 0 ? null :
                     <View style = {styles.onProgressContainer}>
-                        <Text style = {styles.titleText}>On Progress</Text>
+                        <Text style = {styles.titleText}>In Progress</Text>
                         {
                             onProgress.map((plan, index) => {
                                 return(

@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
         width:'100%',
         backgroundColor: '#FBF5F3',
         padding: scale(16),
-        paddingTop: scale(80),
+        paddingTop: scale(48),
         justifyContent: 'center',
         alignItems: 'flex-start',
     

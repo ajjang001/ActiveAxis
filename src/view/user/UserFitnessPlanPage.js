@@ -111,7 +111,7 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                             {
                                 onProgress.length <= 0 ? null :
                                 <View>
-                                    <Text style = {styles.titleText}>On Progress</Text>
+                                    <Text style = {styles.titleText}>In Progress</Text>
                                     {
                                         onProgress.map((plan, index)=>{
                                             return(

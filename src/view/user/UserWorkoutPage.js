@@ -266,7 +266,7 @@ const UserWorkoutPage = ({navigation, route}) => {
                                 <Text style = {styles.buttonText}>My Fitness Plans</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style = {{paddingVertical:scale(16)}}>
+                        <View style = {{paddingVertical:scale(16), gap:scale(8)}}>
                             {
                                 isLoading ?
                                 <ActivityIndicator size="large" />
@@ -279,7 +279,8 @@ const UserWorkoutPage = ({navigation, route}) => {
                                     
                                     history.map((history, index)=>{
                                         return(
-                                            <View style = {[styles.planItem,{gap: scale(25),}]} key = {index}>
+                                            
+                                            <View style = {[styles.planItem,{gap: scale(25),}]} key = {`${index}1`}>
                                                 {history.routine === null ?
                                                     <View style = {styles.planImage}/>
                                                     :
@@ -304,6 +305,7 @@ const UserWorkoutPage = ({navigation, route}) => {
                                                 }
                                                 
                                             </View>
+                                            
                                         )
                                     })
                                     
