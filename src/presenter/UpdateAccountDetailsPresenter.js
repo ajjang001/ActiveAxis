@@ -40,7 +40,6 @@ class UpdateAccountDetailsPresenter {
 
 
   async updateCoachAccountDetails(userEmail, tempName, tempPhoneNumber, tempEmail, coachID, newPassword, confirmnewPassword, profilePic, newprofilePic) {
-    // console.log("updateAccountDetails parameters:", { userEmail, tempName, tempPhoneNumber, tempEmail, coachID, newPassword, confirmnewPassword, profilePic, newprofilePic });
 
     const phonePattern = /^\+65\d{8}$/;
     try{
@@ -87,33 +86,6 @@ class UpdateAccountDetailsPresenter {
     throw new Error(error);
   }
 
-    // else if (newPassword == confirmnewPassword) {
-    //   try {
-    // console.log(newPassword);
-    // console.log(confirmnewPassword);
-    //     
-
-    //     if(newPassword.trim() !== ''){
-
-    //       if(newPassword.trim().length < 6){
-    //         throw new Error('Password must be at least 6 characters long!');
-    //       }else if (newPassword != confirmnewPassword) {
-    //         throw new Error('Passwords do not match.');
-    //       }else{
-    //         
-    //       }
-    //     }
-        
-    //     
-        
-    //     
-    //   } catch (error) {
-    //     throw new Error(error);
-    //   }
-    // }
-    // else{
-    //   //
-    // }
   }
 
   async updateAccountDetails(email, gender, phoneNumber, weight, height, fitnessGoal, fitnessLevel, hasMedical, profilePic, newprofilePic, userID) {
@@ -164,8 +136,6 @@ class UpdateAccountDetailsPresenter {
     }
     else if (newPassword == confirmnewPassword) {
       try {
-        console.log(coachID);
-        console.log(newPassword);
         this.user = new Coach();
         await this.user.updatePassword(coachID, newPassword)
       }

@@ -91,7 +91,7 @@ const UserHomePage = ({ navigation, route }) => {
 
     const scheduleNotification = async () => {
         try {
-            await new DisplayNotificationPresenter().scheduleNotification(caloriesBurned, user.calorieTarget, steps, user.stepTarget);
+            await new DisplayNotificationPresenter().scheduleNotification();
         } catch (error) {
             changeModalVisible(true, error.message.replace('Error: ', ''));
         }

@@ -30,7 +30,6 @@ class DisplayPlanAllocationPresenter{
                     details: planDetails
                 });
             }
-            // console.log(detailedOnProgress);
             this.view.updateAllocatedPlans(detailedAllocatedPlans);
             this.view.updateOnProgress(detailedOnProgress);
         }catch(error){

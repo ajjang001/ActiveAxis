@@ -19,7 +19,6 @@ class DisplayAccountDetailsPresenter {
             } else {
                 throw new Error("Invalid user type");
             }
-            //console.log("Fetched account details:", accountDetails);
             this.view.displayAccountDetails(accountDetails);
         } catch (error) {
             console.error("Error fetching account details:", error.message);

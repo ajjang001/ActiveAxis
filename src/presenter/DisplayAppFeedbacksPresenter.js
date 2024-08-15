@@ -12,7 +12,6 @@ class DisplayAppFeedbacksPresenter {
       const feedbacks = await this.af.fetchFeedbacks();
       this.fiveStarFeedbacks = feedbacks.filter((feedback) => feedback.rating === 5);
       this.displayLatestFeedback();
-      // this.displayRandomFeedback();
     } catch (error) {
       this.view.displayError(error.message);
     }

@@ -32,7 +32,7 @@ class AllocatePlanPresenter{
             }else{
                 
                 await this.model.addAllocatePlan(fitnessPlanID, history.id, startDate, endDate);
-                // console.log(history);
+                
             }
 
             

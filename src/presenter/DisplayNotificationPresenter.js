@@ -27,7 +27,7 @@ class DisplayNotificationPresenter {
     }
   }
 
-  async scheduleNotification(calories, calTarget, steps, stepsTarget) {
+  async scheduleNotification() {
     try{
         this.requestNotificationPermissions();
         console.log("Notification permission granted!");
@@ -67,40 +67,6 @@ class DisplayNotificationPresenter {
   }
   
 
-//   async scheduleNotification(calories, calTarget, steps, stepsTarget) {
-//     try{
-//         const times = ["09:00", "12:00", "15:00", "18:00", "23:00"];
-
-//         const title = calories < calTarget ? "Let's Exercise!" : "Great Work!";
-//         const body = calories < calTarget ? "You have not reached your daily target. Keep exercise and stay healthy!" : "You have reached your daily target! Please take a break and enjoy your day!";
-
-//         for (let i = 0; i < times.length; i++) {
-//             const trigger = new Date(Date.now());
-//             trigger.setHours(parseInt(times[i].split(":")[0]));
-//             trigger.setMinutes(parseInt(times[i].split(":")[1]));
-//             trigger.setSeconds(0);
-    
-//             const content = {
-//                 title: title,
-//                 body: body,
-//                 sound: true,
-//                 priority: Notifications.AndroidNotificationPriority.HIGH,
-//             };
-    
-//             await Notifications.scheduleNotificationAsync({
-//                 content,
-//                 trigger,
-//             });
-//         }
-
-//         console.log("Notification scheduled successfully!");
-        
-//     }catch(error){
-//       throw new Error(error);
-//     }
-//   }
-
-    
 }
 
 export default DisplayNotificationPresenter;
