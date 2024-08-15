@@ -219,8 +219,7 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
                             </View>
                             <View style = {styles.stats}>
                                 <Image source = {require('../../../assets/fire_icon.png')} style = {styles.icon}/>
-                                <Text style = {styles.statsText}>{calBurn} kcal 
-                                    ({repetition} x {initCalBurn} kcal)</Text>
+                                <Text style = {styles.statsText}>{`${calBurn} kcal ${dropdownOpt.length === 0 ? '' : `(${repetition} x ${initCalBurn} kcal)`}`}</Text>
                             </View>
                         </View>
                     </View>

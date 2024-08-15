@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Modal, TouchableOpacity, ActivityIndicator, Image } from "react-native"
+import { View, Text, StyleSheet, Modal, TouchableOpacity, ActivityIndicator, Image, ScrollView } from "react-native"
 import { scale } from "../../components/scale";
 import React, { useEffect, useState, useCallback } from "react";
 import { useIsFocused } from '@react-navigation/native';
@@ -125,50 +125,57 @@ const UserAccountDetailsPage = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.headerView}>
-                <Text style={styles.headerText}>Account Details</Text>
-            </View>
-            <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
-                <LoadingDialog />
-            </Modal>
-            <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
-                <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
-            </Modal>
-            <View style={styles.detailsBox}>
-                {profilePic !== '' ? (
-                    <View style={styles.pictureContainer}>
-                        <Image source={{ uri: profilePic }} resizeMode='stretch' style={styles.userImage} />
+            <ScrollView contentContainerStyle = {{alignItems:'center'}}>
+                    <View style={styles.headerView}>
+                        <Text style={styles.headerText}>Account Details</Text>
                     </View>
-                ) : (
-                    <ActivityIndicator style={styles.pictureContainer} size="large" />
-                )}
-                <Text style={styles.detailsTitle}>Name</Text>
-                <Text style={styles.detailsText}>{fullName}</Text>
-                <Text style={styles.detailsTitle}>Email</Text>
-                <Text style={styles.detailsText}>{email}</Text>
-                <Text style={styles.detailsTitle}>Gender</Text>
-                <Text style={styles.detailsText}>{gender}</Text>
-                <Text style={styles.detailsTitle}>Phone Number</Text>
-                <Text style={styles.detailsText}>{phoneNumber}</Text>
-                <Text style={styles.detailsTitle}>Weight</Text>
-                <Text style={styles.detailsText}>{weight}</Text>
-                <Text style={styles.detailsTitle}>Height</Text>
-                <Text style={styles.detailsText}>{height}</Text>
-                <Text style={styles.detailsTitle}>Fitness Goal</Text>
-                <Text style={styles.detailsText}>{goal}</Text>
-                <Text style={styles.detailsTitle}>Fitness Level</Text>
-                <Text style={styles.detailsText}>{level}</Text>
-                <Text style={styles.detailsTitle}>Medical Condition</Text>
-                <Text style={styles.detailsText}>{medical}</Text>
-            </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate("UserUpdateAccountDetailsPage", { user, userDetails, userType })}>
-                    <Text style={styles.editText}>Edit Information</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.passwordButton} onPress={() => navigation.navigate("UserUpdatePasswordPage", { user, userDetails, userType })}>
-                    <Text style={styles.editText}>Change Password</Text>
-                </TouchableOpacity>
-            </View>
+                    <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+                        <LoadingDialog />
+                    </Modal>
+                    <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+                        <MessageDialog message={modalMsg} changeModalVisible={changeModalVisible} />
+                    </Modal>
+                    <View style={styles.detailsBox}>
+                        
+                        {profilePic !== '' ? (
+                            <View style={styles.pictureContainer}>
+                                <Image source={{ uri: profilePic }} resizeMode='stretch' style={styles.userImage} />
+                            </View>
+                        ) : (
+                            <ActivityIndicator style={styles.pictureContainer} size="large" />
+                        )}
+                        <Text style={styles.detailsTitle}>Name</Text>
+                        <Text style={styles.detailsText}>{fullName}</Text>
+                        <Text style={styles.detailsTitle}>Email</Text>
+                        <Text style={styles.detailsText}>{email}</Text>
+                        <Text style={styles.detailsTitle}>Gender</Text>
+                        <Text style={styles.detailsText}>{gender}</Text>
+                        <Text style={styles.detailsTitle}>Phone Number</Text>
+                        <Text style={styles.detailsText}>{phoneNumber}</Text>
+                        <Text style={styles.detailsTitle}>Weight</Text>
+                        <Text style={styles.detailsText}>{weight}</Text>
+                        <Text style={styles.detailsTitle}>Height</Text>
+                        <Text style={styles.detailsText}>{height}</Text>
+                        <Text style={styles.detailsTitle}>Fitness Goal</Text>
+                        <Text style={styles.detailsText}>{goal}</Text>
+                        <Text style={styles.detailsTitle}>Fitness Level</Text>
+                        <Text style={styles.detailsText}>{level}</Text>
+                        <Text style={styles.detailsTitle}>Medical Condition</Text>
+                        <Text style={styles.detailsText}>{medical}</Text>
+                        
+                    </View>
+                    
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate("UserUpdateAccountDetailsPage", { user, userDetails, userType })}>
+                            <Text style={styles.editText}>Edit Information</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.passwordButton} onPress={() => navigation.navigate("UserUpdatePasswordPage", { user, userDetails, userType })}>
+                            <Text style={styles.editText}>Change Password</Text>
+                        </TouchableOpacity>
+                    </View>
+
+
+            </ScrollView>
         </View>
     )
 }
@@ -177,20 +184,20 @@ export default UserAccountDetailsPage;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
         backgroundColor: '#FBF5F3',
     },
     headerView: {
         backgroundColor: '#E28413',
         width: '100%',
-        height: '8%',
+        height: '10%',
+        justifyContent: 'center',
     },
     headerText: {
         fontSize: scale(36),
         fontFamily: 'League-Spartan',
         fontWeight: 'bold',
         textAlign: 'center',
-        marginVertical: scale(15),
+        marginVertical: scale(6),
     },
     detailsBox: {
         width: '90%',
@@ -234,6 +241,8 @@ const styles = StyleSheet.create({
     buttonContainer: {
         width: '90%',
         flexDirection: 'row',
+        paddingBottom: scale(40),
+        
     },
     passwordButton: {
         borderWidth: 1,

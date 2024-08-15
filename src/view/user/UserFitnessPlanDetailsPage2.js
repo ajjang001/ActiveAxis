@@ -14,8 +14,12 @@ const UserFitnessPlanDetailsPage2 = ({navigation, route}) =>{
     const {isOnProgress} = route.params;
     const {repetition} = route.params || 1;
 
+    // check if the fitness plan has started
+    const [currentDay, setCurrentDay] = useState(-1);
+
 
     const [routines, setRoutines] = useState(fitnessPlan.routinesList || []);
+    const [selectedRoutine, setSelectedRoutine] = useState(null);
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMsg, setModalMsg] = useState('');
@@ -44,11 +48,20 @@ const UserFitnessPlanDetailsPage2 = ({navigation, route}) =>{
         routines.length === 0 ? 
         <Text style = {styles.noAvailText}>{`No Routine\nAvailable`}</Text> 
         : routines.map((routine) => {
-            
+            if(routine.dayNumber < currentDay){
+                return null;
+            }
             return (
                 <View key = {routine.dayNumber}>
                     <View style = {styles.dayTitleView}>
                         <Text style = {styles.dayTitleText}>{`Day ${routine.dayNumber}`}</Text>
+                        {
+                            routine.isRestDay || routine.dayNumber !== currentDay ? null :
+                            <TouchableOpacity style ={styles.startButton} onPress={()=>{setSelectedRoutine(routine);changeConfirmVisible(true, "Once you quit this exercise, you will need to start from the beginning of today's exercise routine.\n\n Are you sure you want to start?")}}>
+                                <Text style ={styles.startText}>Start</Text>
+                            </TouchableOpacity>
+                        }
+                        
                     </View>
 
                     <View style = {styles.exerciseListView}>
@@ -61,12 +74,13 @@ const UserFitnessPlanDetailsPage2 = ({navigation, route}) =>{
                                         
                                         
                                         return (
-                                            <ExerciseCard
-                                                key = {e.exercise.exerciseID}
-                                                routine = {routine}
-                                                exercise = {e}
-                                                isEdit={false}
-                                            />
+                                            <TouchableOpacity onPress={()=>{navigation.navigate('ExerciseInstructionPage', {exercise:e})}} key = {e.exercise.exerciseID}>
+                                                <ExerciseCard
+                                                    routine = {routine}
+                                                    exercise = {e}
+                                                    isEdit={false}
+                                                />
+                                            </TouchableOpacity>
                                         );
                                     })
                                 }
@@ -79,6 +93,19 @@ const UserFitnessPlanDetailsPage2 = ({navigation, route}) =>{
         })
     );
 
+    useEffect(()=>{
+        if(planAllocation){
+            if(isOnProgress){
+                // get the current day
+                const today = new Date();
+                const startDate = planAllocation.startDate.toDate();
+                const diffTime = Math.abs(today - startDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                setCurrentDay(diffDays);
+            }
+        }
+    }, [planAllocation]);
+
     return(
         <View style = {styles.container}>
             <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={()=>changeLoadingVisible(false)}>
@@ -86,6 +113,13 @@ const UserFitnessPlanDetailsPage2 = ({navigation, route}) =>{
             </Modal>
             <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={()=>changeModalVisible(false)}>
                 <MessageDialog message = {modalMsg} changeModalVisible = {changeModalVisible} />
+            </Modal>
+            <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={() => changeConfirmVisible(false)}>
+                <ActionDialog
+                    message={confirmMessage}
+                    changeModalVisible={changeConfirmVisible}
+                    action={()=>{navigation.navigate('UserPerformExercisePage', {user, fitnessPlan, planAllocation, session, routine:selectedRoutine})}}
+                />
             </Modal>
 
 
@@ -170,6 +204,18 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-SemiBold',
         fontSize: scale(32),
     
+    },
+    startButton:{
+        backgroundColor: '#00AD3B',
+        paddingHorizontal: scale(32),
+        paddingVertical: scale(2),
+        borderRadius: scale(5),
+    },
+    startText:{
+        fontFamily: 'Poppins-Medium',
+        fontSize: scale(16),
+        color: 'white',
+
     }
 });
 

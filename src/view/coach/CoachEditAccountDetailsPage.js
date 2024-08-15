@@ -50,7 +50,7 @@ const CoachEditAccountDetailsPage = () => {
 
   const presenter = new UpdateAccountDetailsPresenter({
     displayAccountDetails: (accountDetails) => {
-      console.log("Displaying account details:", accountDetails);
+      // console.log("Displaying account details:", accountDetails);
       setName(accountDetails.fullName);
       setPhoneNumber(accountDetails.phoneNumber.substring(3));
       setEmail(accountDetails.email);
@@ -81,7 +81,7 @@ const CoachEditAccountDetailsPage = () => {
       navigation.navigate('CoachViewAccountDetailsPage', { userEmail, userType })
     } catch (e) {
       console.log(e);
-      changeModal1Visible(true, e.message);
+      changeModal1Visible(true, e.message.replace('Error: ', ''));
       //Alert.alert(e.message);
     } finally {
       changeLoadingVisible(false);
@@ -157,6 +157,7 @@ const handleSelectPhoto = async () => {
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Confirm New Password</Text>
           <TextInput
+            editable={newPassword.trim() !== ''}
             style={styles.input}
             value={confirmnewPassword}
             onChangeText={setConfirmNewPassword}

@@ -52,6 +52,9 @@ import UserWorkoutPage from './src/view/user/UserWorkoutPage';
 import UserFitnessPlanPage from './src/view/user/UserFitnessPlanPage';
 import UserFitnessPlanDetailsPage from './src/view/user/UserFitnessPlanDetailsPage';
 import UserFitnessPlanDetailsPage2 from './src/view/user/UserFitnessPlanDetailsPage2';
+import UserPerformExercisePage from './src/view/user/UserPerformExercisePage';
+import ExerciseInstructionPage from './src/view/user/ExerciseInstructionPage';
+import FitnessPlanDonePage from './src/view/user/FitnessPlanDonePage';
 import UserFriendsListPage from './src/view/user/UserFriendsListPage';
 import UserFriendDetailsPage from './src/view/user/UserFriendDetailsPage';
 import UserFriendRequestPage from './src/view/user/UserFriendRequestPage';
@@ -282,6 +285,9 @@ export default function App() {
           <Stack.Screen name="UserFitnessPlanPage" component={UserFitnessPlanPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserFitnessPlanDetailsPage" component={UserFitnessPlanDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserFitnessPlanDetailsPage2" component={UserFitnessPlanDetailsPage2} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
+          <Stack.Screen name ="UserPerformExercisePage" component={UserPerformExercisePage} options={{ headerShown: false }} />
+          <Stack.Screen name = "FitnessPlanDonePage" component={FitnessPlanDonePage} options={{ headerShown: false }} />
+          <Stack.Screen name="ExerciseInstructionPage" component={ExerciseInstructionPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserCoachDetailsPage" component={UserCoachDetailsPage} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserCoachHistoryDetails" component={UserCoachHistoryDetails} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
           <Stack.Screen name="UserCoachHistoryFeedback" component={UserCoachHistoryFeedback} options={{ title: 'Back', headerStyle: { backgroundColor: '#FBF5F3' }, ...TransitionPresets.SlideFromRightIOS }} />
