@@ -97,7 +97,7 @@ const UserFriendDetailsPage = ({ route }) => {
     return (
         <View style={styles.container}>
             <View style={styles.titleView}>
-                <Text style={styles.title}>Friend Name Details</Text>
+                <Text style={styles.title}>Friend Details</Text>
             </View>
             <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
                 <LoadingDialog />
