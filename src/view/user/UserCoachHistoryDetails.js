@@ -100,22 +100,19 @@ const UserCoachHistoryDetails = ({ route }) => {
                             <Text style={styles.noFeedbackText}>No Feedback Available</Text>
                         )
                     ) : (
-                        (() => {
-                            const filteredFeedback = feedback.filter((f) => f.rating === selectedStar);
-                            return filteredFeedback.length === 0 ? (
-                                <Text style={styles.noFeedbackText}>No Feedback Available</Text>
-                            ) : (
-                                filteredFeedback.map((feedbackItem, index) => (
-                                    <FeedbackCard
-                                        key={index}
-                                        avatar={feedbackItem.profilePicture || feedbackItem.avatar}
-                                        name={feedbackItem.fullName || feedbackItem.name}
-                                        rating={feedbackItem.rating}
-                                        feedback={feedbackItem.feedbackText}
-                                    />
-                                ))
-                            );
-                        }) 
+                        feedback.filter((f) => f.rating === selectedStar).length === 0 ? (
+                            <Text style={styles.noFeedbackText}>No Feedback Available</Text>
+                        ) : (
+                            feedback.filter((f) => f.rating === selectedStar).map((feedbackItem, index) => (
+                                <FeedbackCard
+                                    key={index}
+                                    avatar={feedbackItem.profilePicture || feedbackItem.avatar}
+                                    name={feedbackItem.fullName || feedbackItem.name}
+                                    rating={feedbackItem.rating}
+                                    feedback={feedbackItem.feedbackText}
+                                />
+                            ))
+                        )
                     )}
                 </View>
             </ScrollView>
