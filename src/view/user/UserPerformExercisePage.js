@@ -126,7 +126,7 @@ const UserPerformExercisePage = ({navigation, route}) => {
 
     const handleInfoRedirect = () => {
         setIsPaused(true);
-        navigation.navigate('ExerciseInstructionPage', {exercise:currentExercise});
+        navigation.navigate('ExerciseInstructionPage', {exercise:currentExercise, user});
     }
 
     useEffect(()=>{

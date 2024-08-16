@@ -85,7 +85,7 @@ const UserCompetitionHistoryPage = ({ route, navigation }) => {
         try{
             await new ShareCompetitionPresenter().shareCompetition(competition);
         }catch(err){
-            changeModalVisible(true, err.message.replace('Error: ', ''));
+            console.log(err);
         }
     }
 

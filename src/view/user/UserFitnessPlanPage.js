@@ -122,7 +122,7 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                 <Text style = {styles.contentTitle}>My Fitness Plan</Text>
                 <ScrollView contentContainerStyle = {styles.scrollView}>
                     {
-                        !session ? 
+                        allocatedPlans.length === 0 || onProgress.length === 0 ? 
                         <Text style = {styles.noAvailText}>No Fitness Plan Available</Text>
                         :
                         <View style = {{gap:scale(16)}}>
@@ -235,9 +235,14 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                 </ScrollView>
 
                 <View style = {styles.bottomView}>
+                {
+                    !session ? null :
                     <TouchableOpacity onPress = {()=>{navigation.navigate('UserFitnessPlanHistoryPage', {history:session})}} style = {styles.button}>
                         <Text style = {styles.buttonText}>History</Text>
                     </TouchableOpacity>
+
+                }
+                    
                     {!ads && !isLoading && (
                 <View style={styles.adContainer}>
                     <BannerAd

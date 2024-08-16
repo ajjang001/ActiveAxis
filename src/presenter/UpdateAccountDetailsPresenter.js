@@ -110,7 +110,7 @@ class UpdateAccountDetailsPresenter {
     else {
       try {
         this.account = new User();
-        await this.account.updateAccountDetails(email, gender, phoneNumber1, parseFloat(weight), parseFloat(height), fitnessGoal, fitnessLevel, hasMedical);
+        await this.account.updateAccountDetails(email, gender, phoneNumber, parseFloat(weight), parseFloat(height), fitnessGoal, fitnessLevel, hasMedical);
         
         if (profilePic === newprofilePic) {
           console.log("No update to picture.");
