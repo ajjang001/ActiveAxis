@@ -32,8 +32,8 @@ class FitnessGoalsPresenter {
         try {
             const goal = fitnessGoals[index];
             await this.fitnessGoalsModel.updateFitnessGoal(goal.goalID, updatedGoalName);
-            fitnessGoals[index].goalName = updatedGoalName;
-            this.view.updateFitnessGoals(fitnessGoals);
+            this.fitnessGoals[index].goalName = updatedGoalName;
+            this.view.updateFitnessGoals(this.fitnessGoals);
         } catch (error) {
             throw new Error(error);
         }
