@@ -122,7 +122,7 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                 <Text style = {styles.contentTitle}>My Fitness Plan</Text>
                 <ScrollView contentContainerStyle = {styles.scrollView}>
                     {
-                        allocatedPlans.length === 0 || onProgress.length === 0 ? 
+                        allocatedPlans.length === 0 && onProgress.length === 0 ? 
                         <Text style = {styles.noAvailText}>No Fitness Plan Available</Text>
                         :
                         <View style = {{gap:scale(16)}}>
