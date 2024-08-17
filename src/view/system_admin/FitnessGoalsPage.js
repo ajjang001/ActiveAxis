@@ -6,6 +6,7 @@ import FitnessGoalsPresenter from '../../presenter/FitnessGoalsPresenter';
 const FitnessGoalsPage = ({ navigation }) => {
   const [fitnessGoals, setFitnessGoals] = useState([]);
   const [newGoal, setNewGoal] = useState('');
+  
   const presenter = new FitnessGoalsPresenter({
     updateFitnessGoals: (goals) => {
       console.log('Updating fitness goals in view:', goals);  // Debug log

@@ -17,25 +17,25 @@ class FitnessGoalsPresenter {
         }
     }
 
-    async addFitnessGoal(newGoal) {
+    async addFitnessGoal(newGoal, fitnessGoals) {
         try {
             const newGoalID = await this.fitnessGoalsModel.addFitnessGoal(newGoal);
             const newFitnessGoal = new FitnessGoals();
             newFitnessGoal.goalID = newGoalID;
             newFitnessGoal.goalName = newGoal;
-            this.fitnessGoals.push(newFitnessGoal);
+            fitnessGoals.push(newFitnessGoal);
             this.view.updateFitnessGoals(this.fitnessGoals);
         } catch (error) {
             console.error('Failed to add fitness goal:', error);
         }
     }
 
-    async updateFitnessGoal(index, updatedGoalName) {
+    async updateFitnessGoal(index, updatedGoalName, fitnessGoals) {
         try {
-            const goal = this.fitnessGoals[index];
+            const goal = fitnessGoals[index];
             await this.fitnessGoalsModel.updateFitnessGoal(goal.goalID, updatedGoalName);
             this.fitnessGoals[index].goalName = updatedGoalName;
-            this.view.updateFitnessGoals(this.fitnessGoals);
+            this.view.updateFitnessGoals(fitnessGoals);
         } catch (error) {
             console.error('Failed to update fitness goal:', error);
         }
