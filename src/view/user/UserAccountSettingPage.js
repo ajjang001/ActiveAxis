@@ -9,11 +9,16 @@ import { ActionDialog, LoadingDialog, MessageDialog } from '../../components/Mod
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase/firebaseConfig';
 
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import RemoveAdsPresenter from '../../presenter/RemoveAdsPresenter';
+
 const UserAccountSettingPage = ({ navigation, route }) => {
 
     const [user, setUser] = useState(route.params.user !== undefined ? route.params.user : null);
     const [userDetails, setuserDetails] = useState(null);
     const [imageURL, setImageURL] = useState('');
+
+    const [ads, setAds] = useState(null);
 
     // get image url
     useFocusEffect(
@@ -79,6 +84,25 @@ const UserAccountSettingPage = ({ navigation, route }) => {
         }
     }
 
+    const getAdsRemoved = async () => {
+        try {
+            setAds(await new RemoveAdsPresenter().isAdRemoved(user.accountID));
+        } catch (error) {
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }
+    }
+
+    const setAdsRemoved = async () => {
+        try {
+            changeLoadingVisible(true);
+            setAds(await new RemoveAdsPresenter().setAdsRemoved(user.accountID));
+        } catch (error) {
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        } finally {
+            changeLoadingVisible(false);
+        }
+    }
+
     // Reset the state when the component gains focus
     useFocusEffect(
         useCallback(() => {
@@ -89,6 +113,13 @@ const UserAccountSettingPage = ({ navigation, route }) => {
                 setModalVisible(false);
             };
         }, [route.params.user, route.params.userDetails])
+    );
+
+
+    useFocusEffect(
+        useCallback(() => {
+            getAdsRemoved();
+        }, [])
     );
 
     // Options for the user
@@ -116,11 +147,13 @@ const UserAccountSettingPage = ({ navigation, route }) => {
                         <Text style={styles.topText}>{user.fullName}</Text>
                         <Text style={styles.topText}>{user.email}</Text>
                         <Text style={styles.topText}>{user.phoneNumber}</Text>
-                        <View>
-                            <TouchableOpacity style={styles.upgradeButton} onPress={() => console.log("Remove Advertisements")}>
-                                <Text style={styles.upgradeText}>Remove Advertisements</Text>
-                            </TouchableOpacity>
-                        </View>
+                        {!ads && (
+                            <View>
+                                <TouchableOpacity style={styles.upgradeButton} onPress={() => setAdsRemoved()}>
+                                    <Text style={styles.upgradeText}>Remove Advertisements</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
                     </View>
                 </View>
             )}
@@ -132,7 +165,23 @@ const UserAccountSettingPage = ({ navigation, route }) => {
                 ))
 
             }
-
+            {!ads && (
+                <View style={styles.adContainer}>
+                    <BannerAd
+                        unitId={'ca-app-pub-3940256099942544/6300978111'} // Test ad unit ID
+                        size={BannerAdSize.FULL_BANNER} // Adjust size as needed
+                        requestOptions={{
+                            requestNonPersonalizedAdsOnly: true,
+                        }}
+                        onAdLoaded={() => {
+                            console.log('Banner ad loaded');
+                        }}
+                        onAdFailedToLoad={(error) => {
+                            console.error('Failed to load banner ad:', error);
+                        }}
+                    />
+                </View>
+            )}
             <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={() => changeConfirmVisible(false)}>
                 <ActionDialog
                     message={confirmMessage}
@@ -206,6 +255,11 @@ const styles = StyleSheet.create({
         fontSize: scale(12),
         fontWeight: 'bold',
     },
+    adContainer: {
+        width: '100%', 
+        alignItems: 'center',
+        padding: scale(5), 
+      },
 });
 
 

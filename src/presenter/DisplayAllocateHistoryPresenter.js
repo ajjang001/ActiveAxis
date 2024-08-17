@@ -21,10 +21,6 @@ class DisplayAllocateHistoryPresenter{
                     details: planDetails
                 });
             }
-
-            // console.log(detailedPlan);
-
-            // console.log(allocatePlans[0].constructor.name);
             this.view.updateHistory(detailedPlan);
         }catch(error){
             throw new Error(error.message);

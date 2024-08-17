@@ -5,10 +5,13 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LoadingDialog, ActionDialog, MessageDialog } from "../../components/Modal";
 import HireCoachPresenter from '../../presenter/HireCoachPresenter';
 
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import RemoveAdsPresenter from '../../presenter/RemoveAdsPresenter';
+
 const UserCoachPage = ({ navigation, route }) => {
 
     const { user } = route.params;
-    userID = user.accountID;
+    let userID = user.accountID;
 
     const [coaches, setCoaches] = useState([]);
     const [selectedCoach, setSelectedCoach] = useState(null); // State for the selected coach
@@ -21,6 +24,8 @@ const UserCoachPage = ({ navigation, route }) => {
     const [modalMsg, setModalMsg] = useState('');
 
     const [refreshKey, setRefreshKey] = useState(0);
+
+    const [ads, setAds] = useState(null);
 
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
@@ -105,6 +110,20 @@ const UserCoachPage = ({ navigation, route }) => {
 
         return `${day} ${month} ${year}`;
     };
+
+    const getAdsRemoved = async () => {
+        try {
+            setAds(await new RemoveAdsPresenter().isAdRemoved(user.accountID));
+        } catch (error) {
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            getAdsRemoved();
+        }, [])
+    );
 
     useFocusEffect(
         useCallback(() => {
@@ -242,8 +261,26 @@ const UserCoachPage = ({ navigation, route }) => {
                     <Text style={styles.nocoachText}>No Coaches Available</Text>
                 </View>
             )
+
             }
-        </View >
+            {!ads && !isLoading && (
+                <View style={styles.adContainer}>
+                    <BannerAd
+                        unitId={'ca-app-pub-3940256099942544/6300978111'} // Test ad unit ID
+                        size={BannerAdSize.BANNER} // Adjust size as needed
+                        requestOptions={{
+                            requestNonPersonalizedAdsOnly: true,
+                        }}
+                        onAdLoaded={() => {
+                            console.log('Banner ad loaded');
+                        }}
+                        onAdFailedToLoad={(error) => {
+                            console.error('Failed to load banner ad:', error);
+                        }}
+                    />
+                </View>
+            )}
+        </View>
 
 
     );
@@ -372,7 +409,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: scale(26),
         alignSelf: 'center',
-        marginVertical: scale(25),
+        marginTop: scale(25),
         borderColor: '#E28413'
     },
     detailsTitle: {
@@ -411,6 +448,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
+    adContainer: {
+        width: '100%', 
+        alignItems: 'center',
+        padding: scale(5), 
+      },
 });
 
 

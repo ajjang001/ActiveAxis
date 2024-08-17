@@ -1,11 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { scale } from '../../components/scale';
 import CompetitionTypePresenter from '../../presenter/CompetitionTypePresenter';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 const CompetitionTypePage = ({ navigation }) => {
   const [competitionTypes, setCompetitionTypes] = useState([]);
   const [newType, setNewType] = useState('');
+  const [tempUpdate, setTempUpdate] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+
   const presenter = new CompetitionTypePresenter({
     updateCompetitionTypes: (types) => {
       console.log('Updating competition types in view:', types);  // Debug log
@@ -13,21 +20,31 @@ const CompetitionTypePage = ({ navigation }) => {
     }
   });
 
-  useEffect(() => {
-    presenter.loadCompetitionTypes();
-  }, []);
+
+  useFocusEffect(
+    useCallback(()=>{
+        setCompetitionTypes([]);
+        presenter.loadCompetitionTypes();
+    },[])
+);
 
   const handleAddCompetitionType = async () => {
     if (newType.trim() === '') {
       alert('Please enter a valid competition type.');
       return;
     }
-    await presenter.addCompetitionType(newType);
+    await presenter.addCompetitionType(newType, competitionTypes);
+    setCompetitionTypes([]);
+    presenter.loadCompetitionTypes();
     setNewType('');
   };
 
-  const handleUpdateCompetitionType = async (index, text) => {
-    await presenter.updateCompetitionType(index, text);
+  const handleUpdateCompetitionType = async (index) => {
+    if(tempUpdate.trim()===''){
+      alert('Please enter a non-empty competition type to update');
+      return;
+  }
+    await presenter.updateCompetitionType(index, tempUpdate, competitionTypes);
   };
 
   return (
@@ -37,7 +54,7 @@ const CompetitionTypePage = ({ navigation }) => {
         style={styles.input}
         placeholder="Add new type"
         value={newType}
-        onChangeText={setNewType}
+        onChangeText={(text)=>setNewType(text)}
       />
       <TouchableOpacity style={styles.addButton} onPress={handleAddCompetitionType}>
         <Text style={styles.addButtonText}>Add</Text>
@@ -48,8 +65,14 @@ const CompetitionTypePage = ({ navigation }) => {
           <View style={styles.listItem}>
             <TextInput
               style={styles.listInput}
-              value={item.competitionTypeName}
-              onChangeText={(text) => handleUpdateCompetitionType(index, text)}
+              value={editingIndex === index ? tempUpdate : item.competitionTypeName}
+              onChangeText={(text)=>{
+                setEditingIndex(index);
+                setTempUpdate(text);
+                console.log(text);
+            }}
+            onEndEditing={() => handleUpdateCompetitionType(index)}
+              
             />
           </View>
         )}

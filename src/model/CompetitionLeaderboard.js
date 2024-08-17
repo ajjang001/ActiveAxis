@@ -173,7 +173,6 @@ class CompetitionLeaderboard{
                             userProgress: steps
                         });
 
-                        console.log('updated ' + qs2.data().competitionName + ' ' + steps);
                     }else{
                         await addDoc(collection(db, 'competitionleaderboard'), {
                             participant_userID: userID,
@@ -181,7 +180,6 @@ class CompetitionLeaderboard{
                             userProgress: steps
                         });
 
-                        console.log('added ' + qs2.data().competitionName + ' ' + steps);
                     }
                 }
                 

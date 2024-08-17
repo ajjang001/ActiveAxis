@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { scale } from '../../components/scale';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused, useFocusEffect } from '@react-navigation/native';
 import { LoadingDialog, MessageDialog } from "../../components/Modal";
 
 import ExerciseSettingCard from '../../components/ExerciseSettingCard';
 import DisplayExerciseSettingsPresenter from '../../presenter/DisplayExerciseSettingsPresenter';
+
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import RemoveAdsPresenter from '../../presenter/RemoveAdsPresenter';
 
 const UserExerciseSettingsPage = ({ navigation, route }) => {
 
@@ -25,6 +28,8 @@ const UserExerciseSettingsPage = ({ navigation, route }) => {
     const [stepTarget, setstepTarget] = useState('');
     const [calorieTarget, setcalorieTarget] = useState('');
 
+    const [ads, setAds] = useState(null);
+
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
         setModalMsg(m);
@@ -35,6 +40,20 @@ const UserExerciseSettingsPage = ({ navigation, route }) => {
     const changeLoadingVisible = (b) => {
         setIsLoading(b);
     }
+
+    const getAdsRemoved = async () => {
+        try {
+            setAds(await new RemoveAdsPresenter().isAdRemoved(user.accountID));
+        } catch (error) {
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            getAdsRemoved();
+        }, [])
+    );
 
     const view = {
         displayAccountDetails: (accountDetails) => {
@@ -93,6 +112,23 @@ const UserExerciseSettingsPage = ({ navigation, route }) => {
                 <ExerciseSettingCard title="Daily Steps Target" value={stepTarget} unit="steps" />
                 <ExerciseSettingCard title="Daily Calorie Burn Target" value={calorieTarget} unit="kcal" />
             </View>
+            {!ads && (
+                <View style={styles.adContainer}>
+                    <BannerAd
+                        unitId={'ca-app-pub-3940256099942544/6300978111'} // Test ad unit ID
+                        size={BannerAdSize.BANNER} // Adjust size as needed
+                        requestOptions={{
+                            requestNonPersonalizedAdsOnly: true,
+                        }}
+                        onAdLoaded={() => {
+                            console.log('Banner ad loaded');
+                        }}
+                        onAdFailedToLoad={(error) => {
+                            console.error('Failed to load banner ad:', error);
+                        }}
+                    />
+                </View>
+            )}
             <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('UserUpdateExerciseSettingsPage', { user, userDetails })}>
                 <Text style={styles.editText}>Edit</Text>
             </TouchableOpacity>
@@ -118,7 +154,7 @@ const styles = StyleSheet.create({
         marginVertical: scale(10),
     },
     settingsContainer: {
-        marginTop: scale(40),
+        marginTop: scale(30),
         width: '85%',
         backgroundColor: '#E6E6E6',
         padding: scale(15),
@@ -133,7 +169,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#E28413',
         paddingHorizontal: scale(50),
         paddingVertical: scale(10),
-        marginTop: scale(35),
+        marginTop: scale(15),
         borderRadius: scale(8),
     },
     editText: {
@@ -143,6 +179,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: scale(16)
     },
+    adContainer: {
+        width: '100%', 
+        alignItems: 'center',
+        padding: scale(5), 
+      },
 });
 
 export default UserExerciseSettingsPage;

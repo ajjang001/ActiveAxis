@@ -10,7 +10,6 @@ const UserCoachDetailsPage = ({ route }) => {
 
     const { user, coachDetails } = route.params;
 
-    console.log(coachDetails);
 
     const [feedback, setFeedback] = useState([]);
     const [selectedStar, setSelectedStar] = useState(5);
@@ -94,29 +93,26 @@ const UserCoachDetailsPage = ({ route }) => {
             </View>
             <ScrollView style={styles.contentView} contentContainerStyle={{ alignItems: 'center' }}>
                 <View style={styles.feedbacksView}>
-                    {feedback.length === 0 ? (
+                {feedback.length === 0 ? (
                         isLoading ? (
                             <ActivityIndicator size="large" color="white" />
                         ) : (
                             <Text style={styles.noFeedbackText}>No Feedback Available</Text>
                         )
                     ) : (
-                        (() => {
-                            const filteredFeedback = feedback.filter((f) => f.rating === selectedStar);
-                            return filteredFeedback.length === 0 ? (
-                                <Text style={styles.noFeedbackText}>No Feedback Available</Text>
-                            ) : (
-                                filteredFeedback.map((feedbackItem, index) => (
-                                    <FeedbackCard
-                                        key={index}
-                                        avatar={feedbackItem.profilePicture || feedbackItem.avatar}
-                                        name={feedbackItem.fullName || feedbackItem.name}
-                                        rating={feedbackItem.rating}
-                                        feedback={feedbackItem.feedbackText}
-                                    />
-                                ))
-                            );
-                        })()
+                        feedback.filter((f) => f.rating === selectedStar).length === 0 ? (
+                            <Text style={styles.noFeedbackText}>No Feedback Available</Text>
+                        ) : (
+                            feedback.filter((f) => f.rating === selectedStar).map((feedbackItem, index) => (
+                                <FeedbackCard
+                                    key={index}
+                                    avatar={feedbackItem.profilePicture || feedbackItem.avatar}
+                                    name={feedbackItem.fullName || feedbackItem.name}
+                                    rating={feedbackItem.rating}
+                                    feedback={feedbackItem.feedbackText}
+                                />
+                            ))
+                        )
                     )}
                 </View>
             </ScrollView>

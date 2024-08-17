@@ -18,8 +18,6 @@ class EditUserAccountDetailsPresenter {
         }
         else if (newPassword == confirmnewPassword) {
             try {
-                console.log(userID);
-                console.log(newPassword);
                 this.user = new User();
                 await this.user.updatePassword(userID, newPassword)
             }

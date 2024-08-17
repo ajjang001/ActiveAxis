@@ -49,7 +49,6 @@ class DisplayFitnessPlanDetailsPresenter{
                         newRoutine.isRestDay = routine.isRestDay;
                         newRoutine.routineID = routine.routineID;
 
-                        console.log('done day ' + newRoutine.dayNumber);
 
                         this.model.routinesList.push(newRoutine);
                     }

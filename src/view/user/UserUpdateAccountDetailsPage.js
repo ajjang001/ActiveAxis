@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Modal, TouchableOpacity, ActivityIndicator, Image, TextInput , Alert} from "react-native"
+import { View, Text, StyleSheet, Modal, TouchableOpacity, ActivityIndicator, Image, TextInput , Alert, ScrollView} from "react-native"
 import { scale } from "../../components/scale";
 import React, { useState, useEffect } from "react";
 import { Dropdown } from 'react-native-element-dropdown';
@@ -145,13 +145,12 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
                 hasMedical
             };
             // include back +65
-            phoneNumber1 = "+65" + phoneNumber;
+            let phoneNumber1 = "+65" + phoneNumber;
             await new UpdateAccountDetailsPresenter().updateAccountDetails(email, gender, phoneNumber1, weight, height, fitnessGoal, fitnessLevel, hasMedical, profilePic, newprofilePic, userID);
             navigation.navigate('UserAccountDetailsPage1', { user: updatedUser, userType })
             Alert.alert('Successfully updated account information!')
         } catch (e) {
             changeModal1Visible(true, e.message);
-            //Alert.alert(e.message);
         } finally {
             changeLoadingVisible(false);
         }
@@ -159,6 +158,23 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
+            <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
+                <ActionDialog
+                    message={modalMsg}
+                    changeModalVisible={changeModalVisible}
+                    action={processUpdate}
+                />
+            </Modal>
+            <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
+                <LoadingDialog />
+            </Modal>
+            <Modal transparent={true} animationType='fade' visible={modal1Visible} nRequestClose={() => changeModal1Visible(false)}>
+                <MessageDialog
+                    message={modalMsg}
+                    changeModalVisible={changeModal1Visible}
+                />
+            </Modal>
+            <ScrollView contentContainerStyle={{ alignItems: 'center'}}>
             <View style={styles.headerView}>
                 <Text style={styles.headerText}>Edit Account Details</Text>
             </View>
@@ -255,22 +271,8 @@ const UserUpdateAccountDetailsPage = ({ navigation, route }) => {
                 onPress={() => changeModalVisible(true, 'Do you want to save changes?')}>
                 <Text style={styles.saveText}>Save</Text>
             </TouchableOpacity>
-            <Modal transparent={true} animationType='fade' visible={modalVisible} nRequestClose={() => changeModalVisible(false)}>
-                <ActionDialog
-                    message={modalMsg}
-                    changeModalVisible={changeModalVisible}
-                    action={processUpdate}
-                />
-            </Modal>
-            <Modal transparent={true} animationType='fade' visible={isLoading} nRequestClose={() => changeLoadingVisible(false)}>
-                <LoadingDialog />
-            </Modal>
-            <Modal transparent={true} animationType='fade' visible={modal1Visible} nRequestClose={() => changeModal1Visible(false)}>
-                <MessageDialog
-                    message={modalMsg}
-                    changeModalVisible={changeModal1Visible}
-                />
-            </Modal>
+            
+            </ScrollView>
         </View>
     )
 }
@@ -279,7 +281,6 @@ export default UserUpdateAccountDetailsPage;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
         backgroundColor: '#FBF5F3',
     },
     headerView: {

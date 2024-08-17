@@ -165,7 +165,6 @@ const CoachAllocatePlanPage2 = ({navigation, route}) => {
 
 };
 
-//() => navigation.navigate('CoachAllocatePlanPage3', {selectedPlan, coach, history})
 
 const styles = StyleSheet.create({
     container: {

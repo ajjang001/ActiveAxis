@@ -4,6 +4,9 @@ import React, { useEffect, useState, useCallback } from "react";
 import { LoadingDialog, MessageDialog, ActionDialog } from "../../components/Modal";
 import { useFocusEffect } from "@react-navigation/native";
 
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import RemoveAdsPresenter from '../../presenter/RemoveAdsPresenter';
+
 import DisplayFitnessPlansPresenter from "../../presenter/DisplayFitnessPlansPresenter";
 
 
@@ -22,6 +25,8 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
     const [confirmationVisible, setConfirmationVisible] = useState(false);
     const [confirmMessage, setConfirmMessage] = useState('');
 
+    const [ads, setAds] = useState(null);
+
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
         setModalMsg(m);
@@ -38,6 +43,20 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
         setConfirmMessage(m);
         setConfirmationVisible(b);
     }
+
+    const getAdsRemoved = async () => {
+        try {
+            setAds(await new RemoveAdsPresenter().isAdRemoved(user.accountID));
+        } catch (error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }
+    }
+
+        useFocusEffect(
+        useCallback(() => {
+            getAdsRemoved();
+        }, [])
+    );
 
 
     const getCurrentSession = async()=>{
@@ -103,14 +122,14 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                 <Text style = {styles.contentTitle}>My Fitness Plan</Text>
                 <ScrollView contentContainerStyle = {styles.scrollView}>
                     {
-                        !session ? 
+                        allocatedPlans.length === 0 || onProgress.length === 0 ? 
                         <Text style = {styles.noAvailText}>No Fitness Plan Available</Text>
                         :
                         <View style = {{gap:scale(16)}}>
                             {
                                 onProgress.length <= 0 ? null :
                                 <View>
-                                    <Text style = {styles.titleText}>On Progress</Text>
+                                    <Text style = {styles.titleText}>In Progress</Text>
                                     {
                                         onProgress.map((plan, index)=>{
                                             return(
@@ -148,6 +167,23 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
                                     }
                                 </View>
                             }
+                            {!ads && !isLoading && (
+                <View style={styles.adContainer}>
+                    <BannerAd
+                        unitId={'ca-app-pub-3940256099942544/6300978111'} // Test ad unit ID
+                        size={BannerAdSize.FULL_BANNER} // Adjust size as needed
+                        requestOptions={{
+                            requestNonPersonalizedAdsOnly: true,
+                        }}
+                        onAdLoaded={() => {
+                            console.log('Banner ad loaded');
+                        }}
+                        onAdFailedToLoad={(error) => {
+                            console.error('Failed to load banner ad:', error);
+                        }}
+                    />
+                </View>
+            )}
                             {
                                 allocatedPlans.length <= 0 ? null :
                                 <View>
@@ -197,6 +233,35 @@ const UserFitnessPlanPage = ({ navigation, route }) => {
 
                     }                    
                 </ScrollView>
+
+                <View style = {styles.bottomView}>
+                {
+                    !session ? null :
+                    <TouchableOpacity onPress = {()=>{navigation.navigate('UserFitnessPlanHistoryPage', {history:session})}} style = {styles.button}>
+                        <Text style = {styles.buttonText}>History</Text>
+                    </TouchableOpacity>
+
+                }
+                    
+                    {!ads && !isLoading && (
+                <View style={styles.adContainer}>
+                    <BannerAd
+                        unitId={'ca-app-pub-3940256099942544/6300978111'} // Test ad unit ID
+                        size={BannerAdSize.FULL_BANNER} // Adjust size as needed
+                        requestOptions={{
+                            requestNonPersonalizedAdsOnly: true,
+                        }}
+                        onAdLoaded={() => {
+                            console.log('Banner ad loaded');
+                        }}
+                        onAdFailedToLoad={(error) => {
+                            console.error('Failed to load banner ad:', error);
+                        }}
+                    />
+                </View>
+            )}
+                </View>
+                
             </View>
         </View>
     )
@@ -219,7 +284,7 @@ const styles = StyleSheet.create({
         marginVertical: scale(16),
     },
     scrollView:{
-        height: '90%',
+        height: '80%',
         marginVertical: scale(16),
     },
     titleText: {
@@ -278,6 +343,28 @@ const styles = StyleSheet.create({
         height: scale(25),
         width: scale(25),
     },
+    bottomView:{
+        paddingVertical:scale(16),
+        paddingBottom:scale(240),
+        alignItems:'center'
+    },
+    button:{
+        backgroundColor:'#E28413',
+        paddingVertical:scale(4),
+        width:scale(140),
+        borderRadius:scale(8)
+    },
+    buttonText:{
+        textAlign:'center',
+        fontFamily:'Inter-SemiBold',
+        fontSize:scale(18),
+        color:'white'
+    },
+    adContainer: {
+        width: '100%', 
+        alignItems: 'center',
+        padding: scale(5), 
+      },
 });
 
 export default UserFitnessPlanPage;

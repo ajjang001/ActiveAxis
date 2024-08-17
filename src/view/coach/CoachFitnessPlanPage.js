@@ -54,8 +54,6 @@ const CoachFitnessPlanPage = ({route, navigation}) => {
 
             await new DeleteFitnessPlanPresenter({fitnessPlan: fitnessPlan}).deleteFitnessPlan();
 
-            // navigation.navigate('CoachListOfFitnessPlansPage', {refresh: true, coach: coach});
-            
 
             // remove goback 2 pages
             navigation.goBack();

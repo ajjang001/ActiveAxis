@@ -1,9 +1,13 @@
-import React, {useState, useRef, useEffect } from 'react';
+import React, {useState, useRef, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Modal, Alert, ScrollView } from 'react-native';
 import { scale } from "../../components/scale";
 import { LoadingDialog, MessageDialog, ActionDialog } from '../../components/Modal';
 import { Dropdown } from 'react-native-element-dropdown';
 import moment from 'moment-timezone';
+
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import RemoveAdsPresenter from '../../presenter/RemoveAdsPresenter';
+import { useFocusEffect } from '@react-navigation/native';
 
 import DisplayFitnessPlanDetailsPresenter from "../../presenter/DisplayFitnessPlanDetailsPresenter";
 
@@ -15,6 +19,7 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
     const {isOnProgress} = route.params;
     const {allocatedPlans} = route.params;
 
+    const [ads, setAds] = useState(null);
 
     const [fitnessGoal, setFitnessGoal] = useState('');
 
@@ -37,6 +42,19 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
     // to close dropdown
     const dropdownRef = useRef(null);
 
+    const getAdsRemoved = async () => {
+        try {
+            setAds(await new RemoveAdsPresenter().isAdRemoved(user.accountID));
+        } catch (error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }
+    }
+
+        useFocusEffect(
+        useCallback(() => {
+            getAdsRemoved();
+        }, [])
+    );
 
 
     // change popup/modal visible
@@ -219,8 +237,7 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
                             </View>
                             <View style = {styles.stats}>
                                 <Image source = {require('../../../assets/fire_icon.png')} style = {styles.icon}/>
-                                <Text style = {styles.statsText}>{calBurn} kcal 
-                                    ({repetition} x {initCalBurn} kcal)</Text>
+                                <Text style = {styles.statsText}>{`${calBurn} kcal ${dropdownOpt.length === 0 ? '' : `(${repetition} x ${initCalBurn} kcal)`}`}</Text>
                             </View>
                         </View>
                     </View>
@@ -231,7 +248,23 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
                         <Image source={{uri:fitnessPlan.fitnessPlanPicture}} style={{width: '100%', height: '100%', borderRadius: scale(18)}} />
                     </View>
                 </View>
-
+                {!ads && (
+                <View style={styles.adContainer}>
+                    <BannerAd
+                        unitId={'ca-app-pub-3940256099942544/6300978111'} // Test ad unit ID
+                        size={BannerAdSize.FULL_BANNER} // Adjust size as needed
+                        requestOptions={{
+                            requestNonPersonalizedAdsOnly: true,
+                        }}
+                        onAdLoaded={() => {
+                            console.log('Banner ad loaded');
+                        }}
+                        onAdFailedToLoad={(error) => {
+                            console.error('Failed to load banner ad:', error);
+                        }}
+                    />
+                </View>
+            )}
                 
                 <View style = {styles.detailsView}>
                     <Text style = {styles.detailsTitleText}>GOAL</Text>
@@ -291,7 +324,23 @@ const UserFitnessPlanDetailsPage = ({route, navigation}) => {
                 }
                 
             </View>
-
+            {!ads && (
+                <View style={styles.adContainer}>
+                    <BannerAd
+                        unitId={'ca-app-pub-3940256099942544/6300978111'} // Test ad unit ID
+                        size={BannerAdSize.FULL_BANNER} // Adjust size as needed
+                        requestOptions={{
+                            requestNonPersonalizedAdsOnly: true,
+                        }}
+                        onAdLoaded={() => {
+                            console.log('Banner ad loaded');
+                        }}
+                        onAdFailedToLoad={(error) => {
+                            console.error('Failed to load banner ad:', error);
+                        }}
+                    />
+                </View>
+            )}
         </View>
     );
 };
@@ -411,6 +460,18 @@ const styles = StyleSheet.create({
         fontSize: scale(12),
         fontFamily:'Poppins-Medium'
     },
+    adContainer: {
+        width: '100%', 
+        alignItems: 'center',
+        padding: scale(5), 
+      },
+      adContainer2: {
+        width: '100%', 
+        alignItems: 'center',
+        padding: scale(5), 
+        position: 'absolute', // Allows positioning the container relative to its parent
+        bottom: 0, // Positions the container at the bottom of the screen
+      },
 });
 
 export default UserFitnessPlanDetailsPage;

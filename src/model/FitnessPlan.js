@@ -422,11 +422,6 @@ class FitnessPlan{
                 recommended.push(fitnessPlan);
             }
 
-            // console.log('recommended: ')
-            // recommended.forEach(async (plan) => {
-            //     console.log(plan.fitnessPlanName);
-            // });
-
             return recommended;
             
 
@@ -476,10 +471,6 @@ class FitnessPlan{
                 other.push(fitnessPlan);
             }
 
-            // console.log('other: ')
-            // other.forEach(async (plan) => {
-            //     console.log(plan.fitnessPlanName);
-            // });
 
             return other;
         }catch(e){

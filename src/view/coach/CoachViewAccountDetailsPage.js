@@ -14,7 +14,6 @@ const CoachViewAccountDetailsPage = () => {
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState(''); // Typically, password shouldn't be fetched or displayed
   const [profilePic, setprofilePic] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);

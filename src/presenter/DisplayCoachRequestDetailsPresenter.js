@@ -1,4 +1,3 @@
-import Coach from "../model/Coach";
 
 class DisplayCoachRequestDetailsPresenter{
     constructor(view){

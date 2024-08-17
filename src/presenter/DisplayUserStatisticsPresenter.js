@@ -1,5 +1,4 @@
 
-//import AppFeedback from '../model/AppFeedback.js';
 import AppInfo from '../model/AppInfo.js';
 
 class DisplayUserStatisticsPresenter {

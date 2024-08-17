@@ -90,13 +90,13 @@ const UserFriendRequestPage = ({ route, navigation }) => {
       </Modal>
       <View style={styles.contentContainer}>
                 <View style={styles.titleView}>
-                    <Text style={styles.title}>Friend Requests</Text>
+                    <Text style={styles.title}>Friend Request</Text>
                 </View>
                 <View style={styles.middleContentContainer}>
                     <ScrollView style={styles.userListContainer} contentContainerStyle={styles.userListContent}>
                         {requests.length === 0 ? (
                             <View>
-                                <Text style={{ color: 'white', fontSize: scale(20) }}>No friend requests</Text>
+                                <Text style={{ color: 'white', fontSize: scale(20) }}>No friend request</Text>
                             </View>
                         ) : (
                             requests.map((request, index) => (

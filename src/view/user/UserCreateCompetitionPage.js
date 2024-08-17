@@ -1,10 +1,13 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Keyboard, ScrollView, Alert } from 'react-native';
 import { LoadingDialog, ActionDialog, MessageDialog } from "../../components/Modal";
 import { scale } from '../../components/scale';
 import { Dropdown } from 'react-native-element-dropdown';
 import DatePicker from 'react-native-date-picker';
 import { useFocusEffect } from '@react-navigation/native';
+
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import RemoveAdsPresenter from '../../presenter/RemoveAdsPresenter';
 
 import CreateCompetitionPresenter from "../../presenter/CreateCompetitionPresenter";
 
@@ -45,6 +48,8 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
     const [openStartDate, setOpenStartDate] = useState(false);
     const [openEndDate, setOpenEndDate] = useState(false);
 
+    const [ads, setAds] = useState(null);
+
     // change popup/modal visible
     const changeModalVisible = (b, m) => {
         setModalMsg(m);
@@ -60,6 +65,20 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
         setConfirmMessage(m);
         setConfirmationVisible(b);
     }
+
+    const getAdsRemoved = async () => {
+        try {
+            setAds(await new RemoveAdsPresenter().isAdRemoved(user.accountID));
+        } catch (error){
+            changeModalVisible(true, error.message.replace('Error: ', ''));
+        }
+    }
+
+        useFocusEffect(
+        useCallback(() => {
+            getAdsRemoved();
+        }, [])
+    );
 
     // Render Dropdown options
     const renderItem=(item)=>{
@@ -264,6 +283,24 @@ const UserCreateCompetitionPage = ({ navigation, route }) => {
                         <Text style={styles.createText}>CREATE</Text>
                     </TouchableOpacity>
                 </View>
+
+                {!ads && (
+                <View style={styles.adContainer}>
+                    <BannerAd
+                        unitId={'ca-app-pub-3940256099942544/6300978111'} // Test ad unit ID
+                        size={BannerAdSize.BANNER} // Adjust size as needed
+                        requestOptions={{
+                            requestNonPersonalizedAdsOnly: true,
+                        }}
+                        onAdLoaded={() => {
+                            console.log('Banner ad loaded');
+                        }}
+                        onAdFailedToLoad={(error) => {
+                            console.error('Failed to load banner ad:', error);
+                        }}
+                    />
+                </View>
+            )}
                 <Modal transparent={true} animationType='fade' visible={confirmationVisible} nRequestClose={() => changeConfirmVisible(false)}>
                     <ActionDialog
                         message={confirmMessage}
@@ -405,6 +442,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderWidth: 1,
         borderColor: '#ccc',
+      },
+      adContainer: {
+        width: '100%', 
+        alignItems: 'center',
+        padding: scale(5), 
       },
 });
 

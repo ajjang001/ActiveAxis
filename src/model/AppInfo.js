@@ -100,10 +100,8 @@ class AppInfo {
         if (docSnap.exists()) {
           const querySnapshot = await getDocs(collection(db, "user"));
           let dateArray = docSnap.data().days;
-          // console.log(dateArray.length);
 
           let userCountArray = docSnap.data().userCount;
-          // console.log(userCountArray.length);
 
           const [day, month] = dateArray[dateArray.length - 1].split('/').map(Number);
 

@@ -24,7 +24,7 @@ class ManageAchievementTypePresenter{
             achievementTypes.push(newAchievementType);
             this.view.updateAchievementTypeArray(achievementTypes);
         } catch (error){
-            console.error('Failed to add achievement type:', error); 
+            throw new Error(error);
         }
     }
 
@@ -35,7 +35,7 @@ class ManageAchievementTypePresenter{
             achievementTypes[index].achievementTypeName = updatedTypeName;
             this.view.updateAchievementTypeArray(achievementTypes);
         } catch(error){
-            console.error('Failed to update achievement type:', error);
+            throw new Error(error);
         }
     }
 }

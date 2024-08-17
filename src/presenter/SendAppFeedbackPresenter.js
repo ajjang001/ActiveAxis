@@ -11,7 +11,7 @@ class SendAppFeedbackPresenter {
   async fetchFeedback(accountID) {
     try {
       const feedback = await this.appFeedback.fetchFeedback(accountID);
-      // console.log(feedback);
+      
       this.view.displayFeedback(feedback);
     } catch (error) {
       console.error("Error fetching feedback:", error);

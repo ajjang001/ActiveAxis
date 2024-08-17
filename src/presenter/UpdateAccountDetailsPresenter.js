@@ -40,9 +40,9 @@ class UpdateAccountDetailsPresenter {
 
 
   async updateCoachAccountDetails(userEmail, tempName, tempPhoneNumber, tempEmail, coachID, newPassword, confirmnewPassword, profilePic, newprofilePic) {
-    console.log("updateAccountDetails parameters:", { userEmail, tempName, tempPhoneNumber, tempEmail, coachID, newPassword, confirmnewPassword, profilePic, newprofilePic });
 
     const phonePattern = /^\+65\d{8}$/;
+    try{
 
     if (!phonePattern.test(tempPhoneNumber)) {
       // Check if phone number is 8 digits
@@ -51,29 +51,41 @@ class UpdateAccountDetailsPresenter {
     else if (!tempName || !tempPhoneNumber || !tempEmail) {
       throw new Error('Please complete all fields!');
     }
-    else if (newPassword.trim() === '') {
-      throw new Error('Password has not been entered!');
-    }
-    else if (newPassword.trim().length < 6) {
-      throw new Error('Password must be at least 6 characters long!');
-    }
-    else if (newPassword != confirmnewPassword) {
-      throw new Error('Passwords do not match.');
-    }
-    else if (newPassword == confirmnewPassword) 
-      try {
-        this.account = new Coach();
-        await this.account.updateCoachAccountDetails(userEmail, tempName, tempPhoneNumber, tempEmail);
-        await this.account.updatePassword(coachID, newPassword);
-        if (profilePic === newprofilePic) {
-          console.log("No update to picture.");
-        }
-        else {
-          await this.account.updateAccountPicture(userEmail, newprofilePic);
-        }
-      } catch (error) {
-        throw new Error(error);
+    else {
+      if(newPassword.trim() !== confirmnewPassword.trim()){
+        throw new Error('Passwords do not match.');
       }
+
+      this.account = new Coach();
+
+      if(newPassword.trim() !== '' && confirmnewPassword.trim() !== ''){
+        
+
+        if(newPassword.trim().length < 6){
+          throw new Error('Password must be at least 6 characters long!');
+        }else if (newPassword != confirmnewPassword) {
+          throw new Error('Passwords do not match.');
+        }else{
+          await this.account.updatePassword(coachID, newPassword);
+        }
+      }
+
+      await this.account.updateCoachAccountDetails(userEmail, tempName, tempPhoneNumber, tempEmail);
+
+      if (profilePic === newprofilePic) {
+        console.log("No update to picture.");
+      }
+      else {
+        await this.account.updateAccountPicture(userEmail, newprofilePic);
+      }
+
+      
+
+    }
+  }catch(error){
+    throw new Error(error);
+  }
+
   }
 
   async updateAccountDetails(email, gender, phoneNumber, weight, height, fitnessGoal, fitnessLevel, hasMedical, profilePic, newprofilePic, userID) {
@@ -98,7 +110,7 @@ class UpdateAccountDetailsPresenter {
     else {
       try {
         this.account = new User();
-        await this.account.updateAccountDetails(email, gender, phoneNumber1, parseFloat(weight), parseFloat(height), fitnessGoal, fitnessLevel, hasMedical);
+        await this.account.updateAccountDetails(email, gender, phoneNumber, parseFloat(weight), parseFloat(height), fitnessGoal, fitnessLevel, hasMedical);
         
         if (profilePic === newprofilePic) {
           console.log("No update to picture.");
@@ -124,8 +136,6 @@ class UpdateAccountDetailsPresenter {
     }
     else if (newPassword == confirmnewPassword) {
       try {
-        console.log(coachID);
-        console.log(newPassword);
         this.user = new Coach();
         await this.user.updatePassword(coachID, newPassword)
       }

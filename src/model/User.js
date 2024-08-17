@@ -34,8 +34,8 @@ class User extends Account {
     get fitnessGoal() { return this.#fitnessGoal; }
     get fitnessLevel() { return this.#fitnessLevel; }
     get restInterval() { return this.#restInterval; }
-    get stepTarget() { return this.#stepTarget}
-    get calorieTarget() { return this.#calorieTarget}
+    get stepTarget() { return this.#stepTarget }
+    get calorieTarget() { return this.#calorieTarget }
 
     set hasMedical(hasMedical) { this.#hasMedical = hasMedical; }
     set weight(weight) { this.#weight = weight; }
@@ -44,7 +44,7 @@ class User extends Account {
     set fitnessLevel(fitnessLevel) { this.#fitnessLevel = fitnessLevel; }
     set restInterval(restInterval) { this.#restInterval = restInterval; }
     set stepTarget(stepTarget) { return this.#stepTarget = stepTarget; }
-    set calorieTarget(calorieTarget) { return this.#calorieTarget = calorieTarget; } 
+    set calorieTarget(calorieTarget) { return this.#calorieTarget = calorieTarget; }
 
     async login(email, password) {
         try {
@@ -62,8 +62,8 @@ class User extends Account {
 
                 if (!iv) {
                     await sendEmailVerification(user, {
-                       handleCodeInApp: true,
-                       url: "https://activeaxis-c49ed.firebaseapp.com",
+                        handleCodeInApp: true,
+                        url: "https://activeaxis-c49ed.firebaseapp.com",
                     });
 
                     // Account is not verified
@@ -145,7 +145,7 @@ class User extends Account {
     }
 
     async getInfoByID(userID) {
-        try{
+        try {
 
             const q = doc(db, 'user', userID);
             const queryResult = await getDoc(q);
@@ -177,7 +177,7 @@ class User extends Account {
                 return u;
             }
 
-        }catch(e){
+        } catch (e) {
             throw new Error(e.message);
         }
 
@@ -248,7 +248,9 @@ class User extends Account {
 
                 //default value first
                 stepTarget: 1500,
-                calorieTarget: 150
+                calorieTarget: 150,
+                // for ads
+                isAdRemoved: false,
             });
 
         }
@@ -311,37 +313,37 @@ class User extends Account {
     }
 
     async getDetails(userID) {
-    try {
-        console.log("Fetching details for userId:", userID); // Debugging line
+        try {
+            console.log("Fetching details for userId:", userID); // Debugging line
 
-        // Reference the document for the specific user
-        const docRef = doc(db, 'user', userID);
-        const docSnap = await getDoc(docRef);
+            // Reference the document for the specific user
+            const docRef = doc(db, 'user', userID);
+            const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            console.log("User data:", data); // Debugging line
-            profilePicRef = ref(storage, data.profilePicture);
-            profilePictureURL = await getDownloadURL(profilePicRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                console.log("User data:", data); // Debugging line
+                profilePicRef = ref(storage, data.profilePicture);
+                profilePictureURL = await getDownloadURL(profilePicRef);
 
-            // Return an object with the user's details
-            return {
-                profilePicture: profilePictureURL,
-                fullName: data.fullName || '',
-                gender: data.gender || '',
-                fitnessGoal: data.fitnessGoal || '',
-                fitnessLevel: data.fitnessLevel || ''
-            };
-        } else {
-            // Handle the case where the document does not exist
-            throw new Error('No such document!');
+                // Return an object with the user's details
+                return {
+                    profilePicture: profilePictureURL,
+                    fullName: data.fullName || '',
+                    gender: data.gender || '',
+                    fitnessGoal: data.fitnessGoal || '',
+                    fitnessLevel: data.fitnessLevel || ''
+                };
+            } else {
+                // Handle the case where the document does not exist
+                throw new Error('No such document!');
+            }
+        } catch (error) {
+            // Handle any errors that occur during the process
+            console.error("Error fetching user details:", error.message);
+            throw new Error(error.message);
         }
-    } catch (error) {
-        // Handle any errors that occur during the process
-        console.error("Error fetching user details:", error.message);
-        throw new Error(error.message);
     }
-}
 
 
     async getUserList() {
@@ -391,7 +393,7 @@ class User extends Account {
     async search(search) {
         try {
             // Search for users by name 
-            
+
             let q = null;
             if (search.trim() === '') {
                 q = query(collection(db, 'user'), orderBy('fullName'));
@@ -572,7 +574,7 @@ class User extends Account {
                 u.restInterval = data.restInterval;
                 u.stepTarget = data.stepTarget;
                 u.calorieTarget = data.calorieTarget;
-                
+
 
                 const fitnessGoalQuery = query(collection(db, 'fitnessgoal'), where('goalID', '==', data.fitnessGoal));
                 const fitnessGoalQueryResult = await getDocs(fitnessGoalQuery);
@@ -583,7 +585,7 @@ class User extends Account {
                 const fitnessLevelQueryResult = await getDocs(fitnessLevelQuery);
                 const fitnessLevelDoc = fitnessLevelQueryResult.docs[0];
                 u.fitnessLevelName = fitnessLevelDoc.data().levelName;
-                
+
                 users.push({ id: doc.id, user: u });
 
             }
@@ -636,7 +638,7 @@ class User extends Account {
 
             if (queryResult.empty) {
                 throw new Error('User not found');
-            } 
+            }
 
             // Get the document ID of the first matching user (assuming email is unique)
             const userDocId = queryResult.docs[0].id;
@@ -705,6 +707,42 @@ class User extends Account {
             console.log("Updated picture!")
         }
         catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async getAdRemoved(userID) {
+        try {
+            const docRef = doc(db, 'user', userID); // Create a reference to the document
+            const docSnap = await getDoc(docRef); // Get the document snapshot
+
+            if (docSnap.exists()) {
+                // Check if the document exists
+                const data = docSnap.data(); // Get the document data
+                return data.isAdRemoved; // Return the value of isAdRemoved
+            } else {
+                // Document does not exist
+                throw new Error('No such document!');
+            }
+        }
+        catch (e) {
+            throw new Error(e.message);
+        }
+    }
+
+    async setAdRemoved(userID) {
+        try {
+            const docRef = doc(db, 'user', userID); // Create a reference to the document
+    
+            // Update the isAdRemoved field to true
+            await updateDoc(docRef, {
+                isAdRemoved: true
+            });
+    
+            console.log('Document updated successfully');
+            return true; // Return true upon successful update
+
+        } catch (e) {
             throw new Error(e.message);
         }
     }

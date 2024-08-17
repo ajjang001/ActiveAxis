@@ -10,8 +10,8 @@ import SendFeedbackToCoachPresenter from '../../presenter/SendFeedbackToCoachPre
 const UserCoachHistoryFeedback = ({ navigation, route }) => {
 
     const { user, coachDetails } = route.params;
-    userID = user.accountID;
-    coachID = coachDetails.coachID;
+    let userID = user.accountID;
+    let coachID = coachDetails.coachID;
 
     const [feedback, setFeedback] = useState([]);
 

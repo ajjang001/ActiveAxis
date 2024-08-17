@@ -4,38 +4,36 @@ class CompetitionTypePresenter {
     constructor(view) {
         this.view = view;
         this.competitionTypeModel = new CompetitionType();
-        this.competitionTypes = [];
     }
 
     async loadCompetitionTypes() {
         try {
-            this.competitionTypes = await this.competitionTypeModel.getCompetitionTypes();
-            console.log('Loaded competition types:', this.competitionTypes);  // Debug log
-            this.view.updateCompetitionTypes(this.competitionTypes);
+            const competitionTypes =  await this.competitionTypeModel.getCompetitionTypes();
+            this.view.updateCompetitionTypes(competitionTypes);
         } catch (error) {
-            console.error('Failed to load competition types:', error);
+            throw new Error(e);
         }
     }
 
-    async addCompetitionType(newType) {
+    async addCompetitionType(newType, competitionTypes) {
         try {
             const newTypeID = await this.competitionTypeModel.addCompetitionType(newType);
             const newCompetitionType = new CompetitionType();
             newCompetitionType.competitionTypeID = newTypeID;
             newCompetitionType.competitionTypeName = newType;
-            this.competitionTypes.push(newCompetitionType);
-            this.view.updateCompetitionTypes(this.competitionTypes);
+            competitionTypes.push(newCompetitionType);
+            this.view.updateCompetitionTypes(competitionTypes);
         } catch (error) {
             console.error('Failed to add competition type:', error);
         }
     }
 
-    async updateCompetitionType(index, updatedTypeName) {
+    async updateCompetitionType(index, updatedTypeName, competitionTypes) {
         try {
-            const type = this.competitionTypes[index];
+            const type = competitionTypes[index];
             await this.competitionTypeModel.updateCompetitionType(type.competitionTypeID, updatedTypeName);
-            this.competitionTypes[index].competitionTypeName = updatedTypeName;
-            this.view.updateCompetitionTypes(this.competitionTypes);
+            competitionTypes[index].competitionTypeName = updatedTypeName;
+            this.view.updateCompetitionTypes(competitionTypes);
         } catch (error) {
             console.error('Failed to update competition type:', error);
         }
